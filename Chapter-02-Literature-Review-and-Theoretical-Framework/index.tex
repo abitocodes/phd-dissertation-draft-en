@@ -2,7 +2,7 @@
 \chapter{Literature Review and Theoretical Framework}
 \label{ch:literature}
 
-Chapter~\ref{ch:introduction} stated the research problem, that transfer-graph reputation scores conflate payment flow with trust, and derived objectives O1--O4 and research questions RQ1--RQ4 from it. This chapter reviews the conceptual and technical foundations required to interpret EndorseRank and Adaptive Weighted PageRank (AWP) and to judge whether those objectives are attainable with public data. It begins with blockchain and DeFi primitives, then develops graph ranking theory, reputation-system lineage, ERC-20 allowance semantics, and rank-correlation statistics. A theoretical framework built on hyperlink--citation propagation, domain alignment, and computational complexity motivates the primary EndorseRank versus AWP comparison. Later sections supply terminology, a worked example, a risk taxonomy, AWP in depth, a tabular summary of the reviewed literature (methodology, strengths, limitations), and an explicit statement of the research gap that Chapters~\ref{ch:methodology} and~\ref{ch:results} address.
+Chapter~\ref{ch:introduction} stated the research problem, that transfer-graph reputation scores conflate payment flow with trust, and derived objectives O1--O5 and research questions RQ1--RQ5 from it. This chapter reviews the conceptual and technical foundations required to interpret EndorseRank and Adaptive Weighted PageRank (AWP) and to judge whether those objectives are attainable with public data. It begins with blockchain and DeFi primitives, then develops graph ranking theory, reputation-system lineage, ERC-20 allowance semantics, and rank-correlation statistics. A theoretical framework built on hyperlink--citation propagation, domain alignment, and computational complexity motivates the primary EndorseRank versus AWP comparison. Later sections supply terminology, a worked example, a risk taxonomy, AWP in depth, a tabular summary of the reviewed literature (methodology, strengths, limitations), and an explicit statement of the research gap that Chapters~\ref{ch:methodology} and~\ref{ch:results} address.
 
 \dissertationSubheading[sec:blockchain-defi-foundations]{Blockchain and DeFi foundations}
 
@@ -183,7 +183,7 @@ with $k=0.01$ and $t_0=180$ days as used for AWP in this study. EndorseRank exte
 \item Computational complexity: PageRank's per-iteration cost is $O(|E|)$ \cend{15}. Allowance graphs are sparser than transfer graphs (fewer edges $|E|$), so per-iteration cost and memory are lower and, in practice, fewer iterations are often needed; this is the basis for H3. Because the solver is identical for both methods, any runtime difference is an expected consequence of edge sparsity, not an algorithmic contribution.
 \end{itemize}
 
-Figure~\ref{fig:conceptual-model} presents the conceptual model mapping the primary EndorseRank--AWP comparison to H1--H3 and RQ1--RQ4.
+Figure~\ref{fig:conceptual-model} presents the conceptual model mapping the primary EndorseRank--AWP comparison to H1--H3 and RQ1--RQ4; RQ5 sits on top of it as the question of whether the two constructs combine.
 
 \begin{figure}[htbp]
 \centering
@@ -236,7 +236,7 @@ Artificial activity further complicates behavioral measurement. Wash trading inf
 
 Beyond blockchain, reputation systems have been studied in e-commerce \cend{57}, peer-to-peer networks \cend{16}, and web spam \cend{17}. Common lessons include: (i) reputation is relational; (ii) cheap identities enable Sybil attacks \cend{11}; (iii) seed sets and normalization limit inflation; and (iv) evaluation requires external criteria, not only internal consistency \cend{22}. EndorseRank inherits (i)--(iii) via PageRank damping and endorsement costs, and addresses (iv) via contemporaneous construct checks measured with Spearman's $\rho$ \cend{20} and Kendall's $\tau$ \cend{21}, and via a temporal holdout.
 
-Personalized and topic-sensitive PageRank variants \cend{58,59} could, in future work, bias teleportation toward protocol-approved contracts or known-good wallets, analogous to TrustRank seeds. This research uses uniform teleportation for comparability with AWP\cend{3}.
+Personalized and topic-sensitive PageRank variants \cend{58,59} bias the teleportation vector toward a chosen set of nodes, which is how TrustRank turns a small seed set into a global score \cend{17}. Two families of work extend PageRank to graphs with more than one edge type. In Multiplex PageRank, the centrality of a node on one layer conditions the walk on another \cend{64}; in the multilayer formulation of De Domenico and colleagues, a single walker moves within and between layers of one interconnected network \cend{65}. Both treat the layers as views of the same node set, which is the situation here: allowance edges and transfer edges are two relations over one address space. EndorseRank and AWP use uniform teleportation and one layer each, for comparability with the baseline \cend{3}. The coupled operator of Chapter~\ref{ch:methodology} takes the simplest multilayer form, a per-node convex mixture of the two transition rows with one weight, and the seeded ablation applies the personalised-teleportation idea with the allowance score as the seed vector.
 
 \dissertationSubheading[sec:account-model]{Accounts, gas, and why logs are the measurement surface}
 
@@ -275,13 +275,15 @@ TrustRank \cend{17} & Links from seed goods & Static / seeded & Spam demotion \\
 PageRank/HodgeRank on Ethereum \cend{4} & Token transfers & Static window & Not reproduced in this thesis \\
 AWP \cend{3} & Token transfers & Logistic decay & In-degree / in-value \\
 RiskProp \cend{12} & Risk-bearing links & Propagation of risk & Account risk labels \\
+Multiplex / multilayer PageRank \cend{64,65} & Several relations over one node set & Static layers & Versatility of top-ranked nodes \\
 EndorseRank (this study) & Latest allowances & Snapshot (override) & Allowance checks; t2 new approvals \\
+C-PR / S-PR (this study) & Allowances mixed with, or seeding, transfers & Snapshot and logistic decay & Both holdout labels; pre-registered rule \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
-Table~\ref{tab:method-comparison-lit} shows that EndorseRank's novelty is the choice of latest-allowance endorsement edges as the primary social construct for DeFi wallets, not a new ranking algorithm.
+Table~\ref{tab:method-comparison-lit} shows that EndorseRank's novelty is the choice of latest-allowance endorsement edges as the primary social construct for DeFi wallets, not a new ranking algorithm. The coupled operator and its seeded ablation are the point at which this thesis does alter the operator, by bringing the two relations into one walk; the test of that change is out-of-window, against both constructs, under a rule fixed in advance.
 
 \dissertationSubheading[sec:literature-summary-table]{Summary of the reviewed literature}
 
@@ -322,7 +324,7 @@ Efron (1979) \cend{34}; DiCiccio and Efron (1996) \cend{35} & Bootstrap resampli
 
 \dissertationSubheading[sec:research-gap]{Research gap}
 
-Four gaps follow from Table~\ref{tab:literature-summary}. First, every on-chain reputation method reviewed (PageRank/HodgeRank \cend{4}, AWP \cend{3}, RiskProp \cend{12}, and the systems catalogued in the surveys \cend{25}) builds its graph from transfers or explicit ratings; none uses the ERC-20 allowance, the only on-chain event that records a deliberate delegation of spending authority. Whether a latest-allowance endorsement graph produces a different and useful ordering is therefore untested (addressed by O1 and RQ1). Second, the validation protocol of the transfer-graph baseline compares scores with in-degree and in-value computed from the same transfer data that builds the graph, so agreement is partly mechanical; no study reports the same protocol on an allowance construct alongside its transfer counterpart with confidence intervals and paired difference tests on one cohort (O2 and RQ2). Third, reported runtimes for blockchain PageRank are rarely accompanied by edge counts, memory, and iteration counts under a fixed protocol, which makes efficiency claims hard to attribute to sparsity versus implementation (O3 and RQ3). Fourth, a methodological gap concerns time: same-window graph statistics are routinely presented as validation even though they cannot show that a score anticipates future behaviour; a temporal holdout on future new approvals is the out-of-window check adopted here (O4 and RQ4).
+Five gaps follow from Table~\ref{tab:literature-summary} and Section~\ref{sec:related-measurement}. First, every on-chain reputation method reviewed (PageRank/HodgeRank \cend{4}, AWP \cend{3}, RiskProp \cend{12}, and the systems catalogued in the surveys \cend{25}) builds its graph from transfers or explicit ratings; none uses the ERC-20 allowance, the only on-chain event that records a deliberate delegation of spending authority. Whether a latest-allowance endorsement graph produces a different and useful ordering is therefore untested (addressed by O1 and RQ1). Second, the validation protocol of the transfer-graph baseline compares scores with in-degree and in-value computed from the same transfer data that builds the graph, so agreement is partly mechanical; no study reports the same protocol on an allowance construct alongside its transfer counterpart with confidence intervals and paired difference tests on one cohort (O2 and RQ2). Third, reported runtimes for blockchain PageRank are rarely accompanied by edge counts, memory, and iteration counts under a fixed protocol, which makes efficiency claims hard to attribute to sparsity versus implementation (O3 and RQ3). Fourth, a methodological gap concerns time: same-window graph statistics are routinely presented as validation even though they cannot show that a score anticipates future behaviour; a temporal holdout with a future-tense label for each construct, and the raw degree at the freeze date as the baseline, is the out-of-window check adopted here (O4 and RQ4). Fifth, multilayer ranking has been developed on social, transport and citation networks \cend{64,65} but has not been applied to two on-chain relations over one address set, and no study reports whether mixing an authorisation layer with a payment layer improves on either layer alone under a rule fixed before the result is seen (O5 and RQ5).
 
 \dissertationSubheading[sec:open-problems]{Open problems motivating this research}
 

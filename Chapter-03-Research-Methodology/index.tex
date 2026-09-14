@@ -13,7 +13,7 @@ Four principles govern every operational choice.
 \item Same-seed comparability: EndorseRank and AWP are always scored on identical wallet sets so that differences cannot be attributed to sampling inconsistency.
 \item Pre-registration by configuration: observation window, topic hashes, damping, decay parameters, bootstrap resamples and seed, and benchmark seeds are fixed in configuration before interpreting results.
 \item Separation of construction and timing: graph construction is performed once per cohort; computational benchmarks time only the PageRank solve.
-\item Primary scope: claims C1--C4 and hypotheses H1--H3 concern EndorseRank and AWP. RQ4 uses the spender holdout cohort.
+\item Primary scope: claims C1--C4 and hypotheses H1--H3 concern EndorseRank and AWP; claim C5 concerns the coupled operator and its ablation. RQ4 and RQ5 use the spender holdout cohort.
 \end{itemize}
 
 \dissertationSubheading[sec:notation]{Notation}
@@ -42,6 +42,9 @@ $\tau_{\mathrm{tol}}$ & PageRank convergence tolerance ($10^{-8}$) \\
 $I_{\max}$ & Maximum PageRank iterations ($300$) \\
 $\sigma(\Delta t)$ & Logistic time-decay on transfer age \\
 $k$, $t_0$ & Decay steepness ($0.01$) and midpoint ($180$ days) \\
+$\lambda$ & Allowance-layer weight of the coupled operator C-PR ($\lambda=0.5$ primary; $0.25$, $0.75$ sensitivity) \\
+$\boldsymbol{\pi}$ & Teleportation distribution (uniform; equal to $\mathbf{s}_{\mathrm{ER}}$ for S-PR) \\
+$T_1$, $T_2$ & Holdout freeze date (2026-02-28 UTC) and outcome window (2026-03-01 to 2026-05-31 UTC) \\
 $\Delta t$ & Age of an event in days before observation end \\
 $\rho$ & Spearman's rank correlation \\
 $\tau$ & Kendall's rank correlation \\
@@ -270,11 +273,43 @@ Because $G_{\mathrm{approve}}$ records durable authorizations and $G_{\mathrm{tr
 
 Both methods share the same implementation details. Edge lists are stored as triples \texttt{(from\_node, to\_node, weight)} in memory. Duplicate edges are aggregated by summing weights before the solve. Non-positive weights are dropped. The solver builds a sparse compressed-row transition matrix, iterates Equation~\eqref{eq:pagerank}, and returns a dictionary from node identifier to score. Cohort scores are aligned to $\mathcal{W}$ with missing entries set to zero, then converted to dense ranks for correlation.
 
-\dissertationSubheading[sec:gf-pr-graph]{Temporal holdout protocol}
+\dissertationSubsubheading[sub:coupled-graph]{Coupled operator over both layers (C-PR) and the seeded ablation (S-PR)}
 
-Scores for the holdout are computed from events with timestamp at or before $T_1=$ 28~February~2026, 23:59:59 UTC. Labels use events from $T_2^{\mathrm{start}}=$ 1~March~2026 through $T_2^{\mathrm{end}}=$ 31~May~2026. The claimed label is the count of new owner--spender approval pairs in $T_2$ that are absent from the latest-positive t1 snapshot, attributed to the spender. The claimed cohort is t1 inbound spenders ($n=1{,}335$).
+EndorseRank and AWP each walk on one edge type. RQ5 asks whether a single walk that uses both edge types ranks wallets better than either. The allowance graph and the transfer graph are treated as two layers over the union node set $V=V_A\cup V_T$, with layer transition matrices $P_A$ and $P_T$ defined by Equation~\eqref{eq:transition-impl} on $w_A$ and $w_T$ respectively. The coupled transition row of wallet $u$ is a convex mixture of its two layer rows, renormalised over the layers in which $u$ has out-edges:
+\begin{equation}
+\label{eq:coupled-transition}
+P^{(\lambda)}_{u,\cdot}
+=
+\alpha_A(u)\,P_{A,u,\cdot}+\alpha_T(u)\,P_{T,u,\cdot},
+\qquad
+\alpha_A(u)=\frac{\lambda\,\mathbb{1}[s_A(u)>0]}{\lambda\,\mathbb{1}[s_A(u)>0]+(1-\lambda)\,\mathbb{1}[s_T(u)>0]},
+\quad
+\alpha_T(u)=1-\alpha_A(u),
+\end{equation}
+where $s_A(u)$ and $s_T(u)$ are the out-strengths of $u$ in each layer. A wallet with out-edges in one layer only follows that layer with weight one, so no step is lost to a layer the wallet does not use; a wallet with no out-edges in either layer is dangling and is treated as in Equation~\eqref{eq:pagerank}. Teleportation is uniform and $d=0.85$. The score vector $\mathbf{s}_{\mathrm{CPR}}$ is the stationary vector of $P^{(\lambda)}$ under the same iteration, tolerance and cap as the single-layer methods.
 
-Other t2 quantities (revoke rate, an approval-then-outbound drain heuristic, Aave borrower liquidations) were computed in the pipeline. They are not reported as supporting evidence: revoke and drain had the wrong sign relative to an endorsement reading, and Aave events on this spender set were empty or the wrong construct.
+The operator nests both compared methods. Setting $\lambda=1$ makes every mixed row equal to its allowance row and $\lambda=0$ to its transfer row; on a shared node set the two end points are therefore EndorseRank and AWP exactly, and the unit tests of the pipeline check this identity on a fixture. On the empirical graphs the two layers differ in their one-hop neighbours, so the end points reproduce the single-layer rankings on the common wallets rather than the full score vectors. C-PR is not a third edge swap but a one-parameter family whose ends are the two methods under comparison, and RQ5 asks whether an interior point beats either end. The primary value $\lambda=0.5$ and the sensitivity values $\lambda\in\{0.25,0.75\}$ were fixed in the versioned configuration on 14~September~2026, before any coupled score was computed.
+
+The ablation S-PR keeps the transfer walk and replaces the uniform teleportation vector $\boldsymbol{\pi}$ in Equation~\eqref{eq:pagerank} with the normalised EndorseRank score, $\boldsymbol{\pi}=\mathbf{s}_{\mathrm{ER}}/\|\mathbf{s}_{\mathrm{ER}}\|_1$ on $V_T$ (wallets without an EndorseRank score receive zero restart mass). Dangling mass is redistributed with the same vector. This is the construction of TrustRank\cend{17} with allowance-derived seeds in place of hand-labelled ones: allowances decide where the walk restarts, transfers decide how it spreads. Comparing S-PR with C-PR separates the contribution of the allowance edge as a propagation medium from its contribution as a seed.
+
+The cost of the coupled operator follows from its edge set. C-PR walks on $E_A\cup E_T$, so its per-iteration cost is that of AWP plus that of EndorseRank, and its runtime is expected to sit at or above AWP's; the speed result of Claim~C1 therefore belongs to EndorseRank alone. S-PR costs one EndorseRank solve plus one transfer solve. Both operators are timed under the benchmark protocol of Section~\ref{sec:computational-benchmark}.
+
+\dissertationSubheading[sec:holdout-protocol]{Temporal holdout protocol}
+
+Scores for the holdout are computed from events with timestamp at or before $T_1=$ 28~February~2026, 23:59:59 UTC. Labels use events from $T_2^{\mathrm{start}}=$ 1~March~2026 through $T_2^{\mathrm{end}}=$ 31~May~2026. The cohort is the set of $t_1$ inbound spenders, wallets that hold at least one positive allowance in the latest-positive snapshot at $T_1$ ($n=1{,}335$). Every score in the holdout table is computed from $t_1$ events only: EndorseRank, AWP, C-PR at the three values of $\lambda$, S-PR, and two raw-degree baselines.
+
+Two labels are counted on each wallet, one for each construct, so that each single-layer method is tested on its own construct in the future tense and the hybrids are tested on both:
+\begin{enumerate}
+\item New approval pairs: the number of owner--spender pairs first observed in $T_2$ that are absent from the latest-positive $t_1$ snapshot, attributed to the spender. This is the endorsement construct.
+\item New transfer senders: the number of distinct addresses that send a transfer to the wallet in $T_2$ and never did so at or before $T_1$ (self-transfers excluded). This is the flow construct and mirrors the first label on the transfer side.
+\end{enumerate}
+The two baselines are the wallet's in-approve degree (distinct owners with a positive allowance) and its transfer in-degree (distinct senders) at $T_1$. They are the local statistics that each single-layer PageRank smooths, and their rows make the increment of each PageRank over its own raw degree readable directly; RQ4 is answered by that increment, not by the PageRank coefficient alone.
+
+Uncertainty follows Section~\ref{sec:statistical-tests}: a paired wallet bootstrap with $B=400$ resamples and one shared index matrix, so that every difference between two coefficients on the same label is a paired difference. Eight contrasts were fixed before the run: EndorseRank minus in-approve degree on new approval pairs; AWP minus transfer in-degree on new transfer senders; EndorseRank minus AWP on new approval pairs and AWP minus EndorseRank on new transfer senders; C-PR minus EndorseRank on new approval pairs and C-PR minus AWP on new transfer senders; and the same two contrasts for S-PR.
+
+The pre-registered rule for RQ5 has a primary and a secondary part. Primary (holdout): C-PR at $\lambda=0.5$ must be no worse than EndorseRank on new approval pairs, meaning the interval of $\Delta\tau=\tau_{\mathrm{CPR}}-\tau_{\mathrm{ER}}$ includes zero or lies above it, and better than AWP on new transfer senders, meaning the interval of $\tau_{\mathrm{CPR}}-\tau_{\mathrm{AWP}}$ lies above zero. Secondary (same window, matched cohort): C-PR must fall within the interval of the better single-layer method on the transfer and allowance families and exceed both single-layer methods on the Sybil-stability family with intervals that exclude zero. If the primary rule fails, RQ5 is answered in the negative and the result is reported with its intervals; $\lambda$ is not tuned after the labels have been seen.
+
+Other $t_2$ quantities (revoke rate, an approval-then-outbound drain heuristic, Aave borrower liquidations) were computed in the pipeline. They are not reported as supporting evidence: revoke and drain had the wrong sign relative to an endorsement reading, and Aave events on this spender set were empty or the wrong construct.
 
 \dissertationSubheading[sec:proxy-evaluation]{Construct-check design}
 
@@ -287,7 +322,7 @@ Two contemporaneous families structure the same-window comparison:
 \end{enumerate}
 They are \emph{graph-adjacent}: they are computed from the same event classes that build $G_{\mathrm{transfer}}$ and $G_{\mathrm{approve}}$, but they are local statistics rather than global PageRank scores. Strong alignment of AWP with transfer checks, or of EndorseRank with allowance checks, shows within-construct coherence rather than independent predictive power. Sybil-adjusted activity summaries appear in robustness tables only and carry no headline claim.
 
-The out-of-window check is the temporal holdout in Section~\ref{sec:gf-pr-graph}. Packin and Lev-Aretz\cend{2} caution that decentralized credit scores can become opaque; publishing explicit formulas (Section~\ref{sec:proxy-formulas}) and separating same-window checks from the time split counters that opacity.
+The out-of-window check is the temporal holdout in Section~\ref{sec:holdout-protocol}. Packin and Lev-Aretz\cend{2} caution that decentralized credit scores can become opaque; publishing explicit formulas (Section~\ref{sec:proxy-formulas}) and separating same-window checks from the time split counters that opacity.
 
 \dissertationSubheading[sec:proxy-formulas]{Operational definitions of proxies}
 
@@ -372,7 +407,7 @@ where $C$ is the number of pairs ordered the same way by both rankings and $D$ i
 
 \item Uncertainty: sampling uncertainty is quantified with a paired wallet bootstrap \cend{34}. The matched cohort is resampled with replacement $B=400$ times (seed 42, fixed in configuration); the same index matrix is used for every method and proxy so that resampled statistics are paired across methods. For each proxy $\tau$, each family mean, and the inter-method $\tau$, the 2.5th and 97.5th percentiles of the bootstrap distribution form a 95\% percentile interval \cend{35}. Because the population Kendall $\tau$ is a U-statistic, the percentile interval is first-order accurate at $n=5{,}521$; the small number of resamples was chosen to keep the $O(B\,n\log n)$ cost of the tie-corrected $\tau$ tractable across all methods and proxies, and it limits the precision of the interval end-points to roughly $\pm 0.005$.
 
-\item Difference tests: the comparisons on which the argument rests are pre-specified as paired contrasts and tested with the same resamples: the bootstrap distribution of $\Delta\tau=\tau_A-\tau_B$ is computed resample by resample, and its 95\% percentile interval is reported. A contrast is called a difference when the interval excludes zero. The pre-specified contrasts are (i) EndorseRank on its allowance family minus EndorseRank on the transfer family; (ii) AWP on the transfer family minus EndorseRank on the transfer family; (iii) EndorseRank on the allowance family minus AWP on the allowance family; (iv) AWP minus EndorseRank on the Sybil-stability family; (v) AWP minus EndorseRank on the GMX trading-success proxies (withdrawn with those proxies); and (vi) EndorseRank on $\mathrm{in\_approve\_degree}$ minus EndorseRank on $\mathrm{in\_degree}$. Paired resampling removes the between-resample variance shared by the two coefficients, so the contrast interval is narrower than the difference of the two marginal intervals would suggest.
+\item Difference tests: the comparisons on which the argument rests are pre-specified as paired contrasts and tested with the same resamples: the bootstrap distribution of $\Delta\tau=\tau_A-\tau_B$ is computed resample by resample, and its 95\% percentile interval is reported. A contrast is called a difference when the interval excludes zero. The pre-specified contrasts between the two single-layer methods are (i) EndorseRank on its allowance family minus EndorseRank on the transfer family; (ii) AWP on the transfer family minus EndorseRank on the transfer family; (iii) EndorseRank on the allowance family minus AWP on the allowance family; (iv) AWP minus EndorseRank on the Sybil-stability family; and (v) EndorseRank on $\mathrm{in\_approve\_degree}$ minus EndorseRank on $\mathrm{in\_degree}$. A second set of eight contrasts places the hybrid operators against the single-layer method that leads each family: C-PR and S-PR each minus AWP on the transfer family, minus EndorseRank on the allowance family, and minus both on the Sybil-stability family; these carry the secondary rule of Section~\ref{sec:holdout-protocol}. Paired resampling removes the between-resample variance shared by the two coefficients, so the contrast interval is narrower than the difference of the two marginal intervals would suggest.
 
 \item Orientation and missingness: Proxies are pre-oriented so that larger values indicate better reputation. Wallets absent from a proxy source receive zeros after alignment to $\mathcal{W}$, which is conservative for sparse activity and is applied identically to both methods. No wallet is dropped from one method but retained in the other: the correlation sample is always the full matched cohort for primary tables.
 
@@ -425,7 +460,7 @@ Alignment statistics are recomputed on staged subsamples drawn from the expanded
 
 All empirical tables in Chapter~\ref{ch:results} are produced by an open, versioned evaluation pipeline rather than transcribed by hand. After the Phase~1 extracts are on disk, one evaluation driver recomputes the construct checks, the alignment statistics with bootstrap intervals, and the runtime benchmarks, and writes a single machine-readable summary; a table-export step renders the tables of Chapter~\ref{ch:results} and Appendix~\ref{ch:appendix-eval} from that file. The same driver can run on cached ledger extracts or on synthetic fixtures, and it can enable the damping, top-token, and sample-definition sweeps. Observation window, damping, decay parameters, event-topic identifiers, bootstrap resamples and seed, and benchmark seeds live in one versioned configuration. Fixture mode allows an offline check of the implementation without cloud credentials.
 
-Reproducible elements include: deterministic wallet subsampling via SHA256 seeds; fixed PageRank tolerance and iteration caps; a fixed bootstrap seed and a shared resample-index matrix; the proxy formulas of Section~\ref{sec:proxy-formulas}; the timing protocol of Section~\ref{sec:computational-benchmark}, with per-run timings retained; and logged extraction manifests. Alignment and benchmark tables can be regenerated from the same extracts without re-querying BigQuery. The public repository, the precise revision used for the reported tables, the configuration, and the machine-readable summary are recorded in Appendix~\ref{ch:appendix-eval}.
+Reproducible elements include: deterministic wallet subsampling via SHA256 seeds; fixed PageRank tolerance and iteration caps; a fixed bootstrap seed and a shared resample-index matrix; the proxy formulas of Section~\ref{sec:proxy-formulas}; the timing protocol of Section~\ref{sec:computational-benchmark}, with per-run timings retained; the coupling weight $\lambda$ and the holdout rules of Section~\ref{sec:holdout-protocol}, fixed in configuration before the run; and logged extraction manifests. Alignment and benchmark tables can be regenerated from the same extracts without re-querying BigQuery. The machine-readable summaries from which every table is rendered, together with the configuration in force, are committed to the repository under \texttt{results/} next to the code, so the numbers in this document can be checked against the summary without re-running the pipeline. The public repository, the precise revision used for the reported tables, the configuration, and the summary files are recorded in Appendix~\ref{ch:appendix-eval}.
 
 \dissertationSubheading[sec:sampling-bias]{Sampling considerations and missingness}
 
@@ -470,4 +505,4 @@ This study uses exclusively publicly available blockchain data and does not invo
   Summary of methodological commitments: The design fixes the chain, window, cohort rules, graph formulas, proxy definitions, bootstrap protocol, timing protocol, and statistical tests before interpreting results. Primary claims compare only EndorseRank and AWP on the matched wallet cohort and the spender holdout; the expanded pool and sensitivity sweeps test efficiency and the dependence of results on parameters and sample definition.
 \end{itemize}
 
-Chapter~\ref{ch:results} reports the empirical outcomes of this protocol as an Arbitrum One case study: it first characterises the dataset and cohort, then presents the runtime benchmark and its node-count sensitivity, the sensitivity sweeps, the alignment tables with intervals and contrasts, the rank-divergence test, and the temporal holdout, and closes by stating Claims~C1--C4.
+Chapter~\ref{ch:results} reports the empirical outcomes of this protocol as an Arbitrum One case study: it first characterises the dataset and cohort, then presents the runtime benchmark and its node-count sensitivity, the sensitivity sweeps, the alignment tables with intervals and contrasts, the rank-divergence test, the same-window position of the coupled operator, and the two-label temporal holdout, and closes by stating Claims~C1--C5.
