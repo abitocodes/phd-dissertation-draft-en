@@ -136,13 +136,13 @@ This research makes three contributions to on-chain reputation research and DeFi
 \item Temporal holdout of future new approvals: scores frozen at t1 are tested against new owner--spender approvals in t2 on the spender cohort, separating same-window agreement from prediction. Together with the open, versioned evaluation pipeline (Section~\ref{sec:reproducibility}; Appendix~\ref{ch:appendix-eval}), this provides the evidence base for Claims~C1--C4.
 \end{itemize}
 
-Headline numerical results for inter-method $\tau$, family-level alignment, and runtime are reported once in Chapter~\ref{ch:results} (Tables~\ref{tab:benchmark-runtime} and~\ref{tab:alignment-family-ci}) and are not restated here. Those results describe an efficiency--alignment trade-off: neither social method dominates both constructs.
+Headline numerical results for inter-method $\tau$, family-level alignment, and runtime appear in Chapter~\ref{ch:results} (Tables~\ref{tab:benchmark-runtime} and~\ref{tab:alignment-family-ci}). Those results describe an efficiency--alignment trade-off: neither social method dominates both constructs.
 
 \dissertationSubheading[sec:scope-limitations]{Scope and limitations}
 
 This research focuses on Arbitrum One over the observation window 2025-12-01 to 2026-05-31. The primary empirical sample is a matched wallet cohort of $n=5{,}521$ addresses with non-zero endorsement- and transfer-graph connectivity; edge counts for both graphs are reported in Table~\ref{tab:benchmark-runtime}. Runtime sensitivity to node count is reported on an expanded wallet pool ($N=99{,}080$). Sensitivity analyses examine damping, top-token subgraphs, and the wallet-sample definition.
 
-Unsecured lending default labels are out of scope. Constructs and ethics are defined in Chapters~\ref{ch:introduction} and~\ref{ch:methodology}. The holdout claim uses the spender cohort ($n=1{,}335$). Extended baselines archived for future comparison are excluded from the main narrative (Appendix~\ref{ch:appendix-eval}).
+Unsecured lending default labels are out of scope. Constructs and ethics are defined in Chapters~\ref{ch:introduction} and~\ref{ch:methodology}. The holdout claim uses the spender cohort ($n=1{,}335$). Extended baselines archived for future comparison are excluded from the primary comparison (Appendix~\ref{ch:appendix-eval}).
 
 Generalization beyond Arbitrum One and the six-month window is not claimed. Token-decimal normalization, price oracles, and permit-versus-approve coverage may affect edge weights. Adversarial manipulation of allowances or transfers remains a threat discussed in Chapter~\ref{ch:discussion}; Sybil-adjusted proxies partially address but do not eliminate that risk \cend{11}.
 

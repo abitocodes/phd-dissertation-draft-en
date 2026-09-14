@@ -2,7 +2,7 @@
 \section{Elementary Properties of PageRank and Rank Correlation}
 \label{ch:appendix-theory}
 
-This appendix records elementary properties used implicitly in Chapters~\ref{ch:literature}--\ref{ch:results}. The material is standard \cend{15,23,20,21} and is included for self-contained reading.
+This appendix records elementary properties used implicitly in Chapters~\ref{ch:literature}--\ref{ch:results}. The material is standard \cend{15,23,20,21}.
 
 \dissertationSubheading[sec:pr-existence]{Existence and uniqueness of PageRank}
 
@@ -28,7 +28,7 @@ Spearman's $\rho$ is Pearson's correlation applied to ranks. It is invariant to 
 
 \dissertationSubheading[sec:kendall-properties]{Properties of Kendall's \texorpdfstring{$\tau$}{tau}}
 
-Kendall's $\tau$ equals the normalized difference between concordant and discordant pairwise orderings. It admits a probabilistic reading: for two random distinct wallets, $\tau$ is the probability their relative order agrees under both rankings, minus the probability it disagrees \cend{21}. This reading is useful when communicating results to practitioners: a $\tau$ in the mid-$0.3$ range, as for EndorseRank on the allowance family (Table~\ref{tab:alignment-family-ci}), means a clear but imperfect tendency for the two orderings to agree.
+Kendall's $\tau$ equals the normalized difference between concordant and discordant pairwise orderings. It admits a probabilistic reading: for two random distinct wallets, $\tau$ is the probability their relative order agrees under both rankings, minus the probability it disagrees \cend{21}. A $\tau$ in the mid-$0.3$ range, as for EndorseRank on the allowance family (Table~\ref{tab:alignment-family-ci}), means a clear but imperfect tendency for the two orderings to agree.
 
 For large $n$, $\tau$ and $\rho$ are often similar in sign and magnitude but not identical. This research reports both, following the AWP baseline\cend{3}, and uses family-mean $\tau$ with a paired-bootstrap interval \cend{34} as the primary summary.
 
@@ -38,7 +38,7 @@ Cronbach and Meehl\cend{22} distinguish criterion-related validity from construc
 
 \dissertationSubheading[sec:numerical-summary-sheet]{Where each primary quantity is reported}
 
-To keep every number in one place, the primary quantities are not transcribed here; the following index gives the table in which each is established.
+The following index gives the table in which each primary quantity is established.
 
 \begin{center}
 \fitwidth{%
@@ -60,4 +60,4 @@ Observation window & 2025-12-01 -- 2026-05-31 (Table~\ref{tab:parameter-summary}
 }
 \end{center}
 
-All table values are rendered by the exporter from the pipeline's machine-readable evaluation summary; none is transcribed by hand.
+The quantities listed above appear in the evaluation summary and in the tables of Chapter~\ref{ch:results}.

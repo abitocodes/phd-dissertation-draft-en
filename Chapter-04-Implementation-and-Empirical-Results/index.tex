@@ -2,7 +2,7 @@
 \chapter{Implementation and Empirical Results}
 \label{ch:results}
 
-Chapter~\ref{ch:methodology} specified how EndorseRank and the Adaptive Weighted PageRank (AWP) baseline are built, which construct checks are applied, how uncertainty is quantified and how runtime is timed. This chapter applies that design to Arbitrum One and reports what was observed. It is organised as a single case study: one chain, one observation window, one matched cohort for all same-window comparisons, one spender cohort for the temporal holdout and one expanded address pool for node-count sensitivity. Every table in the chapter is rendered by the pipeline's exporter from the machine-readable summary described in Section~\ref{sec:reproducibility}; where a number is discussed in the text it is stated once, with its table as the reference, and confidence intervals accompany every Kendall $\tau$ coefficient.
+Chapter~\ref{ch:methodology} specified how EndorseRank and the Adaptive Weighted PageRank (AWP) baseline are built, which construct checks are applied, how uncertainty is quantified and how runtime is timed. This chapter applies that design to Arbitrum One and reports what was observed. It is organised as a single case study: one chain, one observation window, one matched cohort for all same-window comparisons, one spender cohort for the temporal holdout and one expanded address pool for node-count sensitivity. Tables are generated from the evaluation summary in Section~\ref{sec:reproducibility}; where a number is discussed in the text its table is the reference, and confidence intervals accompany every Kendall $\tau$ coefficient.
 
 The chapter proceeds from the case-study setting (Section~\ref{sec:dataset}), through the computational benchmark (Section~\ref{sec:benchmark-results}), the same-window alignment results with difference tests (Sections~\ref{sec:three-method-alignment}--\ref{sec:proxy-family-detail}), inter-method rank divergence (Section~\ref{sec:rank-divergence}), robustness and sensitivity checks (Section~\ref{sec:robustness-results}) and the temporal holdout (Section~\ref{sec:gf-pr-ceiling}), to a consolidated statement of the empirical claims C1--C4 (Section~\ref{sec:empirical-claims}).
 
@@ -112,7 +112,7 @@ Figure~\ref{fig:score-distributions} shows the marginal score distributions. Bot
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{\figpath{rank-scatter.pdf}}
-\caption{Rank--rank scatter of EndorseRank versus AWP on the matched cohort (random subsample of $2{,}000$ wallets for legibility). Points on the dashed identity line would indicate identical orderings.}
+\caption{Rank--rank scatter of EndorseRank versus AWP on the matched cohort (random subsample of $2{,}000$ wallets). Points on the dashed identity line would indicate identical orderings.}
 \label{fig:rank-scatter}
 \end{figure}
 

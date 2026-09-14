@@ -6,7 +6,7 @@ Chapter~\ref{ch:literature} closed with the research gap: no reviewed method ran
 
 The methodological stance follows construct (domain) alignment: reputation scores are continuous rankings, and checks use observable wallet-level statistics rather than binary default labels \cend{22}. In measurement terms, each ranking method is an indicator of an unobserved reputation construct. Contemporaneous transfer and allowance statistics check graph coherence. A temporal holdout of future new owner--spender approvals is the out-of-window check. Alignment statistics ask whether the ordering induced by a method co-varies with the ordering induced by each check on the same wallets. This approach is appropriate when the scientific claim is comparative---EndorseRank versus AWP---rather than prediction of trading profit or credit default.
 
-All procedures operate on publicly available blockchain logs within a fixed observation window, with deterministic seeds and an open evaluation pipeline so that reported tables can be regenerated from cached parquet. The chapter is organized to move from symbols and data acquisition, through graph and proxy formalisms, to evaluation statistics, computational protocol, and research ethics. Readers primarily interested in empirical outcomes may skim Sections~\ref{sec:notation}--\ref{sec:event-decoding} and focus on Sections~\ref{sec:graph-construction}--\ref{sec:statistical-tests}; readers implementing a replication should follow the full pipeline description and Section~\ref{sec:reproducibility}.
+All procedures operate on publicly available blockchain logs within a fixed observation window, with deterministic seeds and an open evaluation pipeline so that reported tables can be regenerated from cached parquet. The chapter is organized to move from symbols and data acquisition, through graph and proxy formalisms, to evaluation statistics, computational protocol, and research ethics.
 
 Four principles govern every operational choice.
 \begin{itemize}
@@ -136,7 +136,7 @@ Figure~\ref{fig:pipeline-architecture} summarizes the end-to-end flow from publi
 \node[box, right=of prep] (ranks) {PageRank\\scores};
 \node[box, right=of ranks] (proxy) {Proxy\\metrics};
 \node[wide, right=of proxy] (align) {Alignment\\\& benchmarks};
-\node[wide, right=of align] (latex) {LaTeX\\export};
+\node[wide, right=of align] (tabexp) {Table\\export};
 
 \draw[arrow] (bq) -- (extract);
 \draw[arrow] (extract) -- (decode);
@@ -144,13 +144,13 @@ Figure~\ref{fig:pipeline-architecture} summarizes the end-to-end flow from publi
 \draw[arrow] (prep) -- (ranks);
 \draw[arrow] (ranks) -- (proxy);
 \draw[arrow] (proxy) -- (align);
-\draw[arrow] (align) -- (latex);
+\draw[arrow] (align) -- (tabexp);
 
 \node[draw, dashed, rounded corners, fit=(bq)(extract)(decode), inner sep=8pt, label=above:{\footnotesize Remote / acquisition}] {};
-\node[draw, dashed, rounded corners, fit=(prep)(ranks)(proxy)(align)(latex), inner sep=8pt, label=below:{\footnotesize Local / reproducible}] {};
+\node[draw, dashed, rounded corners, fit=(prep)(ranks)(proxy)(align)(tabexp), inner sep=8pt, label=below:{\footnotesize Local / reproducible}] {};
 \end{tikzpicture}
 \end{adjustbox}
-\caption{Evaluation pipeline: public Arbitrum logs are extracted and decoded, reputation edges are preprocessed, EndorseRank and AWP ranks are computed, checks and alignment statistics are evaluated, and LaTeX result fragments are exported.}
+\caption{Evaluation pipeline: public Arbitrum logs are extracted and decoded, reputation edges are preprocessed, EndorseRank and AWP ranks are computed, checks and alignment statistics are evaluated, and result tables are exported.}
 \label{fig:pipeline-architecture}
 \end{figure}
 
@@ -369,13 +369,13 @@ Spearman captures monotonic agreement: if higher reputation consistently co-occu
 \end{equation}
 where $C$ is the number of pairs ordered the same way by both rankings and $D$ is the number ordered differently (ties handled by the implementation's standard tie correction). Kendall's $\tau$ is more interpretable as a pairwise ordering probability and is less sensitive to large rank displacements than Spearman in some heavy-tailed settings.
 
-\item Why both: Spearman summarizes global monotonic association; Kendall emphasizes pairwise order fidelity. Reporting both follows the AWP protocol\cend{3} and allows readers to verify that family-level conclusions are not an artifact of a single rank statistic. In blockchain reputation settings, score distributions are often heavy-tailed: a few hubs receive large mass while many wallets share near-zero scores. Rank correlations remain well-defined in that regime, whereas Pearson correlation on raw scores would be dominated by hubs.
+\item Why both: Spearman summarizes global monotonic association; Kendall emphasizes pairwise order fidelity. Reporting both follows the AWP protocol\cend{3} so that family-level conclusions are not an artifact of a single rank statistic. In blockchain reputation settings, score distributions are often heavy-tailed: a few hubs receive large mass while many wallets share near-zero scores. Rank correlations remain well-defined in that regime, whereas Pearson correlation on raw scores would be dominated by hubs.
 
 \item Family aggregation: Family-level summaries use mean $\tau$ across proxies within a family. For example, the transfer-family mean is $\tfrac{1}{2}(\tau_{\mathrm{in\_degree}}+\tau_{\mathrm{in\_value}})$. Method comparisons on the same cohort and proxies are relative, not absolute claims about universal reputation. Absolute $\tau$ cutoffs are not used as decision rules; confidence intervals are.
 
 \item Uncertainty: sampling uncertainty is quantified with a paired wallet bootstrap \cend{34}. The matched cohort is resampled with replacement $B=400$ times (seed 42, fixed in configuration); the same index matrix is used for every method and proxy so that resampled statistics are paired across methods. For each proxy $\tau$, each family mean, and the inter-method $\tau$, the 2.5th and 97.5th percentiles of the bootstrap distribution form a 95\% percentile interval \cend{35}. Because the population Kendall $\tau$ is a U-statistic, the percentile interval is first-order accurate at $n=5{,}521$; the small number of resamples was chosen to keep the $O(B\,n\log n)$ cost of the tie-corrected $\tau$ tractable across all methods and proxies, and it limits the precision of the interval end-points to roughly $\pm 0.005$.
 
-\item Difference tests: the comparisons on which the argument rests are pre-specified as paired contrasts and tested with the same resamples: the bootstrap distribution of $\Delta\tau=\tau_A-\tau_B$ is computed resample by resample, and its 95\% percentile interval is reported. A contrast is called a difference when the interval excludes zero. The pre-specified contrasts are (i) EndorseRank on its allowance family minus EndorseRank on the transfer family; (ii) AWP on the transfer family minus EndorseRank on the transfer family; (iii) EndorseRank on the allowance family minus AWP on the allowance family; (iv) AWP minus EndorseRank on the Sybil-stability family; (v) AWP minus EndorseRank on the GMX trading-success proxies (reported for completeness only); and (vi) EndorseRank on $\mathrm{in\_approve\_degree}$ minus EndorseRank on $\mathrm{in\_degree}$. Paired resampling removes the between-resample variance shared by the two coefficients, so the contrast interval is narrower than the difference of the two marginal intervals would suggest.
+\item Difference tests: the comparisons on which the argument rests are pre-specified as paired contrasts and tested with the same resamples: the bootstrap distribution of $\Delta\tau=\tau_A-\tau_B$ is computed resample by resample, and its 95\% percentile interval is reported. A contrast is called a difference when the interval excludes zero. The pre-specified contrasts are (i) EndorseRank on its allowance family minus EndorseRank on the transfer family; (ii) AWP on the transfer family minus EndorseRank on the transfer family; (iii) EndorseRank on the allowance family minus AWP on the allowance family; (iv) AWP minus EndorseRank on the Sybil-stability family; (v) AWP minus EndorseRank on the GMX trading-success proxies (withdrawn with those proxies); and (vi) EndorseRank on $\mathrm{in\_approve\_degree}$ minus EndorseRank on $\mathrm{in\_degree}$. Paired resampling removes the between-resample variance shared by the two coefficients, so the contrast interval is narrower than the difference of the two marginal intervals would suggest.
 
 \item Orientation and missingness: Proxies are pre-oriented so that larger values indicate better reputation. Wallets absent from a proxy source receive zeros after alignment to $\mathcal{W}$, which is conservative for sparse activity and is applied identically to both methods. No wallet is dropped from one method but retained in the other: the correlation sample is always the full matched cohort for primary tables.
 
@@ -426,11 +426,11 @@ Alignment statistics are recomputed on staged subsamples drawn from the expanded
 
 \dissertationSubheading[sec:reproducibility]{Reproducibility}
 
-All empirical tables in Chapter~\ref{ch:results} are produced by an open evaluation pipeline. After Phase~1 parquet artifacts are present, a single evaluation driver (\texttt{scripts/run\_dissertation\_eval.py --real --robustness --benchmark-repeats 5}) recomputes checks, alignment statistics with bootstrap intervals, and benchmarks from those inputs and writes one machine-readable summary (\texttt{data/processed/eval\_summary.json}); a separate exporter (\texttt{scripts/export\_latex\_results.py}) renders every table in Chapter~\ref{ch:results} and Appendix~\ref{ch:appendix-eval} from that file, so no number is transcribed by hand. Command-line flags select cached BigQuery-derived inputs versus synthetic fixtures and enable damping, top-token, and sample-definition sweeps. Observation window, damping, decay parameters, topic hashes, bootstrap resamples and seed, and benchmark seeds are collected in a single versioned configuration file (\texttt{config/margin\_config.yaml}). Fixture mode supports offline verification without cloud credentials.
+All empirical tables in Chapter~\ref{ch:results} are produced by an open evaluation pipeline. After Phase~1 parquet artifacts are present, a single evaluation driver (\texttt{scripts/run\_dissertation\_eval.py --real --robustness --benchmark-repeats 5}) recomputes checks, alignment statistics with bootstrap intervals, and benchmarks from those inputs and writes one machine-readable summary (\texttt{data/processed/eval\_summary.json}); a table-export script writes the tables of Chapter~\ref{ch:results} and Appendix~\ref{ch:appendix-eval} from that file into \texttt{results/tables/}. Command-line flags select cached BigQuery-derived inputs versus synthetic fixtures and enable damping, top-token, and sample-definition sweeps. Observation window, damping, decay parameters, topic hashes, bootstrap resamples and seed, and benchmark seeds are collected in a single versioned configuration file (\texttt{config/margin\_config.yaml}). Fixture mode supports offline verification without cloud credentials.
 
 Reproducible elements include: deterministic wallet subsampling via SHA256 seeds; fixed PageRank tolerance and iteration caps; a fixed bootstrap seed and shared resample index matrix; explicit proxy formulas in Section~\ref{sec:proxy-formulas}; the timing protocol of Section~\ref{sec:computational-benchmark} with per-run timings retained; and logged extraction manifests. Peer reviewers can regenerate alignment and benchmark tables from the same parquet without re-querying BigQuery.
 
-The evaluation source (\texttt{A-Skill-Programs/margin\_rank}), versioned configuration, and machine-readable result summary are in the public repository \url{https://github.com/abitocodes/phd_works} at commit \texttt{0c70518a35540c8b56be66b52452cb94ca3fb916}; the commit hash is updated at each submission. An anonymised archive can be supplied on request.
+The evaluation source (\texttt{A-Skill-Programs/margin\_rank}), versioned configuration, and machine-readable result summary are in the public repository \url{https://github.com/abitocodes/phd_works} at commit \texttt{0c70518a35540c8b56be66b52452cb94ca3fb916}. An anonymised archive can be supplied on request.
 
 \dissertationSubheading[sec:sampling-bias]{Sampling considerations and missingness}
 

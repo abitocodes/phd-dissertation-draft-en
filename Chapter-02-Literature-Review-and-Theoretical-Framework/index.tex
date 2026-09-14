@@ -2,7 +2,7 @@
 \chapter{Literature Review and Theoretical Framework}
 \label{ch:literature}
 
-Chapter~\ref{ch:introduction} stated the research problem---that transfer-graph reputation scores conflate payment flow with trust---and derived objectives O1--O4 and research questions RQ1--RQ4 from it. This chapter reviews the conceptual and technical foundations required to interpret EndorseRank and Adaptive Weighted PageRank (AWP) and to judge whether those objectives are attainable with public data. It begins with blockchain and DeFi primitives for readers who may not specialize in distributed ledgers, then develops graph ranking theory, reputation-system lineage, ERC-20 allowance semantics, and rank-correlation statistics. A theoretical framework---hyperlink--citation propagation, domain alignment, and computational complexity---motivates the primary EndorseRank versus AWP comparison. Later sections supply a terminology guide, worked example, risk taxonomy, AWP in depth, a tabular summary of the reviewed literature (methodology, strengths, limitations), and an explicit statement of the research gap that Chapters~\ref{ch:methodology} and~\ref{ch:results} address.
+Chapter~\ref{ch:introduction} stated the research problem---that transfer-graph reputation scores conflate payment flow with trust---and derived objectives O1--O4 and research questions RQ1--RQ4 from it. This chapter reviews the conceptual and technical foundations required to interpret EndorseRank and Adaptive Weighted PageRank (AWP) and to judge whether those objectives are attainable with public data. It begins with blockchain and DeFi primitives, then develops graph ranking theory, reputation-system lineage, ERC-20 allowance semantics, and rank-correlation statistics. A theoretical framework---hyperlink--citation propagation, domain alignment, and computational complexity---motivates the primary EndorseRank versus AWP comparison. Later sections supply a terminology guide, worked example, risk taxonomy, AWP in depth, a tabular summary of the reviewed literature (methodology, strengths, limitations), and an explicit statement of the research gap that Chapters~\ref{ch:methodology} and~\ref{ch:results} address.
 
 \dissertationSubheading[sec:blockchain-defi-foundations]{Blockchain and DeFi foundations}
 
@@ -146,7 +146,7 @@ The endorsement interpretation is intentional but imperfect. Users approve route
 
 \dissertationSubheading[sub:gf-pr]{What this research does not claim}
 
-This research does not claim that EndorseRank predicts trading profit, loss avoidance or liquidation. The research proposal planned to validate both methods against GMX V2 trading-success proxies and to bound that validation with an outcome-native reference (a PageRank on a star graph built from realized profit and loss). That reference is circular by construction: it is computed from the same PnL stream that defines the trading-success proxies, so its near-perfect agreement with the realized-gain proxy is the correlation of a variable with a monotone function of itself, not evidence about reputation. For the same reason, weak agreement between a social method and those proxies cannot be read as failure. The reference, the associated supplementary research question and claim, and the trading-success, inverse-risk and liquidation families are therefore withdrawn from the main narrative; their matrices are archived in Appendix~\ref{ch:appendix-archive} for completeness only. The remaining external check is a temporal holdout of future new owner--spender approvals (Chapters~\ref{ch:methodology} and~\ref{ch:results}), which is out of window but of the same construct as the score.
+This research does not claim that EndorseRank predicts trading profit, loss avoidance or liquidation. The research proposal planned to validate both methods against GMX V2 trading-success proxies and to bound that validation with an outcome-native reference (a PageRank on a star graph built from realized profit and loss). That reference is circular by construction: it is computed from the same PnL stream that defines the trading-success proxies, so its near-perfect agreement with the realized-gain proxy is the correlation of a variable with a monotone function of itself, not evidence about reputation. For the same reason, weak agreement between a social method and those proxies cannot be read as failure. The reference, the associated supplementary research question and claim, and the trading-success, inverse-risk and liquidation families are therefore withdrawn from the primary comparison; their matrices are archived in Appendix~\ref{ch:appendix-archive}. The remaining external check is a temporal holdout of future new owner--spender approvals (Chapters~\ref{ch:methodology} and~\ref{ch:results}), which is out of window but of the same construct as the score.
 
 \dissertationSubheading[sec:rank-correlation-theory]{Rank correlation theory}
 
@@ -196,9 +196,9 @@ Figure~\ref{fig:conceptual-model} presents the conceptual model mapping the prim
 \item Holdout, not outcome ranking: H1 and H3 concern EndorseRank and AWP only. H2/RQ2 compares contemporaneous allowance and transfer checks. RQ4 is a time-split test of future new owner--spender approvals on the spender cohort.
 \end{itemize}
 
-\dissertationSubheading[sub:terminology]{Reader's guide to terminology}
+\dissertationSubheading[sub:terminology]{Terminology}
 
-The definitions in Chapter~\ref{ch:introduction} establish formal constructs; the following guide clarifies how to interpret results and avoid common misreadings:
+The definitions in Chapter~\ref{ch:introduction} establish formal constructs. The following terms are used when interpreting results:
 
 \begin{itemize}
 \item Primary methods: EndorseRank (allowance graph) and AWP (transfer graph). Both are social PageRank methods on wallet-to-wallet edges; intended as deployable reputation signals.
