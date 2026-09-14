@@ -4,7 +4,7 @@
 
 This appendix maps each hypothesis, research question, and empirical claim to the specific evidence in Chapter~\ref{ch:results}.
 
-\dissertationSubheading[sec:map-h1]{H1 / RQ1 --- Rank divergence}
+\dissertationSubheading[sec:map-h1]{H1 / RQ1: Rank divergence}
 
 \begin{itemize}
 \item Statement: EndorseRank and AWP yield distinct wallet orderings on the same cohort.
@@ -12,7 +12,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \item Interpretation: related but not interchangeable rankings; O1 criterion met (Table~\ref{tab:objectives-achievement}).
 \end{itemize}
 
-\dissertationSubheading[sec:map-h2]{H2 / RQ2 --- Construct-specific alignment}
+\dissertationSubheading[sec:map-h2]{H2 / RQ2: Construct-specific alignment}
 
 \begin{itemize}
 \item Statement: the two methods differ on contemporaneous allowance versus transfer checks.
@@ -20,7 +20,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \item Qualification: within-method contrasts i and vi in Table~\ref{tab:tau-diff} include zero; the claim is between-method only.
 \end{itemize}
 
-\dissertationSubheading[sec:map-h3]{H3 / RQ3 --- Computational efficiency}
+\dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational efficiency}
 
 \begin{itemize}
 \item Statement: EndorseRank is faster than AWP at equal $n$, attributable to edge count.
@@ -28,7 +28,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \item Qualification: expanded-pool stages add nodes without edges (Section~\ref{sub:runtime-scaling}); the claim does not cover edge growth.
 \end{itemize}
 
-\dissertationSubheading[sec:map-rq4]{RQ4 --- Temporal holdout}
+\dissertationSubheading[sec:map-rq4]{RQ4: Temporal holdout}
 
 \begin{itemize}
 \item Statement: after scores are frozen at t1, EndorseRank predicts t2 new owner--spender approvals on inbound spenders more strongly than AWP.
@@ -40,7 +40,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 
 \begin{itemize}
 \item C1: runtime evidence as in H3/RQ3.
-\item C2: intended-construct checks---allowance for EndorseRank, transfer for AWP---in Table~\ref{tab:alignment-family-ci}.
+\item C2: intended-construct checks (allowance for EndorseRank, transfer for AWP) in Table~\ref{tab:alignment-family-ci}.
 \item C3: construct-specific winners as in H2/RQ2, tested in Table~\ref{tab:tau-diff}.
 \item C4: efficiency--alignment trade-off combining C1, C3 and the spender holdout (Table~\ref{tab:holdout-spenders}); robustness in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size} and Figure~\ref{fig:damping-sensitivity}.
 \end{itemize}
@@ -60,9 +60,9 @@ This research does \emph{not} claim:
 \dissertationSubheading[sec:map-artifacts]{Replication artifacts}
 
 \begin{enumerate}
-\item Merged wallet-ranking table --- scores for EndorseRank and AWP.
+\item Merged wallet-ranking table: scores for EndorseRank and AWP.
 \item Machine-readable holdout summary for the spender cohort.
-\item Machine-readable evaluation summary --- authoritative same-window numerics, per-run timings, bootstrap protocol.
+\item Machine-readable evaluation summary: authoritative same-window numerics, per-run timings, bootstrap protocol.
 \item Exported table fragments (\texttt{results/tables/}).
 \item Exported vector figures (\texttt{Figures/generated/}).
 \item Optional archived extended-baseline matrices.
