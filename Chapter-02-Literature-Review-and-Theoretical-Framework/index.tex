@@ -2,7 +2,7 @@
 \chapter{Literature Review and Theoretical Framework}
 \label{ch:literature}
 
-Chapter~\ref{ch:introduction} stated the research problem---that transfer-graph reputation scores conflate payment flow with trust---and derived objectives O1--O4 and research questions RQ1--RQ4 from it. This chapter reviews the conceptual and technical foundations required to interpret EndorseRank and Adaptive Weighted PageRank (AWP) and to judge whether those objectives are attainable with public data. It begins with blockchain and DeFi primitives, then develops graph ranking theory, reputation-system lineage, ERC-20 allowance semantics, and rank-correlation statistics. A theoretical framework---hyperlink--citation propagation, domain alignment, and computational complexity---motivates the primary EndorseRank versus AWP comparison. Later sections supply a terminology guide, worked example, risk taxonomy, AWP in depth, a tabular summary of the reviewed literature (methodology, strengths, limitations), and an explicit statement of the research gap that Chapters~\ref{ch:methodology} and~\ref{ch:results} address.
+Chapter~\ref{ch:introduction} stated the research problem---that transfer-graph reputation scores conflate payment flow with trust---and derived objectives O1--O4 and research questions RQ1--RQ4 from it. This chapter reviews the conceptual and technical foundations required to interpret EndorseRank and Adaptive Weighted PageRank (AWP) and to judge whether those objectives are attainable with public data. It begins with blockchain and DeFi primitives, then develops graph ranking theory, reputation-system lineage, ERC-20 allowance semantics, and rank-correlation statistics. A theoretical framework---hyperlink--citation propagation, domain alignment, and computational complexity---motivates the primary EndorseRank versus AWP comparison. Later sections supply terminology, a worked example, a risk taxonomy, AWP in depth, a tabular summary of the reviewed literature (methodology, strengths, limitations), and an explicit statement of the research gap that Chapters~\ref{ch:methodology} and~\ref{ch:results} address.
 
 \dissertationSubheading[sec:blockchain-defi-foundations]{Blockchain and DeFi foundations}
 
@@ -218,7 +218,7 @@ The literature reviewed here supports three design choices: (i) PageRank as an i
 
 \dissertationSubheading[sec:pagerank-worked-example]{Worked example: PageRank on a four-node endorsement graph}
 
-To make Equation~\eqref{eq:pagerank-node} concrete, consider four wallets $\{A,B,C,D\}$ with latest-allowance edges
+Consider four wallets $\{A,B,C,D\}$ with latest-allowance edges
 \[
 A\to B\ (2),\quad A\to C\ (1),\quad B\to D\ (3),\quad C\to D\ (1),
 \]
@@ -244,7 +244,7 @@ Personalized and topic-sensitive PageRank variants \cend{58,59} could, in future
 
 Ethereum-style accounts are either externally owned accounts (EOAs), controlled by private keys, or contract accounts, controlled by code \cend{60}. Every state-changing interaction consumes gas and emits logs when contracts are written to do so. Reputation research that aims for auditability therefore privileges \emph{logs} over off-chain indexes: logs are part of the canonical chain history and can be re-derived by any full node or public warehouse \cend{61}.
 
-Gas costs shape the graphs we observe. On L2s, lower fees increase transfer frequency and approval churn, densifying $G_{\text{transfer}}$ more than $G_{\text{approve}}$ because payments are routine while approvals are intermittent setup actions. This economic asymmetry is one reason EndorseRank graphs are expected to remain sparse relative to transfer graphs (examined in Chapter~\ref{ch:results}).
+Gas costs shape the observed graphs. On L2s, lower fees increase transfer frequency and approval churn, densifying $G_{\text{transfer}}$ more than $G_{\text{approve}}$ because payments are routine while approvals are intermittent setup actions. This economic asymmetry is one reason EndorseRank graphs are expected to remain sparse relative to transfer graphs (examined in Chapter~\ref{ch:results}).
 
 \dissertationSubheading[sec:approval-security]{Approvals as security-relevant events}
 
