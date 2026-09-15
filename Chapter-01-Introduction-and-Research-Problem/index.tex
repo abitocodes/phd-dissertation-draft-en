@@ -6,11 +6,11 @@ Decentralized Finance (DeFi) changed how capital is allocated on public blockcha
 
 This research addresses a concrete research problem within that setting: whether an on-chain reputation score built from ERC-20 \texttt{approve}/\texttt{permit} allowances, here called EndorseRank, can be computed more cheaply than transfer-based Adaptive Weighted PageRank (AWP) on Arbitrum One, whether it records endorsement more faithfully, and whether its alignment profile differs from AWP's in a way that can be checked. The primary empirical comparison is EndorseRank versus AWP on an identical wallet sample, checked with contemporaneous transfer and allowance statistics and with a temporal holdout of future new approvals, under the rank-correlation validation protocol introduced with AWP\cend{3}.
 
-In this study, on-chain reputation score computation refers to deriving a quantitative wallet score from observable on-chain behavior and relationships without off-chain identity \cend{4}. EndorseRank produces such a score from allowance-based endorsement edges. The rest of this chapter gives the background, motivates allowance-based reputation, states the research problem, objectives and questions, defines the constructs, summarizes the literature and methodology that later chapters develop, and ends with the contributions, scope and roadmap.
+In this study an on-chain reputation score is a number computed from public wallet behavior and relationships, without an off-chain identity \cend{4}. EndorseRank is that number computed from allowance edges. The sections that follow give the DeFi setting, the reason for using allowances, the research problem, the objectives and questions, and a short preview of the later chapters.
 
 \dissertationSubheading[sec:background]{Background: DeFi, collateralization, and pseudonymity}
 
-Public blockchains introduced programmable settlement and open participation without a central operator \cend{5}. Smart contracts encode agreement terms as self-executing code \cend{6}; financial applications built on them settle on-chain instead of through custodial intermediaries \cend{7}. DeFi protocols compose these contracts into markets for lending, automated market making, and perpetual futures \cend{8}. On Arbitrum One and similar Layer-2 networks, activity density is high enough that wallet-level behavioral signals (transfers, approvals, and protocol events) can be observed at scale.
+Public blockchains made programmable settlement possible without a central operator \cend{5}. The terms of an agreement can be written as a smart contract \cend{6}, and a financial application that uses that contract settles on the ledger rather than through a custodian \cend{7}. DeFi protocols then compose those contracts into markets for lending, automated market making and perpetual futures \cend{8}. On Arbitrum One and similar Layer-2 networks the activity is dense enough that transfers, approvals and protocol events can be read at wallet scale.
 
 Despite this transparency, DeFi credit markets remain structurally over-collateralized. Protocols typically require borrowers or traders to post collateral exceeding the value of their exposure because counterparties are pseudonymous addresses rather than identified legal persons \cend{9,10}. Pseudonymity is a design feature of public ledgers: anyone may create addresses at negligible cost, and a single economic actor may control many wallets \cend{11}. Traditional credit scoring depends on identity-linked histories that do not transfer cleanly to this setting \cend{2}. Consequently, risk management defaults to collateral buffers, liquidation engines, and protocol-level parameters rather than individualized reputation.
 
@@ -154,8 +154,6 @@ Unsecured lending default labels are out of scope. Constructs and ethics are def
 Generalization beyond Arbitrum One and the six-month window is not claimed. Token-decimal normalization, price oracles, and permit-versus-approve coverage may affect edge weights. Adversarial manipulation of allowances or transfers remains a threat discussed in Chapter~\ref{ch:discussion}; Sybil-adjusted proxies partially address but do not eliminate that risk \cend{11}.
 
 \dissertationSubheading[sec:roadmap]{Research roadmap}
-
-This research proceeds as follows.
 
 Chapter~\ref{ch:literature} reviews graph-based on-chain reputation and ERC-20 allowance semantics. It develops the theoretical framework (hyperlink propagation, domain alignment, and computational complexity) that motivates the primary EndorseRank versus AWP comparison.
 
