@@ -29,7 +29,7 @@ These matrices motivate future work on credit-delegation edges and cross-protoco
 The primary comparison is EndorseRank versus AWP for three reasons:
 
 \begin{enumerate}
-\item The novel construct is allowance-based endorsement. Comparing it to the established transfer baseline\cend{3} isolates the research question.
+\item The novel construct is allowance-based endorsement. Comparing it to the established transfer baseline~\cend{3} isolates the research question.
 \item Additional variants that share transfer edges with AWP add rows without adding independent constructs.
 \item The outcome-native GF-PR reference used in the research proposal is built from the same GMX events as the trading-success proxies, so any alignment between them is construct overlap, not validation (Section~\ref{sub:gf-pr}); its three-method matrix is archived alongside the seven-method and six-Aave presets.
 \end{enumerate}
@@ -44,24 +44,24 @@ The following identifiers appear in archive tables and CSV exports.
 
 \begin{description}
 \item[LP-PR] A transfer-graph variant with alternative loss-penalized or liquidity-oriented weighting. Empirically it tracks AWP closely on transfer families, which points to shared payment-flow structure.
-\item[CW-AWP] A counterparty-weighted AWP variant that down-weights repeated transfers between the same pair. It slightly reduces transfer $\tau$ relative to AWP while remaining in the same construct family.
-\item[LF-PR] A low-frequency or lightly filtered graph with very small edge counts and near-zero runtimes. Rankings are not comparable to full AWP: the sparse graph is a failed baseline.
-\item[RiskProp] A risk-propagation style ranking on transfer-like edges inspired by Lin et al.\cend{12}. On this cohort it numerically mirrors AWP on several families, which suggests that the implemented risk signal did not diverge strongly from transfer centrality under the study's parameterization.
-\item[LiqCall-PR / Borrow-PR / Repay-PR] Aave-oriented wallet-to-wallet graphs built from liquidation calls, borrows, and repays when those events are present. On Arbitrum in the study window, edge counts are small (tens to hundreds), so alignment is weak and runtimes are negligible.
-\item[Delegation-PR] Intended to use credit-delegation allowances; with zero delegation edges extracted, scores are degenerate and $\tau$ is not interpretable.
+\item[CW-AWP] A counterparty-weighted AWP variant that down-weights repeated transfers between the same pair. Slightly lowers transfer $\tau$ vs.\ AWP; same construct family.
+\item[LF-PR] A low-frequency or lightly filtered graph; very small edge counts, near-zero runtimes. Rankings not comparable to full AWP: the sparse graph is a failed baseline.
+\item[RiskProp] A risk-propagation style ranking on transfer-like edges, inspired by Lin et al.~\cend{12}. On this cohort it numerically mirrors AWP on several families, which implies the risk signal implemented did not diverge strongly from transfer centrality under the study's parameterization.
+\item[LiqCall-PR / Borrow-PR / Repay-PR] Aave-oriented wallet-to-wallet graphs based on liquidation calls, borrows, and repays (where applicable). Edge counts on Arbitrum in the study window are small (tens to hundreds), so alignment is weak and runtimes are negligible.
+\item[Delegation-PR] Intended to leverage credit-delegation allowances; with zero delegation edges extracted, scores are degenerate and $\tau$ is not interpretable.
 \end{description}
 
 Archive rows are not peer-reviewed baselines.
 
 \dissertationSubheading[sec:archive-decision-log]{Criteria for the two-method comparison}
 
-Chapters~\ref{ch:results}--\ref{ch:discussion} report EndorseRank and AWP. The remaining variants fail the following criteria:
+Chapters~\ref{ch:results}--\ref{ch:discussion} focus on EndorseRank and AWP. The other variants do not meet the following criteria:
 
 \begin{enumerate}
-\item Construct independence: a baseline must implement a distinct edge semantics, not a minor reweighting of transfers.
-\item Data adequacy: edge counts must be large enough for stable PageRank on the matched cohort.
+\item Construct independence: a baseline should implement a different edge semantics, rather than simply being a reweighting of transfers.
+\item Data adequacy: the edge counts should be large enough to support stable PageRank on the matched cohort.
 \item Scope: the contribution is allowance-based endorsement, not a survey of all possible PageRank variants.
 \end{enumerate}
 
-Under these criteria, EndorseRank (allowance) and AWP (transfer) form a minimal sufficient set. The seven-method and six-Aave matrices remain in the archive; they are not part of Claims~C1--C4.
+Based on these criteria, EndorseRank (allowance) and AWP (transfer) form a minimal sufficient set. The seven-method and six-Aave matrices remain in the archive; they are not included in Claims~C1--C4.
 

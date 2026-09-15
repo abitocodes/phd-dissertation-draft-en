@@ -18,15 +18,15 @@
 \section{Evaluation Pipeline and Reproducibility}
 \label{ch:appendix-eval}
 
-This appendix documents the evaluation pipeline that produced the numerics in Chapter~\ref{ch:results}: data sources, processing stages, default parameters, proxy formulas, and a glossary. The quantities cited here also appear in the tables and figures of Chapter~\ref{ch:results}.
+This appendix describes the evaluation pipeline used to generate the numbers in Chapter~\ref{ch:results}, including the data sources, the processing steps, the default parameters, the formula for computing proxies, and a glossary. These quantities are also repeated in the tables and figures in Chapter~\ref{ch:results}.
 
 \dissertationSubheading[sec:pipeline-stages]{Pipeline stages}
 
-The evaluation proceeds in two stages on Arbitrum One over the observation window 2025-12-01 to 2026-05-31 (UTC, inclusive).
+The evaluation consists of two stages, performed on Arbitrum One during the observation period 2025-12-01 to 2026-05-31 (UTC, both inclusive).
 
 \begin{enumerate}
-\item Reputation graphs and scores: Extract ERC-20 \texttt{Approval} and \texttt{Transfer} logs in monthly batches (per-query dry-run and a $150$\,GiB abort cap). The matched cohort is wallets with non-zero approval or transfer connectivity ($n=5{,}521$). Build the latest-allowance endorsement graph and the time-decayed transfer graph, then compute EndorseRank and AWP scores by power iteration (damping $d=0.85$, tolerance $10^{-8}$, at most $300$ iterations); compute C-PR on the per-node mixture of the two layers at $\lambda\in\{0.25,0.5,0.75\}$ and S-PR on the transfer layer with the EndorseRank restart vector, under the same solver settings.
-\item Checks, alignment, and benchmarks: Compute transfer and allowance checks defined in Chapter~\ref{ch:methodology}, report Spearman $\rho$ and Kendall $\tau$ against each score vector with 95\% paired-bootstrap intervals (400 wallet resamples, seed 42), the five pre-specified single-layer $\Delta\tau$ contrasts and the eight hybrid contrasts, time PageRank solves on pre-built edge lists under one protocol (one untimed warm-up, five timed repeats, per-session memoisation), and run sensitivity sweeps over damping, top tokens, and sample definition.
+\item Reputation graphs and scores: Fetch ERC-20 \texttt{Approval} and \texttt{Transfer} logs in monthly chunks (per-query dry-run, and a $150$\,GiB abort limit). The set of wallets included in our sample is those with non-zero approval or transfer connectivity ($n=5{,}521$). Construct the latest-allowance endorsement graph and the time-decayed transfer graph, then calculate EndorseRank and AWP scores using power iteration (damping $d=0.85$, tolerance $10^{-8}$, up to $300$ iterations); compute C-PR on the per-node mixture of the two layers with $\lambda\in\{0.25,0.5,0.75\}$ and S-PR on the transfer layer with the EndorseRank restart vector, also using power iteration (same solver parameters).
+\item Checks, alignment, and benchmarks: Calculate transfer and allowance checks from Chapter~\ref{ch:methodology}, report Spearman $\rho$ and Kendall $\tau$ against each score vector with 95\% paired-bootstrap confidence intervals (400 resamples of wallets, seed 42), the five predefined single-layer $\Delta\tau$ differences and the eight hybrid $\Delta\tau$ differences, measure PageRank solve times on pre-built edge lists under one protocol (one unmeasured warm-up run, five measured runs, per-session memoization), and perform sensitivity analysis over damping factor, number of top tokens, and sample definition.
 \item Temporal holdout: Freeze scores at 28~February~2026 on the spender cohort ($n=1{,}335$), count new approval pairs and new transfer senders in March--May~2026, and report every score and both raw-degree baselines against both labels with 400 paired resamples and the eight pre-registered holdout contrasts (\texttt{scripts/run\_holdout\_eval.py --cohort spenders}).
 \end{enumerate}
 
@@ -44,7 +44,7 @@ A second-tier extraction was planned for the $93{,}559$ supplemental addresses o
 
 \dissertationSubheading[sec:scaling-appendix]{Scaling tables}
 
-Table~\ref{tab:benchmark-scaling-incohort} reports in-cohort runtime scaling for $n \leq 5{,}521$ under the timing protocol of Section~\ref{sec:computational-benchmark}; its last row is the same measurement as Table~\ref{tab:benchmark-runtime}. Unlike the expanded-pool stages, every in-cohort stage is a subset of wallets whose edges were extracted, so $|V|$ and $|E|$ grow with $n$ here.
+Table~\ref{tab:benchmark-scaling-incohort} reports in-cohort runtime scaling for $n \leq 5{,}521$ under the timing protocol of Section~\ref{sec:computational-benchmark}; its last row is the same measurement as Table~\ref{tab:benchmark-runtime}. All of the in-cohort stages are subsets of the wallets whose edges were extracted. Unlike the expanded-pool stages, $|V|$ and $|E|$ therefore grow with $n$ here.
 
 \input{results/tables/benchmark-scaling-incohort.tex}
 

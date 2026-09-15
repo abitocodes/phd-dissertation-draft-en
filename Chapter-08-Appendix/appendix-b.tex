@@ -68,31 +68,31 @@ The pipeline's parameters are collected in a single versioned configuration file
 \item output locations for intermediate artifacts and table fragments (\texttt{results/tables/}).
 \end{itemize}
 
-Changing damping or decay parameters requires re-running the full evaluation, including robustness sweeps and table export, and regenerating figures from the same artifacts, so that reported numerics remain consistent with the pipeline's machine-readable summary.
+If the damping factor or the decay parameter are changed, then the entire evaluation has to be run again (including robustness sweeps and exporting the tables) and all figures re-created from the same artifacts so that the numerics match what is reported in the pipeline's machine-readable summary.
 
 \dissertationSubheading[sec:complexity-notes]{Complexity notes}
 
-Let $n$ be the number of nodes and $m=|E|$ the number of edges. Building latest-allowance edges is $O(R_a\log R_a)$ if $R_a$ approval rows are sorted by timestamp, or $O(R_a)$ expected time with a hash map keyed by (token, owner, spender). Building transfer edges is $O(R_t)$ over transfer rows. PageRank is $O(m + mI)$ for $I$ iterations, the first term being the assembly of the sparse operator. Iteration counts and edge counts for both methods are given in Table~\ref{tab:benchmark-runtime}; EndorseRank needs roughly a third of AWP's iterations and $m_{\mathrm{approve}}\ll m_{\mathrm{transfer}}$, so both factors favour EndorseRank.
+Let $n$ be the number of nodes and $m=|E|$ the number of edges. Constructing the latest-allowance edges takes $O(R_a\log R_a)$ time if the $R_a$ approval rows are already sorted by timestamp, or $O(R_a)$ expected time using a hash map keyed on (token, owner, spender). Constructing the transfer edges takes $O(R_t)$ time over the transfer rows. PageRank runs in $O(m + mI)$ time for $I$ iterations, where the first term is the cost of building the sparse operator. The iteration count and edge counts for both methods are shown in Table~\ref{tab:benchmark-runtime}. EndorseRank uses about one-third the number of iterations that AWP does and has $m_{\mathrm{approve}}\ll m_{\mathrm{transfer}}$, which means that both aspects work in EndorseRank's favor.
 
-Memory is dominated by edge lists and score vectors. The peak-memory ratio in Table~\ref{tab:benchmark-runtime} is of the same order as the edge-count ratio.
+Memory usage is dominated by the edge lists and score vectors. The peak-memory ratio in Table~\ref{tab:benchmark-runtime} is on the same order of magnitude as the edge-count ratio.
 
 \dissertationSubheading[sec:interpretation-checklist]{Conventions for the result tables}
 
-The following conventions apply to the tables of Chapter~\ref{ch:results}:
+The tables of Chapter~\ref{ch:results} follow these conventions:
 
 \begin{enumerate}
-\item Identify whether a row is a social method (EndorseRank or AWP).
-\item Match each family to its intended construct (allowance vs.\ transfer).
-\item Prefer relative comparisons on the same cohort over absolute $\tau$ thresholds.
-\item Read runtime tables as PageRank solve time on pre-built edge lists, not end-to-end ETL time, and expect identical numbers wherever the same graph is tabulated under the same settings (Section~\ref{sec:computational-benchmark}).
-\item Read every $\tau$ with its interval, and read differences between coefficients from Table~\ref{tab:tau-diff} rather than by subtracting point estimates.
-\item Treat the sample-definition sweep (Table~\ref{tab:robustness-sample-size}) as a sensitivity analysis whose absolute values are not comparable with the matched-cohort tables.
+\item Indicate whether a row corresponds to a social method (EndorseRank or AWP).
+\item Associate each family with its target concept (allowance vs.\ transfer).
+\item Favor relative comparisons on the same cohort rather than absolute $\tau$ thresholds.
+\item Treat runtime tables as representing PageRank solve time on pre-built edge lists, not end-to-end ETL time, and assume that the numbers will be the same whenever the same graph is reported in the same configuration (see Section~\ref{sec:computational-benchmark}).
+\item Report every $\tau$ with its interval and derive differences between coefficients from Table~\ref{tab:tau-diff} rather than subtracting the point estimates.
+\item Treat the sample-definition sweep (Table~\ref{tab:robustness-sample-size}) as a sensitivity analysis and do not compare its absolute values to the matched-cohort tables.
 \end{enumerate}
 
 \dissertationSubheading[sec:archived-baselines]{Archived extended baselines}
 
-Three-method (with the withdrawn GF-PR reference), seven-method and six-Aave alignment matrices are archived alongside the evaluation pipeline, together with corresponding CSV matrices. They are not part of the primary comparison because several variants require additional event types (e.g., credit delegation) or introduce constructs outside the EndorseRank--AWP question.
+The three-method (including the now-withdrawn GF-PR reference), seven-method and six-Aave alignment matrices have been archived with the evaluation pipeline, along with the corresponding CSV matrices. They are excluded from the main comparison because some variants rely on additional event types (such as credit delegation) or introduce concepts that are not part of the EndorseRank--AWP question.
 
 \dissertationSubheading[sec:limitations-reprise]{Limitations}
 
-SQL templates do not imply that other chains were queried, and archived baselines do not constitute peer comparisons in this research. The reported numerics are those in the pipeline's machine-readable summary for the matched cohort ($n=5{,}521$) and expanded wallet pool ($N=99{,}080$).
+The SQL templates do not mean that other chains were queried, nor do the archived baselines serve as peer comparisons in this study. The numerics presented are those in the pipeline's machine-readable summary for the matched cohort ($n=5{,}521$) and the expanded wallet pool ($N=99{,}080$).

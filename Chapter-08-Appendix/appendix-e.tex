@@ -2,37 +2,37 @@
 \section{Claim-to-Evidence Map}
 \label{ch:appendix-claims}
 
-This appendix maps each hypothesis, research question, and empirical claim to the specific evidence in Chapter~\ref{ch:results}.
+This appendix links each hypothesis, research question, and empirical claim to the corresponding evidence in Chapter~\ref{ch:results}.
 
 \dissertationSubheading[sec:map-h1]{H1 / RQ1: Rank divergence}
 
 \begin{itemize}
-\item Statement: EndorseRank and AWP yield distinct wallet orderings on the same cohort.
-\item Evidence: inter-method Kendall $\tau$ with 95\% CI (Table~\ref{tab:alignment-family-ci}, last row; Section~\ref{sec:rank-divergence}); rank scatter in Figure~\ref{fig:rank-scatter}; score distributions in Figure~\ref{fig:score-distributions}.
-\item Interpretation: related but not interchangeable rankings; O1 criterion met (Table~\ref{tab:objectives-achievement}).
+\item Statement: EndorseRank and AWP produce different wallet rankings on the same cohort.
+\item Evidence: inter-method Kendall $\tau$ with 95\% CI (Table~\ref{tab:alignment-family-ci}, last row; Section~\ref{sec:rank-divergence}); rank scatter plot in Figure~\ref{fig:rank-scatter}; score distribution plots in Figure~\ref{fig:score-distributions}.
+\item Interpretation: related but non-equivalent rankings; O1 criterion is satisfied (Table~\ref{tab:objectives-achievement}).
 \end{itemize}
 
 \dissertationSubheading[sec:map-h2]{H2 / RQ2: Construct-specific alignment}
 
 \begin{itemize}
-\item Statement: the two methods differ on contemporaneous allowance versus transfer checks.
-\item Evidence: family means with CI (Table~\ref{tab:alignment-family-ci}); paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy detail (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); heatmap Figure~\ref{fig:alignment-heatmap}.
-\item Qualification: within-method contrasts i and v in Table~\ref{tab:tau-diff} include zero; the claim is between-method only.
+\item Statement: the two methods yield different results on allowance vs.\ transfer checks at the same time points.
+\item Evidence: family means with CI (Table~\ref{tab:alignment-family-ci}); paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy detail (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); heatmap in Figure~\ref{fig:alignment-heatmap}.
+\item Note: contrasts i and v in Table~\ref{tab:tau-diff} contain zero; the claim applies only to between-method comparisons.
 \end{itemize}
 
 \dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational efficiency}
 
 \begin{itemize}
-\item Statement: EndorseRank is faster than AWP at equal $n$, attributable to edge count.
+\item Statement: EndorseRank is faster than AWP at the same $n$, due to fewer edges.
 \item Evidence: Table~\ref{tab:benchmark-runtime} (runtime, SD, memory, iterations, $|V|$, $|E|$); Table~\ref{tab:benchmark-scaling-incohort}; Table~\ref{tab:benchmark-scaling}; Figure~\ref{fig:runtime-scaling}.
-\item Qualification: expanded-pool stages add nodes without edges (Section~\ref{sub:runtime-scaling}); the claim does not cover edge growth.
+\item Note: expansion steps add nodes without adding edges (Section~\ref{sub:runtime-scaling}); the claim is restricted to edge count.
 \end{itemize}
 
 \dissertationSubheading[sec:map-rq4]{RQ4: Temporal holdout}
 
 \begin{itemize}
-\item Statement: after scores are frozen at t1, EndorseRank predicts t2 new owner--spender approvals on inbound spenders more strongly than AWP; it does not predict them more informatively than the t1 in-approve degree.
-\item Evidence: Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} (Section~\ref{sec:holdout-results}): EndorseRank minus AWP lies above zero; EndorseRank minus t1 in-approve degree lies below zero; AWP minus t1 in-degree on new transfer senders lies below zero.
+\item Statement: after scores are fixed at t1, EndorseRank predicts t2 new owner--spender approvals on inbound spenders better than AWP; it does not predict them better than the t1 in-approve degree.
+\item Evidence: Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} (Section~\ref{sec:holdout-results}): EndorseRank minus AWP is greater than zero; EndorseRank minus t1 in-approve degree is less than zero; AWP minus t1 in-degree on new transfer senders is less than zero.
 \item Qualification: both labels are the constructs in the future tense (new approvals, new senders), not credit or trading outcomes, and both are counts of arrivals; RQ4 replaced the proposal's trading-success comparison (Section~\ref{sub:gf-pr}).
 \end{itemize}
 
@@ -63,8 +63,8 @@ This research does \emph{not} claim:
 \item that EndorseRank's allowance alignment exceeds its own transfer alignment;
 \item that EndorseRank or AWP predicts the future growth of its own construct better than the raw t1 degree;
 \item that no combination of the two edge types can beat the single-layer methods; only that the tested per-node convex mixture with fixed $\lambda$ does not;
-\item that runtime scales favourably as the edge population grows beyond the cohort graph;
-\item that results generalise beyond Arbitrum One and the study window without replication;
+\item that runtime scales favorably as the edge population grows beyond the cohort graph;
+\item that results generalize beyond Arbitrum One and the study window without replication;
 \item that on-chain scores replace collateral or legal identity systems.
 \end{itemize}
 
