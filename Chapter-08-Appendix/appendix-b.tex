@@ -2,11 +2,11 @@
 \section{SQL Templates, Configuration, and Extended Notes}
 \label{ch:appendix-sql}
 
-This appendix collects representative SQL patterns, configuration keys, and extended methodological notes that support reproduction.
+To aid reproduction, this appendix gathers representative SQL patterns, configuration keys, and extended methodological notes.
 
 \dissertationSubheading[sec:sql-approval]{Approval log extraction pattern}
 
-ERC-20 \texttt{Approval} events are identified by topic~$0$ equal to the keccak256 hash of \texttt{Approval(address,address,uint256)}. A simplified monthly query pattern is:
+An ERC-20 \texttt{Approval} event is identified by its topic~$0$, which is the keccak256 hash of \texttt{Approval(address,address,uint256)}. For one month, a simplified query is:
 
 \begin{verbatim}
 SELECT
@@ -28,11 +28,11 @@ WHERE block_timestamp >= TIMESTAMP('2025-12-01')
   );
 \end{verbatim}
 
-Wallet filtering via \texttt{@wallet\_list} keeps scans proportional to the cohort rather than the full chain. Monthly batching respects per-query byte caps documented in the study's acquisition record.
+With rows filtered against \texttt{@wallet\_list}, scan volume is proportional to the cohort instead of the full chain. Monthly batches keep every query below the per-query byte caps documented in the study's acquisition record.
 
 \dissertationSubheading[sec:sql-transfer]{Transfer log extraction pattern}
 
-\texttt{Transfer} events use topic~$0$ for \texttt{Transfer(address,address,uint256)}:
+\texttt{Transfer} events are selected by the topic~$0$ of \texttt{Transfer(address,address,uint256)}:
 
 \begin{verbatim}
 SELECT
@@ -54,45 +54,45 @@ WHERE block_timestamp >= TIMESTAMP('2025-12-01')
   );
 \end{verbatim}
 
-Post-processing applies token decimals, builds time-decayed edge weights, and restricts nodes to the evaluation sample before PageRank.
+Before PageRank, post-processing applies token decimals, computes time-decayed edge weights, and restricts nodes to the evaluation sample.
 
 \dissertationSubheading[sec:config-keys]{Configuration keys}
 
-The pipeline's parameters are collected in a single versioned configuration file. Salient keys include:
+All of the pipeline's parameters are kept in a single versioned configuration file, whose principal keys include:
 
 \begin{itemize}
-\item observation window start and end timestamps;
-\item PageRank damping, tolerance, and maximum iterations;
-\item logistic decay $k$ and $t_0$;
-\item benchmark repetition count and subsample seeds;
-\item output locations for intermediate artifacts and table fragments (\texttt{results/tables/}).
+\item start and end timestamps of the observation window;
+\item the PageRank damping factor, tolerance, and maximum number of iterations;
+\item logistic decay parameters $k$ and $t_0$;
+\item subsample seeds and the number of benchmark repetitions;
+\item the locations to which intermediate artifacts and table fragments are written (\texttt{results/tables/}).
 \end{itemize}
 
-If the damping factor or the decay parameter are changed, then the entire evaluation has to be run again (including robustness sweeps and exporting the tables) and all figures re-created from the same artifacts so that the numerics match what is reported in the pipeline's machine-readable summary.
+Changing the damping factor or the decay parameter requires a rerun of the entire evaluation, including the robustness sweeps and the table export. All figures must then be regenerated from the same artifacts so that the reported numbers match the pipeline's machine-readable summary.
 
 \dissertationSubheading[sec:complexity-notes]{Complexity notes}
 
-Let $n$ be the number of nodes and $m=|E|$ the number of edges. Constructing the latest-allowance edges takes $O(R_a\log R_a)$ time if the $R_a$ approval rows are already sorted by timestamp, or $O(R_a)$ expected time using a hash map keyed on (token, owner, spender). Constructing the transfer edges takes $O(R_t)$ time over the transfer rows. PageRank runs in $O(m + mI)$ time for $I$ iterations, where the first term is the cost of building the sparse operator. The iteration count and edge counts for both methods are shown in Table~\ref{tab:benchmark-runtime}. EndorseRank uses about one-third the number of iterations that AWP does and has $m_{\mathrm{approve}}\ll m_{\mathrm{transfer}}$, which means that both aspects work in EndorseRank's favor.
+Write $n$ for the number of nodes and $m=|E|$ for the number of edges. Building the latest-allowance edges costs $O(R_a\log R_a)$ time if the $R_a$ approval rows are already sorted by timestamp, or $O(R_a)$ expected time with a hash map keyed on (token, owner, spender). The transfer edges take $O(R_t)$ time over the transfer rows. For $I$ iterations, PageRank runs in $O(m + mI)$ time, where the first term is the cost of building the sparse operator. Table~\ref{tab:benchmark-runtime} lists the iteration and edge counts of both methods. EndorseRank needs roughly a third as many iterations as AWP, and it also has $m_{\mathrm{approve}}\ll m_{\mathrm{transfer}}$, so both factors favor EndorseRank.
 
-Memory usage is dominated by the edge lists and score vectors. The peak-memory ratio in Table~\ref{tab:benchmark-runtime} is on the same order of magnitude as the edge-count ratio.
+The edge lists and score vectors account for most of the memory use. In Table~\ref{tab:benchmark-runtime}, the peak-memory ratio is of the same order of magnitude as the edge-count ratio.
 
 \dissertationSubheading[sec:interpretation-checklist]{Conventions for the result tables}
 
-The tables of Chapter~\ref{ch:results} follow these conventions:
+These conventions govern the tables of Chapter~\ref{ch:results}:
 
 \begin{enumerate}
-\item Indicate whether a row corresponds to a social method (EndorseRank or AWP).
-\item Associate each family with its target concept (allowance vs.\ transfer).
-\item Favor relative comparisons on the same cohort rather than absolute $\tau$ thresholds.
-\item Treat runtime tables as representing PageRank solve time on pre-built edge lists, not end-to-end ETL time, and assume that the numbers will be the same whenever the same graph is reported in the same configuration (see Section~\ref{sec:computational-benchmark}).
-\item Report every $\tau$ with its interval and derive differences between coefficients from Table~\ref{tab:tau-diff} rather than subtracting the point estimates.
-\item Treat the sample-definition sweep (Table~\ref{tab:robustness-sample-size}) as a sensitivity analysis and do not compare its absolute values to the matched-cohort tables.
+\item Mark which rows belong to a social method (EndorseRank or AWP).
+\item Tie each family to the concept it targets (allowance vs.\ transfer).
+\item Prefer relative comparisons on the same cohort to absolute $\tau$ thresholds.
+\item Interpret runtime tables as PageRank solve time on pre-built edge lists, excluding end-to-end ETL time, and assume that the numbers are identical wherever the same graph is reported under the same configuration (see Section~\ref{sec:computational-benchmark}).
+\item Report each $\tau$ together with its interval, and obtain differences between coefficients from Table~\ref{tab:tau-diff} instead of subtracting the point estimates.
+\item Regard the sample-definition sweep (Table~\ref{tab:robustness-sample-size}) as a sensitivity analysis, and keep its absolute values out of any comparison with the matched-cohort tables.
 \end{enumerate}
 
 \dissertationSubheading[sec:archived-baselines]{Archived extended baselines}
 
-The three-method (including the now-withdrawn GF-PR reference), seven-method and six-Aave alignment matrices have been archived with the evaluation pipeline, along with the corresponding CSV matrices. They are excluded from the main comparison because some variants rely on additional event types (such as credit delegation) or introduce concepts that are not part of the EndorseRank--AWP question.
+Archived with the evaluation pipeline are the three-method alignment matrix (which includes the now-withdrawn GF-PR reference), the seven-method and six-Aave matrices, and the matching CSV files. None of them enters the main comparison, because some of their variants depend on extra event types (credit delegation, for instance) or introduce concepts that lie outside the EndorseRank--AWP question.
 
 \dissertationSubheading[sec:limitations-reprise]{Limitations}
 
-The SQL templates do not mean that other chains were queried, nor do the archived baselines serve as peer comparisons in this study. The numerics presented are those in the pipeline's machine-readable summary for the matched cohort ($n=5{,}521$) and the expanded wallet pool ($N=99{,}080$).
+Showing SQL templates here does not imply that any other chain was queried, and this study does not use the archived baselines as peer comparisons. All reported numbers are taken from the pipeline's machine-readable summary for the matched cohort ($n=5{,}521$) and the expanded wallet pool ($N=99{,}080$).

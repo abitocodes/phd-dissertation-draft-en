@@ -2,56 +2,56 @@
 \section{Claim-to-Evidence Map}
 \label{ch:appendix-claims}
 
-This appendix links each hypothesis, research question, and empirical claim to the corresponding evidence in Chapter~\ref{ch:results}.
+This appendix maps each hypothesis, research question, and empirical claim to the relevant evidence in Chapter~\ref{ch:results}.
 
 \dissertationSubheading[sec:map-h1]{H1 / RQ1: Rank divergence}
 
 \begin{itemize}
-\item Statement: EndorseRank and AWP produce different wallet rankings on the same cohort.
-\item Evidence: inter-method Kendall $\tau$ with 95\% CI (Table~\ref{tab:alignment-family-ci}, last row; Section~\ref{sec:rank-divergence}); rank scatter plot in Figure~\ref{fig:rank-scatter}; score distribution plots in Figure~\ref{fig:score-distributions}.
-\item Interpretation: related but non-equivalent rankings; O1 criterion is satisfied (Table~\ref{tab:objectives-achievement}).
+\item Statement: on the same cohort, EndorseRank and AWP rank wallets differently.
+\item Evidence: inter-method Kendall $\tau$ with its 95\% CI (last row of Table~\ref{tab:alignment-family-ci}; Section~\ref{sec:rank-divergence}); the rank scatter plot in Figure~\ref{fig:rank-scatter}; score distributions plotted in Figure~\ref{fig:score-distributions}.
+\item Interpretation: the rankings are related but not equivalent; the O1 criterion is met (Table~\ref{tab:objectives-achievement}).
 \end{itemize}
 
 \dissertationSubheading[sec:map-h2]{H2 / RQ2: Construct-specific alignment}
 
 \begin{itemize}
-\item Statement: the two methods yield different results on allowance vs.\ transfer checks at the same time points.
-\item Evidence: family means with CI (Table~\ref{tab:alignment-family-ci}); paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy detail (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); heatmap in Figure~\ref{fig:alignment-heatmap}.
-\item Note: contrasts i and v in Table~\ref{tab:tau-diff} contain zero; the claim applies only to between-method comparisons.
+\item Statement: at the same time points, the two methods produce different results on allowance vs.\ transfer checks.
+\item Evidence: family means with their CIs (Table~\ref{tab:alignment-family-ci}); the paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy results (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); the heatmap in Figure~\ref{fig:alignment-heatmap}.
+\item Note: contrasts i and v in Table~\ref{tab:tau-diff} include zero, so the claim is limited to between-method comparisons.
 \end{itemize}
 
 \dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational efficiency}
 
 \begin{itemize}
-\item Statement: EndorseRank is faster than AWP at the same $n$, due to fewer edges.
-\item Evidence: Table~\ref{tab:benchmark-runtime} (runtime, SD, memory, iterations, $|V|$, $|E|$); Table~\ref{tab:benchmark-scaling-incohort}; Table~\ref{tab:benchmark-scaling}; Figure~\ref{fig:runtime-scaling}.
-\item Note: expansion steps add nodes without adding edges (Section~\ref{sub:runtime-scaling}); the claim is restricted to edge count.
+\item Statement: at the same $n$, EndorseRank runs faster than AWP because it has fewer edges.
+\item Evidence: Table~\ref{tab:benchmark-runtime} (runtime, SD, memory, iterations, $|V|$, $|E|$); Tables~\ref{tab:benchmark-scaling-incohort} and~\ref{tab:benchmark-scaling}; Figure~\ref{fig:runtime-scaling}.
+\item Note: the expansion steps add nodes but no edges (Section~\ref{sub:runtime-scaling}), and the claim is confined to edge count.
 \end{itemize}
 
 \dissertationSubheading[sec:map-rq4]{RQ4: Temporal holdout}
 
 \begin{itemize}
-\item Statement: after scores are fixed at t1, EndorseRank predicts t2 new owner--spender approvals on inbound spenders better than AWP; it does not predict them better than the t1 in-approve degree.
-\item Evidence: Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} (Section~\ref{sec:holdout-results}): EndorseRank minus AWP is greater than zero; EndorseRank minus t1 in-approve degree is less than zero; AWP minus t1 in-degree on new transfer senders is less than zero.
-\item Qualification: both labels are the constructs in the future tense (new approvals, new senders), not credit or trading outcomes, and both are counts of arrivals; RQ4 replaced the proposal's trading-success comparison (Section~\ref{sub:gf-pr}).
+\item Statement: with scores fixed at t1, EndorseRank predicts new owner--spender approvals at t2 on inbound spenders better than AWP does, but not better than the t1 in-approve degree.
+\item Evidence: Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} (Section~\ref{sec:holdout-results}). EndorseRank minus AWP is above zero and EndorseRank minus the t1 in-approve degree is below zero; on new transfer senders, AWP minus the t1 in-degree is also below zero.
+\item Qualification: both labels are the constructs as observed in a later period (new approvals, new senders), not credit or trading outcomes, and both are counts of arrivals. RQ4 replaced the proposal's trading-success comparison (Section~\ref{sub:gf-pr}).
 \end{itemize}
 
 \dissertationSubheading[sec:map-rq5]{RQ5: Coupled operator}
 
 \begin{itemize}
-\item Statement: a per-node convex mixture of the allowance and transfer layers (C-PR) does not rank wallets better than the appropriate single-layer method; the seeded ablation (S-PR) reproduces AWP.
-\item Evidence: Table~\ref{tab:holdout-diff} (pre-registered primary rule, both parts not met); Tables~\ref{tab:alignment-hybrid} and~\ref{tab:tau-diff-hybrid} (same-window position, secondary rule); runtime rows in Table~\ref{tab:benchmark-runtime}.
-\item Qualification: fixed $\lambda\in\{0.25,0.5,0.75\}$, uniform teleportation, transition-level mixing, one chain; the rule and the values of $\lambda$ were fixed in configuration before the run (Section~\ref{sec:holdout-protocol}).
+\item Statement: a per-node convex mixture of the allowance and transfer layers (C-PR) ranks wallets no better than the appropriate single-layer method, and the seeded ablation (S-PR) reproduces AWP.
+\item Evidence: Table~\ref{tab:holdout-diff} (neither part of the pre-registered primary rule is met); Tables~\ref{tab:alignment-hybrid} and~\ref{tab:tau-diff-hybrid} (same-window position under the secondary rule); runtime rows of Table~\ref{tab:benchmark-runtime}.
+\item Qualification: tested with fixed $\lambda\in\{0.25,0.5,0.75\}$, uniform teleportation, transition-level mixing and one chain. The rule and the values of $\lambda$ were set in the configuration before the run (Section~\ref{sec:holdout-protocol}).
 \end{itemize}
 
 \dissertationSubheading[sec:map-c1c4]{Claims C1--C5}
 
 \begin{itemize}
-\item C1: runtime evidence as in H3/RQ3; specific to EndorseRank, since C-PR costs at least as much as AWP (Table~\ref{tab:benchmark-runtime}).
-\item C2: intended-construct checks (allowance for EndorseRank, transfer for AWP) in Table~\ref{tab:alignment-family-ci}.
-\item C3: construct-specific winners as in H2/RQ2, tested in Table~\ref{tab:tau-diff}.
-\item C4: efficiency--alignment trade-off combining C1, C3 and the spender holdout (Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}), bounded by the degree baselines; robustness in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size} and Figure~\ref{fig:damping-sensitivity}.
-\item C5: bounded negative result on coupling, as in RQ5.
+\item C1: the runtime evidence listed under H3/RQ3; the claim is specific to EndorseRank, since C-PR costs at least as much as AWP (Table~\ref{tab:benchmark-runtime}).
+\item C2: intended-construct checks in Table~\ref{tab:alignment-family-ci}, namely allowance for EndorseRank and transfer for AWP.
+\item C3: the construct-specific winners identified under H2/RQ2, tested in Table~\ref{tab:tau-diff}.
+\item C4: an efficiency--alignment trade-off drawing on C1, C3 and the spender holdout (Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}), bounded by the degree baselines; robustness is reported in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size} and Figure~\ref{fig:damping-sensitivity}.
+\item C5: a bounded negative result on coupling, as described under RQ5.
 \end{itemize}
 
 \dissertationSubheading[sec:map-nonclaims]{Explicit non-claims}
@@ -59,24 +59,24 @@ This appendix links each hypothesis, research question, and empirical claim to t
 This research does \emph{not} claim:
 
 \begin{itemize}
-\item that AWP is obsolete;
-\item that EndorseRank's allowance alignment exceeds its own transfer alignment;
-\item that EndorseRank or AWP predicts the future growth of its own construct better than the raw t1 degree;
-\item that no combination of the two edge types can beat the single-layer methods; only that the tested per-node convex mixture with fixed $\lambda$ does not;
-\item that runtime scales favorably as the edge population grows beyond the cohort graph;
-\item that results generalize beyond Arbitrum One and the study window without replication;
-\item that on-chain scores replace collateral or legal identity systems.
+\item that AWP has become obsolete;
+\item that EndorseRank aligns more closely with the allowance family than with the transfer family;
+\item that either EndorseRank or AWP forecasts the future growth of its own construct better than the raw t1 degree does;
+\item that no combination of the two edge types can beat the single-layer methods, only that the per-node convex mixture tested here, with fixed $\lambda$, does not;
+\item that runtime scales favorably when the edge population grows beyond the cohort graph;
+\item that, without replication, the results generalize beyond Arbitrum One and the study window;
+\item that on-chain scores substitute for collateral or legal identity systems.
 \end{itemize}
 
 \dissertationSubheading[sec:map-artifacts]{Replication artifacts}
 
 \begin{enumerate}
-\item Merged wallet-ranking table: scores for EndorseRank, AWP, C-PR ($\lambda\in\{0.25,0.5,0.75\}$) and S-PR.
-\item Machine-readable holdout summary for the spender cohort, including the paired contrasts and the primary-criterion verdict (committed under \texttt{results/holdout/}).
-\item Machine-readable evaluation summary: authoritative same-window numerics, per-run timings, bootstrap protocol (committed under \texttt{results/}).
-\item Exported table fragments (\texttt{results/tables/}).
-\item Exported vector figures (\texttt{Figures/generated/}).
-\item Optional archived extended-baseline matrices.
+\item A merged wallet-ranking table with the scores of EndorseRank, AWP, C-PR ($\lambda\in\{0.25,0.5,0.75\}$) and S-PR.
+\item The machine-readable holdout summary for the spender cohort, with the paired contrasts and primary-criterion verdict (committed under \texttt{results/holdout/}).
+\item The machine-readable evaluation summary: authoritative same-window numbers, per-run timings and the bootstrap protocol (committed under \texttt{results/}).
+\item The exported table fragments (\texttt{results/tables/}).
+\item The exported vector figures (\texttt{Figures/generated/}).
+\item The archived extended-baseline matrices (optional).
 \end{enumerate}
 
-Tables and figures are regenerated by running the evaluation pipeline on real data with robustness sweeps, exporting the tables, and regenerating figures from the same artifacts (Appendix~\ref{sec:pipeline-stages}).
+The tables and figures are rebuilt by running the evaluation pipeline on real data with the robustness sweeps, exporting the tables, and then redrawing the figures from the same artifacts (Appendix~\ref{sec:pipeline-stages}).
