@@ -42,22 +42,26 @@ Figure~\ref{fig:allowance-sequence} traces an ERC-20 allowance through its lifec
 \node[actor] (spender) at (11,0) {Spender};
 
 % Lifelines (vertical dashed lines)
-\draw[dashed, gray] (owner.south) -- ++(0,-5.2);
-\draw[dashed, gray] (token.south) -- ++(0,-5.2);
-\draw[dashed, gray] (spender.south) -- ++(0,-5.2);
+\draw[dashed, gray] (owner.south) -- ++(0,-6.6);
+\draw[dashed, gray] (token.south) -- ++(0,-6.6);
+\draw[dashed, gray] (spender.south) -- ++(0,-6.6);
 
 % Message 1: approve (owner -> token), horizontal span 5.5cm
 \draw[msg] (0,-1.2) -- node[above,font=\scriptsize] {\texttt{approve(spender,$a$)}} (5.5,-1.2);
 \node[note] at (2.75,-1.7) {emit \texttt{Approval}; store allowance};
 
+% Alternative to message 1: EIP-2612 permit, submitted by the spender (or a relayer) with the owner's signature
+\draw[msg, densely dotted] (11,-2.6) -- node[above,font=\scriptsize] {\texttt{permit(owner,spender,$a$,sig)}} (5.5,-2.6);
+\node[note] at (8.25,-3.1) {alternative to \texttt{approve}: owner signs off-chain;\\ emit \texttt{Approval}; store allowance};
+
 % Message 2: transferFrom (spender -> token), horizontal span 5.5cm
-\draw[msg] (11,-2.8) -- node[above,font=\scriptsize] {\texttt{transferFrom(owner,to,$v\leq a$)}} (5.5,-2.8);
-\node[note] at (8.25,-3.3) {move tokens; reduce allowance};
+\draw[msg] (11,-4.2) -- node[above,font=\scriptsize] {\texttt{transferFrom(owner,to,$v\leq a$)}} (5.5,-4.2);
+\node[note] at (8.25,-4.7) {move tokens; reduce allowance};
 
 % Message 3: revoke (owner -> token), dashed
-\draw[msg, dashed] (0,-4.4) -- node[above,font=\scriptsize] {\texttt{approve(spender,$0$)} (revoke)} (5.5,-4.4);
+\draw[msg, dashed] (0,-5.8) -- node[above,font=\scriptsize] {\texttt{approve(spender,$0$)} (revoke)} (5.5,-5.8);
 \end{tikzpicture}
-\caption{ERC-20 allowance lifecycle: approve (or permit), optional \texttt{transferFrom}, and revoke. Each EndorseRank edge encodes the latest live allowance snapshot for its owner--spender pair; historical approvals are superseded, not time-decayed.}
+\caption[{ERC-20 allowance lifecycle: approve (or permit), optional \texttt{transferFrom}, and revoke. EndorseRank edges reflect the latest live allowance snapshot per owner--spender pair (historical approvals superseded, not time-decayed).}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. An EndorseRank edge carries the value of the most recent \texttt{Approval} event in the observation window for its owner--spender pair, summed over tokens. A later approval replaces an earlier one, and nothing is time-decayed.}
 \label{fig:allowance-sequence}
 \end{figure}
 
@@ -71,29 +75,29 @@ Graph-based methods are attractive because they (i) use only public information,
 
 \dissertationSubheading[sec:pagerank-formalism]{PageRank formalism}
 
-Consider a directed graph $G=(V,E)$ with $|V|=n$ nodes, and write $w_{ij}>0$ for the weight of the edge from $i$ to $j$. That weight stands for influence from $i$ to $j$, in either the endorsement or the transfer sense introduced above. Let $W$ be the corresponding weighted adjacency matrix, with $d_i^{\mathrm{out}}=\sum_j w_{ij}$. The row-stochastic transition matrix $P$ is then
+Consider a directed graph $G=(V,E)$ with $|V|$ nodes, and write $w_{ij}>0$ for the weight of the edge from $i$ to $j$. That weight stands for influence from $i$ to $j$, in either the endorsement or the transfer sense introduced above. Let $W$ be the corresponding weighted adjacency matrix, and let $o_i=\sum_j w_{ij}$ be the out-strength of node $i$. The row-stochastic transition matrix $P$ is then
 \begin{equation}
 P_{ij} =
 \begin{cases}
-w_{ij}/d_i^{\mathrm{out}} & \text{if } d_i^{\mathrm{out}}>0,\\
-1/n & \text{if } d_i^{\mathrm{out}}=0
+w_{ij}/o_i & \text{if } o_i>0,\\
+1/|V| & \text{if } o_i=0
 \end{cases}
 \label{eq:transition}
 \end{equation}
 (dangling nodes spread their mass evenly). Given a damping parameter $d\in(0,1)$, the Google matrix is
 \begin{equation}
-G_{\mathrm{PR}} = d\, P^{\top} + \frac{1-d}{n}\,\mathbf{1}\mathbf{1}^{\top},
+G_{\mathrm{PR}} = d\, P^{\top} + \frac{1-d}{|V|}\,\mathbf{1}\mathbf{1}^{\top},
 \label{eq:google-matrix}
 \end{equation}
-and the PageRank vector $\boldsymbol{\pi}$ satisfies $\boldsymbol{\pi}=G_{\mathrm{PR}}\boldsymbol{\pi}$ with $\boldsymbol{\pi}\geq 0$ and $\sum_i \pi_i=1$ \cend{15,23}. Element by element, this becomes
+and the PageRank vector $\mathbf{r}$ satisfies $\mathbf{r}=G_{\mathrm{PR}}\mathbf{r}$ with $\mathbf{r}\geq 0$ and $\sum_i r_i=1$ \cend{15,23}. Element by element, with the dangling rows of $P$ written as a separate middle term, this becomes
 \begin{equation}
-\pi_j = d\sum_{i:(i\to j)\in E}\pi_i \frac{w_{ij}}{d_i^{\mathrm{out}}} + \frac{1-d}{n}.
+r_j = d\sum_{i:(i\to j)\in E} r_i \frac{w_{ij}}{o_i} + \frac{d}{|V|}\sum_{i:\,o_i=0} r_i + \frac{1-d}{|V|}.
 \label{eq:pagerank-node}
 \end{equation}
 
 \dissertationSubsubheading[sub:random-surfer]{Random-surfer interpretation}
 
-Equation~\eqref{eq:pagerank-node} can be read probabilistically. At each step a surfer follows an outgoing edge with probability $d$ or teleports uniformly with probability $1-d$ (Figure~\ref{fig:random-surfer}). The stationary distribution then ranks nodes by how often they are visited in the long run. Damping keeps sinks from absorbing all the mass. Under mild conditions it also makes $G_{\mathrm{PR}}$ primitive, which guarantees that the Perron vector is unique \cend{23}.
+Equation~\eqref{eq:pagerank-node} can be read probabilistically. At each step a surfer at a node with out-edges follows one of them with probability $d$, choosing it in proportion to its weight, or teleports to a uniformly chosen node with probability $1-d$ (Figure~\ref{fig:random-surfer}). At a node without out-edges the surfer always jumps to a uniformly chosen node; this is the dangling rule of Equation~\eqref{eq:transition}. The stationary distribution then ranks nodes by how often they are visited in the long run. Damping keeps rank sinks (groups of nodes with no edge leaving them) from absorbing all the mass. With $d<1$ and uniform teleportation, every entry of $G_{\mathrm{PR}}$ is positive, so $G_{\mathrm{PR}}$ is primitive and its Perron vector is unique \cend{23}. Appendix~\ref{sec:pr-existence} gives the argument.
 
 \begin{figure}[htbp]
 \centering
@@ -108,10 +112,10 @@ Equation~\eqref{eq:pagerank-node} can be read probabilistically. At each step a 
 \node[vertex] (c) at (3.2,-1.5) {$C$};
 \node[vertex] (d) at (6.4,0) {$D$};
 % Graph transitions: A->B, A->C, B->D, C->D (same topology as the worked example; D is dangling)
-\draw[arrow] (a) -- (b);
-\draw[arrow] (a) -- (c);
-\draw[arrow] (b) -- (d);
-\draw[arrow] (c) -- (d);
+\draw[arrow] (a) -- node[above left, font=\footnotesize] {$2$} (b);
+\draw[arrow] (a) -- node[below left, font=\footnotesize] {$1$} (c);
+\draw[arrow] (b) -- node[below left=-1pt, font=\footnotesize] {$3$} (d);
+\draw[arrow] (c) -- node[above left=-1pt, font=\footnotesize] {$1$} (d);
 % Uniform teleportation, drawn from D only: one dashed arrow to every node, including D itself.
 % D->A runs through the gap between B and C, and D->B / D->C bend outward, so no dashed arrow crosses a solid edge.
 \draw[teleport] (d) -- (a);
@@ -119,20 +123,20 @@ Equation~\eqref{eq:pagerank-node} can be read probabilistically. At each step a 
 \draw[teleport] (d) to[bend left=32] (c);
 \draw[teleport] (d) to[loop right, min distance=12mm] (d);
 \end{tikzpicture}
-\caption{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}. Solid arrows are graph transitions, taken with total probability $d$. Dashed arrows show uniform teleportation, which reaches every node (the current one included) with probability $(1-d)/n$; the dashed fan is drawn only from $D$, although every node has one. Because $D$ has no outgoing edge, Equation~\eqref{eq:transition} spreads its remaining mass uniformly as well, and that is how damping stops a sink from absorbing the chain.}
+\caption[{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}. Solid arrows are graph transitions, followed with total probability $d$. Dashed arrows are uniform teleportation, probability $(1-d)/n$ to every node including the current one; the dashed fan is drawn from $D$ only but leaves every node.}]{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}; edge labels are the allowance weights. Solid arrows are graph transitions: with total probability $d$ the surfer follows one of them, chosen in proportion to its weight. Dashed arrows show uniform teleportation, which reaches every node (the current one included) with probability $(1-d)/|V|$; the dashed fan is drawn only from $D$, although every node has one. $D$ has no outgoing edge, so under the dangling rule of Equation~\eqref{eq:transition} a surfer at $D$ always jumps to a uniformly chosen node, each with probability $1/|V|=0.25$. That rule, and not damping, keeps $D$ from absorbing the chain.}
 \label{fig:random-surfer}
 \end{figure}
 
 \dissertationSubsubheading[sub:power-iteration]{Power iteration and complexity}
 
-In practice, $\boldsymbol{\pi}$ is usually obtained by power iteration,
+In practice, $\mathbf{r}$ is usually obtained by power iteration from the uniform vector $\mathbf{r}^{(0)}=\mathbf{1}/|V|$,
 \begin{equation}
-\boldsymbol{\pi}^{(t+1)} = G_{\mathrm{PR}}\boldsymbol{\pi}^{(t)},
+\mathbf{r}^{(t+1)} = G_{\mathrm{PR}}\mathbf{r}^{(t)},
 \label{eq:power-iteration}
 \end{equation}
-until $\|\boldsymbol{\pi}^{(t+1)}-\boldsymbol{\pi}^{(t)}\|_1 < \varepsilon$ or until the iteration cap is reached. On a sparse graph, each iteration costs $O(|E|)$ arithmetic operations \cend{49}. A method that generates fewer edges, for instance by using latest-allowance snapshots instead of full transfer histories, therefore lowers the cost per iteration and sometimes the memory required. Hypothesis H3 is motivated by this complexity fact.
+until $\|\mathbf{r}^{(t+1)}-\mathbf{r}^{(t)}\|_1 < \varepsilon$ or until the iteration cap $I_{\max}$ is reached. On a sparse graph, each iteration costs $O(|E|)$ arithmetic operations \cend{49}. A method that generates fewer edges, for instance by using latest-allowance snapshots instead of full transfer histories, therefore lowers the cost per iteration and sometimes the memory required. Hypothesis H3 is motivated by this complexity fact.
 
-By default this work sets damping to the conventional $d=0.85$ \cend{15} and uses two study-specific solver settings, a convergence tolerance $\varepsilon=10^{-8}$ and a maximum of $300$ iterations.\footnote{The tolerance and the iteration cap were chosen to keep run-times reproducible; they are not put forward as part of the classical PageRank formulation.} Damping is varied over $d\in\{0.75,0.85,0.95\}$ in the robustness section.
+By default this work sets damping to the conventional $d=0.85$ \cend{15} and uses two study-specific solver settings, a convergence tolerance $\varepsilon=10^{-8}$ and a maximum of $I_{\max}=300$ iterations.\footnote{The tolerance and the iteration cap were chosen to keep run-times reproducible; they are not put forward as part of the classical PageRank formulation.} Damping is varied over $d\in\{0.75,0.85,0.95\}$ in the robustness section.
 
 \dissertationSubheading[sec:reputation-systems]{Reputation systems lineage}
 
@@ -146,7 +150,7 @@ Machine-learning credit models that use DeFi features \cend{14} can predict labe
 
 Through the ERC-20 \texttt{approve} function and EIP-2612 \texttt{permit}, users state explicitly how much a spender may move on their behalf \cend{18,19}. EndorseRank takes the latest allowance from an owner to a spender as the strength of that edge in a directed endorsement graph, then runs PageRank on the snapshot. No temporal decay is needed, because newer approvals supersede older ones.
 
-Concretely, let $a_{o\to s}$ be the decimal-adjusted latest allowance for one owner--spender pair on one token. We sum these allowances over all tokens to get a single edge weight $w_{o\to s}$ for the pair. The graph that results, $G_{\text{approve}}=(V,E_{\text{approve}},w)$, is usually much sparser than the transfer graph over the same wallets and window. Running PageRank on $G_{\text{approve}}$ yields the EndorseRank scores $\mathbf{s}_{\mathrm{ER}}$.
+Concretely, for one token let $a_{o\to s}$ be the value of the latest \texttt{Approval} event from owner $o$ to spender $s$ within the observation window. The value stays in the token's raw base units, with no adjustment for decimals, and a pair whose latest value is zero (a revocation) is dropped. We sum these allowances over all tokens to get a single edge weight $w_{o\to s}$ for the pair. The graph that results, $G_{\text{approve}}=(V,E_{\text{approve}},w)$, is usually much sparser than the transfer graph over the same wallets and window. Running PageRank on $G_{\text{approve}}$ yields the EndorseRank scores $\mathbf{s}_{\mathrm{ER}}$.
 
 Treating allowances as endorsements is a deliberate choice, and an imprecise one. Users approve routers because it is convenient, not necessarily to make a social statement about whether the router is trustworthy. Contract addresses and EOAs coexist as well. Even so, an allowance signals approval more explicitly than a received transfer, which could come from market making, wash trading \cend{29}, airdrop farming \cend{32} or routing without any intent to endorse.
 
@@ -158,19 +162,19 @@ EndorseRank is not presented here as a predictor of trading profit, loss avoidan
 
 Reputation scores and validation proxies are both continuous variables, and neither has a natural boundary for classification. Following the AWP validation design\cend{3} and classical psychometrics \cend{22}, this research measures two kinds of rank agreement, monotonic and pairwise. Bootstrap confidence intervals quantify the sampling uncertainty of every reported coefficient \cend{34}.
 
-Spearman's rank correlation \cend{20} is the Pearson correlation of the ranks. For paired ranks $(R_i,S_i)$ of $n$ items without ties,
+Spearman's rank correlation \cend{20} is the Pearson correlation of the ranks. For paired ranks $(R_i,S_i)$ of $n$ items without ties, it reduces to
 \begin{equation}
-\rho = 1 - \frac{6\sum_{i=1}^n (R_i-S_i)^2}{n(n^2-1)}
+\rho = 1 - \frac{6\sum_{i=1}^n (R_i-S_i)^2}{n(n^2-1)}.
 \label{eq:spearman}
 \end{equation}
-and software uses a tie-aware variant when ties occur. Spearman's $\rho$ thus measures monotonic association.
+This no-ties form does not hold when ties occur. Spearman's $\rho$ is then the Pearson correlation of average ranks (mid-ranks), in which tied items share the mean of the positions they occupy, and every reported $\rho$ is computed this way. In both forms $\rho$ measures monotonic association.
 
-Kendall's $\tau$ \cend{21} rests on counts of concordant and discordant pairs. Over all pairs $(i,j)$ with $i<j$,
+Kendall's $\tau$ \cend{21} rests on counts of concordant and discordant pairs. Of the $n_0=n(n-1)/2$ pairs $(i,j)$ with $i<j$, $n_c$ are concordant (both rankings order them the same way) and $n_d$ are discordant (the rankings order them oppositely); a pair tied in either ranking is neither. Let $n_1=\sum_k t_k(t_k-1)/2$, where $t_k$ is the size of the $k$-th group of tied values in the first ranking, and define $n_2$ in the same way for the second ranking. The $\tau$-b variant is then
 \begin{equation}
-\tau = \frac{2(C - D)}{n(n-1)},
+\tau_b = \frac{n_c - n_d}{\sqrt{(n_0-n_1)(n_0-n_2)}},
 \label{eq:kendall}
 \end{equation}
-where $C$ ($D$) is the count of concordant (discordant) pairs; the $\tau$-b variant adds tie corrections. For agreement about pairwise orderings, Kendall's $\tau$ is usually the easier coefficient to interpret, and Chapter~\ref{ch:results} uses it as the main family-level summary. Its values are compared with those of other methods on the same cohort; no uncited absolute benchmark is used.
+and without the tie corrections it becomes $\tau_a=(n_c-n_d)/n_0$. Every $\tau$ reported in this thesis is $\tau_b$, computed on the raw scores and proxies. The difference matters for these data. On the matched cohort, 67.5\% of wallet pairs are tied on EndorseRank, so for EndorseRank against AWP $\tau_b=0.316$ but $\tau_a=0.180$. For agreement about pairwise orderings, Kendall's $\tau$ is usually the easier coefficient to interpret, and Chapter~\ref{ch:results} uses it as the main family-level summary. Its values are compared with those of other methods on the same cohort; no uncited absolute benchmark is used.
 
 \dissertationSubheading[sec:theoretical-framework]{Theoretical framework}
 
@@ -182,19 +186,19 @@ This study compares EndorseRank and AWP on reputation structure (H1), social-met
 \sigma(\Delta t)=\frac{1}{1+\exp\bigl(k(\Delta t-t_0)\bigr)}
 \label{eq:logistic}
 \end{equation}
-with $k=0.01$ and $t_0=180$ days, the values this study uses for AWP. EndorseRank extends citation-based propagation to ERC-20 approve/permit edges, since an allowance is an explicit, on-chain delegation of spending authority \cend{18,19}. Whereas a transfer may reflect trading or routing without any intent to trust, an allowance records an explicit authorization that remains in force until it is revoked or replaced. Graph-based risk models \cend{12} also show that network structure contains information beyond raw activity counts, which argues for a directed endorsement graph alongside transfer volume.
+where $\Delta t$ is a transfer's age in days before the end of the scoring window. This study uses $k=0.01$ per day and $t_0=180$ days for AWP. EndorseRank extends citation-based propagation to ERC-20 approve/permit edges, since an allowance is an explicit, on-chain delegation of spending authority \cend{18,19}. Whereas a transfer may reflect trading or routing without any intent to trust, an allowance records an explicit authorization that remains in force until it is revoked or replaced. Graph-based risk models \cend{12} also show that network structure contains information beyond raw activity counts, which argues for a directed endorsement graph alongside transfer volume.
 
 \item Domain alignment framework: Measurement theory uses construct alignment to ask how closely an indicator follows the construct it is meant to track \cend{22}. Messick\cend{33} widens the idea into one unified judgment about what a score means and what using it implies. With rank-based reputation scores, Spearman's $\rho$ and Kendall's $\tau$ measure monotonic and pairwise agreement in ordering and need no classification threshold, as in the AWP validation protocol\cend{3}. Graph coherence is checked with contemporaneous transfer and allowance statistics. The out-of-window check is a temporal holdout of future new approvals.
 
 \item Computational complexity: Each PageRank iteration costs $O(|E|)$ \cend{15}. Allowance graphs are sparser than transfer graphs, with fewer edges $|E|$, so an iteration needs less time and memory, and in practice convergence often takes fewer iterations too. This argument underlies H3. Both methods use the same solver, so any difference in runtime is an expected effect of edge sparsity and does not count as an algorithmic contribution.
 \end{itemize}
 
-The conceptual model in Figure~\ref{fig:conceptual-model} links the primary EndorseRank--AWP comparison to H1--H3 and RQ1--RQ4. RQ5 is layered above it and asks whether the two constructs combine.
+The conceptual model in Figure~\ref{fig:conceptual-model} links the primary EndorseRank--AWP comparison to H1--H3 and RQ1--RQ4. RQ5 is the dashed box on the right. It takes input from H2/RQ2 and from RQ4 and asks whether the two constructs combine.
 
 \begin{figure}[htbp]
 \centering
 \input{Figures/conceptual-model.tex}
-\caption{Conceptual model linking the primary EndorseRank vs.\ AWP comparison to reputation structure (H1/RQ1), construct checks (H2/RQ2), computational efficiency (H3/RQ3), and the temporal holdout of future new approvals (RQ4).}
+\caption[{Conceptual model: primary EndorseRank vs.\ AWP comparison mapped to reputation structure (H1/RQ1), construct checks (H2/RQ2), computational efficiency (H3/RQ3), and the temporal holdout of future new approvals (RQ4).}]{Conceptual model linking the primary EndorseRank vs.\ AWP comparison to reputation structure (H1/RQ1), construct checks (H2/RQ2), computational efficiency (H3/RQ3) and the temporal holdout of future new approvals (RQ4). The dashed box on the right is RQ5, which asks whether the coupled operator C-PR, mixing both edge types, improves on either single-layer method in the same-window checks and on both holdout labels.}
 \label{fig:conceptual-model}
 \end{figure}
 
@@ -208,15 +212,15 @@ The formal constructs are defined in Chapter~\ref{ch:introduction}. The terms be
 \item Primary methods: EndorseRank (allowance graph) and AWP (transfer graph), two social PageRank methods run on wallet-to-wallet edges and intended for deployment as reputation signals.
 \item Primary graph construct: The graph that a method is \emph{designed} to rank, for example $G_{\text{approve}}$ for EndorseRank; it is separate from checks applied after scoring.
 \item Contemporaneous check: A local transfer or allowance statistic taken from the same window as the score \cend{22}.
-\item Temporal holdout: Scores frozen at t1; labels are the new owner--spender approvals that inbound spenders receive at t2.
-\item Matched wallet cohort: The primary same-window sample of $n=5{,}521$ wallets with non-zero connectivity in both the endorsement graph and the transfer graph.
-\item Spender holdout cohort: The RQ4 sample of $n=1{,}335$ inbound allowance recipients at t1.
+\item Temporal holdout: Scores are frozen at $t_1$ (28~February~2026). Two labels are then counted up to $t_2$ (31~May~2026): new owner--spender approval pairs and new transfer senders.
+\item Matched wallet cohort: The primary same-window sample of $n=5{,}521$ GMX V2 wallets on Arbitrum One with at least three closed positions between 1~December~2025 and 31~May~2026. The list is fixed from GMX data before any approval or transfer is extracted, so a cohort wallet can lack edges in one graph or both (966 have no allowance edge, 381 no transfer edge, and 370 neither).
+\item Spender holdout cohort: The RQ4 sample of $n=1{,}335$ spenders, each holding at least one positive latest allowance at $t_1$ in the extracted approval data.
 \item Expanded wallet pool: A larger address set ($N=99{,}080$) reaching beyond the matched cohort, used to test how runtime responds to node count.
 \end{itemize}
 
 \dissertationSubheading[sec:domain-alignment-metrics]{Domain alignment metrics}
 
-For rank-based scores, construct alignment is measured by Spearman's $\rho$ and Kendall's $\tau$ between reputation scores and check rankings, following the AWP validation protocol\cend{3} and Cronbach and Meehl\cend{22}. This research reports contemporaneous transfer and allowance checks as well as a temporal holdout of future new approvals. Operational definitions are in Chapter~\ref{ch:methodology}.
+For rank-based scores, construct alignment is measured by Spearman's $\rho$ and Kendall's $\tau$ between reputation scores and check rankings, following the AWP validation protocol\cend{3} and Cronbach and Meehl\cend{22}. This research reports contemporaneous transfer and allowance checks as well as a temporal holdout with two labels, new owner--spender approval pairs and new transfer senders. Operational definitions are in Chapter~\ref{ch:methodology}.
 
 The literature reviewed so far supports three design choices: (i) PageRank as an interpretable propagation backbone; (ii) allowances treated as endorsement edges, separate from transfers; and (iii) a check design based on rank correlation plus a time split. The rest of this chapter is motivated by these choices, as is the operational pipeline developed later in Chapter~\ref{ch:methodology}.
 
@@ -226,9 +230,9 @@ Take four wallets $\{A,B,C,D\}$ joined by the latest-allowance edges
 \[
 A\to B\ (2),\quad A\to C\ (1),\quad B\to D\ (3),\quad C\to D\ (1),
 \]
-with damping $d=0.85$. The out-strengths are $d_A^{\mathrm{out}}=3$, $d_B^{\mathrm{out}}=3$, $d_C^{\mathrm{out}}=1$ and $d_D^{\mathrm{out}}=0$ (the last is dangling). One power-iteration step from the uniform vector $\boldsymbol{\pi}^{(0)}=\mathbf{1}/4$ already tilts the mass toward $D$, since both $B$ and $C$ endorse $D$, while $A$ splits its mass between $B$ and $C$. Later iterations mix in teleportation mass $(1-d)/4=0.0375$ at every node. In the stationary ranking $D$ comes first, $B$ and $C$ follow, and $A$ is last. The example shows that a node gains score by \emph{receiving} endorsements from nodes that are endorsed in turn, which is precisely the citation logic of PageRank \cend{15,23}.
+with damping $d=0.85$. The out-strengths are $o_A=3$, $o_B=3$, $o_C=1$ and $o_D=0$ (the last is dangling). The edges $B\to D$ and $C\to D$ are the only out-edges of their nodes, so each is followed with probability one and its weight has no effect on the scores. Teleportation adds $(1-d)/4=0.0375$ to every node at every step, the first one included. One power-iteration step from the uniform vector $\mathbf{r}^{(0)}=\mathbf{1}/4$ gives $\mathbf{r}^{(1)}=(0.0906,\,0.2323,\,0.1615,\,0.5156)$ for $(A,B,C,D)$. The mass already tilts toward $D$, since both $B$ and $C$ endorse $D$, while $A$ splits its mass between $B$ and $C$. The iteration converges to the stationary vector $\mathbf{r}=(0.1375,\,0.2154,\,0.1765,\,0.4706)$, so $D$ comes first, $B$ and $C$ follow, and $A$ is last. No wallet endorses $A$. Apart from teleportation, its whole score comes from the dangling rule, which spreads $D$'s mass evenly over the four nodes ($d\,r_D/4=0.1000$). The example shows that a node gains score by \emph{receiving} endorsements from nodes that are endorsed in turn, which is precisely the citation logic of PageRank \cend{15,23}.
 
-Suppose the same wallets were linked by many small transfers instead of a few large ones. The transition matrix would change, and we might then obtain a different ranking from exactly the same nodes. Hypothesis H1 is this situation in miniature: EndorseRank and AWP need not agree.
+Suppose the same wallets were linked by transfers instead of allowances. The transfers would in general join other pairs, or the same pairs with other per-pair totals. That gives another transition matrix $P$, and possibly a different ranking of exactly the same nodes. Hypothesis H1 is this situation in miniature: EndorseRank and AWP need not agree.
 
 \dissertationSubheading[sec:defi-risk-taxonomy]{DeFi risk taxonomy and where reputation fits}
 
@@ -246,7 +250,7 @@ Personalized and topic-sensitive PageRank \cend{58,59} bias the teleportation ve
 
 \dissertationSubheading[sec:account-model]{Accounts, gas, and why logs are the measurement surface}
 
-Ethereum has two kinds of account: externally owned accounts (EOAs) and contract accounts. A private key controls an EOA, whereas a contract account is governed by the code it stores \cend{60}. Every state-changing transaction consumes gas, and logs are emitted when contract accounts write to storage. A reputation system that means to be auditable must prefer logs to off-chain databases, because logs are a permanent part of the blockchain history that any full node or index provider can recompute independently \cend{61}.
+Ethereum has two kinds of account: externally owned accounts (EOAs) and contract accounts. A private key controls an EOA, whereas a contract account is governed by the code it stores \cend{60}. Every state-changing transaction consumes gas. Logs come from a contract's \texttt{LOG} instructions, which run when its code emits an event (the Solidity \texttt{emit} statement); writing to storage produces no log. A reputation system that means to be auditable must prefer logs to off-chain databases, because logs are a permanent part of the blockchain history that any full node or index provider can recompute independently \cend{61}.
 
 Gas prices also affect how the resulting graphs are structured. On L2 networks, cheaper gas brings higher transfer volume and more approval churn, and it densifies $G_{\text{transfer}}$ more than $G_{\text{approve}}$, because transfers recur routinely while an approval is granted once so that later transfers can go through. We therefore expect the graph EndorseRank produces to be considerably sparser than the transfer graph, and Chapter~\ref{ch:results} examines this further.
 
@@ -254,13 +258,13 @@ Gas prices also affect how the resulting graphs are structured. On L2 networks, 
 
 Unlimited approvals (\texttt{type(uint256).max}) are a familiar user-experience problem. If the approved account is compromised, every one of the owner's tokens can be stolen until the owner resets the approval. Analyses of honeypot smart contracts \cend{62} and of phishing accounts on Ethereum \cend{24} treat allowances as capabilities, not as mere metadata. EndorseRank interprets a token approval as endorsing one spender's capability to move those tokens. This is why an allowance does not mean the same thing as a transfer, even though both involve the movement of tokens. An account could receive many transfers and never be granted permission to move funds on anyone else's behalf.
 
-In the data, unlimited approvals appear as extreme edge weights. Decimal adjustment, together with optional winsorization, is meant to damp these outliers. This work aggregates the decimal-adjusted latest allowances and relies on PageRank's normalization by out-strength, so a single very large allowance does not always dominate; it does so only when the account has few outgoing endorsements.
+In the data, unlimited approvals appear as extreme edge weights, each equal to $2^{256}-1\approx1.16\times10^{77}$ base units. Of the 21,585 latest allowances, 13,055 (60.5\%) are unlimited, and 3,986 of the 4,590 owners in the EndorseRank subgraph hold at least one unlimited approval. No decimal adjustment, capping or winsorization is applied, so these values enter the edge weights unchanged. Normalization by out-strength does not limit their effect. In double precision, a finite allowance next to an unlimited one receives a negligible share of the owner's row, so for most owners the row is split among their unlimited approvals.
 
 \dissertationSubheading[sec:awp-in-depth]{AWP in depth: what the transfer-graph baseline measures}
 
 Do and Do\cend{4} apply PageRank and HodgeRank to Ethereum transfer graphs and treat the resulting scores as signals of creditworthiness. Adaptive Weighted PageRank (AWP), proposed by Do, Do, and Nguyen\cend{3}, weights token-transfer edges by value and by recency through a logistic decay. Ranking accuracy is then validated against inbound degree and inbound value, taken as proxies for ``the amount of economic attention a wallet attracts''. Both the decay function (Equation~\eqref{eq:logistic}) and the in-degree/in-value proxies in Chapters~\ref{ch:methodology} and~\ref{ch:results} are taken from the AWP paper. The approach has the advantage of being entirely on-chain and rank-based, and it needs no off-chain identity of any kind.
 
-EndorseRank keeps the same template, PageRank plus a rank-correlation metric, and changes what the edges mean. In Chapter~\ref{ch:results} we test whether allowance edges yield a score that is construct-distinct, allowance-aligned, and cheaper, and whether scores taken at t1 can predict new approvals at t2.
+EndorseRank keeps the same template, PageRank plus a rank-correlation metric, and changes what the edges mean. In Chapter~\ref{ch:results} we test whether allowance edges yield a score that is construct-distinct, allowance-aligned, and cheaper, and whether scores taken at $t_1$ can predict new approvals by $t_2$.
 
 \dissertationSubheading[sec:method-comparison-table]{Comparison of graph reputation methods}
 
@@ -268,7 +272,7 @@ Table~\ref{tab:method-comparison-lit} compares EndorseRank with the other approa
 
 \begin{table}[htbp]
 \centering
-\caption{Conceptual comparison of selected graph reputation methods.}
+\caption{Comparison of selected graph reputation methods (conceptual).}
 \label{tab:method-comparison-lit}
 \fitwidth{%
 \begin{tabular}{p{0.18\linewidth}p{0.24\linewidth}p{0.24\linewidth}p{0.28\linewidth}}
@@ -282,7 +286,7 @@ PageRank/HodgeRank on Ethereum \cend{4} & Token transfers & Static window & Not 
 AWP \cend{3} & Token transfers & Logistic decay & In-degree / in-value \\
 RiskProp \cend{12} & Risk-bearing links & Propagation of risk & Account risk labels \\
 Multiplex / multilayer PageRank \cend{64,65} & Several relations over one node set & Static layers & Versatility of top-ranked nodes \\
-EndorseRank (this study) & Latest allowances & Snapshot (override) & Allowance checks; t2 new approvals \\
+EndorseRank (this study) & Latest allowances & Snapshot (override) & Allowance checks; $t_2$ new approvals \\
 C-PR / S-PR (this study) & Allowances mixed with, or seeding, transfers & Snapshot and logistic decay & Both holdout labels; pre-registered rule \\
 \bottomrule
 \end{tabular}

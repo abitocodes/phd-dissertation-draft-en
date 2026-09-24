@@ -17,6 +17,7 @@
 \node[smallbox] (h3) at (5,-1.0) {H3 / RQ3\\EndorseRank\\efficiency};
 
 \node[refbox] (hold) at (0,-3.0) {RQ4: temporal holdout\\future new approvals};
+\node[refbox] (rq5) at (5,-3.0) {RQ5: coupled operator C-PR\\both edge types, both labels};
 
 \draw[arrow] (center.south -| rep.north) -- (rep.north);
 \draw[arrow] (center.south) -- (risk.north);
@@ -27,4 +28,6 @@
 \draw[arrow] (eff.south) -- (h3.north);
 
 \draw[arrow, dashed] (h2.south) -- (hold.north);
+\draw[arrow, dashed] (h2.south east) -- (rq5.north west);
+\draw[arrow, dashed] (hold.east) -- (rq5.west);
 \end{tikzpicture}

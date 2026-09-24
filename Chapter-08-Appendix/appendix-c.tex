@@ -6,23 +6,31 @@ Chapters~\ref{ch:literature}--\ref{ch:results} rely implicitly on the elementary
 
 \dissertationSubheading[sec:pr-existence]{Existence and uniqueness of PageRank}
 
-Take $P$ to be a row-stochastic matrix on $n$ nodes, possibly after the dangling-node repair of Equation~\eqref{eq:transition}. For $d\in(0,1)$ the Google matrix
+Take $P$ to be a row-stochastic matrix on $|V|$ nodes, possibly after the dangling-node repair of Equation~\eqref{eq:transition}. For $d\in(0,1)$ the Google matrix of Equation~\eqref{eq:google-matrix},
 \[
-G_{\mathrm{PR}}=d P^{\top}+\frac{1-d}{n}\mathbf{1}\mathbf{1}^{\top}
+G_{\mathrm{PR}}=d P^{\top}+\frac{1-d}{|V|}\mathbf{1}\mathbf{1}^{\top},
 \]
-is positive and, up to the transpose convention of Equation~\eqref{eq:google-matrix}, column-stochastic. By the Perron--Frobenius theorem for positive matrices, $G_{\mathrm{PR}}$ has a single eigenvalue of modulus one, and the corresponding eigenvector $\boldsymbol{\pi}$ is strictly positive; we can scale it so that $\sum_i\pi_i=1$. It follows that, once the damping and the dangling-node rules are fixed, every directed graph has unique PageRank scores \cend{23}.
+is positive and column-stochastic. By the Perron--Frobenius theorem for positive matrices, $G_{\mathrm{PR}}$ has a single eigenvalue of modulus one, and the corresponding eigenvector $\mathbf{r}$ is strictly positive; we can scale it so that $\sum_i r_i=1$. It follows that, once the damping and the dangling-node rules are fixed, every directed graph has unique PageRank scores \cend{23}.
+
+The restart vector of S-PR, the normalized EndorseRank score, is zero at every transfer-layer wallet without an EndorseRank score, so the Google matrix of S-PR is not positive. The fixed point is still unique: for two probability vectors the restart term cancels in their difference, and the operator multiplies their $\|\cdot\|_1$ distance by at most $d$. In general it is not strictly positive, however, because a wallet with no restart mass that no path from a restart wallet reaches keeps a score of zero.
 
 Uniqueness guarantees a well-defined comparison between EndorseRank and AWP. Once its parameters are fixed, each method assigns exactly one score vector to a given edge set, so any difference between $\mathbf{s}_{\mathrm{ER}}$ and $\mathbf{s}_{\mathrm{AWP}}$ must arise from edge semantics and weights and cannot be traced to multiple solvers.
 
 \dissertationSubheading[sec:pr-continuity]{Continuity in edge weights}
 
-For fixed $d\in(0,1)$, PageRank depends continuously on the entries of $P$. Small perturbations of the allowance and transfer weights thus move the scores only slightly in the $\|\cdot\|_1$ norm, with Lipschitz constants that depend on $d$ and $n$ \cend{23}.
+For fixed $d\in(0,1)$, PageRank depends continuously on the entries of $P$. If $\tilde P$ is a second row-stochastic matrix on the same nodes, with PageRank vector $\tilde{\mathbf{r}}$, then
+\[
+\|\mathbf{r}-\tilde{\mathbf{r}}\|_1\le\frac{d}{1-d}\,\max_i\bigl\|P_{i\cdot}-\tilde P_{i\cdot}\bigr\|_1,
+\]
+a bound that does not depend on $|V|$ \cend{23}.
 
-Continuity allows us to run robustness checks that vary the damping or keep only the top tokens. Were alignment overly sensitive to the exact hyperparameters, changes this small would disrupt the family-level $\tau$ altogether. Empirically, EndorseRank's allowance family mean is unchanged in the first three decimal places across $d\in\{0.75,0.85,0.95\}$ (Table~\ref{tab:robustness-damping}), which suggests that the ranking geometry is stable.
+Continuity in $P$ is not the same as continuity in the edge weights. A row $P_{i\cdot}=w_{i\cdot}/o_i$ moves continuously with the weights only while the out-strength $o_i$ stays positive. When a node gains its first out-edge or loses its last one, its row jumps between the uniform dangling row and a row concentrated on its out-neighbors, however small the weight involved. In the worked example of Section~\ref{sec:pagerank-worked-example}, adding an edge $D\to A$ of weight $10^{-12}$ moves $\mathbf{r}$ by $0.37$ in the $\|\cdot\|_1$ norm and raises $r_A$ from $0.1375$ to $0.3202$.
+
+The damping sweep is covered by continuity: it keeps $P$ fixed and changes $d$ smoothly, and for $d<1$ the PageRank vector varies continuously with $d$. The top-token filter is not covered. It removes edges, which can leave a wallet without out-edges, so the stability of that check rests on the data alone (Table~\ref{tab:robustness-tokens}). Empirically, EndorseRank's allowance family mean is unchanged in the first three decimal places across $d\in\{0.75,0.85,0.95\}$ (Table~\ref{tab:robustness-damping}), which suggests that the ranking geometry is stable.
 
 \dissertationSubheading[sec:pr-sparsity]{Sparsity and per-iteration cost}
 
-With $m$ nonzero edges, the sparse matrix--vector product $P^{\top}\mathbf{x}$ costs $O(m)$ arithmetic operations, and building the sparse operator from the edge list is also $O(m)$. Power iteration over $I$ iterations is therefore $O(m + mI)$. On the matched cohort the transfer graph has about $9.3$ times as many edges as the endorsement graph, so even at identical $I$ the transfer method would run roughly an order of magnitude longer. Unequal iteration counts widen the gap further, and the measured wall-time ratio (Table~\ref{tab:benchmark-runtime}) is on the same scale as the edge ratio.
+With $m=|E|$ nonzero edges, the sparse matrix--vector product $P^{\top}\mathbf{x}$ costs $O(m)$ arithmetic operations, and building the sparse operator from the edge list is also $O(m)$. Power iteration over $I$ iterations is therefore $O(m + mI)$. On the matched cohort the transfer graph has about $9.3$ times as many edges as the endorsement graph, so even at identical $I$ the transfer method would run roughly an order of magnitude longer. The iteration counts also differ ($37$ against $100$), but they explain little of the measured times. The timed call builds the sparse matrix from the edge list with a per-edge Python loop before it iterates, and in a separate profiling run of the same call that assembly took about 94\% of the wall time, while the power iterations took under 2\% (about $6$\,ms of $0.41$\,s for EndorseRank and $70$\,ms of $3.91$\,s for AWP). Assembly and iteration are both $O(m)$, so the measured wall-time ratio of $10.2$ (Table~\ref{tab:benchmark-runtime}) tracks the edge ratio of $9.3$.
 
 \dissertationSubheading[sec:spearman-properties]{Properties of Spearman's \texorpdfstring{$\rho$}{rho}}
 
@@ -30,13 +38,17 @@ Spearman's $\rho$ is Pearson's correlation computed on ranks. It lies in $[-1,1]
 
 \dissertationSubheading[sec:kendall-properties]{Properties of Kendall's \texorpdfstring{$\tau$}{tau}}
 
-Kendall's $\tau$ is the normalized difference between the numbers of concordant and discordant pairwise orderings. It can also be interpreted probabilistically. For two distinct wallets drawn at random, $\tau$ is the probability that both rankings order them the same way, minus the probability that the rankings order them differently \cend{21}. A $\tau$ in the mid-$0.3$ range, such as EndorseRank attains on the allowance family (Table~\ref{tab:alignment-family-ci}), implies substantial but imperfect agreement between the two rankings.
+Kendall's $\tau$ is the normalized difference between the numbers of concordant and discordant pairwise orderings, $n_c$ and $n_d$. In the variant without tie correction, $\tau_a=(n_c-n_d)/n_0$ with $n_0=n(n-1)/2$, it can also be interpreted probabilistically. For two distinct wallets drawn at random, $\tau_a$ is the probability that both rankings order them the same way, minus the probability that the rankings order them differently \cend{21}. Every $\tau$ reported in this thesis is instead
+\[
+\tau_b=\frac{n_c-n_d}{\sqrt{(n_0-n_1)(n_0-n_2)}},
+\]
+where $n_1=\sum_i t_i(t_i-1)/2$ sums over the tie groups of the first ranking, $t_i$ being the size of group $i$, and $n_2$ is defined likewise for the second. The two variants are equal when neither ranking has ties, and here ties are heavy. EndorseRank takes $66$ distinct values on the matched cohort, so $67.5\%$ of all wallet pairs are tied on it, against $0.5\%$ on AWP. For EndorseRank against AWP this gives the reported $\tau_b=0.316$ but $\tau_a=0.180$; of the pairs that both scores order ($32\%$ of all pairs), $22.3\%$ are discordant. A $\tau_b$ in the mid-$0.3$ range, such as EndorseRank attains on the allowance family (Table~\ref{tab:alignment-family-ci}), therefore implies substantial but imperfect agreement on the pairs that the rankings separate.
 
-When $n$ is large, $\tau$ and $\rho$ usually agree in sign and are of similar magnitude, although the two are not identical. We report both, as the AWP baseline does~\cend{3}. Our main summary statistic is the family-mean $\tau$ with a paired-bootstrap interval~\cend{34}.
+When $n$ is large, $\tau$ and $\rho$ usually agree in sign, but they differ in magnitude. Across the method--proxy pairs of this study with $|\tau|>0.02$, the ratio $\rho/\tau$ lies between $1.01$ and $1.49$, and $\rho$ is always the larger of the two. We report both, as the AWP baseline does~\cend{3}. Our main summary statistic is the family-mean $\tau$ with a paired-bootstrap interval~\cend{34}.
 
 \dissertationSubheading[sec:construct-validity-note]{Construct validity note}
 
-Cronbach and Meehl~\cend{22} distinguish criterion-related validity from construct validity. Since no definitive gold standard default label exists, this research takes a construct-oriented approach. Each method is tested against validation checks that embody its conceptual definition (e.g.\ receiving allowances for EndorseRank; making inbound transfers for AWP), and also against a holdout period of future new approvals. High within-construct $\tau$ supports the interpretation. A low cross-construct $\tau$, by contrast, does not automatically signal failure; it may indicate discriminant validity.
+Cronbach and Meehl~\cend{22} distinguish criterion-related validity from construct validity. Since no definitive gold standard default label exists, this research takes a construct-oriented approach. Each method is tested against validation checks that embody its conceptual definition (e.g.\ receiving allowances for EndorseRank; receiving inbound transfers for AWP), and also against a holdout period with two labels, new approval pairs and new transfer senders. High within-construct $\tau$ supports the interpretation. A low cross-construct $\tau$, by contrast, does not automatically signal failure; it may indicate discriminant validity.
 
 \dissertationSubheading[sec:numerical-summary-sheet]{Where each primary quantity is reported}
 
