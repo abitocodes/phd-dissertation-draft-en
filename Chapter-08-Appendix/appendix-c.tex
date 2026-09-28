@@ -60,14 +60,17 @@ For each primary quantity, the index below names the table where it is establish
 \toprule
 Quantity & Reported in \\
 \midrule
-Matched-cohort size, $|V|$, $|E|$, runtime, SD, memory, iterations & Table~\ref{tab:benchmark-runtime} \\
+Matched-cohort size, $|V|$, $|E|$, runtime, SD, memory, iterations (four methods) & Table~\ref{tab:benchmark-runtime} \\
 In-cohort scaling stages & Table~\ref{tab:benchmark-scaling-incohort} \\
-Expanded-pool stages ($N=99{,}080$) & Table~\ref{tab:benchmark-scaling} \\
+Pool subsample stages ($N=99{,}080$) & Table~\ref{tab:benchmark-scaling} \\
 Family-mean $\tau$ with 95\% CI; inter-method $\tau$ & Table~\ref{tab:alignment-family-ci} \\
-Paired $\Delta\tau$ contrasts & Table~\ref{tab:tau-diff} \\
+Paired $\Delta\tau$ contrasts, single-layer methods & Table~\ref{tab:tau-diff} \\
 Per-proxy $\rho$, $\tau$, CI & Tables~\ref{tab:alignment-transfer}, \ref{tab:alignment-allowance}, \ref{tab:alignment-sybil-stability} \\
+C-PR and S-PR in the same window & Tables~\ref{tab:alignment-hybrid} and~\ref{tab:tau-diff-hybrid} \\
 Damping, top-token, sample-definition sweeps & Tables~\ref{tab:robustness-damping}, \ref{tab:robustness-tokens}, \ref{tab:robustness-sample-size} \\
-Holdout spender cohort ($n=1{,}335$) & Table~\ref{tab:holdout-spenders} \\
+Spender holdout ($n=1{,}335$) & Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} \\
+Exploratory trader run & Section~\ref{sub:trader-results} \\
+Registered June--August replication & Section~\ref{sub:fresh-results} \\
 Observation window & 2025-12-01 -- 2026-05-31 (Table~\ref{tab:parameter-summary}) \\
 \bottomrule
 \end{tabular}

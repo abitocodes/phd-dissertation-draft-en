@@ -78,21 +78,19 @@ The edge lists and score vectors account for most of the memory use. In Table~\r
 
 \dissertationSubheading[sec:interpretation-checklist]{Conventions for the result tables}
 
-These conventions govern the tables of Chapter~\ref{ch:results}:
+The tables of Chapter~\ref{ch:results} follow these conventions:
 
 \begin{enumerate}
-\item Mark which rows belong to a social method (EndorseRank or AWP).
-\item Tie each family to the concept it targets (allowance vs.\ transfer).
-\item Prefer relative comparisons on the same cohort to absolute $\tau$ thresholds.
-\item Interpret runtime tables as the time of one PageRank call on edge lists built in advance, covering matrix assembly and power iteration but not end-to-end ETL time, and assume that the numbers are identical wherever the same graph is reported under the same configuration (see Section~\ref{sec:computational-benchmark}).
-\item Report each $\tau$ together with its interval, and obtain differences between coefficients from Table~\ref{tab:tau-diff} instead of subtracting the point estimates.
-\item Regard the sample-definition sweep (Table~\ref{tab:robustness-sample-size}) as a sensitivity analysis, and keep its absolute values out of any comparison with the matched-cohort tables.
+\item Every $\tau$ is Kendall's $\tau_b$ on raw scores and proxies, reported with its 95\% paired-bootstrap interval. Differences between coefficients come from the paired contrast tables, not from subtracting point estimates.
+\item On the matched cohort, EndorseRank's coefficients are capped by its ties (Section~\ref{sec:rank-divergence}), so they are compared with other coefficients only through the contrasts and with that cap in mind.
+\item A runtime is the time of one PageRank call on edge lists built in advance, covering matrix assembly and power iteration but not extraction or preprocessing. The same graph under the same settings shows the same numbers in every table (Section~\ref{sec:computational-benchmark}).
+\item The sample-definition sweep (Table~\ref{tab:robustness-sample-size}) is a sensitivity analysis, and its absolute values are not compared with the matched-cohort tables.
 \end{enumerate}
 
 \dissertationSubheading[sec:archived-baselines]{Archived extended baselines}
 
-Archived with the evaluation pipeline are the three-method alignment matrix (which includes the now-withdrawn GF-PR reference), the seven-method and six-Aave matrices, and the matching CSV files. None of them enters the main comparison, because some of their variants depend on extra event types (credit delegation, for instance) or introduce concepts that lie outside the EndorseRank--AWP question.
+The archived matrices, and the reasons they stay out of the main comparison, are described in Appendix~\ref{ch:appendix-archive}.
 
 \dissertationSubheading[sec:limitations-reprise]{Limitations}
 
-Showing SQL templates here does not imply that any other chain was queried, and this study does not use the archived baselines as peer comparisons. All reported numbers are taken from the pipeline's machine-readable summaries for the matched cohort ($n=5{,}521$), the expanded wallet pool ($N=99{,}080$) and the holdout spender cohort ($n=1{,}335$).
+The SQL above was run only on Arbitrum One. All reported numbers come from the pipeline's machine-readable summaries for the matched cohort ($n=5{,}521$), the pool subsamples, the spender cohort ($n=1{,}335$) and the exploratory trader run; the registered June--August results come from the summary of that run (Section~\ref{sub:fresh-results}).
