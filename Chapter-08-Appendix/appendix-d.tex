@@ -22,7 +22,7 @@ An Aave-oriented preset is archived as well. Within the study window, several of
 
 That preset remains in the archive and is not drawn here.
 
-Although these matrices motivate future work on credit-delegation edges and cross-protocol lending labels, they leave Claims C1--C4 unchanged.
+Although these matrices motivate future work on credit-delegation edges and cross-protocol lending labels, they leave Claims C1--C5 unchanged.
 
 \dissertationSubheading[sec:why-archived]{Why the comparison uses two methods}
 
@@ -43,10 +43,10 @@ Running the evaluation pipeline's table export with the seven-method and six-Aav
 The archive tables and CSV exports use the identifiers below.
 
 \begin{description}
-\item[LP-PR] A transfer-graph variant whose alternative weighting is loss-penalized or liquidity-oriented. Empirically it tracks AWP closely on transfer families, a sign of shared payment-flow structure.
-\item[CW-AWP] A counterparty-weighted AWP variant, in the same construct family, that down-weights repeated transfers within one pair. Its transfer $\tau$ is slightly lower than AWP's.
-\item[LF-PR] A low-frequency or lightly filtered graph with very few edges and near-zero runtimes. Its rankings cannot be compared with full AWP, since the sparse graph fails as a baseline.
-\item[RiskProp] A risk-propagation style ranking on transfer-like edges, inspired by Lin et al.~\cend{12}. On this cohort it mirrors AWP numerically on several families. This implies that, under the study's parameterization, the implemented risk signal did not diverge strongly from transfer centrality.
+\item[LP-PR] The AWP transfer graph with each edge weight multiplied by one minus the GMX liquidation rate of its sender and one minus that of its receiver. It tracks AWP closely on the transfer families. Its weights use the same liquidation outcomes as the liquidation proxies, so it shares the circularity of GF-PR.
+\item[CW-AWP] AWP restricted to transfers of a fixed list of collateral tokens. Its transfer $\tau$ is slightly lower than AWP's.
+\item[LF-PR] A lending-flow graph from Aave events, with borrows as edges from the pool to the user and repayments and liquidations as edges from the user to the pool, all under AWP's time decay. Few cohort wallets used Aave on Arbitrum in the window, so the graph has very few edges and near-zero runtimes, and its rankings cannot be compared with AWP.
+\item[RiskProp] The AWP transfer graph with each edge weight multiplied by one minus the GMX liquidation rate of its sender. It borrows the idea of propagating risk from Lin et al.~\cend{12} but is not their method. On this cohort it mirrors AWP numerically on several families, so the liquidation weighting changed little.
 \item[LiqCall-PR / Borrow-PR / Repay-PR] Aave-oriented wallet-to-wallet graphs derived from liquidation calls, borrows, and repays, where applicable. On Arbitrum in the study window they have only tens to hundreds of edges, which leaves alignment weak and runtimes negligible.
 \item[Delegation-PR] Intended to use credit-delegation allowances. With zero delegation edges extracted, its scores are degenerate and its $\tau$ cannot be interpreted.
 \end{description}
@@ -63,5 +63,5 @@ Chapters~\ref{ch:results}--\ref{ch:discussion} concentrate on EndorseRank and AW
 \item Scope: the contribution is allowance-based endorsement; it is not meant to survey every possible PageRank variant.
 \end{enumerate}
 
-By these criteria, EndorseRank (allowance) and AWP (transfer) make up a minimal sufficient set. The seven-method and six-Aave matrices remain archived and do not enter into Claims~C1--C4.
+By these criteria, EndorseRank (allowance) and AWP (transfer) make up a minimal sufficient set. The seven-method and six-Aave matrices remain archived and do not enter into Claims~C1--C5.
 
