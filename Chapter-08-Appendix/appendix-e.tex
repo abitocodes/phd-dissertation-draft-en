@@ -17,7 +17,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \begin{itemize}
 \item Statement: at the same time points, the two methods produce different results on allowance vs.\ transfer checks.
 \item Evidence: family means with their CIs (Table~\ref{tab:alignment-family-ci}); the paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy results (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); the heatmap in Figure~\ref{fig:alignment-heatmap}.
-\item Note: contrasts i and v in Table~\ref{tab:tau-diff} include zero, so the claim is limited to between-method comparisons.
+\item Note: contrasts i and v in Table~\ref{tab:tau-diff} include zero, and for EndorseRank their two coefficients have different ceilings (Section~\ref{sec:rank-divergence}), so the claim is limited to between-method comparisons.
 \end{itemize}
 
 \dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational efficiency}
@@ -63,7 +63,7 @@ This research does \emph{not} claim:
 
 \begin{itemize}
 \item that AWP has become obsolete;
-\item that EndorseRank aligns more closely with the allowance family than with the transfer family;
+\item that EndorseRank aligns more closely with the allowance family than with the transfer family (the two coefficients have different ceilings);
 \item that either EndorseRank or AWP forecasts the future growth of its own construct better than the raw $t_1$ degree does;
 \item that no combination of the two edge types can beat the single-layer methods, only that the per-node convex mixture tested here, with fixed $\lambda$, does not;
 \item that runtime scales favorably when the edge population grows beyond the cohort graph;
