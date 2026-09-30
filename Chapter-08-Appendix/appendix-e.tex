@@ -53,7 +53,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \item C1: the runtime evidence listed under H3/RQ3. The AWP/EndorseRank runtime ratio is $10.2\times$ on the matched cohort and ranges from $8.1\times$ to $12.2\times$ across the in-cohort and pool stages. In a profiling run on the matched cohort, matrix assembly takes about 94\% of the timed call and the iterations under 2\%; assembly is $O(|E|)$ like the iterations, so the ratio follows the edge ratio of about $9.3$ (Appendix~\ref{sec:pr-sparsity}). The claim is specific to EndorseRank, since C-PR costs at least as much as AWP (Table~\ref{tab:benchmark-runtime}).
 \item C2: intended-construct checks in Table~\ref{tab:alignment-family-ci}, namely allowance for EndorseRank and transfer for AWP.
 \item C3: the construct-specific winners identified under H2/RQ2, tested in Table~\ref{tab:tau-diff}.
-\item C4: the out-of-window comparison on the spender holdout (Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}), bounded by the degree baselines, with the exploratory trader run (Section~\ref{sub:trader-results}) as its limit on the traders; robustness is reported in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size} and Figure~\ref{fig:damping-sensitivity}.
+\item C4: the out-of-window comparison on the spender holdout (Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}), bounded by the degree baselines and by the re-weighting check (Table~\ref{tab:holdout-weighting}), with the exploratory trader run (Section~\ref{sub:trader-results}) as its limit on the traders; robustness is reported in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size} and Figure~\ref{fig:damping-sensitivity}.
 \item C5: coupling does not beat both single-layer methods, a bounded negative result, and its exploratory gain over AWP alone is decided by the registered replication; see RQ5 above. On the holdout, C-PR lies between EndorseRank and AWP on new approval pairs at every $\lambda$, and on new transfer senders at $\lambda=0.5$ and $0.75$; at $\lambda=0.25$ it is $0.004$ below AWP on new senders, with overlapping intervals (Table~\ref{tab:holdout-spenders}). In the same window, at every $\lambda$, it is below AWP but within $0.015$ of it on the transfer family, near zero on the allowance family (from $-0.009$ to $0.006$, against $0.355$ for EndorseRank), and above both single-layer methods on Sybil stability (Table~\ref{tab:alignment-hybrid}).
 \end{itemize}
 
@@ -65,6 +65,7 @@ This research does \emph{not} claim:
 \item that AWP has become obsolete;
 \item that EndorseRank aligns more closely with the allowance family than with the transfer family (the two coefficients have different ceilings);
 \item that either EndorseRank or AWP forecasts the future growth of its own construct better than the raw $t_1$ degree does;
+\item that EndorseRank predicts new transfer senders better than AWP whatever the edge weights (the lead holds for raw amounts only);
 \item that no combination of the two edge types can beat the single-layer methods, only that the per-node convex mixture tested here, with fixed $\lambda$, does not;
 \item that runtime scales favorably when the edge population grows beyond the cohort graph;
 \item that, without replication, the results generalize beyond Arbitrum One and the study window;
