@@ -8,8 +8,8 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 
 \begin{itemize}
 \item Statement: on the same cohort, EndorseRank and AWP rank wallets differently.
-\item Evidence: inter-method Kendall $\tau_b=0.316$ with its 95\% CI (last row of Table~\ref{tab:alignment-family-ci}; Section~\ref{sec:rank-divergence}); the rank scatter plot in Figure~\ref{fig:rank-scatter}; score distributions plotted in Figure~\ref{fig:score-distributions}.
-\item Interpretation: the rankings are related but not equivalent; the O1 criterion is met (Table~\ref{tab:objectives-achievement}).
+\item Evidence: inter-method Kendall $\tau_b=0.316$ with its 95\% CI (last row of Table~\ref{tab:alignment-family-ci}; Section~\ref{sec:rank-divergence}); the rank scatter plot in Figure~\ref{fig:rank-scatter}; score distributions plotted in Figure~\ref{fig:score-distributions}; $\tau_b=-0.025$ when the wallets outside each graph are kept as isolated nodes (Table~\ref{tab:tie-sensitivity}).
+\item Interpretation: the rankings are not equivalent, and their agreement comes from the wallets that EndorseRank scores zero; the O1 criterion is met (Table~\ref{tab:objectives-achievement}).
 \end{itemize}
 
 \dissertationSubheading[sec:map-h2]{H2 / RQ2: Construct-specific alignment}
@@ -17,7 +17,7 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \begin{itemize}
 \item Statement: at the same time points, the two methods produce different results on allowance vs.\ transfer checks.
 \item Evidence: family means with their CIs (Table~\ref{tab:alignment-family-ci}); the paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy results (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); the heatmap in Figure~\ref{fig:alignment-heatmap}.
-\item Note: contrasts i and v in Table~\ref{tab:tau-diff} include zero, and for EndorseRank their two coefficients have different ceilings (Section~\ref{sec:rank-divergence}), so the claim is limited to between-method comparisons.
+\item Note: contrasts i and v in Table~\ref{tab:tau-diff} include zero, and for EndorseRank their two coefficients have different ceilings (Section~\ref{sec:rank-divergence}), so the claim is limited to between-method comparisons. Both contrasts are large and positive with the wallets outside the allowance graph kept as isolated nodes (Table~\ref{tab:tie-sensitivity}), a rule tried after the results were known.
 \end{itemize}
 
 \dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational efficiency}
