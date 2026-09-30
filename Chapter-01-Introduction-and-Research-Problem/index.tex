@@ -84,15 +84,15 @@ A second window was registered on 28~September~2026, after the results of this s
 \toprule
 Item & Addresses & Reported in \\
 \midrule
-H1 / RQ1 & Do EndorseRank and AWP produce different wallet orderings? & \S\ref{sec:rank-divergence}; inter-method $\tau$ with 95\% CI \\
-H2 / RQ2 & Which method aligns with the allowance checks, and which with the transfer checks? & Tables~\ref{tab:alignment-family-ci} and~\ref{tab:tau-diff}; Claims C2--C3 \\
+H1 / RQ1 & Do EndorseRank and AWP produce different wallet orderings? & \S\ref{sec:rank-divergence}; inter-method $\tau$ with 95\% CI; Table~\ref{tab:tie-sensitivity} \\
+H2 / RQ2 & Which method aligns with the allowance checks, and which with the transfer checks? & Tables~\ref{tab:alignment-family-ci}, \ref{tab:tau-diff} and~\ref{tab:tie-sensitivity}; Claims C2--C3 \\
 H3 / RQ3 & Is EndorseRank faster to compute than AWP at equal $n$? & Tables~\ref{tab:benchmark-runtime}--\ref{tab:benchmark-scaling}; Claim C1 \\
-RQ4 & Do $t_1$ scores predict $t_2$ new approvals better than AWP and than the spender's approval count at $t_1$? & \S\ref{sec:holdout-results}; Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}; Claim C4 \\
+RQ4 & Do $t_1$ scores predict $t_2$ new approvals better than AWP and than the spender's approval count at $t_1$? & \S\ref{sec:holdout-results}; Tables~\ref{tab:holdout-spenders}, \ref{tab:holdout-diff} and~\ref{tab:holdout-weighting}; Claim C4 \\
 RQ5 & Does the coupled operator C-PR improve on AWP, and does it rank wallets better than both single-layer scores? & \S\ref{sec:coupled-results}, \S\ref{sec:holdout-results} and~\S\ref{sub:fresh-results}; Tables~\ref{tab:alignment-hybrid}, \ref{tab:tau-diff-hybrid} and~\ref{tab:holdout-diff} \\
 C1 & EndorseRank vs.\ AWP runtime and graph size & Table~\ref{tab:benchmark-runtime} \\
 C2 & Intended-construct checks: allowance for ER, transfer for AWP & Tables~\ref{tab:alignment-transfer}--\ref{tab:alignment-allowance} \\
 C3 & Construct-specific winners (EndorseRank vs.\ AWP) & Table~\ref{tab:alignment-family-ci} \\
-C4 & Out of window the allowance edge beats the transfer edge, and the raw degree beats both PageRanks & Tables~\ref{tab:benchmark-runtime}, \ref{tab:alignment-family-ci}, \ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} \\
+C4 & Out of window the allowance edge beats the transfer edge on new approvals, and on new senders only with raw-amount weights; the raw degree beats both PageRanks & Tables~\ref{tab:benchmark-runtime}, \ref{tab:alignment-family-ci}, \ref{tab:holdout-spenders}, \ref{tab:holdout-diff} and~\ref{tab:holdout-weighting} \\
 C5 & Coupling the two edge types does not beat both single-layer methods; its exploratory gain over AWP goes to a registered replication & Tables~\ref{tab:alignment-hybrid}, \ref{tab:tau-diff-hybrid} and~\ref{tab:holdout-diff}; \S\ref{sub:fresh-results} \\
 \bottomrule
 \end{tabular}
