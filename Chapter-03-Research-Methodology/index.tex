@@ -337,7 +337,7 @@ The pipeline also computed other quantities over the label window: a revoke rate
 
 \dissertationSubsubheading[sub:trader-holdout]{Trader outcomes in the spring window}
 
-The spender cohort says little about the traders who make up the matched cohort, because most of them receive no approvals. On 29~August~2026, before the coupled operator existed, an exploratory run applied the spring freeze to the matched cohort. It scored EndorseRank and AWP for the 4,227 matched wallets in the freeze-date graph and compared them with GMX success labels counted from March to May: the number of profitable closes, the realized gain and the share of closes that were profitable. These labels are defined for the 1,860 wallets with at least three closes in that window. The run used 200 bootstrap resamples instead of 400. It scored no C-PR and had no GMX liquidation label; its other labels, among them inverse-risk measures and Aave liquidations, are in the same summary file. Chapter~\ref{ch:results} reports it as exploratory.
+The spender cohort says little about the traders who make up the matched cohort, because most of them receive no approvals. On 29~August~2026, before the coupled operator existed, an exploratory run applied the spring freeze to the matched cohort. It scored EndorseRank and AWP for the 4,227 matched wallets in the freeze-date graph and compared them with GMX success labels counted from March to May: the number of profitable closes, the realized gain and the share of closes that were profitable. These labels are defined for the 1,860 wallets with at least three closes in that window. The run used 200 bootstrap resamples instead of 400. It scored no C-PR and had no GMX liquidation label; its other labels, among them Aave liquidations and inverse-risk measures computed before the sign correction of Appendix~\ref{sec:supplementary-summary}, are in the same summary file. Chapter~\ref{ch:results} reports it as exploratory.
 
 \dissertationSubsubheading[sub:fresh-holdout]{Registered replication: June to August 2026}
 
@@ -498,7 +498,7 @@ On the matched cohort we vary the PageRank damping over $d\in\{0.75,0.85,0.95\}$
 
 \dissertationSubsubheading[sub:top-tokens]{Top-token subgraph}
 
-For this check we keep only the $20$ ERC-20 tokens with the largest summed amounts over the window, adding raw transfer amounts and raw allowance values, and recompute EndorseRank and AWP on that subgraph. Amounts are raw base units and an unlimited approval counts as $2^{256}-1$, so this ranking favors tokens with many unlimited approvals and large supplies; it is not a ranking by economic value. The check asks whether the family-level results change when every other token is dropped.
+For this check we keep only $20$ ERC-20 tokens and recompute EndorseRank and AWP on that subgraph. The first selection takes the tokens with the largest summed amounts over the window, adding raw transfer amounts and raw allowance values. Amounts are raw base units and an unlimited approval counts as $2^{256}-1$, so this ranking favors tokens with many unlimited approvals and large supplies. A second selection, added after the results were known, takes the tokens with the most rows (transfer events plus latest allowances). Neither is a ranking by economic value. The check asks whether the family-level results change when every other token is dropped.
 
 \dissertationSubsubheading[sub:sample-size-protocol]{Sample-definition sensitivity}
 

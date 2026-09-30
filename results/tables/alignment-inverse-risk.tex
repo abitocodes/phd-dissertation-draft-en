@@ -11,14 +11,14 @@
 Proxy & Spearman $\rho$ & Kendall $\tau$ & 95\% CI of $\tau$ \\
 \midrule
 \multicolumn{4}{l}{\textit{EndorseRank}} \\
-Loss avoidance ($-\sum\min(\text{PnL},0)$) & 0.097 & 0.079 & [0.060, 0.103] \\
+Loss avoidance ($\sum\min(\text{PnL},0)$) & -0.097 & -0.079 & [-0.103, -0.060] \\
 Non-loss close rate & -0.037 & -0.031 & [-0.053, -0.011] \\
-Worst-close PnL score ($-\min\text{PnL}$) & 0.070 & 0.057 & [0.037, 0.079] \\
+Worst-close PnL ($\min\text{PnL}$) & -0.070 & -0.057 & [-0.079, -0.037] \\
 \addlinespace
 \multicolumn{4}{l}{\textit{AWP}} \\
-Loss avoidance ($-\sum\min(\text{PnL},0)$) & 0.243 & 0.165 & [0.148, 0.183] \\
+Loss avoidance ($\sum\min(\text{PnL},0)$) & -0.243 & -0.165 & [-0.183, -0.148] \\
 Non-loss close rate & 0.028 & 0.019 & [0.002, 0.036] \\
-Worst-close PnL score ($-\min\text{PnL}$) & 0.204 & 0.137 & [0.119, 0.155] \\
+Worst-close PnL ($\min\text{PnL}$) & -0.204 & -0.137 & [-0.155, -0.119] \\
 
 \bottomrule
 \end{tabular}
