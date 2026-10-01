@@ -241,7 +241,7 @@ The steps for building the graph and running PageRank are listed in Algorithm~\r
 
 \dissertationSubsubheading[sub:awp-graph]{AWP transfer graph}
 
-AWP follows the method presented at IEEE RIVF 2023\cend{3}. In that method, a transfer $e$ of token amount $x_e$ made $\Delta t$ days before the observation window closes at $T_{\mathrm{obs}}$ contributes its amount times the decay factor
+AWP adapts the method presented at IEEE RIVF 2023\cend{3}. In the form used here, a transfer $e$ of token amount $x_e$ made $\Delta t$ days before the observation window closes at $T_{\mathrm{obs}}$ contributes its amount times the decay factor
 \begin{equation}
 \label{eq:logistic-decay}
 \sigma(\Delta t)
@@ -259,6 +259,8 @@ w_T(u,v)
 x_e\,\sigma(\Delta t_e).
 \end{equation}
 The sum runs over every transfer from $u$ to $v$ in the window, whatever the token, so raw base-unit amounts of different tokens are added together. A self-transfer ($u=v$) is kept and becomes a self-loop on $u$. The damping factor is again $d=0.85$. The decay curve is the logistic function of Equation~\eqref{eq:logistic}, and Figure~\ref{fig:logistic-decay-methods} shows its shape. Ages in the window run from $0$ to $182$ days, where the curve is close to linear. The weight falls from $\sigma(0)=0.858$ through $\sigma(90)=0.711$ to $\sigma(182)=0.495$, a factor of about $1.7$, and only events from the first two days of the window are older than $t_0$.
+
+The published method differs from this form in three respects. First, a transaction of value $z$ enters its edge through $V(z)=2/(1+e^{-bz})-1$, which lies between $0$ and $1$, and not through $z$ itself, so a single transaction adds at most its time weight. Second, the walk does not restart uniformly. Each address receives restart mass in proportion to its activeness, the sum over the addresses it has sent to of the time weight of its latest transaction to each, so addresses that sent recently and to many others are favored. Third, the paper scores Ethereum transactions and reports no parameter values. Its time weight is the logistic function of Equation~\eqref{eq:logistic-decay} written in calendar time instead of age, and the values $k=0.01$ and $t_0=180$ days, like the value of $b$ in the check below, are this study's choice. The AWP of this thesis keeps raw amounts and uniform restarts, which EndorseRank also uses, so the two single-layer scores differ only in their edges. Whether this weakens the baseline was checked after the spring results were known, by scoring the published form on the same data with $b=1$ on raw base units (Section~\ref{sub:awp-paper-form}). The same comparison is one of two sensitivity analyses registered for the June--August replication (Section~\ref{sub:fresh-holdout}).
 
 \begin{figure}[htbp]
 \centering
@@ -354,6 +356,8 @@ The rule compares C-PR with AWP through the paired difference $\Delta\tau=\tau_{
 \item F3, traders, liquidation-free close rate: the lower end of the interval lies above $-0.02$.
 \end{itemize}
 C-PR counts as improving on AWP only if all three hold, so no correction for multiple testing is needed. The margin of 0.02 is the half-width of the paired interval for the F2 contrast in the spring; a smaller difference could not be resolved at these sample sizes. One weakness of F3 was written down with the rule. If neither score predicts liquidation, F3 can pass with both coefficients near zero, so the two coefficients are reported next to the verdict. Three further results are reported in a fixed order and do not enter the decision: C-PR against AWP on the liquidation-free close rate as a superiority test (F4), C-PR against EndorseRank on the same label (F5), and the primary part of the 14~September rule, rerun on the new window (F6).
+
+Two sensitivity analyses were added on 1~October~2026, after the post hoc checks of Chapter~\ref{ch:results} and before any June--August log was extracted. Both are reported next to the decision, and neither enters it. The first repeats F1--F4 with AWP in its published form (Section~\ref{sub:awp-graph}) in place of the AWP of this thesis. The second repeats F1--F6 with the cohort wallets that a graph leaves out kept as isolated nodes instead of scored zero (Section~\ref{sec:rank-divergence}). Only EndorseRank and AWP change under the second rule, since every spender is in the allowance graph and every trader in the cohort is in the union graph that C-PR walks.
 
 \dissertationSubheading[sec:proxy-evaluation]{Construct-check design}
 
