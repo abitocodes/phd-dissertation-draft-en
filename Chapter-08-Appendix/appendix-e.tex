@@ -79,12 +79,13 @@ This research does \emph{not} claim:
 
 \begin{enumerate}
 \item A merged wallet-ranking table with the scores of EndorseRank, AWP, C-PR ($\lambda\in\{0.25,0.5,0.75\}$) and S-PR.
-\item The machine-readable holdout summary for the spender cohort, with the paired contrasts and primary-criterion verdict (committed under \texttt{results/holdout/}).
-\item The machine-readable evaluation summary: authoritative same-window numbers, per-run timings and the bootstrap protocol (committed under \texttt{results/}).
-\item The registered replication: the registration file and plan as committed on 1~October~2026, the extraction manifest with the hashes of both files, and the evaluation summary with every coefficient, contrast and verdict (committed under \texttt{results/config/} and \texttt{results/fresh\_2026q3/}).
+\item The machine-readable holdout summary for the spender cohort, with the paired contrasts and primary-criterion verdict (committed under \texttt{data/3-published-results-for-thesis/spring-holdout-2026-03-to-2026-05/}).
+\item The machine-readable evaluation summary: authoritative same-window numbers, per-run timings and the bootstrap protocol (committed under \texttt{data/3-published-results-for-thesis/}).
+\item The registered replication: the registration file and plan as committed on 1~October~2026, the extraction manifest with the hashes of both files, and the evaluation summary with every coefficient, contrast and verdict (committed under \texttt{config-copies/} and \texttt{registered-replication-2026-06-to-2026-08/} in \texttt{data/3-published-results-for-thesis/}).
 \item The exported table fragments (\texttt{results/tables/}).
 \item The exported vector figures (\texttt{Figures/generated/}).
-\item The archived extended-baseline matrices (optional).
+\item The extracted logs and the tables built from them (\texttt{data/1-raw-blockchain-logs/} and \texttt{data/2-processed-tables-and-evaluations/}); files over 100\,MiB are left out and can be rebuilt from the monthly files.
+\item The archived extended-baseline matrices (\texttt{data/4-archived-extended-baselines/}, optional).
 \end{enumerate}
 
 The tables and figures are rebuilt by running the evaluation pipeline on real data with the robustness sweeps, exporting the tables, and then redrawing the figures from the same artifacts (Appendix~\ref{sec:pipeline-stages}).

@@ -1,9 +1,10 @@
 # Dissertation results tables
 
 LaTeX fragments consumed by `Chapter-04-Implementation-and-Empirical-Results/index.tex` and Appendix.
-All numbers come from `A-Skill-Programs/margin_rank/data/processed/eval_summary.json`
-(pipeline run of 2026-09-12: 5 timed PageRank solves after one warm-up, 400 paired
-wallet-bootstrap resamples with seed 42).
+All numbers come from the summaries in `2-Dissertation-Draft-Works/wallet-reputation-experiments/data/3-published-results-for-thesis/`
+of `phd_works` (pipeline run of 2026-09-12: 5 timed PageRank solves after one warm-up, 400 paired
+wallet-bootstrap resamples with seed 42). The working copies are in `data/2-processed-tables-and-evaluations/`,
+and `data/README.md` in that folder describes every file.
 
 ## Main dissertation tables (Chapter 4)
 
@@ -34,7 +35,7 @@ outcome data it would be validated against.
 ## Regenerate (real BigQuery parquet + robustness)
 
 ```bash
-cd A-Skill-Programs/margin_rank
+cd 2-Dissertation-Draft-Works/wallet-reputation-experiments
 python scripts/run_dissertation_eval.py --real --robustness --benchmark-repeats 5
 python scripts/export_latex_results.py
 python scripts/export_method_matrix.py --preset three   # archive only
@@ -43,9 +44,9 @@ python scripts/generate_dissertation_figures.py
 
 ## Regenerate (offline synthetic)
 
-```bash
-python scripts/run_dissertation_eval.py --fixtures --n-wallets 571 --export-latex
-```
+Do not run `run_dissertation_eval.py --fixtures` in the `phd_works` checkout: it writes synthetic
+data over the real files in `data/2-processed-tables-and-evaluations/`, and with `--export-latex`
+it would write synthetic tables here.
 
 ## Figures
 
