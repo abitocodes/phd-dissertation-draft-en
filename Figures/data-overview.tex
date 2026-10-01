@@ -95,13 +95,13 @@
 \lanetitle{-7.88}{Registered replication, June--August 2026}
 \rowlabel{dsApproval}{-8.28}{Approval}
 \dsInput{dsApproval}{-8.28}{0}{6}{score input}
-\dsHeld{dsApproval}{-8.28}{6}{9}{new approval pairs}{dashed}
+\dsHeld{dsApproval}{-8.28}{6}{9}{new approval pairs}{solid}
 \rowlabel{dsTransfer}{-8.72}{Transfer}
 \dsInput{dsTransfer}{-8.72}{0}{6}{score input}
-\dsHeld{dsTransfer}{-8.72}{6}{9}{new senders}{dashed}
+\dsHeld{dsTransfer}{-8.72}{6}{9}{new senders}{solid}
 \rowlabel{dsGMX}{-9.16}{GMX V2}
-\dsHeld{dsGMX}{-9.16}{6}{9}{liquidation-free}{dashed}
-\laneuse{-7.78}{Spenders at 31 May and the matched traders in the 31 May graph: F1--F6 and two reported sensitivity analyses. The June--August logs are extracted only after the registration is committed (\S\ref{sub:fresh-holdout}, \S\ref{sub:fresh-results}).}
+\dsHeld{dsGMX}{-9.16}{6}{9}{liquidation-free}{solid}
+\laneuse{-7.78}{1,964 spenders at 31 May and the 5,151 matched traders in the 31 May graph, 1,402 of them with labels: F1--F6 and two reported sensitivity analyses. Extracted on 1 October 2026, after the registration was committed (\S\ref{sub:fresh-holdout}, \S\ref{sub:fresh-results}).}
 \lanerule{-9.51}
 
 % Lane F: runtime pool
@@ -135,10 +135,7 @@
   \fill[pattern=north east lines, pattern color=black!70] (8.6,-1.0) rectangle (9.05,-0.8);
   \draw[black!60, line width=0.7pt] (8.6,-1.0) rectangle (9.05,-0.8);
   \node[oneline, anchor=west] at (9.1,-0.9) {hatched: held-out labels, counted after the freeze};
-  \fill[pattern=north east lines, pattern color=black!70] (1.4,-1.42) rectangle (1.85,-1.22);
-  \draw[black!60, line width=0.7pt, dashed] (1.4,-1.42) rectangle (1.85,-1.22);
-  \node[oneline, anchor=west] at (1.9,-1.32) {dashed border: registered labels, not yet extracted};
-  \draw[black!70, dashed, line width=0.6pt] (8.825,-1.5) -- (8.825,-1.14);
-  \node[oneline, anchor=west] at (9.1,-1.32) {dashed line: freeze date};
+  \draw[black!70, dashed, line width=0.6pt] (1.625,-1.5) -- (1.625,-1.14);
+  \node[oneline, anchor=west] at (1.9,-1.32) {dashed line: freeze date};
 \end{scope}
 \end{tikzpicture}
