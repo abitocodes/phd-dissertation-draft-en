@@ -94,7 +94,16 @@ The damping factor $d$ interpolates between pure propagation along the graph (as
 
 \dissertationSubheading[sec:data-sources]{Data sources and sampling}
 
-This subsection specifies the empirical space, that is, the chain, time interval, public tables, events, and wallets that make up the main sample. No later step of graph or proxy construction brings in events from outside it.
+This subsection specifies the empirical space, that is, the chain, time interval, public tables, events, and wallets that make up the main sample. No later step of graph or proxy construction brings in events from outside it. Figure~\ref{fig:data-overview} places every kind of on-chain record used in the thesis on one calendar. It shows which months each analysis scores, which months it holds out as labels, and what each kind of record is used for.
+
+\begin{figure}[htbp]
+\centering
+\begin{adjustbox}{max width=\linewidth}
+\input{Figures/data-overview.tex}
+\end{adjustbox}
+\caption[{Blockchain data used in this thesis: sources, months covered, held-out labels and uses.}]{Blockchain data used in this thesis, all from Arbitrum One. Each lane is one analysis, and each bar is one kind of on-chain record placed on the months it covers. Solid bars are inputs to scores, to cohorts or to same-window checks. Hatched bars are labels counted after a freeze date and kept out of the scores; a dashed border marks the June--August labels of the registered replication, which have not been extracted yet. The text in a bar says what the records compute, and the right-hand column names the cohort, the research questions and the sections that report the results. The GMX records select the matched cohort, and the approval and transfer queries are filtered to it.}
+\label{fig:data-overview}
+\end{figure}
 
 \begin{itemize}
 \item Primary chain: All events in the analysis are drawn from Arbitrum One (chain ID $42161$), an optimistic rollup on Ethereum \cend{45} whose logs are included in the public BigQuery export. Staying on one chain removes the problem of cross-chain aliases, where a single user running different addresses on several chains would show up as distinct nodes. It also means that every wallet in the sample faces the same gas fees and network latencies. Arbitrum One is the only source of empirical data for our comparison.
