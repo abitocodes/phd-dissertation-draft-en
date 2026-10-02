@@ -57,7 +57,7 @@ Aave~V3 records credit delegation in \texttt{BorrowAllowanceDelegated} events, a
 
 \dissertationSubheading[sec:supplementary-summary]{Supplementary alignment summary table}
 
-The pipeline computes six proxy families, and Table~\ref{tab:alignment-summary} lists the family-mean $\tau$ for each. Among them are the liquidation, inverse-risk and GMX trading-success families, which were withdrawn from the primary comparison along with the GF-PR reference (Section~\ref{sub:gf-pr}). Until 30~September~2026 the pipeline negated two of the three inverse-risk proxies, the summed loss and the worst close, so both ranked the largest losses highest. They are now oriented like every other proxy, a value nearer zero meaning smaller losses, and the table shows the corrected values; the correction changes no other entry. Both scores are negative on this family, which fits the summed loss and the worst close growing with how much a wallet trades (Section~\ref{sec:holdout-results}). The transfer, allowance and Sybil-stability rows repeat those of Table~\ref{tab:alignment-family-ci}.
+The pipeline computes six proxy families, and Table~\ref{tab:alignment-summary} lists the family-mean $\tau$ of every score on each. Among them are the liquidation, inverse-risk and GMX trading-success families, which were withdrawn from the primary analysis along with the GF-PR reference (Section~\ref{sub:gf-pr}). Until 30~September~2026 the pipeline negated two of the three inverse-risk proxies, the summed loss and the worst close, so both ranked the largest losses highest. They are now oriented like every other proxy, a value nearer zero meaning smaller losses, and the table shows the corrected values; the correction changes no other entry. Every score is negative on this family, which fits the summed loss and the worst close growing with how much a wallet trades (Section~\ref{sec:same-window-alignment}). The transfer, allowance and Sybil-stability columns repeat Table~\ref{tab:alignment-hybrid} without intervals.
 
 \input{results/tables/alignment-summary.tex}
 
@@ -126,5 +126,6 @@ The formulas below are those of Chapter~\ref{ch:methodology}.
 \input{Chapter-08-Appendix/appendix-b.tex}
 \input{Chapter-08-Appendix/appendix-c.tex}
 \input{Chapter-08-Appendix/appendix-d.tex}
+\input{Chapter-08-Appendix/appendix-endorserank-awp.tex}
 \input{Chapter-08-Appendix/appendix-e.tex}
 \input{Chapter-08-Appendix/appendix-f.tex}

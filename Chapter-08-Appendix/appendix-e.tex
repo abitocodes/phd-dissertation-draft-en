@@ -8,22 +8,22 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 
 \begin{itemize}
 \item Statement: on the same cohort, EndorseRank and AWP rank wallets differently.
-\item Evidence: inter-method Kendall $\tau_b=0.360$ with its 95\% CI (last row of Table~\ref{tab:alignment-family-ci}; Section~\ref{sec:rank-divergence}); the rank scatter plot in Figure~\ref{fig:rank-scatter}; score distributions plotted in Figure~\ref{fig:score-distributions}; $\tau_b=-0.025$ when the wallets outside each graph are kept as isolated nodes (Table~\ref{tab:tie-sensitivity}).
+\item Evidence: inter-method Kendall $\tau_b=0.360$ with its 95\% CI (last row of Table~\ref{tab:tie-sensitivity}; Section~\ref{sec:rank-divergence}); the rank scatter plot in Figure~\ref{fig:rank-scatter}; score distributions plotted in Figure~\ref{fig:score-distributions}; $\tau_b=-0.025$ when the wallets outside each graph are kept as isolated nodes (Table~\ref{tab:tie-sensitivity}).
 \item Interpretation: the rankings are not equivalent, and their agreement comes from the wallets that EndorseRank scores zero; the O1 criterion is met (Table~\ref{tab:objectives-achievement}).
 \end{itemize}
 
-\dissertationSubheading[sec:map-h2]{H2 / RQ2: Construct-specific alignment}
+\dissertationSubheading[sec:map-h2]{H2 / RQ2: Same-window alignment}
 
 \begin{itemize}
-\item Statement: at the same time points, the two methods produce different results on allowance vs.\ transfer checks.
-\item Evidence: family means with their CIs (Table~\ref{tab:alignment-family-ci}); the paired $\Delta\tau$ contrasts ii and iii (Table~\ref{tab:tau-diff}); per-proxy results (Tables~\ref{tab:alignment-transfer} and~\ref{tab:alignment-allowance}); the heatmap in Figure~\ref{fig:alignment-heatmap}.
-\item Note: contrasts i and v in Table~\ref{tab:tau-diff} include zero, and for EndorseRank their two coefficients have different ceilings (Section~\ref{sec:rank-divergence}), so the claim is limited to between-method comparisons. Both contrasts are large and positive with the wallets outside the allowance graph kept as isolated nodes (Table~\ref{tab:tie-sensitivity}), a rule tried after the results were known. None of these comparisons was fixed in advance.
+\item Statement: in the same window, each score agrees with the checks built from the edges it walks on.
+\item Evidence: the family means of every score with their CIs (Table~\ref{tab:alignment-hybrid}); the same-window coefficients with the wallets outside a graph kept as isolated nodes (Table~\ref{tab:tie-sensitivity}).
+\item Note: the agreement is partly built in, since the proxies come from the same events as the graphs. EndorseRank's allowance and transfer coefficients have different ceilings (Section~\ref{sec:same-window-alignment}), so the claim says nothing about which of the two it follows more closely; with the wallets outside the allowance graph kept as isolated nodes its allowance coefficient rises to $0.990$ and its transfer coefficient falls to $-0.071$, a rule tried after the results were known. None of these comparisons was fixed in advance. The paired differences between EndorseRank and AWP, their per-proxy results and the heatmap are in Appendix~\ref{ch:appendix-er-awp}.
 \end{itemize}
 
-\dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational efficiency}
+\dissertationSubheading[sec:map-h3]{H3 / RQ3: Computational cost}
 
 \begin{itemize}
-\item Statement: at the same $n$, EndorseRank runs faster than AWP because it has fewer edges.
+\item Statement: at the same $n$, a score's computation time follows the number of edges in its graph, so EndorseRank, on the sparsest graph, runs fastest.
 \item Evidence: Table~\ref{tab:benchmark-runtime} (runtime, SD, memory, iterations, $|V|$, $|E|$); Tables~\ref{tab:benchmark-scaling-incohort} and~\ref{tab:benchmark-scaling}; Figure~\ref{fig:runtime-scaling}.
 \item Note: the expanded-pool stages add sampled addresses but no edges, and hence no solver-graph nodes, beyond the matched-cohort graph (Section~\ref{sub:runtime-scaling}); the claim is confined to edge count.
 \end{itemize}
@@ -31,9 +31,9 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 \dissertationSubheading[sec:map-rq4]{RQ4: Temporal holdout}
 
 \begin{itemize}
-\item Statement: with scores fixed at $t_1$, EndorseRank predicts the new owner--spender approvals that appear after $t_1$ and up to $t_2$ on the spender cohort ($n=1{,}335$) better than AWP does, but not better than the $t_1$ in-approve degree. AWP predicts new transfer senders better than EndorseRank, but not better than the $t_1$ transfer in-degree.
-\item Evidence: Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} (Section~\ref{sec:holdout-results}). EndorseRank minus AWP is $+0.271$ on new approval pairs and AWP minus EndorseRank $+0.061$ on new senders; EndorseRank minus the $t_1$ in-approve degree ($-0.317$) and AWP minus the $t_1$ in-degree ($-0.127$) are below zero. The June--August window repeats all four signs ($+0.215$, $+0.064$, $-0.280$ and $-0.116$; Table~\ref{tab:fresh-posthoc}).
-\item Qualification: both labels are the constructs as observed in a later period (new approvals, new senders), not credit or trading outcomes, and both are counts of arrivals. RQ4 replaced the proposal's trading-success validation (Section~\ref{sub:gf-pr}). Much of both leads is coverage: on the 977 spenders that had received a transfer before the freeze, EndorseRank's lead on new approval pairs falls to $+0.042$ and the two are level on new senders (Table~\ref{tab:holdout-receiving}). None of these comparisons was fixed in advance.
+\item Statement: with scores fixed at $t_1$, the scores predict the new owner--spender approvals and new transfer senders that appear after $t_1$ and up to $t_2$ on the spender cohort ($n=1{,}335$), with the edge type deciding which label a score ranks well, but no PageRank predicts either label better than the raw $t_1$ degree of its own edge type.
+\item Evidence: Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff} (Section~\ref{sec:holdout-results}). C-PR ($\lambda=1$) minus the $t_1$ in-approve degree is $-0.233$ (fixed before the run), EndorseRank minus the same degree $-0.317$ and AWP minus the $t_1$ in-degree $-0.127$, all below zero. The June--August window repeats the last two signs ($-0.280$ and $-0.116$; Table~\ref{tab:fresh-posthoc}), and AWP's holds on the 977 spenders that had received a transfer before the freeze ($-0.314$; Table~\ref{tab:holdout-receiving}).
+\item Qualification: both labels are the constructs as observed in a later period (new approvals, new senders), not credit or trading outcomes, and both are counts of arrivals. RQ4 replaced the proposal's trading-success validation (Section~\ref{sub:gf-pr}). Apart from the increment of C-PR ($\lambda=1$), none of these comparisons was fixed in advance. The differences between EndorseRank and AWP are in Appendix~\ref{ch:appendix-er-awp}.
 \end{itemize}
 
 \dissertationSubheading[sec:map-rq5]{RQ5: Coupled operator}
@@ -52,9 +52,9 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 
 \begin{itemize}
 \item C1: the runtime evidence listed under H3/RQ3. The AWP/EndorseRank runtime ratio is $9.2\times$ on the matched cohort and ranges from $8.6\times$ to $14.4\times$ across the in-cohort and pool stages. In a profiling run on the matched cohort, matrix assembly takes about 94\% of the timed call and the iterations about 1\%; assembly is $O(|E|)$ like the iterations, so the ratio follows the edge ratio of about $9.3$ (Appendix~\ref{sec:pr-sparsity}). The claim is specific to EndorseRank, since C-PR costs at least as much as AWP (Table~\ref{tab:benchmark-runtime}).
-\item C2: intended-construct checks in Table~\ref{tab:alignment-family-ci}, namely allowance for EndorseRank and transfer for AWP.
-\item C3: the construct-specific winners identified under H2/RQ2, tested in Table~\ref{tab:tau-diff}.
-\item C4: the out-of-window comparison on the spender holdout (Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}), bounded by the degree baselines and by the coverage check (Table~\ref{tab:holdout-receiving}), with the exploratory trader run (Section~\ref{sub:trader-results}) as its limit on the traders and the June--August window as its repetition (Table~\ref{tab:fresh-posthoc}); robustness is reported in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size}, Table~\ref{tab:endorserank-restarts} and Figure~\ref{fig:damping-sensitivity}.
+\item C2: the same-window agreement of every score with the checks of its own edges (Table~\ref{tab:alignment-hybrid}), partly built in and, for EndorseRank, set by the rule for wallets outside the graph (Table~\ref{tab:tie-sensitivity}).
+\item C3: the rank divergence listed under H1/RQ1 (Table~\ref{tab:tie-sensitivity}, Figure~\ref{fig:rank-scatter}).
+\item C4: the comparison of every PageRank with the raw degree of its own edge type on the spender holdout (Tables~\ref{tab:holdout-spenders} and~\ref{tab:holdout-diff}), with the coverage check (Table~\ref{tab:holdout-receiving}), the exploratory trader run (Table~\ref{tab:holdout-traders}) as its limit on the traders and the June--August window as its repetition (Table~\ref{tab:fresh-posthoc}); robustness is reported in Tables~\ref{tab:robustness-damping}--\ref{tab:robustness-sample-size}, Table~\ref{tab:endorserank-restarts} and Figure~\ref{fig:damping-sensitivity}.
 \item C5: coupling does not beat its two layers walked alone, a bounded negative result, and the registered replication does not confirm its exploratory gain over the transfer walk alone (Table~\ref{tab:fresh-contrasts}); see RQ5 above. On the holdout, C-PR lies between the two walks on new approval pairs at every $\lambda$ (Table~\ref{tab:holdout-spenders}). In the same window, at every $\lambda$, it is below the transfer walk but within $0.015$ of it on the transfer family, near zero on the allowance family (from $-0.009$ to $0.006$, against $0.355$ for the allowance walk and $0.375$ for EndorseRank), and above both walks on Sybil stability (Table~\ref{tab:alignment-hybrid}).
 \end{itemize}
 
@@ -63,10 +63,9 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 This research does \emph{not} claim:
 
 \begin{itemize}
-\item that AWP has become obsolete;
+\item that any of the scores is the better measure of reputation, or that AWP has become obsolete (the comparisons between EndorseRank and AWP in Appendix~\ref{ch:appendix-er-awp} follow the constructs and depend on coverage);
 \item that EndorseRank aligns more closely with the allowance family than with the transfer family (the two coefficients have different ceilings);
-\item that either EndorseRank or AWP forecasts the future growth of its own construct better than the raw $t_1$ degree does;
-\item that EndorseRank's lead on new approval pairs is independent of coverage (on the spenders that had received a transfer it shrinks to $+0.042$);
+\item that any PageRank of this thesis forecasts the future growth of its own construct better than the raw $t_1$ degree does;
 \item that the value parameter $b=1$, or EndorseRank's uniform restart, is the best choice (both were fixed by this study, the restart after comparing the two rules on these data);
 \item that C-PR improves on a walk over the transfers alone (the registered rule failed on new senders) or on AWP (it falls behind AWP on new senders in both windows);
 \item that no combination of the two edge types can beat the single-layer methods, only that the per-node convex mixture tested here, with fixed $\lambda$, does not;
