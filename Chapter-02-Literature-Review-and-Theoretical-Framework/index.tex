@@ -213,7 +213,7 @@ Only EndorseRank and AWP enter H1. H2/RQ2 and H3/RQ3 concern every score, and RQ
 The formal constructs are defined in Chapter~\ref{ch:introduction}. The terms below are used when results are interpreted:
 
 \begin{itemize}
-\item Primary methods: EndorseRank (allowance graph) and AWP (transfer graph), two single-layer PageRank scores on edges between addresses, intended for use as reputation signals.
+\item Single-layer methods: EndorseRank (allowance graph) and AWP (transfer graph), the two PageRank scores that walk on one edge type, intended for use as reputation signals. The coupled walks of Section~\ref{sub:coupled-graph} and the raw degrees are evaluated beside them.
 \item Primary graph construct: The graph that a method is \emph{designed} to rank, for example $G_{\text{approve}}$ for EndorseRank; it is separate from checks applied after scoring.
 \item Contemporaneous check: A local transfer or allowance statistic taken from the same window as the score \cend{22}.
 \item Temporal holdout: Scores are frozen at $t_1$ (28~February~2026). Two labels are then counted up to $t_2$ (31~May~2026): new owner--spender approval pairs and new transfer senders. A registered second window freezes scores on 31~May~2026 and counts labels from June to August~2026 (Section~\ref{sub:fresh-holdout}).
