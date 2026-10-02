@@ -54,7 +54,7 @@ WHERE block_timestamp >= TIMESTAMP('2025-12-01')
   );
 \end{verbatim}
 
-Before PageRank, post-processing keeps, for each (token, owner, spender) triple, the value of the last \texttt{Approval} event in (\texttt{block\_number}, \texttt{log\_index}) order and drops zero (revoked) values. It then computes time-decayed transfer weights and keeps every edge with at least one endpoint in the matched cohort. Amounts stay in raw token base units, the \texttt{uint256} value cast to a float, and no decimal scaling is applied before allowances or transfer values are summed across tokens.
+Before PageRank, post-processing keeps, for each (token, owner, spender) triple, the value of the last \texttt{Approval} event in (\texttt{block\_number}, \texttt{log\_index}) order and drops zero (revoked) values. It then weights each latest approval and each transfer by its time weight and bounded value weight, builds the raw-amount layers of C-PR beside them, and keeps every edge with at least one endpoint in the matched cohort. Amounts stay in raw token base units, the \texttt{uint256} value cast to a float, and no decimal scaling is applied before the value weight or, in the C-PR layers, before allowances or transfer values are summed across tokens.
 
 \dissertationSubheading[sec:config-keys]{Configuration keys}
 
@@ -63,7 +63,7 @@ All of the pipeline's parameters are kept in a single versioned configuration fi
 \begin{itemize}
 \item start and end timestamps of the observation window;
 \item the PageRank damping factor, tolerance, and maximum number of iterations;
-\item logistic decay parameters $k$ and $t_0$;
+\item logistic decay parameters $k$ and $t_0$ and the value-weight parameter $b$;
 \item subsample seeds and the number of benchmark repetitions;
 \item the locations to which intermediate artifacts and table fragments are written (\texttt{results/tables/}).
 \end{itemize}
@@ -72,7 +72,7 @@ Changing the damping factor or the decay parameter requires a rerun of the entir
 
 \dissertationSubheading[sec:complexity-notes]{Complexity notes}
 
-Write $|V|$ for the number of nodes and $m=|E|$ for the number of edges. Building the latest-allowance edges requires the $R_a$ approval rows in (\texttt{block\_number}, \texttt{log\_index}) order. The pipeline sorts them, which costs $O(R_a\log R_a)$ time; only if the rows already arrive in that order does one linear pass with a hash map keyed on (token, owner, spender) suffice, in $O(R_a)$ expected time. The transfer edges take $O(R_t)$ time over the transfer rows. For $I$ iterations, PageRank runs in $O(m + mI)$ time, where the first term is the cost of building the sparse operator. Table~\ref{tab:benchmark-runtime} lists the iteration and edge counts of both methods. EndorseRank needs roughly a third as many iterations as AWP, and it also has $m_{\mathrm{approve}}\ll m_{\mathrm{transfer}}$. In the measured calls, though, assembling the sparse operator takes most of the wall time, so the iteration saving contributes little and the runtime ratio follows the edge ratio (Appendix~\ref{sec:pr-sparsity}).
+Write $|V|$ for the number of nodes and $m=|E|$ for the number of edges. Building the latest-allowance edges requires the $R_a$ approval rows in (\texttt{block\_number}, \texttt{log\_index}) order. The pipeline sorts them, which costs $O(R_a\log R_a)$ time; only if the rows already arrive in that order does one linear pass with a hash map keyed on (token, owner, spender) suffice, in $O(R_a)$ expected time. The transfer edges take $O(R_t)$ time over the transfer rows. For $I$ iterations, PageRank runs in $O(m + mI)$ time, where the first term is the cost of building the sparse operator. Table~\ref{tab:benchmark-runtime} lists the iteration and edge counts of both methods. EndorseRank needs about two fifths as many iterations as AWP ($37$ against $91$), and it also has $m_{\mathrm{approve}}\ll m_{\mathrm{transfer}}$. In the measured calls, though, assembling the sparse operator takes most of the wall time, so the iteration saving contributes little and the runtime ratio follows the edge ratio (Appendix~\ref{sec:pr-sparsity}).
 
 The edge lists and score vectors account for most of the memory use. In Table~\ref{tab:benchmark-runtime}, the peak-memory ratio is of the same order of magnitude as the edge-count ratio.
 

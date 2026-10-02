@@ -64,7 +64,7 @@
 \dsInput{dsGMX}{-2.93}{0}{6}{archived trading families}
 \rowlabel{dsAave}{-3.37}{Aave V3}
 \dsInput{dsAave}{-3.37}{0}{6}{archived lending baselines}
-\laneuse{-1.55}{Approval and transfer edges together give \mbox{C-PR} and \mbox{S-PR}, and the transfer edges also give AWP's published form (\S\ref{sub:awp-paper-form}). RQ1--RQ3, the same-window part of RQ5 and the runtime benchmark (\S\S\ref{sec:benchmark-results}--\ref{sec:coupled-results}). The GMX and Aave rows enter no claim (Appendix~\ref{ch:appendix-archive}).}
+\laneuse{-1.55}{Approval and transfer edges together give \mbox{C-PR} and \mbox{S-PR}, weighted by raw amounts. RQ1--RQ3, the same-window part of RQ5 and the runtime benchmark (\S\S\ref{sec:benchmark-results}--\ref{sec:coupled-results}). The GMX and Aave rows enter no claim (Appendix~\ref{ch:appendix-archive}).}
 \lanerule{-3.72}
 
 % Lane C: spring holdout on spenders
@@ -88,7 +88,7 @@
 \dsHeld{dsGMX}{-6.79}{3}{6}{success labels}{solid}
 \rowlabel{dsAave}{-7.23}{Aave V3}
 \dsHeld{dsAave}{-7.23}{3}{6}{liquidations}{solid}
-\laneuse{-5.41}{The 4,227 matched wallets in the $t_1$ graph, 1,860 of them with at least three closes from March to May. EndorseRank and AWP only, under no rule (\S\ref{sub:trader-holdout}, \S\ref{sub:trader-results}).}
+\laneuse{-5.41}{The 4,227 matched wallets in the $t_1$ graph, 1,860 of them with at least three closes from March to May. EndorseRank, AWP and C-PR, scored after the labels were known and under no rule (\S\ref{sub:trader-holdout}, \S\ref{sub:trader-results}).}
 \lanerule{-7.58}
 
 % Lane E: registered replication
