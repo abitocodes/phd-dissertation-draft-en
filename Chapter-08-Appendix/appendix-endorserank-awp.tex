@@ -6,18 +6,7 @@ Chapter~\ref{ch:results} reports every score of the thesis together and reads ea
 
 \dissertationSubheading[sec:er-awp-same-window]{Same window}
 
-Table~\ref{tab:alignment-family-ci} gives the family means of the two scores on the matched cohort with their intervals, together with the agreement between the two score vectors, and Figure~\ref{fig:alignment-heatmap} draws them. The values are those of Table~\ref{tab:alignment-hybrid}.
-
-\input{results/tables/alignment-family-ci.tex}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{\figpath{alignment-heatmap.pdf}}
-\caption[{Family-mean Kendall $\tau$ on the matched cohort ($n=5{,}521$) for EndorseRank and AWP; these are the values of Table~\ref{tab:alignment-family-ci}.}]{Family-mean Kendall $\tau$ for EndorseRank and AWP on the matched cohort ($n=5{,}521$), plotted from the values in Table~\ref{tab:alignment-family-ci}. The color scale is centered at zero, so red cells are positive and blue cells negative.}
-\label{fig:alignment-heatmap}
-\end{figure}
-
-The two patterns cross. AWP tracks the transfer family most closely ($0.612$) and is slightly negative on the allowance family, while EndorseRank tracks the allowance family most closely ($0.375$) and the transfer family moderately ($0.330$). Table~\ref{tab:tau-diff} tests five paired differences on the same wallet resamples (Section~\ref{sec:statistical-tests}).
+Table~\ref{tab:alignment-hybrid} gives the family means of the two scores with their intervals, and the last row of Table~\ref{tab:tie-sensitivity} their agreement. The two patterns cross. AWP tracks the transfer family most closely ($0.612$) and is slightly negative on the allowance family, while EndorseRank tracks the allowance family most closely ($0.375$) and the transfer family moderately ($0.330$). Table~\ref{tab:tau-diff} tests five paired differences on the same wallet resamples (Section~\ref{sec:statistical-tests}), numbered i to v in the order of its rows.
 
 \input{results/tables/tau-diff.tex}
 
@@ -35,13 +24,13 @@ Each family mean condenses several per-proxy coefficients. Tables~\ref{tab:align
 
 \input{results/tables/alignment-transfer.tex}
 
-In Table~\ref{tab:alignment-transfer}, AWP's agreement with in-degree ($\tau=0.728$) is the largest per-proxy Kendall $\tau$ on the matched cohort, and its agreement with in-value is much lower ($0.495$); Section~\ref{sec:same-window-alignment} gives the reason. EndorseRank's transfer coefficients are moderate ($0.341$ and $0.319$), and their intervals overlap neither zero nor AWP's intervals. They mainly reflect that wallets in the allowance graph also receive more transfers than wallets outside it (Section~\ref{sec:rank-divergence}). A protocol that equates reputation with inbound flow can read that flow from the in-degree itself; AWP adds propagation and weighting, and out of window it ranks new senders below the in-degree (Section~\ref{sec:holdout-results}).
+In Table~\ref{tab:alignment-transfer}, AWP's agreement with in-degree is the largest per-proxy Kendall $\tau$ on the matched cohort, and its agreement with in-value is much lower, for the reason given in Section~\ref{sec:same-window-alignment}. EndorseRank's transfer coefficients are moderate ($0.341$ and $0.319$), and their intervals overlap neither zero nor AWP's intervals. They mainly reflect that wallets in the allowance graph also receive more transfers than wallets outside it (Section~\ref{sec:rank-divergence}). A protocol that equates reputation with inbound flow can read that flow from the in-degree itself, and out of window AWP ranks new senders below the in-degree (Section~\ref{sec:holdout-results}).
 
 \dissertationSubsubheading[sub:allowance-family]{Allowance family}
 
 \input{results/tables/alignment-allowance.tex}
 
-In Table~\ref{tab:alignment-allowance}, EndorseRank's coefficients on in-approve degree and in-approve value are almost equal ($0.376$ and $0.373$). Both proxies are positive for the same 131 wallets, and EndorseRank lifts all of them above its common value, so the two coefficients mostly measure the same split and sit at the ceiling that the ties allow ($0.377$ and $0.378$). AWP's coefficients are slightly negative ($-0.024$ and $-0.023$), with intervals that exclude zero: among the cohort's wallets, transfer centrality does not pick out those that are approved as spenders. The comparison rests on these 131 wallets and is partly built in, since EndorseRank is computed from the same approvals.
+In Table~\ref{tab:alignment-allowance}, EndorseRank's two coefficients are almost equal and sit at the ceiling that its ties allow (Section~\ref{sec:same-window-alignment}). AWP's are slightly negative ($-0.024$ and $-0.023$), with intervals that exclude zero: among the cohort's wallets, transfer centrality does not pick out those that are approved as spenders. The comparison rests on the 131 wallets that receive approvals and is partly built in, since EndorseRank is computed from the same approvals.
 
 \dissertationSubsubheading[sub:sybil-family]{Sybil-adjusted stability family}
 
