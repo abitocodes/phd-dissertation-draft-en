@@ -1,7 +1,7 @@
 # Dissertation results tables
 
 LaTeX fragments consumed by `Chapter-04-Implementation-and-Empirical-Results/index.tex` and Appendix.
-All numbers come from the summaries in `2-Dissertation-Draft-Works/wallet-reputation-experiments/data/3-published-results-for-thesis/`
+All numbers come from the summaries in `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments/data/3-published-results-for-thesis/`
 of `phd_works` (pipeline run of 2026-09-12: 5 timed PageRank solves after one warm-up, 400 paired
 wallet-bootstrap resamples with seed 42). The working copies are in `data/2-processed-tables-and-evaluations/`,
 and `data/README.md` in that folder describes every file.
@@ -35,7 +35,7 @@ outcome data it would be validated against.
 ## Regenerate (real BigQuery parquet + robustness)
 
 ```bash
-cd 2-Dissertation-Draft-Works/wallet-reputation-experiments
+cd 1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments
 python scripts/run_dissertation_eval.py --real --robustness --benchmark-repeats 5
 python scripts/export_latex_results.py
 python scripts/export_method_matrix.py --preset three   # archive only
