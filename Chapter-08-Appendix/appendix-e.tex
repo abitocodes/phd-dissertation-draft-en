@@ -62,9 +62,12 @@ This appendix maps each hypothesis, research question, and empirical claim to th
 This research does \emph{not} claim:
 
 \begin{itemize}
-\item that any of the scores is the better measure of reputation, or that AWP has become obsolete (the comparisons between EndorseRank and AWP in Appendix~\ref{ch:appendix-er-awp} follow the constructs and depend on coverage);
+\item that any of the scores is the better measure of reputation in general, or that AWP has become obsolete (the comparisons between EndorseRank and AWP in Appendix~\ref{ch:appendix-er-awp} follow the constructs and depend on coverage);
 \item that EndorseRank aligns more closely with the allowance family than with the transfer family (the two coefficients have different ceilings);
 \item that any PageRank of this thesis forecasts the future growth of its own construct better than the raw $t_1$ degree does;
+\item that allowance edges lead transfer edges on liquidation avoidance at the PageRank level, or that EndorseRank beats AWP there (the PageRank contrasts of Section~\ref{sub:neutral-label-results} are not resolved);
+\item that any score measures creditworthiness, default risk or trading skill (the allowance signal is lower on the profitable and non-loss shares, and the data contain no default label);
+\item that the liquidation-avoidance signal belongs to the allowance edge and not to account type (almost every approval-receiving trader is a contract account, and account type is unresolved);
 \item that the value parameter $b=1$, or EndorseRank's uniform restart, is the best choice (both were fixed by this study, the restart after comparing the two rules on these data);
 \item that C-PR improves on a walk over the transfers alone (the registered rule failed on new senders) or on AWP (it falls behind AWP on new senders in both windows);
 \item that no combination of the two edge types can beat the single-layer methods, only that the per-node convex mixture tested here, with fixed $\lambda$, does not;
@@ -87,3 +90,11 @@ This research does \emph{not} claim:
 \end{enumerate}
 
 The tables and figures are rebuilt by running the evaluation pipeline on real data with the robustness sweeps, exporting the tables, and then redrawing the figures from the same artifacts (Appendix~\ref{sec:pipeline-stages}).
+
+\dissertationSubheading[sec:map-c6]{C6 --- Outcomes built from neither edge type}
+
+\begin{itemize}
+\item Statement: on the trader outcome built from neither edge type that bears on counterparty risk, later liquidation avoidance, the approval count at the freeze ranked traders above the transfer count in the registered window, after stratification by the number of closes, and in the spring window.
+\item Evidence: Tables~\ref{tab:neutral-label-contrasts} and~\ref{tab:neutral-label-recipients} (Section~\ref{sub:neutral-label-results}); all six trader labels in both windows, Table~\ref{tab:neutral-label-grid}; the protocol, Section~\ref{sub:neutral-label-protocol}; the plan and claim ledger, \texttt{analysis/neutral-label/PLAN.md}, committed in \texttt{20e250f} before the analysis ran, with its script and results in the same folder.
+\item Qualification: a pre-specified post hoc analysis of existing data that adds no research question. The claim is count-level, since the like-for-like PageRank pair points the same way but is not resolved. Most recipients are contract accounts, so account type is an unresolved confound, and the same signal is lower on the profitable and non-loss shares, so it ranks forced-liquidation avoidance, not trading success. Any use in screening would first need a registered test on new data with account type controlled (Section~\ref{sec:future-work}).
+\end{itemize}
