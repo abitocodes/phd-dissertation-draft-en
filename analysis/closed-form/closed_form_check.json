@@ -1,0 +1,32 @@
+{
+ "W0_freeze_2026-02-28": {
+  "n_nodes": 4743,
+  "n_edges": 9765,
+  "n_pure_owners": 3408,
+  "n_pure_spenders": 1243,
+  "n_dual_role": 92,
+  "n_spenders_with_a_dual_role_in_neighbour": 50,
+  "common_owner_score_c": 0.00012888963739007917,
+  "spearman_er_vs_delta_spenders": 0.9454562338467711,
+  "spearman_er_vs_in_degree_spenders": 0.5840820000976553,
+  "spearman_delta_vs_in_degree_spenders": 0.5892556798031792,
+  "median_relative_error_closed_form": 4.790482031276593e-10,
+  "p95_relative_error_closed_form": 6.724978597038198e-09,
+  "share_spenders_within_1pct": 0.9640449438202248
+ },
+ "W1_freeze_2026-05-31": {
+  "n_nodes": 6442,
+  "n_edges": 14726,
+  "n_pure_owners": 4479,
+  "n_pure_spenders": 1852,
+  "n_dual_role": 111,
+  "n_spenders_with_a_dual_role_in_neighbour": 58,
+  "common_owner_score_c": 9.623802436988631e-05,
+  "spearman_er_vs_delta_spenders": 0.980443380047224,
+  "spearman_er_vs_in_degree_spenders": 0.5679144303431337,
+  "spearman_delta_vs_in_degree_spenders": 0.5703098649793908,
+  "median_relative_error_closed_form": 3.7580599102201095e-10,
+  "p95_relative_error_closed_form": 7.595904704869676e-06,
+  "share_spenders_within_1pct": 0.9735099337748344
+ }
+}
