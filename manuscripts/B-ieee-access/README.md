@@ -63,32 +63,32 @@ Two internal reviews were checked against the thesis, the analysis outputs, the 
 Not done, with reasons:
 
 - **New references outside the thesis list** (multiplex PageRank: Pedroche et al. 2016, Iacovacci & Bianconi 2016, Kivelä et al. 2014, De Domenico et al. 2013, MultiRank; growing networks: Mariani et al. 2015, Liao et al. 2017; PageRank sensitivity: Ng, Zheng & Jordan 2001, Bianchini et al. 2005, Boldi et al. 2005; Sybil defenses: SybilGuard, SybilRank, Viswanath et al. 2010; Qin et al. IMC 2021; Victor & Lüders FC 2019; Chen et al. INFOCOM 2018; Berger 1982 on intersection–union tests; Piaggio et al. 2012 CONSORT non-inferiority; registered reports in computing). The manuscript brief allows only references from the thesis list. Perez et al. 2021 and Bartoletti et al. 2021, which are on the list, were added. The authors should verify and add the others (author to-do 10).
-- **Port to `ieeeaccess.cls`.** The class is not available offline and the template site could not be reached from the build environment; the porting steps are below.
 - **Placeholders** (affiliations, e-mails, funding, acknowledgment, biographies, contribution confirmation): only the authors can fill them.
 - **Gas cost of an approval, allowance state at the freeze block, two-hop expansion.** These need an Arbitrum node or new BigQuery scans billed to the authors' project; the text says `c_gas` was not measured and gives a proxy for left-censoring (15.8% of "new" pairs under a three-month history were allowances already held).
 
-## What the authors must still fill in
+## Status of the author items (updated 9 October 2026)
 
-1. Affiliations and e-mail addresses of Donatien Koulla Moulla and David Sena Attipoe (placeholders: "[affiliation to be confirmed]", "[to be added]"), and the e-mail of Ernest Mnkandla.
-2. Funding statement (`\thanks{Funding: ...}` now; `\tfootnote{...}` in the official template).
-3. Acknowledgment text before the AI-use disclosure (placeholder in `\section*{Acknowledgment}`).
-4. Confirmation of the author contribution statement by all authors (the section starts with "[To be confirmed by all authors.]").
-5. Author biographies and photographs (IEEE Access prints both; placeholders "[Biography to be added.]").
-6. **Make `phd_works` public before submission** (it is private as of 9 October 2026, checked through the GitHub API) and archive a frozen snapshot with a DOI (Zenodo or Software Heritage); add the URL and DOI to the Data Availability section. Check that commits `0097fdb`, `f54d10c`, `4085ab9`, `f701400`, `d6d26c4`, `1462d76`, `ce50659` and `7129981` are visible after release, since the paper cites them.
-7. **Correct the thesis wording on the repository.** Chapter 1 (Section 1 design summary), Chapter 3 (`sub:fresh-holdout`), Chapter 4 (`sub:fresh-results`) and Appendix 8 (reproducibility, around line 36) call `phd_works` a "public repository". Either make it public before the thesis is examined or change those sentences to "the authors' repository"; otherwise reviewers comparing the thesis with either manuscript will see a contradiction.
-8. Consider whether the thesis should also state that Rule A's configuration entered version control on 28 September (see "Rule A timing" above), so the thesis and Manuscript B agree.
-9. Confirm the privacy plan in Data Availability (release aggregate results and code; address-level score files only with salted address hashes) or replace it with the release policy you prefer.
-10. Verify and add the related-work references listed under "Not done" (exact bibliographic details), and add access dates to the GMX and Human Passport documentation entries (IEEE style asks for "Accessed: Mon. DD, YYYY"; the sites could not be reached from the build environment).
-11. Optional, to strengthen Sections VII and VIII-A: measure the fee of an approval on Arbitrum One from a sample of the window's approval transactions, and read `allowance(owner, spender)` at the freeze block for a random sample of label pairs to quantify left-censoring.
-12. Final title and journal of Manuscript A in `references.bib` (`KwonA2026`). Update the note from "Manuscript submitted" to the citation once either paper is accepted.
-13. Date of submission and all-author approval in `cover-letter.tex`; upload Manuscript A as confidential material for the reviewers, as the cover letter says.
-14. ORCID iDs for the authors in the submission system.
+Planned submission date: **2 November 2026** (same day as Manuscript A), after all co-authors have approved both manuscripts.
+
+Done:
+- **Official template**: the source now uses `ieeeaccess.cls` from the IEEE Template Selector (pristine copy in `ieee-template/`; the class, fonts and logos are copied next to `main.tex`). Fig. 1 is precompiled from `figures/fig_layers_standalone.tex` because the class clashes with TikZ. The PDF has 17 pages.
+- Affiliations (CAIDS for Koulla Moulla and Attipoe), corresponding author, funding footnote ("no external funding"), acknowledgment, AI-use statement, short biographies without photos, `\EOD`.
+- Data Availability and Section on the registration now point to the public repositories; the thesis repository tag `manuscripts-2026-11` fixes the reported state.
+- The thesis now states Rule A's commit timing and the weighting sensitivity, so thesis and paper agree.
+- Cover letter dated 2 November 2026.
+
+Still for the authors:
+1. All co-authors approve the submission (the cover letter states that they have).
+2. ORCID iDs in ScholarOne; optional author photographs and longer biographies (IEEE asks for them at the final-files stage).
+3. Access dates for the GMX and Human Passport documentation entries; optional literature listed under "Not done".
+4. Optional: measure the approval gas fee and allowance state at the freeze block (Section VII/VIII-A).
+5. Check the current IEEE Access APC and arrange payment or a waiver before acceptance.
 
 ## Submission checklist (IEEE Access, ScholarOne)
 
-- [ ] Repository public and archived with a DOI; URL and DOI in Data Availability (to-do 6).
-- [ ] Placeholders filled (to-dos 1–5).
-- [ ] Port the source to the official template (steps below) and rebuild; check that the page count stays under 20.
+- [x] Repositories public; URLs in Data Availability (a Zenodo DOI is optional).
+- [x] Placeholders filled (affiliations, funding, acknowledgment, biographies).
+- [x] Official IEEE Access template (17 pages, under 20).
 - [ ] Abstract 150 to 250 words, single paragraph; index terms in alphabetical order.
 - [ ] Figures as vector PDF; Figs. 2 and 3 span both columns (`figure*`); colors are paired with marker shapes and line styles, so the figures read in grayscale.
 - [ ] Tables: captions above, booktabs rules; Tables I, III, IV and V span both columns.
@@ -112,46 +112,6 @@ latexmk -c                                                # optional: remove aux
 
 Requires a TeX Live installation with `IEEEtran.cls`, `IEEEtran.bst` and TikZ (TeX Live 2023 was used). The thesis repository's own `latexmkrc` (XeLaTeX) lives in the repository root and is not read when latexmk runs in this folder. To recompute the exploratory checks, see `supplement/README.md`.
 
-## Porting to the official IEEE Access template
+## Template
 
-`ieeeaccess.cls` is not available offline, so the draft uses `IEEEtran`, from which the IEEE Access class is derived. On Overleaf, open "IEEE Access LaTeX Template" (or download it from the IEEE Access author resources page) and then:
-
-1. Upload `main.tex`, `references.bib`, `fig_layers.tex`, `tab_timeline.tex`, `tab_ids.tex`, `tab_holdout.tex`, `tab_contrasts.tex`, `tab_explore.tex` and the folder `figures/` into the template project (keep the template's `ieeeaccess.cls`, logos and `IEEEtran.bst`).
-2. Replace `\documentclass[journal]{IEEEtran}` with `\documentclass{ieeeaccess}`. Keep `cite`, `amsmath`, `amssymb`, `graphicx`, `booktabs`, `array`, `url`, `xcolor` and `tikz` (with `\usetikzlibrary{arrows.meta}`). If the class already loads `hyperref` or `xcolor`, delete our `\usepackage` lines for them (keep the two `\definecolor` lines).
-3. Directly after `\begin{document}` insert the template's front-matter commands:
-   ```latex
-   \history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
-   \doi{10.1109/ACCESS.2017.DOI}
-   ```
-   Leave both as the template placeholders; the journal fills them in.
-4. Replace the `\author{...}` block (with its four `\thanks`) by
-   ```latex
-   \author{\uppercase{Taehong Kwon}\authorrefmark{1},
-   \uppercase{Ernest Mnkandla}\authorrefmark{1},
-   \uppercase{Donatien Koulla Moulla}\authorrefmark{2},
-   and \uppercase{David Sena Attipoe}\authorrefmark{2}}
-   \address[1]{School of Computing, College of Science, Engineering and Technology,
-     University of South Africa, South Africa (e-mail: thkwon@enu-tech.co.kr)}
-   \address[2]{[affiliation to be confirmed]}
-   \tfootnote{[Funding statement to be completed by the authors.]}
-   \markboth
-   {Kwon \headeretal: Coupling Authorization and Payment Layers in a PageRank Walk}
-   {Kwon \headeretal: Coupling Authorization and Payment Layers in a PageRank Walk}
-   \corresp{Corresponding author: Taehong Kwon (e-mail: thkwon@enu-tech.co.kr).}
-   ```
-   and delete our `\markboth{IEEE Access}{...}` line.
-5. Keep `\begin{abstract}...\end{abstract}`. Rename `IEEEkeywords` to `keywords`: `\begin{keywords} ... \end{keywords}`.
-6. Insert `\titlepgskip=-15pt` before `\maketitle`, and delete `\IEEEpeerreviewmaketitle`.
-7. Replace `\IEEEPARstart{L}{enders}` with `\PARstart{L}{enders}`.
-8. Leave `\newtheorem{proposition}{Proposition}` and the `IEEEproof` environment as they are (the class inherits them from IEEEtran). If the build complains, load `amsthm` and use `proof`.
-9. Keep `\appendices` before the Acknowledgment. Keep `\bibliographystyle{IEEEtran}` and `\bibliography{references}`; Overleaf runs BibTeX. Some editorial offices ask for the bibliography inline: then paste the contents of `main.bbl` in place of the two commands.
-10. Replace each `IEEEbiographynophoto` by
-    ```latex
-    \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{kwon.jpg}}]{Taehong Kwon}
-    ...
-    \end{IEEEbiography}
-    ```
-    with one photograph per author.
-11. Put `\EOD` on the line before `\end{document}`.
-12. The unnumbered end sections (Acknowledgment with the AI-use disclosure, Author Contributions, Conflict of Interest, Data Availability) can stay as `\section*{...}`. If the editorial office prefers fewer headings, merge the author contributions and conflict-of-interest statements into the Acknowledgment.
-13. Recompile, then check the two-column floats (Tables I, III, IV, V and Figs. 2, 3), the page count and the absence of overfull boxes.
+The manuscript is already on the official IEEE Access template (see Status above). To rebuild Fig. 1: `cd figures && pdflatex fig_layers_standalone.tex && mv fig_layers_standalone.pdf fig_layers.pdf`.

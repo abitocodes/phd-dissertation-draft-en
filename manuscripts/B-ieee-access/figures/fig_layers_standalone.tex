@@ -1,0 +1,38 @@
+% Standalone source of Fig. 1 (compiled to figures/fig_layers.pdf; ieeeaccess.cls clashes with TikZ).
+% Build: pdflatex fig_layers_standalone.tex && mv fig_layers_standalone.pdf fig_layers.pdf
+\documentclass[border=2pt]{standalone}
+\usepackage{mathptmx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\definecolor{authc}{HTML}{EB6834}
+\definecolor{payc}{HTML}{2A78D6}
+\newcommand{\cpr}{C-PR}
+\newcommand{\spr}{S-PR}
+\begin{document}
+\begin{tikzpicture}[>=Stealth, font=\footnotesize,
+  wal/.style={circle, draw=black!70, thick, minimum size=6.5mm, inner sep=0pt, fill=white},
+  con/.style={rectangle, draw=black!70, thick, minimum size=6.2mm, inner sep=0pt, fill=black!6},
+  auth/.style={->, thick, dashed, draw=authc},
+  pay/.style={->, thick, draw=payc}]
+  \node[wal] (u)  at (0,0)      {$u$};
+  \node[wal] (w)  at (2.0,1.05) {$w$};
+  \node[wal] (x)  at (2.0,-1.05){$x$};
+  \node[con] (r)  at (4.2,1.05) {$R$};
+  \node[con] (s)  at (4.2,-1.05){$S$};
+  \node[wal, draw=black!40, text=black!60] (z) at (4.2,0) {$z$};
+  \draw[auth] (u) -- (r);
+  \draw[auth] (u) to[bend right=8] (s);
+  \draw[auth] (w) -- (r);
+  \draw[auth] (x) -- (s);
+  \draw[pay] (u) -- (w);
+  \draw[pay] (u) -- (z);
+  \draw[pay] (r) -- (x);
+  \draw[auth] (-0.4,2.0) -- (0.4,2.0) node[right, text=black] {authorization (latest positive approval)};
+  \draw[pay] (-0.4,1.6) -- (0.4,1.6) node[right, text=black] {payment (token transfer)};
+  \node[align=left, anchor=north west, inner sep=1pt] at (-0.45,-1.55)
+    {$u\in B$: \cpr{} row $=\lambda P_A(u,\cdot)+(1-\lambda)P_T(u,\cdot)$\\
+     $w$, $x$: authorization out-edges only, follow $P_A$ for $\lambda>0$\\
+     $R$: payment out-edges only, follows $P_T$ for $\lambda<1$};
+\end{tikzpicture}
+\end{document}

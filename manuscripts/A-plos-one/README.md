@@ -107,21 +107,25 @@ PLOS collects these in the submission form, not in the manuscript file. Funding 
 - **Use of AI tools:** the full statement is in Methods ("Use of generative AI"), with a pointer in Acknowledgments. It names the tool and lists what it did, following the commit history. Two parts are left to the authors (see to-do 5).
 - **Related manuscript:** upload Manuscript B (`manuscripts/B-ieee-access/main.pdf`) as a "Related manuscript" file.
 
-## What the authors must still fill in, decide or run
+## Status of the author items (updated 9 October 2026)
 
-### Placeholders and decisions (no new analysis needed)
+Planned submission date: **2 November 2026** (same day as Manuscript B), after all co-authors have approved both manuscripts.
 
-1. **Affiliations.** Add the affiliations of Donatien Koulla Moulla and David Sena Attipoe (now "[affiliation to be confirmed]") and the city of the UNISA affiliation (now "[city to be confirmed]"). PLOS requires a city and country for each affiliation.
-2. **Ethics clearance.** Add the clearance reference in the Ethics statement. The ethics wording is reserved for the authors and was not edited.
-3. **Ethics and deposited data.** Reconcile the Ethics statement ("only aggregate statistics are reported") with the Data availability statement, which promises per-wallet analysis frames (address, liquidations, realized gains). Decide whether to deposit addresses in clear or hashed, and update both statements.
-4. **Funding, acknowledgments, CRediT and ORCID.** Complete the funding statement (form only) and the acknowledgments text, and confirm the CRediT roles and ORCID iDs. Suggested reviewers and editors are optional.
-5. **AI disclosure.** Complete the bracketed sentence in "Use of generative AI". State whether Claude was also used for the evaluation pipeline in `phd_works` (that repository's local clone has a shallow history, so this could not be checked). Describe how you verified the tool's outputs, for example by an independent re-run of `neutral_label_analysis.py`, code review, or checking each number against `results.json`. PLOS requires this. The cover letter refers to the same statement.
-6. **Public data.** Make both repositories public before submission, or give the editor an anonymous reviewer link. Create an archived release with a Zenodo DOI, archive `PLAN.md` and the registration files on OSF or Zenodo (for an independent timestamp), and insert the DOI in `main.tex` and the cover letter. Because the BigQuery table is not a versioned snapshot, also archive the extracted log subsets, or their hashes with the query text and run dates.
-7. **Cover letter.** Add the date, confirm Manuscript B's status and title, and replace the bracketed repository sentence.
-8. **References.** Add access dates to the web sources (EIP-20, EIP-2612, GMX documentation, Human Passport). Add any missing DOIs, pages or report numbers (Gudgeon 2020, Perez 2021, Fortunato 2008, Cheng 2005, Gyöngyi 2005, Wang 2022 pages, Page 1998 report number) **after checking them against the publishers' records**, in the thesis list and here alike. They were not added because every entry must match the thesis list.
-9. **Fig 1 check.** Run PACE (https://pacev2.apexcovantage.com/) on `figures/Fig1.tif`.
-10. **AWP paper.** Add the section or equation number of Do, Do and Nguyen (2023) that supports two statements: that the paper gives no parameter values ("We found no parameter values in the paper"), and that it validates AWP against inbound degree and value. Reviewer 1 asked for this. Alternatively, ask the AWP authors for their parameter values.
-11. **Optional literature.** Reviewer 1 suggested further literature. None of it is in the thesis list, so none was added: Victor & Lüders 2019 (ERC-20 token networks), Chen et al. 2018 and Lee et al. 2020 (Ethereum graph analysis), Qin et al. 2021 (DeFi liquidations), Cao et al. 2012 (SybilRank), Pandurangan, Raghavan & Upfal (PageRank vs in-degree), Kendall 1945 (ties), Gelman & Loken 2014 (forking paths), the ERC-4337 and EIP-7702 specifications, Permit2 documentation, and approval-phishing studies. Add only works you have verified, in the thesis list first.
+Done:
+- Affiliations: Kwon and Mnkandla, School of Computing, CSET, UNISA, Johannesburg; Koulla Moulla and Attipoe, Centre for Augmented Intelligence and Data Science (CAIDS), School of Computing, UNISA, Johannesburg (from the co-supervisors' e-mails of 28-29 July 2026).
+- Funding: "The authors received no specific funding for this work." (enter the same in the PLOS form). BigQuery cost under USD 20, paid by the first author, is stated in Data availability.
+- Acknowledgments written; AI-use statement completed (the tool's use in both repositories and the scripted number checks).
+- Data availability: both repositories are public; the tag `manuscripts-2026-11` in the thesis repository fixes the reported state; per-wallet frames are committed in `analysis/neutral-label/`.
+- Cover letter dated 2 November 2026; companion manuscript described as submitted at the same time to IEEE Access.
+
+Still for the authors:
+1. **Ethics statement**: insert the clearance reference (left as a bracket; ethics wording is reserved for the authors).
+2. **Approval and ORCID**: every co-author approves the final PDF; enter ORCID iDs and CRediT roles in the submission form.
+3. **References**: access dates for the web sources (EIP-20, EIP-2612, GMX, Human Passport) and any missing DOIs/pages, after checking publishers' records (thesis list first).
+4. **Fig 1**: run PACE (https://pacev2.apexcovantage.com/) on `figures/Fig1.tif`.
+5. **AWP paper**: add the section of Do, Do and Nguyen (2023) that supports "no parameter values" and its validation claim, or ask its authors.
+6. Optional: a Zenodo DOI for a release of each repository (PLOS accepts GitHub; a DOI makes the archive permanent).
+7. Optional literature suggested by the reviewer (list in the previous version of this README, commit 680cb44).
 
 ### Analyses the reviewers requested that only the authors' pipeline can produce
 
@@ -154,7 +158,7 @@ These analyses were **not** run. The brief allows only numbers from the authors'
 
 ## Submission checklist
 
-- [ ] Cover letter (`cover-letter.pdf`) with running title, date and repository sentence completed.
+- [x] Cover letter (`cover-letter.pdf`) dated 2 November 2026 with the public repository links.
 - [ ] Manuscript PDF (`main.pdf`) with line and page numbers; LaTeX source (`main.tex`, `references.bib`) for the files step.
 - [ ] Title in sentence case, under 250 characters; abstract under 300 words (292), no citations.
 - [ ] Section order: Abstract, Introduction, Materials and methods, Results, Discussion, Conclusions, Acknowledgments, References, Supporting information.
@@ -163,10 +167,10 @@ These analyses were **not** run. The brief allows only numbers from the authors'
 - [ ] Supporting information uploaded as separate files: S1 Text (`supporting/S1_Text.pdf`), S1 File (`supporting/S1_File.md`), S1 Table (`supporting/S1_Table.pdf`), S2 Table (`supporting/S2_Table.pdf`). Their captions are at the end of `main.tex`.
 - [ ] Manuscript B uploaded as a Related manuscript.
 - [ ] Ethics statement completed by the authors, and Data availability statement made consistent with it (Methods and submission form).
-- [ ] AI-use disclosure completed (bracketed sentence) in Methods; pointer in Acknowledgments.
+- [x] AI-use disclosure completed in Methods; pointer in Acknowledgments.
 - [ ] Author contributions (CRediT), competing interests and funding entered in the form.
-- [ ] Repositories public, or anonymous reviewer link, with archived release and DOI.
-- [ ] Affiliations with cities.
+- [x] Repositories public (tag `manuscripts-2026-11`); a Zenodo DOI is optional.
+- [x] Affiliations with cities.
 
 ## Claim discipline (from the revision brief)
 

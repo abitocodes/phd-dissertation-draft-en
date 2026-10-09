@@ -85,14 +85,12 @@
 Taehong Kwon\textsuperscript{1*},
 Ernest Mnkandla\textsuperscript{1},
 Donatien Koulla Moulla\textsuperscript{2},
-David Sena Attipoe\textsuperscript{3}
+David Sena Attipoe\textsuperscript{2}
 \\
 \bigskip
-\textbf{1} School of Computing, College of Science, Engineering and Technology, University of South Africa, [city to be confirmed], South Africa
+\textbf{1} School of Computing, College of Science, Engineering and Technology, University of South Africa, Johannesburg, South Africa
 \\
-\textbf{2} [affiliation to be confirmed]
-\\
-\textbf{3} [affiliation to be confirmed]
+\textbf{2} Centre for Augmented Intelligence and Data Science (CAIDS), School of Computing, University of South Africa, Johannesburg, South Africa
 \\
 \bigskip
 
@@ -243,11 +241,11 @@ This study used only publicly available blockchain data and involved no human pa
 
 \subsection*{Data availability}
 
-The evaluation code, the versioned configuration, the SQL queries, the extraction manifests, the machine-readable summaries behind every table, the registration files of the June--August window, the analysis plan, script and results of the trader comparison, and the per-wallet analysis frames are held in two Git repositories of the authors, which are currently private: \nolinkurl{github.com/abitocodes/phd_works}, folder \nolinkurl{1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments} (registration commit \texttt{4085ab9}, table revision \texttt{7129981}), and \nolinkurl{github.com/abitocodes/phd-dissertation-draft-en}, folder \nolinkurl{analysis/} (plan \texttt{20e250f}, script \texttt{dbe7cf0}, results \texttt{b89c48e}). Both will be made public, with an archived release, before submission [archive DOI, and an anonymous reviewer link if the release is delayed, to be inserted by the authors]. The plan is also S1 File, and the queries are in S1 Text. The raw logs can be re-extracted from the public BigQuery table named above; because that table is not a versioned snapshot, the archive will also hold the extracted log subsets, or their hashes, with the query text and run dates. [How addresses in the per-wallet frames are deposited is to be decided by the authors, consistently with the Ethics statement.]
+The evaluation code, the versioned configuration, the SQL queries, the extraction manifests, the extracted logs, the machine-readable summaries behind every table, the registration files of the June--August window, and the analysis plan, script, results and per-wallet analysis frames of the trader comparison are publicly available in two Git repositories: \nolinkurl{https://github.com/abitocodes/phd_works}, folder \nolinkurl{1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments} (registration commit \texttt{4085ab9}, table revision \texttt{7129981}), and \nolinkurl{https://github.com/abitocodes/phd-dissertation-draft-en}, folder \nolinkurl{analysis/} (plan \texttt{20e250f}, script \texttt{dbe7cf0}, results \texttt{b89c48e}; the tag \texttt{manuscripts-2026-11} fixes the state described here). The plan is also S1 File, and the queries are in S1 Text. Because the public BigQuery table is not a versioned snapshot, the extracted log subsets are kept in the first repository with the query text and run dates; re-running the queries cost less than USD~20. The per-wallet files hold addresses only as they appear on the public ledger, with no off-chain identity.
 
 \subsection*{Use of generative AI}
 
-Claude (Anthropic), used through the Claude Code agent, was used in this study for more than language editing. In the repository that holds the trader comparison, the tool drafted the analysis plan (S1 File, commit \texttt{20e250f}), wrote and ran the analysis script and the closed-form check (commits \texttt{dbe7cf0} and \texttt{cde51b8}), and produced the results files and the tables derived from them (\texttt{b89c48e}); these commits carry the author name Claude. The tool also generated Fig 1 and S1 and S2 Tables from those results, drafted and revised the text of this manuscript, its supporting information and the cover letter, and checked text and analysis scripts for errors. [The authors to state any further use, for example in the evaluation pipeline, and how they verified the tool's outputs, for instance by an independent re-run of the analysis scripts, review of the code, or a check of each reported number against the results files.] The authors take full responsibility for the content of the article.
+Claude (Anthropic), used through the Claude Code agent, was used in this study for more than language editing. In the repository that holds the trader comparison, the tool drafted the analysis plan (S1 File, commit \texttt{20e250f}), wrote and ran the analysis script and the closed-form check (commits \texttt{dbe7cf0} and \texttt{cde51b8}), and produced the results files and the tables derived from them (\texttt{b89c48e}); these commits carry the author name Claude. The tool also generated Fig 1 and S1 and S2 Tables from those results, drafted and revised the text of this manuscript, its supporting information and the cover letter, and checked text and analysis scripts for errors. The same tool was used through Claude Code to develop and maintain parts of the evaluation pipeline in the first repository; commits made with it there also carry the author name Claude. Before any new analysis was run, the analysis code reproduced the published summaries exactly, and every number reported here was checked against the results files with scripted checks. The authors take full responsibility for the content of the article.
 
 %======================================================================
 \section*{Results}
@@ -484,7 +482,7 @@ Authorization edges and payment edges carry different information about the same
 
 \section*{Acknowledgments}
 
-[Acknowledgments to be completed by the authors.] The use of Claude (Anthropic) in the analysis and in writing is described under Use of generative AI in Materials and methods.
+We thank the School of Computing at the University of South Africa for supporting the first author's doctoral research, of which this study is part. The event logs were drawn from the public Arbitrum One dataset hosted on Google BigQuery. The use of Claude (Anthropic) in the analysis and in writing is described under Use of generative AI in Materials and methods.
 
 \nolinenumbers
 
