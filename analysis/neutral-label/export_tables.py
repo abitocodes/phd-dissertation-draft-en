@@ -47,7 +47,7 @@ def contrasts_table() -> str:
     for wname, w in (("Registered window, June--August 2026", W1), ("Spring window, March--May 2026", W0)):
         res = w["plain"][lab]
         st = w["stratified_by_closes"][lab]["contrasts"]
-        rows.append(f"\\multicolumn{{6}}{{l}}{{\\emph{{{wname} ($n={res['n']:,}$ traders)}}}} \\\\".replace(",", "{,}"))
+        rows.append(f"\\multicolumn{{6}}{{l}}{{\\emph{{{wname} ($n={res['n']:,}$ traders)}}}} \\\\".replace(f"{res['n']:,}", f"{res['n']:,}".replace(",", "{,}")))
         for cid in ("P", "Q", "L1-L0", "ER-AWP", "L0-AWP", "ER-deg"):
             c = res["contrasts"][cid]
             c975 = iv(c["ci975"]) if cid in ("P", "Q") else "--"
@@ -57,7 +57,7 @@ def contrasts_table() -> str:
         for cid in ("P", "Q"):
             c = st[cid]
             rows.append(
-                f"\\quad stratified by closes: {NAMES[cid][0].lower() + NAMES[cid][1:]} & {f(c['tau_a'])} & {f(c['tau_b'])} & {f(c['delta'])} & {iv(c['ci95'])} & -- \\\\"
+                f"\\quad {NAMES[cid]}, stratified by closes & {f(c['tau_a'])} & {f(c['tau_b'])} & {f(c['delta'])} & {iv(c['ci95'])} & -- \\\\"
             )
         rows.append("\\midrule")
     rows = rows[:-1]
@@ -118,9 +118,9 @@ def recipients_table() -> str:
     for wname, w in (("Registered window, June--August 2026", W1), ("Spring window, March--May 2026", W0)):
         r = w["recipients"]
         cls = r["recipient_account_classes"]
-        cls_s = ", ".join(f"{v} {k}" for k, v in sorted(cls.items(), key=lambda kv: -kv[1]))
+        cls_s = ", ".join(f"{v} {(k.upper() if k == 'eoa' else k)}" for k, v in sorted(cls.items(), key=lambda kv: -kv[1]))
         rd = r["zero_liquidation_risk_difference"]
-        rows.append(f"\\multicolumn{{3}}{{l}}{{\\emph{{{wname} ($n={r['n_labelled']:,}$ labelled traders)}}}} \\\\".replace(",", "{,}"))
+        rows.append(f"\\multicolumn{{3}}{{l}}{{\\emph{{{wname} ($n={r['n_labelled']:,}$ labelled traders)}}}} \\\\".replace(f"{r['n_labelled']:,}", f"{r['n_labelled']:,}".replace(",", "{,}")))
         a, b = r["recipients"], r["non_recipients"]
         rows.append(f"Traders & {a['n']} & {b['n']:,} \\\\".replace(",", "{,}"))
         rows.append(f"Share with no liquidation & {a['zero_liquidation_share']:.3f} & {b['zero_liquidation_share']:.3f} \\\\")
