@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{flushright}
+Taehong Kwon\\
+School of Computing, College of Science, Engineering and Technology\\
+University of South Africa, South Africa\\
+thkwon@enu-tech.co.kr\\[0.3em]
+[Date of submission]
+\end{flushright}
+
+The Editor-in-Chief\\
+\emph{IEEE Access}
+
+Dear Editor,
+
+We submit the manuscript ``Coupling Authorization and Payment Layers in a PageRank Walk: A Pre-Specified, Hash-Gated Out-of-Window Test on an Ethereum Rollup'' for consideration as a Research Article in \emph{IEEE Access}.
+
+Wallet reputation on public blockchains is usually computed from token payments, although the same addresses are also linked by token allowances, the on-chain records by which an owner authorizes a spender. The manuscript treats the two relations as layers of one network and tests, out of window, whether a single PageRank walk that mixes them ranks better than the walk on the payment layer alone. The data are one-hop networks around the traders of a derivatives exchange on the Arbitrum One rollup, and most outcomes concern the contracts those traders newly approve or pay. Two decision rules were fixed in advance; the second was committed to the authors' repository before the logs of its window were extracted, and the extraction code checks that commit before it runs.
+
+Both rules failed, and the manuscript reports them as failed. The coupled walk again ranked later approvals better than the payment walk, but a loss on later transfer senders beyond the registered margin could not be excluded, and each layer's raw count outranked every walk. The paper states what the registration does and does not guarantee (full commit identifiers, file hashes and server-side push times are given), reports exploratory checks that separate the coupling from the edge weighting, and calibrates known link-farm results to the authorization layer.
+
+We believe the work matters to an international readership. Lending and margin protocols everywhere face pseudonymous counterparties, and on-chain reputation is a recurring proposal for screening them; the paper shows on public data which design choices did not help and how cheaply the authorization layer can be inflated. Because \emph{IEEE Access} reviews for technical soundness and welcomes well-executed negative results, it suits a study whose central findings are rules that were not met.
+
+The manuscript is original, has not been published, and is not under consideration elsewhere. It is derived from the first author's doctoral research at the University of South Africa. A related manuscript by the same authors has been submitted to \emph{PLOS ONE}. That paper compares the two edge types as separate scores against their raw degrees and studies trader outcomes built from neither edge type; the present paper concerns the coupling operator, its pre-specified test and the manipulability of the authorization layer. The two share data and cite each other; the reference rows that both report are attributed to the companion paper here. We upload the companion manuscript as confidential material for the reviewers. The study uses only public blockchain data and involves no human participants. The code, configuration, registration files and result summaries will be made public on submission. The authors declare no competing interests, and all authors have approved the submission [to be confirmed by all authors].
+
+Yours sincerely,
+
+Taehong Kwon (corresponding author), on behalf of Ernest Mnkandla, Donatien Koulla Moulla and David Sena Attipoe
+
+\end{document}

@@ -1,0 +1,33 @@
+% Table 1: order of commitments and their records. Sources: the commit history of the
+% authors' repository phd_works (GitHub API: commit, push-event and pull-request times),
+% the registration plan docs/fresh_holdout_2026q3_plan.md, the extraction manifest and
+% evaluation summary of the registered replication, and thesis Sections sub:coupled-graph,
+% sec:holdout-protocol, sub:fresh-holdout and the reproducibility appendix.
+\begin{table*}[!t]
+\centering
+\caption{Order of Commitments, the Record of Each, and What Was Known When It Was Made (Dates in 2026, Times in UTC)}
+\label{tab:timeline}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.085\textwidth}>{\raggedright\arraybackslash}p{0.355\textwidth}>{\raggedright\arraybackslash}p{0.285\textwidth}>{\raggedright\arraybackslash}p{0.235\textwidth}@{}}
+\toprule
+When & Commitment or event & Record & Already known \\
+\midrule
+29 Aug & Exploratory spring run on the trader cohort with three trading-success labels; only the two single-layer walks were scored, with no liquidation label and no coupled score & Disclosed in the Rule~B plan & Spring labels \\
+14 Sep & Coupled operator, $\lambda\in\{0.25,0.5,0.75\}$ and Rule~A written in a dated plan & Plan dated 14 Sep; first committed, with the configuration, in \texttt{0097fdb} on 28 Sep, the commit that also holds the first coupled spring results & Spring labels; spring results of both single-layer walks; the 29 Aug run \\
+14--28 Sep & Coupled spring scores computed and Rule~A evaluated & Summary file records a run at 14 Sep, 08:54; first committed in \texttt{0097fdb} & --- \\
+28 Sep, 08:43 & Rule~B (F1--F3, with F4--F6 to be reported), its window and its trader label written in a configuration file (status ``draft'') and a plan & \texttt{0097fdb}; push recorded by GitHub at 22:07:54 & All spring results, including the exploratory gain; the spring prevalence and same-window coefficients of the trader label (see Section~\ref{sec:protocol}) \\
+1 Oct, 12:50 & Sensitivity analyses S1 and S2 added to the configuration and the plan & \texttt{f54d10c}, the plan's last change & Spring scores of AWP \\
+1 Oct, 13:28 & Status set to ``registered'' & \texttt{4085ab9}; push recorded by GitHub at 13:28:45; merged at 13:33:45 (\texttt{f701400}) & No June--August log \\
+1 Oct, 14:05--14:07 & Dry run and nine extraction jobs; manifest records both file hashes and no override & Manifest; extracts in \texttt{d6d26c4} (pushed 14:17:32) & --- \\
+1 Oct, 14:23 & Registered evaluation, code as of \texttt{4085ab9} & Summary in \texttt{1462d76} (pushed 14:28:44), byte-identical today & --- \\
+2 Oct & EndorseRank scored on the registered cohorts outside the rule; code revised for the reference scores (\texttt{ce50659}); spring check rerun with identical values & Registered summary not regenerated & Registered results \\
+9 Oct & Plan of the post hoc trader comparison, source of the decomposition rows of Table~\ref{tab:contrasts} & \texttt{20e250f} (thesis repository) & Registered labels and single-score coefficients \\
+9 Oct & Exploratory diagnostics of Appendix~\ref{app:explore} & This paper's supplement & Every result above \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\parbox{\textwidth}{\footnotesize Full commit identifiers and file hashes are listed in Section~\ref{sec:gate}. Spring scores use 90 days of history (1 December 2025 to 28 February 2026); registered scores use 182 days (1 December 2025 to 31 May 2026).}
+\end{table*}

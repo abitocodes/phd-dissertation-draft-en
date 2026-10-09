@@ -1,0 +1,34 @@
+% Table 2: out-of-window Kendall tau_b. Sources: results/tables/holdout-spenders.tex
+% (spring), fresh-holdout.tex and fresh-posthoc.tex (registered window).
+\begin{table*}[!t]
+\centering
+\caption{Kendall $\tau_b$ Between Scores at the Freeze and Later Labels, With 95\% Paired-Bootstrap Intervals}
+\label{tab:holdout}
+\footnotesize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & \multicolumn{2}{c}{Spring: freeze 28 Feb, labels Mar--May} & \multicolumn{3}{c}{Registered: freeze 31 May, labels Jun--Aug} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-6}
+ & \multicolumn{2}{c}{Spenders ($n=1{,}335$)} & \multicolumn{2}{c}{Spenders ($n=1{,}964$)} & Traders ($n=1{,}402$) \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
+Score & New approval pairs & New transfer senders & New approval pairs & New transfer senders & Liquidation-free close rate \\
+\midrule
+In-approve degree & 0.711 [0.665, 0.759] & 0.404 [0.348, 0.467] & 0.613 [0.564, 0.663] & 0.371 [0.313, 0.429] & 0.144 [0.110, 0.172] \\
+Transfer in-degree & 0.117 [0.049, 0.191] & 0.472 [0.423, 0.520] & 0.128 [0.064, 0.188] & 0.435 [0.401, 0.468] & $-$0.006 [$-$0.046, 0.031] \\
+\midrule
+EndorseRank & 0.394 [0.360, 0.431] & 0.283 [0.247, 0.320] & 0.333$^{\dagger}$ [0.306, 0.364] & 0.255$^{\dagger}$ [0.227, 0.284] & 0.081$^{\dagger}$ [0.032, 0.123] \\
+AWP & 0.123 [0.068, 0.177] & 0.344 [0.307, 0.383] & 0.118 [0.071, 0.161] & 0.319 [0.291, 0.345] & 0.045 [0.009, 0.079] \\
+\midrule
+C-PR ($\lambda=1$), authorization walk & 0.479 [0.427, 0.529] & 0.372 [0.325, 0.424] & 0.338 [0.292, 0.388] & 0.289 [0.247, 0.332] & 0.086 [0.037, 0.129] \\
+C-PR ($\lambda=0.75$) & 0.314 [0.271, 0.357] & 0.287 [0.253, 0.330] & 0.243 [0.206, 0.280] & 0.248 [0.219, 0.275] & 0.086 [0.051, 0.121] \\
+C-PR ($\lambda=0.5$), primary & 0.295 [0.252, 0.336] & 0.277 [0.241, 0.318] & 0.238 [0.200, 0.274] & 0.246 [0.218, 0.274] & 0.083 [0.047, 0.119] \\
+C-PR ($\lambda=0.25$) & 0.271 [0.231, 0.314] & 0.266 [0.231, 0.306] & 0.228 [0.190, 0.265] & 0.245 [0.217, 0.273] & 0.077 [0.042, 0.114] \\
+C-PR ($\lambda=0$), payment walk & 0.044 [$-$0.011, 0.098] & 0.270 [0.235, 0.310] & 0.058 [0.012, 0.103] & 0.257 [0.229, 0.286] & 0.065 [0.030, 0.102] \\
+S-PR & 0.114 [0.052, 0.164] & 0.264 [0.229, 0.304] & 0.126 [0.076, 0.172] & 0.254 [0.223, 0.281] & 0.030 [$-$0.006, 0.066] \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\parbox{\textwidth}{\footnotesize Degrees are counted at the freeze. Spenders hold at least one positive latest allowance at the freeze; traders are sampled traders in the freeze-date graph with at least three closes in the label window. The degree, EndorseRank and AWP rows are reference scores, reported in full in the companion study \cite{KwonA2026}. In the spring, 222 spenders gained a new approval pair and 175 a new payment sender; in the registered window, 158 and 136 did, and 789 of the 1,402 traders had at least one liquidation. Intervals: 400 paired wallet resamples, seed 42. $^{\dagger}$Scored after the registered evaluation; not part of any rule.}
+\end{table*}

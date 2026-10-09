@@ -1,0 +1,44 @@
+% Table 4: exploratory checks, run on 9 October 2026 after every result was known.
+% Source: supplement/exploratory_checks.json (script supplement/exploratory_checks.py).
+\begin{table*}[!t]
+\centering
+\caption{Exploratory Checks: Paired Contrasts $\Delta\tau=\tau_a-\tau_b$ Under Changes That No Rule Fixed}
+\label{tab:explore}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lllcc@{}}
+\toprule
+Check & Contrast ($a$ minus $b$) & Label & Spring [95\% CI] & Registered [95\% CI] \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Spring sample selected from December--February closes only (1,170 spenders)}} \\
+ & A1: C-PR minus C-PR ($\lambda=1$) & new approval pairs & $-$0.172 [$-$0.207, $-$0.142] & --- \\
+ & A2: C-PR minus C-PR ($\lambda=0$) & new transfer senders & +0.014 [$-$0.006, 0.035] & --- \\
+ & C-PR minus C-PR ($\lambda=0$) & new approval pairs & +0.251 [0.199, 0.300] & --- \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Both layers with bounded weights (EndorseRank's and AWP's), uniform restarts}} \\
+ & C-PR minus C-PR ($\lambda=0$) & new approval pairs & +0.258 [0.203, 0.313] & +0.213 [0.168, 0.261] \\
+ & C-PR minus C-PR ($\lambda=0$) & new transfer senders & $-$0.026 [$-$0.047, $-$0.005] & $-$0.010 [$-$0.022, 0.002] \\
+ & C-PR minus C-PR ($\lambda=0$) & liquidation-free close rate & --- & +0.035 [0.025, 0.046] \\
+ & C-PR minus C-PR ($\lambda=1$) & new approval pairs & $-$0.067 [$-$0.088, $-$0.045] & $-$0.061 [$-$0.080, $-$0.043] \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Both layers with binary weights, uniform restarts}} \\
+ & C-PR minus C-PR ($\lambda=0$) & new approval pairs & +0.249 [0.196, 0.304] & +0.196 [0.151, 0.243] \\
+ & C-PR minus C-PR ($\lambda=0$) & new transfer senders & +0.007 [$-$0.013, 0.027] & $-$0.006 [$-$0.017, 0.008] \\
+ & C-PR minus C-PR ($\lambda=0$) & liquidation-free close rate & --- & +0.023 [0.014, 0.033] \\
+ & C-PR minus C-PR ($\lambda=1$) & new approval pairs & $-$0.077 [$-$0.102, $-$0.052] & $-$0.058 [$-$0.078, $-$0.040] \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Registered operator, two-way bootstrap (spenders with label-generating owners or senders; traders with calendar weeks)}} \\
+ & A1 / F6a: C-PR minus C-PR ($\lambda=1$) & new approval pairs & $-$0.184 [$-$0.206, $-$0.135] & --- \\
+ & A2 / F2: C-PR minus C-PR ($\lambda=0$) & new transfer senders & +0.007 [$-$0.014, 0.024] & $-$0.011 [$-$0.026, 0.005] \\
+ & F1: C-PR minus C-PR ($\lambda=0$) & new approval pairs & --- & +0.179 [0.126, 0.219] \\
+ & F3: C-PR minus C-PR ($\lambda=0$) & liquidation-free close rate & --- & +0.018 [0.009, 0.025] \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Seeded ablation at $d=0.5$, against the payment walk at the same damping}} \\
+ & S-PR minus C-PR ($\lambda=0$) & new approval pairs & +0.079 [0.050, 0.111] & +0.072 [0.045, 0.099] \\
+ & S-PR minus C-PR ($\lambda=0$) & new transfer senders & $-$0.001 [$-$0.014, 0.014] & $-$0.004 [$-$0.021, 0.011] \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\parbox{\textwidth}{\footnotesize C-PR without a $\lambda$ is $\lambda=0.5$. Intervals: 400 paired resamples, seed 42, as in the registered analysis; the two-way rows add Poisson(1) weights on owners or senders, or a multinomial draw of the 14 weeks of the label window. Several variants were computed after the outcomes were known, so no row supports a claim on its own.}
+\end{table*}

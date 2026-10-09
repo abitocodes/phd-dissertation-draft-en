@@ -1,0 +1,69 @@
+% Table 3: paired contrasts grouped by when they were fixed. Sources:
+% results/tables/holdout-diff.tex (spring), fresh-contrasts.tex and fresh-posthoc.tex
+% (registered window), neutral-label-contrasts.tex and analysis/neutral-label/results.json
+% (post hoc decomposition, B = 2,000).
+\begin{table*}[!t]
+\centering
+\caption{Paired Contrasts $\Delta\tau=\tau_a-\tau_b$, Grouped by When They Were Fixed}
+\label{tab:contrasts}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llllcl@{}}
+\toprule
+ & Contrast ($a$ minus $b$) & Label & Test & $\Delta\tau$ [95\% CI] & Verdict \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Rule A, fixed 14 Sep before any coupled score; spring window (Mar--May)}} \\
+A1 & C-PR minus C-PR ($\lambda=1$) & new approval pairs & no worse & $-$0.184 [$-$0.213, $-$0.149] & fails \\
+A2 & C-PR minus C-PR ($\lambda=0$) & new transfer senders & superiority & +0.007 [$-$0.012, 0.028] & fails \\
+ & C-PR ($\lambda=1$) minus in-approve degree & new approval pairs & --- & $-$0.233 [$-$0.291, $-$0.183] & fixed with A \\
+ & S-PR minus C-PR ($\lambda=1$) & new approval pairs & --- & $-$0.365 [$-$0.431, $-$0.300] & fixed with A \\
+ & S-PR minus C-PR ($\lambda=0$) & new transfer senders & --- & $-$0.006 [$-$0.017, 0.006] & fixed with A \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Exploratory, computed after the spring labels were known}} \\
+ & C-PR minus C-PR ($\lambda=0$) & new approval pairs & --- & +0.251 [0.203, 0.306] & hypothesis for B \\
+ & C-PR minus AWP & new approval pairs & --- & +0.172 [0.111, 0.226] & \\
+ & C-PR minus AWP & new transfer senders & --- & $-$0.067 [$-$0.095, $-$0.039] & \\
+ & C-PR minus EndorseRank & new approval pairs & --- & $-$0.099 [$-$0.133, $-$0.064] & \\
+ & EndorseRank minus in-approve degree & new approval pairs & --- & $-$0.317 [$-$0.354, $-$0.283] & \\
+ & AWP minus transfer in-degree & new transfer senders & --- & $-$0.127 [$-$0.150, $-$0.099] & \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Rule B, registered 1 Oct before extraction; June--August window; F1, F2 and F3 all required}} \\
+F1 & C-PR minus C-PR ($\lambda=0$) & new approval pairs & superiority & +0.179 [0.132, 0.225] & holds \\
+F2 & C-PR minus C-PR ($\lambda=0$) & new transfer senders & non-inferiority, $-0.02$ & $-$0.011 [$-$0.025, 0.003] & fails \\
+F3 & C-PR minus C-PR ($\lambda=0$) & liquidation-free close rate & non-inferiority, $-0.02$ & +0.018 [0.011, 0.024] & holds \\
+ & Decision & & & & \textbf{not met} \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Registered, reported in a fixed order outside the decision (nominal)}} \\
+F4 & C-PR minus C-PR ($\lambda=0$) & liquidation-free close rate & superiority & +0.018 [0.011, 0.024] & holds (secondary) \\
+F5 & C-PR minus C-PR ($\lambda=1$) & liquidation-free close rate & superiority & $-$0.003 [$-$0.060, 0.051] & fails \\
+F6a & C-PR minus C-PR ($\lambda=1$) & new approval pairs & no worse & $-$0.101 [$-$0.127, $-$0.076] & fails \\
+F6b & C-PR minus C-PR ($\lambda=0$) & new transfer senders & superiority & $-$0.011 [$-$0.025, 0.003] & fails \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Registered sensitivity S1: AWP as comparator (nominal)}} \\
+F1 & C-PR minus AWP & new approval pairs & superiority & +0.119 [0.075, 0.169] & holds \\
+F2 & C-PR minus AWP & new transfer senders & non-inferiority, $-0.02$ & $-$0.073 [$-$0.092, $-$0.055] & fails \\
+F3/F4 & C-PR minus AWP & liquidation-free close rate & both & +0.037 [0.011, 0.066] & holds \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Registered sensitivity S2: sampled wallets missing from a graph kept as isolated nodes (nominal)}} \\
+F1 & C-PR minus C-PR ($\lambda=0$) & new approval pairs & superiority & +0.185 [0.137, 0.232] & holds \\
+F2 & C-PR minus C-PR ($\lambda=0$) & new transfer senders & non-inferiority, $-0.02$ & $-$0.012 [$-$0.027, 0.003] & fails \\
+F3/F4 & C-PR minus C-PR ($\lambda=0$) & liquidation-free close rate & both & +0.018 [0.010, 0.024] & holds \\
+F5 & C-PR minus C-PR ($\lambda=1$) & liquidation-free close rate & superiority & $-$0.072 [$-$0.118, $-$0.028] & fails \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Computed after the registered evaluation; June--August window}} \\
+ & EndorseRank minus in-approve degree & new approval pairs & --- & $-$0.280 [$-$0.313, $-$0.247] & \\
+ & AWP minus transfer in-degree & new transfer senders & --- & $-$0.116 [$-$0.133, $-$0.095] & \\
+ & C-PR minus EndorseRank & new approval pairs & --- & $-$0.096 [$-$0.128, $-$0.065] & \\
+\midrule
+\multicolumn{6}{@{}l}{\emph{Post hoc decomposition, plan fixed 9 Oct before computation; 2,000 resamples}} \\
+ & C-PR ($\lambda=0$) minus AWP, Jun--Aug & liquidation-free close rate & --- & +0.019 [$-$0.010, 0.047] & \\
+ & C-PR ($\lambda=0$) minus AWP, Mar--May & liquidation-free close rate & --- & +0.037 [0.011, 0.063] & \\
+ & C-PR ($\lambda=1$) minus C-PR ($\lambda=0$), Jun--Aug & liquidation-free close rate & --- & +0.021 [$-$0.035, 0.080] & \\
+ & C-PR ($\lambda=1$) minus C-PR ($\lambda=0$), Mar--May & liquidation-free close rate & --- & $-$0.024 [$-$0.071, 0.022] & \\
+ & C-PR minus in-approve degree, Jun--Aug & liquidation-free close rate & --- & $-$0.061 [$-$0.111, $-$0.011] & \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\parbox{\textwidth}{\footnotesize C-PR without a $\lambda$ is the primary setting $\lambda=0.5$. Superiority holds when the interval lies above zero; non-inferiority holds when its lower end lies above the margin $-0.02$; ``no worse'' holds when the interval contains zero or lies above it. Nominal verdicts use unadjusted 95\% intervals; the fixed order was an order of reporting, not a gatekeeping sequence. Rule A also had a same-window secondary part (Section~\ref{sec:res-window}). The EndorseRank, AWP and degree rows are reference contrasts reported in full in \cite{KwonA2026}. Intervals use the same paired wallet resamples for $a$ and $b$ (400 resamples, seed 42, unless marked).}
+\end{table*}

@@ -1,0 +1,43 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.0cm]{geometry}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\pagestyle{empty}
+
+\begin{document}
+\small
+
+\begin{flushright}
+[date of submission]
+\end{flushright}
+
+The Editors\\
+\textit{PLOS ONE}
+
+\textbf{Re: Research Article submission, ``Allowance edges or transfer edges? Evaluating on-chain wallet reputation out of window against degree baselines''}\\
+Running title: \textit{Allowance versus transfer edges for on-chain wallet reputation}
+
+Dear Editors,
+
+We submit the above manuscript for consideration as a Research Article in \textit{PLOS ONE}. It asks what an ERC-20 allowance, the on-chain record of an owner authorizing a spender to move its tokens, adds to wallet reputation compared with the token transfers on which existing graph scores are built. On public data from the Arbitrum One rollup, we compare PageRank on latest allowances (EndorseRank) with the published transfer-based Adaptive Weighted PageRank and with the raw degree counts that both walks smooth, freezing every score before the outcomes it is tested on. Most of the ranked addresses are contracts, and the paper says so.
+
+\textbf{Why the work matters beyond its case study.} Lending and margin protocols worldwide must screen pseudonymous counterparties without credit files, and graph reputation scores are a frequently proposed answer. Our results show that such scores should be evaluated out of window and against the counts they smooth: in two windows no PageRank beat the raw degree of its own edge type on that edge type's own label, and a closed form shows what the allowance walk computes on one-hop samples. On trader outcomes recorded by the exchange rather than by either graph, a post hoc analysis, planned after part of its inputs were known, found that having received any approval ranked later avoidance of forced liquidation above the transfer in-degree. We report it with its limits: it rests on a few dozen mostly contract accounts that the two windows largely share, account type is a confound the design cannot assess, it was not compared with traders' own past liquidations, and the PageRank versions were not resolved. The evaluation design and the pipeline, which will be released openly, are useful to researchers and practitioners in computational finance, network science and blockchain security in any jurisdiction.
+
+\textbf{Why \textit{PLOS ONE}.} The journal assesses scientific soundness rather than perceived impact and publishes null and negative results. Several of our central findings are negative or qualified: propagation adds nothing over the raw count on this sample, the like-for-like PageRank comparison on liquidation avoidance is unresolved, and the signal does not extend to trading success. We report what was fixed in advance and what was not, give every effect size with its paired bootstrap interval, state which numbers were known when the post hoc analysis plan was committed, and provide that plan verbatim and every contrast it specified as supporting information.
+
+\textbf{Statements.} The manuscript is not under consideration elsewhere and has not been published. It is derived from the first author's doctoral research at the University of South Africa (UNISA). A related second manuscript, on a coupled walk over both edge types, its registered out-of-window test and the Sybil exposure of the authorization layer, has been submitted to \textit{IEEE Access}; we upload it as a related manuscript file. The two papers share the data source and the June--August registration, and the spender holdout coefficients of the counts and the two walks, the runtimes and, briefly, the closed form appear in both; each paper's main question is reported only in that paper. The underlying code, configuration, queries, result summaries, per-wallet analysis frames, registration files and analysis plan [are archived at <repository URL and DOI, to be inserted by the authors>; until the repositories are public, the editor can be given an anonymous reviewer link]. The study uses only public blockchain data and involves no human participants. The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. Funding: [to be completed by the authors]. Claude (Anthropic) was used to draft the analysis plan, write and run the analysis scripts, generate tables and figures, and draft and revise the text; the full statement is in Methods (Use of generative AI).
+
+Thank you for considering our work.
+
+Yours sincerely,
+
+Taehong Kwon (corresponding author), on behalf of all authors\\
+School of Computing, College of Science, Engineering and Technology, University of South Africa\\
+\href{mailto:thkwon@enu-tech.co.kr}{thkwon@enu-tech.co.kr}
+
+\end{document}

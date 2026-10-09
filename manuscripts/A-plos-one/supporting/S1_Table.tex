@@ -1,0 +1,54 @@
+% S1 Table of Manuscript A (PLOS ONE): descriptive statistics by window and cohort.
+% Every entry is copied from analysis/neutral-label/results.json, analysis/closed-form/closed_form_check.json
+% or the thesis tables named in README.md; nothing here is newly computed.
+\documentclass[10pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs,array}
+\pagestyle{empty}
+\begin{document}
+\raggedright
+{\large\textbf{S1 Table. Windows, cohorts, graphs and labels.}}
+
+\smallskip
+\begin{tabular}{>{\raggedright\arraybackslash}p{6.9cm}>{\raggedright\arraybackslash}p{4.1cm}>{\raggedright\arraybackslash}p{4.1cm}}
+\toprule
+ & W0 (spring) & W1 \\
+\midrule
+Scoring window & 1 Dec 2025 -- 28 Feb 2026 & 1 Dec 2025 -- 31 May 2026 \\
+Label window & 1 Mar -- 31 May 2026 & 1 Jun -- 31 Aug 2026 \\
+\addlinespace
+\multicolumn{3}{l}{\emph{Seed cohort (5,521 wallets with at least three GMX~V2 closes, 1 Dec 2025 -- 31 May 2026)}} \\
+Seed wallets present in the freeze-date graphs & 4,227 & 5,151 \\
+\addlinespace
+\multicolumn{3}{l}{\emph{Allowance graph at the freeze}} \\
+Nodes & 4,743 & 6,442 \\
+Edges, self-loops removed (with them) & 9,765 & 14,726 (14,727) \\
+Pure owners / pure spenders / both & 3,408 / 1,243 / 92 & 4,479 / 1,852 / 111 \\
+\addlinespace
+\multicolumn{3}{l}{\emph{Spender cohort}} \\
+Spenders (at least one positive latest allowance) & 1,335 & 1,964 \\
+Account type (code read at block 510,408,687) & 1,174 contract, 161 EOA$^{a}$ & not classified \\
+Spenders with at least one new approval pair & 222 (221 contracts) & 158 \\
+Spenders with at least one new transfer sender & 175 & 136 \\
+\addlinespace
+\multicolumn{3}{l}{\emph{Trader cohort (seed wallets in the graphs with at least three closes in the label window)}} \\
+Traders & 1,860 & 1,402 \\
+Traders with at least one liquidation & 923 & 789 \\
+Traders with every close liquidated & not reported & 17 \\
+Recipients (in-approve degree above zero at the freeze) & 39 & 44 \\
+In-approve degree of recipients & 1 for all 39 & 1 for 39, 2 for 5 \\
+Recipient account types$^{b}$ & 38 contract, 1 EOA & 40 contract, 3 unknown, 1 EOA \\
+Median closes in the label window, recipients / others & 27.0 / 15.0 & 23.0 / 16.5 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\begin{minipage}{16.2cm}
+\footnotesize
+W1 and W0 share their scoring data from 1 December 2025 to 28 February 2026, and W1's scoring window contains W0's label window. All 5,521 seed wallets were selected on closes up to 31 May 2026, which for W0 includes its label window. The W1 transfer graph has 30,791 nodes and 137,087 edges; the transfer graph at the W0 freeze is not summarized here. The 1,964 W1 spenders include the one node whose only incoming allowance is from itself; it has no in-edge once self-loops are removed, which is why the graph counts 1,963 nodes with in-edges.
+$^{a}$One of the 161 EOAs delegates to contract code under EIP-7702.
+$^{b}$Taken from the spring spender lookup; a recipient outside the spring spender cohort is recorded as unknown. Traders that are not recipients were not classified.
+\end{minipage}
+\end{document}
