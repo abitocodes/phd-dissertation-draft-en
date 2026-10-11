@@ -16,8 +16,12 @@ $Chapters = @(
 # Full dissertation (writes <Dir>/index.aux checkpoints and main.aux)
 xelatex -interaction=nonstopmode main.tex
 if ($LASTEXITCODE -ne 0) { throw "xelatex main.tex (pass 1) failed" }
+biber main
+if ($LASTEXITCODE -ne 0) { throw "biber main failed" }
 xelatex -interaction=nonstopmode main.tex
 if ($LASTEXITCODE -ne 0) { throw "xelatex main.tex (pass 2) failed" }
+xelatex -interaction=nonstopmode main.tex
+if ($LASTEXITCODE -ne 0) { throw "xelatex main.tex (pass 3) failed" }
 
 # Preserve chapter aux from the full build; per-chapter runs would otherwise overwrite page checkpoints
 $auxBackup = Join-Path $PSScriptRoot "_chapter_aux_backup"
@@ -44,6 +48,7 @@ foreach ($c in $Chapters) {
   Restore-ChapterAux
   $dir = $c.Dir
   Copy-Item -Force main.aux "$dir.aux"
+  Copy-Item -Force main.bbl "$dir.bbl"
   if (Test-Path main.out) {
     Copy-Item -Force main.out "$dir.out"
   }
