@@ -1,117 +1,125 @@
 # Manuscript B: IEEE Access
 
-**Title.** Coupling Authorization and Payment Layers in a PageRank Walk: A Pre-Specified, Hash-Gated Out-of-Window Test on an Ethereum Rollup
+**Title.** Coupling Authorization and Payment Layers in a PageRank Walk for Smart-Contract Reputation: A Pre-Specified, Commit-Gated Out-of-Window Test on an Ethereum Rollup
 
 **Article type.** Research Article
 
 **Authors.** Taehong Kwon (corresponding, thkwon@enu-tech.co.kr), Ernest Mnkandla, Donatien Koulla Moulla, David Sena Attipoe
+
+The title adds "for Smart-Contract Reputation" to the working title, because every scored address in the study is a contract. "Commit-gated" replaces the earlier "hash-gated": the extraction script refuses to run unless the registration files are committed without local changes, and it only records their SHA-256 hashes; it compares no hash.
 
 ## Target journal and why
 
 *IEEE Access* (IEEE, open access, multidisciplinary engineering and computing).
 
 - **DHET accreditation.** The journal is indexed in Scopus, so it is on the DHET-accredited list that UNISA uses for the two first-author manuscripts.
-- **Acceptance likelihood.** The official acceptance rate is about 27%. Review judges technical soundness, and negative results are explicitly "especially encouraged". This paper's central findings are two decision rules that were **not met**, so a venue that judges soundness rather than novelty of a positive result fits it best.
-- **Scope.** Graph ranking, blockchain and network security papers appear in the journal regularly. Three of the cited works are IEEE Access papers on blockchain reputation, rollups and cryptocurrency transaction analysis.
-- **Binary decision.** IEEE Access accepts or rejects; there is no major-revision round. The revision of 9 October 2026 answers two internal reviews (summary below) so that the first submission pre-empts the predictable objections.
+- **Acceptance likelihood.** The official acceptance rate is about 27%. Reviewers are asked to judge technical soundness, not novelty. This paper's central findings are two decision rules that were **not met**, so a venue that judges soundness rather than novelty of a positive result fits it best.
+- **Scope.** Graph ranking, blockchain and network security papers appear in the journal regularly; three of the cited works (Bellini et al., Thibault et al., Liu et al.) are IEEE Access papers on blockchain reputation, rollups and cryptocurrency transaction analysis.
+- **Binary decision.** IEEE Access accepts or rejects; there is no major-revision round, so the first submission has to pre-empt the predictable objections (the limits of the commit-gated record, the post hoc revision, the margin that the trader cohort could not reach).
+
+## What the paper reports
+
+- **The pre-specified test is the registered analysis** (raw token base units, every ERC-20, cohort 27,844 contracts): plan commit `43d8045` at 2026-10-09 13:41:27 UTC, ten seconds before the BigQuery job of scan A was created; registration commit `0d3a057` at 16:49:32 UTC, eight seconds before the job of scan B was created; the gated extraction script wrote its manifest at 16:49:33.
+- **The revised analysis** (US dollars, five tokens WETH/USDC/USDT0/ARB/WBTC, cohort 15,107; commits `a897475`, `09dfc32`, `2705b28` on 10 October 2026, after the registered results were known and before any revised score) is reported beside it as a re-analysis under the same rules, never as a registered result.
+- Verdicts are identical in the two analyses: rule A not met (A1 holds, A2 fails; the same-window part fails on all three families); rule B not met (F1 holds, F2 and F3 fail); F4, F5, F6 fail with F6a holding; S1 and S2 not met; R1 and R2 do not hold and R3 holds (reported in the companion paper). F3 fails differently: in the registered analysis C-PR was worse than the payment walk on the trader label (−0.044 [−0.100, −0.002]); in the revised analysis the two were level (+0.000 [−0.014, 0.010]) and F3 failed on precision.
+- The Sybil model is reported on the revised EndorseRank graph (22 / about 2,074 / about 135,895 farm addresses to pass the 90th percentile, the 99th percentile and the top of the cohort; `sybil_model.json` gives 21.4, 2,073.9 and 135,894.8), with the registered graph's 13 / 1,253 / about 1,080,271 beside it.
+- The record of the registration is described with its limits: commit times come from the committer's clock; the BigQuery job times are kept by Google but visible only to the project owner; GitHub's public push record (saved in `supplement/github_push_events.json`) does not show the plan or the registration commit before the W1 extraction, nor the cap amendment `2705b28` before 13:29:26 UTC on 10 October (after the revised results were committed). The queries of the cohort, ego network, pair tables and W0 labels, the score and bootstrap implementations, the same-window and W0 drivers and the unit tests were committed with the registration, after they had run on the observation window and after rule A had been judged. The script has no override; the manifest's `override_used` field is a constant.
 
 ## Files
 
 | File | Content |
 |---|---|
-| `main.tex` | Manuscript source (IEEEtran journal class, two columns) |
-| `references.bib` | 47 references: 46 taken from the thesis list (`Chapter-07-References/index.tex`) with their bibliographic details, plus the companion manuscript. EIP-20 and EIP-2612 carry the authors named in the EIP headers (checked in `github.com/ethereum/ERCs`). |
-| `fig_layers.tex` | Fig. 1, schematic of the two layers, C-PR and S-PR (TikZ) |
-| `tab_timeline.tex` | Table I, order of commitments, their records and what was known |
-| `tab_ids.tex` | Table II, full commit identifiers and SHA-256 hashes of the registration files |
-| `tab_holdout.tex` | Table III, out-of-window Kendall tau with intervals (both windows) |
-| `tab_contrasts.tex` | Table IV, paired contrasts grouped by when they were fixed |
-| `tab_explore.tex` | Table V, exploratory checks (Appendix A) |
-| `figures/fig_lambda_sweep.pdf` | Fig. 2, lambda sweep with intervals, end points shown as separate operators, exploratory lambda values |
-| `figures/fig_contrasts.pdf` | Fig. 3, forest plot of A1–A2, F1–F6, S1, S2 |
-| `figures/make_figures_b.py` | Script for Figs. 2 and 3 (values from the thesis tables and `supplement/exploratory_checks.json`) |
-| `supplement/` | Extraction queries, the exploratory-check script and its JSON output (see `supplement/README.md`) |
-| `cover-letter.tex` / `.pdf` | One-page cover letter |
-| `main.pdf` | Built manuscript (16 pages in IEEEtran) |
+| `main.tex` | Manuscript source (`ieeeaccess.cls`, two columns) |
+| `references.bib` | 51 references: 50 copied from the thesis bibliography (`Config/references.bib`) and converted from biblatex to BibTeX for IEEEtran.bst, plus the companion manuscript (`kwon2026companion`) |
+| `fig_layers.tex` | Fig. 1 wrapper (caption) |
+| `figures/fig_layers_standalone.tex`, `figures/fig_layers.pdf` | Fig. 1, schematic of the two layers, C-PR and S-PR (TikZ, compiled separately because the class clashes with TikZ) |
+| `figures/make_figures_b.py` | Writes Figs. 2 and 3 from the published summaries in `phd_works` |
+| `figures/fig_contrasts.pdf` | Fig. 2, forest plot of A1–A2, F1–F6, S1, S2 in both analyses |
+| `figures/fig_lambda_sweep.pdf` | Fig. 3, tau_b of C-PR against lambda, both analyses, W0 spenders, W1 spenders, W1 traders |
+| `make_tables.py` | Writes every `tab_*.tex` from the published summaries, the extraction manifest, the job times, the git history of `phd_works` and `supplement/exploratory_checks.json`; checks each summary against `SHA256SUMS.txt` and the manifest hashes against the committed files |
+| `tab_bench.tex` | Table 1, solver time with \|V\| and \|E\|, both analyses |
+| `tab_timeline.tex` | Table 2, order of commitments with UTC times, records and what was known |
+| `tab_ids.tex` | Table 3, full commit identifiers (including `f33a87a`, which published the registered benchmark and the data description with the BigQuery job times) and SHA-256 of the registration files (CRLF as recorded, LF as stored) and of the plan |
+| `tab_holdout.tex` | Table 4, out-of-window tau_b with intervals, both analyses, W0 and W1 |
+| `tab_contrasts.tex` | Table 5, paired contrasts and verdicts of rules A and B, F4–F6, S1, S2 and the contrasts computed after the labels, both analyses |
+| `tab_explore.tex` | Table 6, exploratory checks (Appendix A) |
+| `supplement/` | The queries behind the reported results (extraction, pair tables, same-window proxies, labels), the exploratory-check script and its output, the GitHub push record (see `supplement/README.md`) |
+| `cover-letter.tex` / `.pdf` | One-page cover letter, dated 11 October 2026 |
+| `main.pdf` | Built manuscript |
+| `ieeeaccess.cls`, `IEEEtran.bst`, `spotcolor.sty`, `t1*`, `*.png` | Official IEEE Access template files (pristine copy in `ieee-template/`) |
 
-Every number in the tables and text comes from `results/tables/holdout-spenders.tex`, `holdout-diff.tex`, `fresh-holdout.tex`, `fresh-contrasts.tex`, `fresh-posthoc.tex`, `alignment-hybrid.tex`, `tau-diff-hybrid.tex`, `benchmark-runtime.tex`, `neutral-label-contrasts.tex`, `analysis/neutral-label/results.json`, `analysis/closed-form/closed_form_check.json`, the thesis text (Sybil model in Chapter 5, data counts in Chapters 3 and 4), the registration plan and extraction manifest in `phd_works`, the GitHub records of `phd_works` (commit, push-event and pull-request times, read through the GitHub API on 9 October 2026), or `supplement/exploratory_checks.json`. The source file of each table names its sources in a comment.
+## Where each table and figure gets its numbers
 
-## Lengths and checks (9 October 2026)
+`phd_works` paths are relative to `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/data/`; `pub` is `3-published-results-for-thesis/` (registered analysis) and `pub/revised-usd/` (revised analysis).
 
-- Abstract: 248 words, one paragraph, no abbreviations, references or equations (limit 150 to 250).
-- Body text, Introduction to Conclusion plus Appendix A, without equations, proofs, tables and captions: about 9,500 words; 5 tables, 3 figures; 16 pages. This is above the brief's 5,500–7,000 words because the revision adds the reproducibility details, the record of the registration and the exploratory checks the reviewers asked for. IEEE Access recommends under 20 pages.
-- `overlap_check.py`: 0.6% 8-gram overlap with the thesis; longest shared span 12 words (a list of numbers).
-- Build: no errors, no undefined citations or references, no overfull boxes; four underfull lines in the bibliography and a few underfull page boxes (cosmetic).
+| Item | Source |
+|---|---|
+| Table 1 (bench) | `pub[/revised-usd]/benchmark/benchmark.json` : `main` |
+| Table 2 (timeline) | `git log` of `phd_works`; `pub/registered-w1/extraction_manifest.json` : `started_at`, `finished_at`; `pub/describe/describe.json` : `timing`; thesis Chapter 4, Implementation (revised scores from 11:36 UTC) |
+| Table 3 (ids) | `git show -s` of the eight commits; manifest : `sha256` (CRLF); `git show <commit>:<path>` hashed as stored (LF) |
+| Table 4 (holdout) | `pub[/revised-usd]/holdout-w0/eval_summary.json` : `taus`; `registered-w1` or `window-w1/eval_summary.json` : `spender_taus`, `trader_taus` |
+| Table 5 (contrasts) | `holdout-w0/eval_summary.json` : `contrasts_prefixed`, `rule_a_primary`, `contrasts_after`; `same-window/eval_summary.json` : `rule_a_secondary`; W1 summary : `rule_b`, `sensitivity_awp`, `sensitivity_isolated`, `endorserank_results` |
+| Table 6 (explore) | `supplement/exploratory_checks.json` |
+| Fig. 2 (forest) | the same keys as Table 5 |
+| Fig. 3 (sweep) | the same keys as Table 4 |
+| Text: same window, Rule A secondary | `same-window/eval_summary.json` : `families`, `contrasts[0..1]`, `rule_a_secondary` |
+| Text: closed form | `analysis/closed-form/closed_form_check.json` (thesis repository) |
+| Text: Sybil model | `pub[/revised-usd]/sybil-model/sybil_model.json` |
+| Text: data counts | `pub[/revised-usd]/describe/describe.json`, `cohort/matched_cohort.json`, the eval summaries' `graph` blocks, `gmx/*.json`; revision constants from `pub/revised-usd/describe/describe.json` : `constants`; thesis Chapter 3 (account-type counts, token rule) |
+| Text: GitHub push record | `supplement/github_push_events.json` |
+
+Every number in the text was checked against these sources; derived ratios (time and edge ratios, interval widths) were computed from the same JSON files.
 
 ## Distinctness from Manuscript A (PLOS ONE)
 
-Manuscript A compares the allowance edge and the transfer edge as separate scores against their raw degrees and studies trader outcomes built from neither edge type. Manuscript B covers the coupling operator (C-PR, S-PR), the two pre-specified rules and the registered replication, and the Sybil exposure of the authorization layer. B cites A (`KwonA2026`, note "Manuscript submitted") for the data pipeline, the closed form of the authorization walk and the reference rows (EndorseRank, AWP, raw degrees), which Tables III–IV and Section VI-G label as reported in full in A. The post hoc trader comparison appears in B only as the decomposition rows of Table IV and one sentence pointing to A. The cover letter states the delineation and says that A is uploaded as confidential material for the reviewers.
+Manuscript A compares the allowance edge and the transfer edge as separate scores against their raw degrees and compares them on GMX trader outcomes built from neither edge type (P, Q, R1–R3). Manuscript B covers the coupling operator (C-PR, S-PR), the two pre-specified rules, the commit-gated record, the revision as a deviation, and the Sybil exposure of the authorization layer. Results that appear in both: the data description, the reference rows (raw degrees, EndorseRank, AWP) and their degree contrasts in Tables 4–5, the closed form of the authorization walk (Section III-G), and the solver times of EndorseRank and AWP (Table 1); B attributes them to A (`kwon2026companion`) and states this in the Introduction. R1–R3 are named in B (Introduction, Tables 2 and 3) without their verdicts. A reports the revised analysis in its Results with the registered values beside them; B leads with the registered analysis because it is about the rules fixed for it, and says so in the Introduction.
 
-## Revision of 9 October 2026: what changed and what was not done
+## Lengths and checks (11 October 2026)
 
-Two internal reviews were checked against the thesis, the analysis outputs, the authors' repository (`phd_works`) and its GitHub record. Changes:
+- Abstract: 250 words, one paragraph, no references or equations (IEEE Access limit 150 to 250).
+- Body text, Introduction to Conclusion plus Appendix A, without tables, captions, equations and the bibliography: about 9,800 words; 6 tables, 3 figures; 18 pages (IEEE Access recommends under 20). Fig. 2 sits in Section VI and Fig. 3 at the top of the page where Section VII starts (two full-width floats may share a page top).
+- `../tools/overlap_check.py main.tex`: 1.3% 8-gram overlap with the thesis; longest shared span 13 words (the name of the public BigQuery table).
+- `make_tables.py`: every published summary matched `SHA256SUMS.txt` (CRLF form); the manifest hashes equal the CRLF hashes of the files committed in `0d3a057`.
+- `supplement/exploratory_checks.py`: every recomputed decision contrast (A1, A2, F1–F6, S1) equals the published value (largest difference 0).
+- Build: no errors, no undefined citations or references. Remaining warnings: the template's own overfull header and title boxes and its font-shape substitutions (the same as when the pristine `ieee-template/access.tex` is built), a harmless T1/pcr font-series substitution from `\texttt`, and a few underfull lines in number-heavy paragraphs and the bibliography.
 
-- **Title and registration record.** "Registered" became "Pre-Specified, Hash-Gated". Section IV-C and Tables I–II now give the full 40-hex commit identifiers, the SHA-256 hashes of both registration files (as recorded on the CRLF checkout and as they are with LF endings), GitHub's server-side push and merge times, the BigQuery job times from the manifest, and the code revision behind the registered summary (code as committed at `4085ab9`; summary `1462d76` byte-identical today).
-- **Rule A timing (new disclosure).** The repository shows that the 14 September plan and the configuration encoding Rule A were first committed on 28 September in `0097fdb`, the same commit that holds the first coupled spring results (whose summary file records a run at 14 September 08:54 UTC). The manuscript now says that Rule A's precedence over the coupled scores rests on the dated plan, not on a commit. The thesis says the rule was "written to the configuration" on 14 September; that is not contradicted, but it cannot be checked from the repository.
-- **Construct and data.** Labels are now described as counted on sample-filtered events (future attachment inside a trader-centered ego network; 5,346 of 5,353 spring and 2,163 of 2,168 registered approval-pair events come from a sampled owner); the edge is redefined as the latest in-window approval with caveats (pre-window allowances, `transferFrom`, Permit2, native ether, ERC-721); the extraction filter, GMX decoding, cohort graph filtering (the spender cohort's payment layer holds only transfers touching a spender), zero-score rule, RNG and hardware are stated; the proof of the closed form is included.
-- **Look-ahead and window asymmetry.** Disclosed (1,584 sampled traders qualified only through spring-label-window closes and generated most spring label events; score history 90 vs 182 days) and checked: the spring rerun on a December–February sample gives A1 −0.172, A2 +0.014 and the exploratory gain +0.251 again.
-- **Weighting vs coupling.** Exploratory reruns with bounded and binary weights: the approval-side picture holds, but the payer contrast moves to either side of the margin (bounded −0.022, binary −0.017 lower end). The abstract and conclusion now scope the negative result to this operator on this sample.
-- **Proposition 1.** r(B) (0.44 on the spender graphs, 0.36 on the trader graph), the l1 movement (0.60, 0.52) and the Kendall tau between interior rankings (0.91, 0.93) are reported; the text now says the proposition locates the weight's action but does not explain the flat interior, and addresses the lambda = 0 step (most of the F1 gain appears at lambda = 0.01). The sparsity claim was removed from the conclusion.
-- **Statistics.** The margin is described as precision-based, with prospective pass probabilities for F2 (0.51/0.77 at spring precision, 0.78/0.96 at registered precision); the intersection–union logic is stated; Rule A's weak criteria are acknowledged; "fixed order" is defined and F4–F6, S1, S2 are marked nominal; the invented "±0.005" Monte Carlo precision was replaced by a 50-seed computation (F2 endpoint SD 0.0008); two-way bootstraps (spenders × owners/senders; traders × weeks) are reported.
-- **Other corrections.** AWP's decay parameters are now attributed to the authors, not to the AWP paper; AWP's units are stated as our reading; the decomposition is hedged; missing intervals were added (−0.317, 0.127, 0.116); the in-approve degree on the trader label carries the account-type caveat; F4 carries the "secondary, outside the failed rule" qualifier everywhere; S2's change in F5 is explained through ties; the Sybil section is framed as a calibration, gives the top spender score for context (the 11-address star reaches 1.7% of it) and adds the same attacks on AWP and on C-PR; S-PR at d = 0.5 and sensitivity to d, k and t0 are reported; a short section on implications for lending and margin protocols was added; acronyms ERC, EIP and HITS are expanded; the Bordeianu citation is narrowed; `howpublished = {Online}` was removed; Nosek et al. is cited only for preregistration on existing data; the competing-interest heading and the AI-use wording ("the authors ... take") were adapted; a privacy plan for released scores was added.
+## Still for the authors
 
-Not done, with reasons:
-
-- **New references outside the thesis list** (multiplex PageRank: Pedroche et al. 2016, Iacovacci & Bianconi 2016, Kivelä et al. 2014, De Domenico et al. 2013, MultiRank; growing networks: Mariani et al. 2015, Liao et al. 2017; PageRank sensitivity: Ng, Zheng & Jordan 2001, Bianchini et al. 2005, Boldi et al. 2005; Sybil defenses: SybilGuard, SybilRank, Viswanath et al. 2010; Qin et al. IMC 2021; Victor & Lüders FC 2019; Chen et al. INFOCOM 2018; Berger 1982 on intersection–union tests; Piaggio et al. 2012 CONSORT non-inferiority; registered reports in computing). The manuscript brief allows only references from the thesis list. Perez et al. 2021 and Bartoletti et al. 2021, which are on the list, were added. The authors should verify and add the others (author to-do 10).
-- **Placeholders** (affiliations, e-mails, funding, acknowledgment, biographies, contribution confirmation): only the authors can fill them.
-- **Gas cost of an approval, allowance state at the freeze block, two-hop expansion.** These need an Arbitrum node or new BigQuery scans billed to the authors' project; the text says `c_gas` was not measured and gives a proxy for left-censoring (15.8% of "new" pairs under a three-month history were allowances already held).
-
-## Status of the author items (updated 9 October 2026)
-
-Planned submission date: **2 November 2026** (same day as Manuscript A), after all co-authors have approved both manuscripts.
-
-Done:
-- **Official template**: the source now uses `ieeeaccess.cls` from the IEEE Template Selector (pristine copy in `ieee-template/`; the class, fonts and logos are copied next to `main.tex`). Fig. 1 is precompiled from `figures/fig_layers_standalone.tex` because the class clashes with TikZ. The PDF has 17 pages.
-- Affiliations (CAIDS for Koulla Moulla and Attipoe), corresponding author, funding footnote ("no external funding"), acknowledgment, AI-use statement, short biographies without photos, `\EOD`.
-- Data Availability and Section on the registration now point to the public repositories; the thesis repository tag `manuscripts-2026-11` fixes the reported state.
-- The thesis now states Rule A's commit timing and the weighting sensitivity, so thesis and paper agree.
-- Cover letter dated 2 November 2026.
-
-Still for the authors:
 1. All co-authors approve the submission (the cover letter states that they have).
-2. ORCID iDs in ScholarOne; optional author photographs and longer biographies (IEEE asks for them at the final-files stage).
-3. Access dates for the GMX and Human Passport documentation entries; optional literature listed under "Not done".
-4. Optional: measure the approval gas fee and allowance state at the freeze block (Section VII/VIII-A).
+2. The companion entry (`kwon2026companion`) carries Manuscript A's title as of 11 October 2026 ("Allowance edges or transfer edges? Evaluating on-chain smart contract reputation out of window against degree baselines"); keep it in step with A. A's entry for this paper (`kwon2026coupling`) carries the title above, with "commit-gated".
+3. ORCID iDs in ScholarOne; optional author photographs and longer biographies (IEEE asks for them at the final-files stage).
+4. Optional: anchor future registrations with a third-party timestamp (Section IV-C names the gap); measure the approval fee `c_gas` and the allowance state at the freeze block.
 5. Check the current IEEE Access APC and arrange payment or a waiver before acceptance.
+6. The thesis and the companion report the revised analysis as their main analysis; this paper leads with the registered one because it is about the rules fixed for it, and its Introduction says so.
+7. **Decide before submission (disclosure).** Before the plan of 9 October 2026, other work by the first author had extracted GMX V2 closes, approvals and transfers up to 31 August 2026 for a cohort of 5,521 trading accounts (registration committed 1 October 2026), and had computed C-PR, S-PR, EndorseRank and AWP on them. 63 of the 131 contract accounts with at least three GMX closes in W1 are in that cohort (80 counting any close), so July–August outcomes of about half of the possible W1 traders had been extracted before. The paper now scopes every "before extraction" claim to this study (abstract, Introduction, Section IV, Table 2, Conclusion, cover letter) but does not mention the other work, because the writing brief forbids naming earlier work. The authors and supervisors should decide whether Section IV-E should carry a sentence such as: "Before the plan, the first author had extracted GMX V2 closes up to 31 August 2026 for a cohort of 5,521 trading accounts in other work; 63 of the 131 contract accounts with at least three closes in W1 were among them, and no score of this study had been set against those closes." Do not submit until this is decided.
 
 ## Submission checklist (IEEE Access, ScholarOne)
 
 - [x] Repositories public; URLs in Data Availability (a Zenodo DOI is optional).
-- [x] Placeholders filled (affiliations, funding, acknowledgment, biographies).
-- [x] Official IEEE Access template (17 pages, under 20).
-- [ ] Abstract 150 to 250 words, single paragraph; index terms in alphabetical order.
-- [ ] Figures as vector PDF; Figs. 2 and 3 span both columns (`figure*`); colors are paired with marker shapes and line styles, so the figures read in grayscale.
-- [ ] Tables: captions above, booktabs rules; Tables I, III, IV and V span both columns.
-- [ ] References in IEEE style, numbered in order of citation (IEEEtran.bst); access dates for the two documentation entries (to-do 10).
-- [ ] AI-use disclosure in the Acknowledgment (IEEE policy).
-- [ ] Supplementary material: `supplement/` (queries, exploratory script and output); Manuscript A as confidential material for reviewers.
-- [ ] Cover letter uploaded; disclose that the work derives from the first author's UNISA doctoral thesis and that a related manuscript is under review at PLOS ONE. IEEE runs a similarity check, and the thesis will be in the UNISA repository.
-- [ ] Article processing charge: check the current IEEE Access APC and arrange payment or a waiver before acceptance.
+- [x] Official IEEE Access template, under 20 pages.
+- [x] Abstract 150 to 250 words, single paragraph; index terms in alphabetical order.
+- [x] Figures as vector PDF; Figs. 2 and 3 span both columns, set in Liberation Serif (metric-compatible with Times) with text of 8 pt or more after scaling; colors are paired with marker shapes and fills, so the figures read in grayscale.
+- [x] Tables: captions above, booktabs rules.
+- [x] References in IEEE style, numbered in order of citation (IEEEtran.bst).
+- [x] AI-use disclosure in the Acknowledgment (IEEE policy).
+- [ ] Supplementary material: `supplement/` (queries, exploratory script and output, push record); Manuscript A as confidential material for reviewers.
+- [ ] Cover letter uploaded; it discloses that the work derives from the first author's UNISA doctoral research and that a related manuscript goes to PLOS ONE. IEEE runs a similarity check, and the thesis will be in the UNISA repository.
+- [ ] Article processing charge.
 - [ ] Optional: suggested reviewers; graphical abstract.
 
 ## How to build
 
 ```bash
 cd manuscripts/B-ieee-access
+export PHD_WORKS=/path/to/phd_works                       # checkout of github.com/abitocodes/phd_works
+python3 supplement/exploratory_checks.py                  # about 10 minutes on four cores (numpy, scipy, pandas, pyarrow)
+python3 make_tables.py                                    # all tab_*.tex (needs git and the phd_works history)
 python3 figures/make_figures_b.py                         # Figs. 2 and 3 (needs matplotlib)
+(cd figures && pdflatex fig_layers_standalone.tex && mv fig_layers_standalone.pdf fig_layers.pdf)   # Fig. 1
 latexmk -pdf -interaction=nonstopmode main.tex            # runs bibtex automatically
 latexmk -pdf -interaction=nonstopmode cover-letter.tex
-python3 ../tools/overlap_check.py main.tex                # overlap with the thesis
+python3 ../tools/overlap_check.py main.tex                # overlap with the thesis (run from this folder)
 latexmk -c                                                # optional: remove auxiliary files
 ```
 
-Requires a TeX Live installation with `IEEEtran.cls`, `IEEEtran.bst` and TikZ (TeX Live 2023 was used). The thesis repository's own `latexmkrc` (XeLaTeX) lives in the repository root and is not read when latexmk runs in this folder. To recompute the exploratory checks, see `supplement/README.md`.
-
-## Template
-
-The manuscript is already on the official IEEE Access template (see Status above). To rebuild Fig. 1: `cd figures && pdflatex fig_layers_standalone.tex && mv fig_layers_standalone.pdf fig_layers.pdf`.
+Requires a TeX Live installation (TeX Live 2023 was used) with TikZ; `ieeeaccess.cls` and `IEEEtran.bst` are in this folder. The thesis repository's own `latexmkrc` (XeLaTeX) lives in the repository root and is not read when latexmk runs in this folder.

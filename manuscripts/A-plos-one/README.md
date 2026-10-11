@@ -1,80 +1,106 @@
 # Manuscript A: PLOS ONE submission package
 
-**Title:** Allowance edges or transfer edges? Evaluating on-chain wallet reputation out of window against degree baselines
+**Title:** Allowance edges or transfer edges? Evaluating on-chain smart contract reputation out of window against degree baselines
 
-**Running title (62 characters, limit 70):** Allowance versus transfer edges for on-chain wallet reputation
+**Running title (61 characters, limit 70):** Allowance versus transfer edges for smart contract reputation
 
 **Article type:** PLOS ONE Research Article
 
 **Authors:** Taehong Kwon (corresponding, thkwon@enu-tech.co.kr), Ernest Mnkandla, Donatien Koulla Moulla, David Sena Attipoe
 
-The title is unchanged because Manuscript B cites it. The text now says early, in the Abstract and the Introduction, that most ranked addresses are contracts, not user wallets.
+## What the paper reports
+
+The study scores and evaluates only smart contracts on Arbitrum One: 15,107 contracts that at least three owners approved on WETH, USDC, USDT0, ARB or WBTC between 1 October 2023 and 30 June 2026. It compares EndorseRank (PageRank on the latest ERC-20 allowances, with AWP's edge weights and uniform restarts) with the transfer-based AWP of Do, Do and Nguyen (2023) and with the raw in-approve degree and transfer in-degree. Main points:
+
+- Intended-construct checks in the same window: each score agrees most with the checks of its own edges, partly by construction (Table 2).
+- Out of window, in W0 (freeze 31 March 2026, labels April to June) and W1 (freeze 30 June, labels July to September): AWP beats the transfer in-degree on new senders; EndorseRank with uniform restarts falls below the in-approve degree on new approval pairs; the activity-restart variant beats the count and is reported as a hypothesis. All degree contrasts were computed after the labels (none is named in the plan or the registration document) (Table 3, Fig 1A).
+- Closed form: a spender whose owners are not themselves approved scores c(1 + d δ(v)); this holds within 1% for every such spender (Table 1).
+- Outcomes built from neither edge type (GMX V2 contract traders): the registered rules R1 to R3 applied to the revised scores give R1 not met, R2 not met, R3 applies (Tables 4 and 5, Fig 1B and 1C).
+- The registered analysis (raw base units, every ERC-20, cohort 27,844) reached the same verdicts; the unresolved PageRank pairs on the trader label (Q, EndorseRank − AWP, the amount-weighted layers) changed sign between the two analyses (Table 6).
+- The 2.23 edge ratio and the 2.17 time ratio are reported as a consequence of |E| only.
+
+**Status words.** The revised analysis (US dollars, five tokens) was decided after the registered results were known and is the main analysis here. Its verdicts under R1 to R3 are always called a re-analysis with the registered rules, never registered results. Registered values appear only in sentences and table columns labelled "registered analysis".
 
 ## Target journal and why it was chosen
 
 - **PLOS ONE** is DHET-accredited through its Scopus and DOAJ indexing, which meets the UNISA requirement of a first-author article in an accredited journal.
-- It reviews for scientific soundness, not perceived impact, and it publishes negative and null results. Several central results here are negative or qualified: no PageRank beats the raw degree of its own edge type on that edge type's own label; the like-for-like PageRank pair on liquidation avoidance is unresolved; and the liquidation signal is post hoc, rests on a few dozen mostly contract accounts and does not extend to trading success.
-- The official acceptance rate was about 31% in 2023.
-- The companion Manuscript B (coupled walk, registered test, Sybil exposure) goes to IEEE Access. The Introduction states which results appear in both papers.
+- It reviews for scientific soundness, not perceived impact, and it publishes negative and null results. Several central results here are negative or qualified: EndorseRank with the planned restarts does not beat the approval count; the comparison on trader outcomes does not separate the edge types; the one positive allowance-side result (activity restarts) was found after the labels.
+- The companion Manuscript B (coupled walk C-PR and its ablation S-PR, rules A and B, the registered test, Sybil exposure) goes to IEEE Access. The Introduction of A states which results appear in both papers.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `main.tex` | Manuscript in the PLOS ONE LaTeX layout (article class, rebuilt by hand from the PLOS template). The figure is **not** embedded, per PLOS policy. The Fig 1 caption follows the paragraph that first cites it, and each table follows the paragraph that first cites it. |
+| `main.tex` | Manuscript in the PLOS ONE LaTeX layout (article class, rebuilt by hand from the PLOS template). Figures are **not** embedded, per PLOS policy. The Fig 1 caption follows the paragraph that first cites it, and each table follows the paragraph that first cites it. Tables 1 to 6 sit between `% BEGIN GENERATED tabN` / `% END GENERATED tabN` markers and are written by `make_tables.py`; do not edit them by hand. |
 | `main.pdf` | Build of `main.tex`: submission layout with line numbers and no embedded figure. |
 | `main_preview.tex`, `main_preview.pdf` | Reading copy for the authors with Fig 1 embedded. Not for submission. |
-| `references.bib` | Bibliography. Every cited entry is copied from the thesis reference list (`Chapter-07-References/index.tex`; a comment above each entry gives its thesis number). Proper nouns in titles are brace-protected for `plos2015.bst`. The Manuscript B entry (`kwon2026coupling`) stays in the file but is **not cited** (see "References style"). |
-| `cover-letter.tex`, `cover-letter.pdf` | One-page cover letter. |
-| `figures/fig_allowance_vs_transfer.pdf` | Vector source of Fig 1, generated by `figures/make_fig1.py` from `analysis/neutral-label/results.json`. It uses Liberation Sans (metrically identical to Arial) at 8 pt or larger, labels the windows W1 and W0, and adds 97.5% interval ticks on the liquidation-free row. It replaces the old copy made by `manuscripts/figures/make_figures.py`, which is unchanged and still serves Manuscript B. |
-| `figures/Fig1.tif` | Fig 1 for upload: 2160 x 1050 px (7.2 x 3.5 in) at 300 dpi, RGB, LZW-compressed TIFF. |
-| `supporting/S1_Text.tex`, `.pdf` | **S1 Text.** Event decoding, label formulas, account-type lookup and SQL. Constants are copied from the pipeline config and scripts in `phd_works`. |
-| `supporting/S1_File.md` | **S1 File.** `analysis/neutral-label/PLAN.md` copied verbatim from commit `20e250f` (the file is unchanged since then). SHA-256 `ba731ff2ba5db4e2c10a7e11f0d3b025e291c4883be2e45cc42fdd7b665ac209`. |
-| `supporting/S1_Table.tex`, `.pdf` | **S1 Table.** Windows, cohorts, graphs and labels (descriptive). It is built only from numbers already in `results.json`, `closed_form_check.json` or the thesis. |
-| `supporting/S2_Table.tex`, `.pdf`, `S2_Table_rows.tex`, `make_s2_table.py` | **S2 Table.** Every contrast of the plan on all six labels in both windows, with 95% and 97.5% intervals and the stratified rows. This includes the three contrasts that involve the companion study's raw-amount walks. The rows are generated from `results.json`, and the P(Δτ>0) share is deliberately left out. |
+| `references.bib` | Bibliography: 53 entries. The 52 cited entries are each copied from the thesis bibliography `Config/references.bib` (same key) and converted to BibTeX for `vancouver.bst` (journaltitle to journal, report to techreport, online to misc, eid to pages, DOI as an `https://doi.org/` link and URL in `note`, accents as TeX accents). The uncited 53rd entry, `kwon2026coupling`, is Manuscript B with its current title (see "References style"). |
+| `cover-letter.tex`, `cover-letter.pdf` | One-page cover letter dated 11 October 2026. |
+| `data_sources.py` | Shared loader for the scripts below. Needs `--phd-works PATH` or `PHD_WORKS`; nothing is guessed. Checks every published summary against its `SHA256SUMS.txt` (CRLF form, as the checksums were taken on a Windows checkout) before use. |
+| `make_tables.py` | Writes Tables 1 to 6 into `main.tex` and the rows of S1 Table (`supporting/S1_Table_rows.tex`) from the published summaries and `analysis/*.json`. |
+| `check_numbers.py` | Lists every number in the prose of a `.tex` file (tables skipped) that does not occur in a source (both results digests, the published summaries, `analysis/*.json`). |
+| `figures/make_fig1.py` | Fig 1 (panels A, B, C, bold uppercase letters as in PLOS figures; the line styles are explained in the caption, not in the figure) from `revised-usd/holdout-w0/eval_summary.json`, `window-w1/eval_summary.json`, `supplementary/supplementary.json` and `analysis/neutral-label/results.json`. Liberation Sans (metrically identical to Arial), 8 pt or larger, 7.2 in wide. Categorical colours: slots 1 and 2 of the dataviz reference palette (validated, CVD ΔE 24.7), plus circle/square markers as a second encoding. |
+| `figures/fig1.pdf` | Vector source of Fig 1. |
+| `figures/Fig1.tif` | Fig 1 for upload: 2160 x 1770 px (7.2 x 5.9 in) at 300 dpi, RGB, LZW-compressed TIFF. |
+| `supporting/S1_Text.tex`, `.pdf` | **S1 Text.** Event decoding, account type, token rule and US-dollar valuation, graph weights and constants, GMX decoding, label formulas (including the revocation and drain counts that the main text reports without offering them as evidence), same-window checks, SQL patterns, properties not quantified. Constants copied from the pipeline config, SQL and scripts in `phd_works` (named in the file header). |
+| `supporting/S1_File.md` | **S1 File.** The three pre-specification documents verbatim: analysis plan at `43d8045`, W1 registration at `0d3a057`, revision of the amounts at `2705b28`, with full commit ids and SHA-256 hashes (LF and CRLF). The embedded copies were checked byte for byte against `git show <commit>:<path>`. |
+| `supporting/S1_Table.tex`, `.pdf`, `S1_Table_rows.tex` | **S1 Table.** Windows, cohorts, graphs and amounts. Rows generated by `make_tables.py`. |
+| `supporting/S2_Table.tex`, `.pdf`, `S2_Table_rows.tex`, `make_s2_table.py` | **S2 Table.** Every registered pair (P, Q, EndorseRank − AWP, C-PR(λ=1) − C-PR(λ=0), C-PR(λ=0) − AWP, and EndorseRank − in-approve degree from the committed code) on all six trader labels, both windows, both analyses, with the stratified rows; 95% and 97.5% intervals. Generated from `analysis/neutral-label/results.json`; the share of positive resamples is not exported. |
+
+## Where each number comes from
+
+All summaries are in `phd_works`, folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/data/3-published-results-for-thesis/` (registered analysis) and its subfolder `revised-usd/` (revised analysis); the two `results_digest.md` files name the JSON key of every value.
 
 | Table / figure | Content | Source of the numbers |
 |---|---|---|
-| Table 1 | Allowance graphs at both freezes and fit of the closed form | `analysis/closed-form/closed_form_check.json`; self-loop note checked against `latest_allowances.parquet` in `phd_works` |
-| Table 2 | Spender holdouts in both windows, with paired differences (one-line cells) | `results/tables/holdout-spenders.tex`, `holdout-diff.tex`, `fresh-posthoc.tex`, `endorserank-restarts.tex`, `endorserank-awp-holdout.tex` |
-| Table 3 | Allowance-side minus transfer-side contrasts on the liquidation-free close rate | `results/tables/neutral-label-contrasts.tex` / `analysis/neutral-label/results.json` |
-| Table 4 | Recipients against all other traders | `results/tables/neutral-label-recipients.tex` / `results.json` (recipient degree split derived from the `describe()` block: 44 recipients with mean 1.136 and max 2, so 39 have degree 1 and 5 have degree 2) |
-| Fig 1 | P and Q on all six trader labels, both windows | `analysis/neutral-label/results.json` |
-| S1 Table, S2 Table | see above | see above |
+| Table 1 | Graphs at both freezes and fit of the closed form | `revised-usd/same-window` and `holdout-w0/eval_summary.json` (`graph`, `closed_form`), through `analysis/closed-form/closed_form_check.json` |
+| Table 2 | Same-window intended-construct check, ranking agreement | `revised-usd/same-window/eval_summary.json` (`families`, `per_proxy`, `contrasts`, `inter_method`) |
+| Table 3 | Spender holdouts W0 and W1, degree contrasts, EndorseRank − AWP | `revised-usd/holdout-w0/eval_summary.json` (`taus`, `contrasts_after`), `window-w1/eval_summary.json` (`spender_taus`, `endorserank_results`), `supplementary/supplementary.json` |
+| Table 4 | Trader comparison on the liquidation-free close rate, both windows | `analysis/neutral-label/results.json`, `analyses.revised.windows.<W1,W0>.contrasts` and `.stratified` |
+| Table 5 | Recipients against other traders, influence check | `analysis/neutral-label/results.json`, `recipients`, `influence_without_top10`, `max_in_approve_degree` |
+| Table 6 | Registered analysis beside the revised analysis, including EndorseRank − AWP and C-PR(λ=1) − C-PR(λ=0) on the liquidation-free close rate in both windows | same-window, holdout-w0, registered-w1 / window-w1 summaries and `supplementary.json` of both analyses; `closed_form_check.json`; `results.json` (both analyses, `windows.<W1,W0>.contrasts`, `rules`) |
+| Fig 1 | (A) PageRank minus raw degree on spender labels; (B) P and (C) Q on six trader labels | as Table 3 for A; `analysis/neutral-label/results.json` for B, C |
+| S1 Table | Descriptive | `revised-usd` summaries (`same-window`, `holdout-w0`, `window-w1`, `describe/describe.json`, `cohort/matched_cohort.json`), `results.json`; footnote counts 17,167 = 17,050 + 104 + 13 (`spender_account_types`) and 12 W0 traders with a liquidation = 48 × (1 − 0.750) (`recipients.others`) |
+| S2 Table | All trader contrasts | `analysis/neutral-label/results.json` |
 
-Graph-structure numbers in Results come from thesis Chapter 4 (Implementation): strongly connected core of 9,278 addresses, 28.5% reciprocated edges, no cycle apart from one self-loop, and about 94% of solver time spent on matrix assembly. The contract counts among spenders (all top-100 EndorseRank spenders; 221 of 222 spenders that gained a new pair) and the one EIP-7702 EOA also come from Chapter 4 (§ Cohorts).
+Numbers in the prose that `check_numbers.py` does not find in a source (last run 11 October 2026), all checked by hand:
+
+- `main.tex`: EIP numbers (721, 2612); block 513,216,506 and the 133 mapped tokens and 75.75% row share (thesis Chapter 3 and `docs/revision_price_weighting.md`); 17,167 W0 spenders (17,050 + 104 + 13); σ(0) = 0.858, σ(90) = 0.711, σ(182) = 0.495, σ(365) = 0.136 (computed from k = 0.01, t0 = 180; 0.495 also occurs in an unrelated source value, so the script passes it by chance); c = 7.64 × 10⁻⁸ (7.639e-08 rounded); the layout length 2.25 in.
+- `S1_Text.tex`: chain id 42161, block 513,216,506, EIP numbers, 133 tokens, 75.75%.
+- Derived in the text and stated as such: 2.23 (edge ratio, in the digest), "0.21 wide" (97.5% interval of Q in W1: 0.064 − (−0.148)) and "an estimate of 0.1 or less" (about the half-width of that interval, 0.106; every degree contrast in Table 3 and EndorseRank − AWP on new approval pairs are below it), "one in six" (2,367 / 14,406), "one in three" (5,706 / 17,032), and the AWP tie share 2.87% (`ties.awp`, share of pairs tied 0.0287).
+
+Other text sources: the candidate count 29,022 = 27,844 + 1,121 + 57 is in the registered `results_digest.md` (`cohort/matched_cohort.json` : `candidates`); the pinned block number, the token rule and the price check come from thesis Chapters 3 and 4 and Appendix D and from `usd/chainlink_check.json`; commit times from `git -C phd_works log`; the creation time of the scan B query (16:49:40) from `describe/describe.json` (registered analysis); the benchmark machine from thesis Chapter 3 (Implementation notes).
 
 ## How to build
 
 ```bash
 cd manuscripts/A-plos-one
+export PHD_WORKS=/path/to/phd_works                     # required by the generators
+python3 make_tables.py                                   # Tables 1-6 into main.tex, S1 Table rows
+python3 supporting/make_s2_table.py                      # S2 Table rows (reads analysis/ only)
+python3 figures/make_fig1.py                             # figures/fig1.pdf
+(cd figures && pdftoppm -tiff -tiffcompression lzw -r 300 -singlefile fig1.pdf Fig1)
 latexmk -pdf -interaction=nonstopmode main.tex          # submission layout (bibtex runs automatically)
 latexmk -pdf -interaction=nonstopmode main_preview.tex  # reading copy with Fig 1 embedded
 latexmk -pdf -interaction=nonstopmode cover-letter.tex
-cd supporting
-python3 make_s2_table.py                                 # regenerate S2 Table rows from results.json
-for f in S1_Text S1_Table S2_Table; do latexmk -pdf -interaction=nonstopmode $f.tex; done
+cd supporting && for f in S1_Text S1_Table S2_Table; do latexmk -pdf -interaction=nonstopmode $f.tex; done
 ```
 
-Regenerate the figure and TIFF after any change (needs matplotlib and the Liberation fonts):
+Python 3 with matplotlib (3.11 used) and the Liberation fonts. The supporting files use the default Computer Modern fonts (the `lmodern` package is not installed in the build environment).
+
+Checks:
 
 ```bash
-cd manuscripts/A-plos-one/figures
-python3 make_fig1.py
-pdftoppm -tiff -tiffcompression lzw -r 300 -singlefile fig_allowance_vs_transfer.pdf Fig1
+python3 check_numbers.py main.tex cover-letter.tex supporting/S1_Text.tex supporting/S1_Table.tex
+python3 ../tools/overlap_check.py main.tex
 ```
 
-Last build (9 October 2026): `main.pdf` 21 pages, `main_preview.pdf` 21 pages, `cover-letter.pdf` 1 page, S1 Text 3 pages, S1 Table 1 page, S2 Table 3 pages. There are no errors, no undefined references or citations, and no overfull boxes. Two kinds of benign warning remain: LaTeX changes the `!h` float specifier of the Fig 1 caption to `!ht`, and BibTeX issues 9 warnings for the `@misc` EIP, GMX and Passport entries (no author or publisher) and for `wang2022`, which has no pages (the thesis entry has none either).
+## Last build and checks (11 October 2026)
 
-Text-overlap check against the thesis (target at most 8%, no shared span above about 25 words):
-
-```bash
-python3 manuscripts/tools/overlap_check.py manuscripts/A-plos-one/main.tex
-```
-
-Last run: 1.3% 8-gram overlap on 8,713 words; longest shared span 14 words (S1 Text: 0.3%, longest 9 words).
-
-Word counts (last build): abstract 292 words (limit 300); body from Introduction to Conclusions about 8,260 words, not counting tables, figure caption and display equations. That total includes about 380 words of required statements (Ethics, Data availability, Use of generative AI), so the scientific text is about 7,880 words. The revision added the reviewers' requested qualifications, definitions and pre-specification detail. To make room, it cut repeated caveats: the trader caveats now appear in full once, in the Discussion. Runtime moved to the end of Results and is no longer a contribution.
+- `main.pdf` 25 pages, `main_preview.pdf` 26 pages, `cover-letter.pdf` 1 page, S1 Text 5 pages, S1 Table 1 page, S2 Table 5 pages. No errors, no undefined references or citations, no overfull boxes. All 42 DOIs in the reference list link to `https://doi.org/` (no relative links). Tables 1 to 6 and Fig 1 are first cited in ascending order, and each float follows the paragraph that first cites it (checked by script). BibTeX issues 8 benign warnings for the four `@misc` web sources (GMX, Human Passport, DefiLlama, Chainlink: no editor or publisher).
+- Abstract: 292 words in the PDF text (limit 300), no citations. Body from Introduction to Conclusions about 9,600 words counting numbers, without tables, the figure caption and display equations; about 400 of them are the required statements (Ethics, Data availability, Use of generative AI). 6 tables, 1 figure.
+- Text overlap with the thesis (`manuscripts/tools/overlap_check.py`, 8-word shingles; the tool now strips biblatex `\textcite`/`\parencite` keys as well as `\cite` keys): `main.tex` 2.7%, longest shared span 17 words (the registered wording of the decision contrasts, quoted on purpose); S1 Text 2.2%, longest 15 words; cover letter 0.8%. Manuscript B rerun with the same tool: 2.2%, longest 15 words, as its README states.
+- `check_numbers.py`: every data number in the prose occurs in a source; the exceptions are listed above.
 
 ## References style: vancouver.bst now, plos2015.bst at acceptance
 
@@ -85,103 +111,37 @@ The review PDF uses `\bibliographystyle{vancouver}` (numbered, in order of citat
 3. Paste the contents of `main.bbl` into `main.tex` in place of `\bibliography{references}` (PLOS does not accept `.bib` files).
 4. Check that each DOI, which sits in the `note` field, prints once.
 
-**Companion manuscript.** PLOS ONE keeps submitted, unaccepted manuscripts out of the reference list. Manuscript A therefore mentions Manuscript B in the text only ("submitted to *IEEE Access*; unpublished") and uploads it as a *Related manuscript* file. If B is posted as a preprint or accepted before A is published, cite the preprint or the article in the reference list; the `kwon2026coupling` entry is ready for that. Manuscript B still cites A as "Manuscript submitted", which suits IEEE.
+**Companion manuscript.** PLOS ONE keeps submitted, unaccepted manuscripts out of the reference list. Manuscript A therefore mentions Manuscript B in the text only ("submitted to *IEEE Access*; unpublished") and uploads it as a *Related manuscript* file. If B is posted as a preprint or accepted before A is published, cite it; the `kwon2026coupling` entry is ready and carries B's current title ("Coupling authorization and payment layers in a PageRank walk for smart-contract reputation: A pre-specified, commit-gated out-of-window test on an Ethereum rollup"); match it again if B's title changes.
 
 ## Statements to enter in the submission system (Editorial Manager)
 
-PLOS collects these in the submission form, not in the manuscript file. Funding in particular must not appear in the manuscript.
-
-- **Author contributions (CRediT; to be confirmed by all authors):**
-  Taehong Kwon: Conceptualization, Methodology, Software, Data curation, Formal analysis, Writing – original draft.
-  Ernest Mnkandla: Supervision, Writing – review & editing.
-  Donatien Koulla Moulla: Supervision, Writing – review & editing.
-  David Sena Attipoe: Supervision, Writing – review & editing.
+- **Author contributions (CRediT; to be confirmed by all authors):** Taehong Kwon: Conceptualization, Methodology, Software, Data curation, Formal analysis, Writing – original draft. Ernest Mnkandla: Supervision, Writing – review & editing. Donatien Koulla Moulla: Supervision, Writing – review & editing. David Sena Attipoe: Supervision, Writing – review & editing.
 - **Competing interests:** The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
-- **Funding:** [to be completed by the authors]
-- **Data availability:** use the "Data availability" subsection of `main.tex`. It names both repositories, the folders and the commits:
-  - `phd_works`, folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments`: registration `4085ab9`, table revision `7129981`.
-  - `phd-dissertation-draft-en`, folder `analysis/`: plan `20e250f`, script `dbe7cf0`, results `b89c48e`.
-
-  Both repositories are **private** (checked by reviewer 2 through the GitHub API). PLOS expects the data to be accessible at submission, or at the latest at publication; reviewers asked for public access, or an anonymous reviewer link, before submission.
-- **Ethics statement:** Only public blockchain data were used; no human participants. [ethics clearance reference to be added by the authors]
-- **Use of AI tools:** the full statement is in Methods ("Use of generative AI"), with a pointer in Acknowledgments. It names the tool and lists what it did, following the commit history. Two parts are left to the authors (see to-do 5).
+- **Funding:** The authors received no specific funding for this work.
+- **Data availability:** use the "Data availability" subsection of `main.tex`. It names `phd_works`, folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments` as it stands on the default branch `master` (plan `43d8045`, registration `0d3a057`, registered results `8d8b568`, revision `a897475`/`09dfc32`/`2705b28`, revised results `77e71f5`, all on `origin/master`), with a commit-pinned link to that folder at `77e71f5`, and `phd-dissertation-draft-en` (folders `analysis/` and `manuscripts/A-plos-one/`). Both repositories are public (checked 11 October 2026 through the GitHub API). The folder `...-Wallet-Reputation/experiments` exists only on the unmerged branch `claude/beautiful-feynman-0sd7ov`; name it in the statement only after that branch is merged to `master`.
+- **Ethics statement:** Only public blockchain data and public token prices were used; no human participants; only contracts are scored. [ethics clearance reference to be added by the authors] Do not submit while this bracket is in `main.tex`: PLOS's technical check returns a manuscript with a placeholder.
+- **Use of AI tools:** the full statement is in Methods ("Use of generative AI"), with a pointer in Acknowledgments.
 - **Related manuscript:** upload Manuscript B (`manuscripts/B-ieee-access/main.pdf`) as a "Related manuscript" file.
 
-## Status of the author items (updated 9 October 2026)
+## Open items for the authors
 
-Planned submission date: **2 November 2026** (same day as Manuscript B), after all co-authors have approved both manuscripts.
+1. **Ethics statement (required before submission):** insert the UNISA ethics clearance reference (committee name and number) and delete the bracket in `main.tex`; if the committee confirmed that no clearance was needed, state that with the committee's name instead. The thesis also has it as [TBD].
+2. **Fix the reported state of the second repository:** `analysis/` and this folder are not yet committed. The generators `make_tables.py`, `data_sources.py`, `check_numbers.py`, `supporting/S1_Table_rows.tex` and `figures/fig1.pdf` were untracked and are now added to the index, so that the commit includes them; `__pycache__/` is ignored. After committing, tag a release (the existing tag `manuscripts-2026-11` points to an older state and must not be cited for this version) and add the commit or tag to the Data availability statement.
+3. **Use of generative AI:** confirm the sentence on the experiment repository ("Under the first author's direction it wrote and ran parts of the extraction and evaluation code in the first repository"). The commits `43d8045` to `77e71f5` carry the first author's account name; commit `7129981` set the repository so that Claude attribution lines are not added.
+4. **Companion manuscript:** the Introduction of A, the Introduction of B and both cover letters now use the same list of shared results (spender holdout coefficients of the raw degrees, EndorseRank and AWP with their degree contrasts; the closed form of EndorseRank; the solver runtimes), say that P, Q and R1–R3 are reported only in A and that B reports on the same trader cohort only the contrasts of its coupled walk that its own rule names. Check this again if either paper changes; `kwon2026coupling` now carries B's current title.
+5. **Supervisors' confirmation** that the revised analysis replaces the registered one as the main analysis (open in the thesis notes as well).
+6. **Approval and ORCID:** every co-author approves the final PDF; enter ORCID iDs and CRediT roles in the submission form.
+7. **Fig 1:** run PACE (https://pacev2.apexcovantage.com/) on `figures/Fig1.tif`.
+8. **Web sources:** access dates of the four web sources are those of the thesis bibliography (9 and 10 October 2026); update them if the pages are checked again before submission.
+9. **Archived release (required before submission):** a GitHub folder path is not a stable location (the experiment folder is being renamed on an unmerged branch), and both repositories also hold material outside this study. Archive a tagged release on Zenodo that contains only the experiment folder of `phd_works` and `analysis/` plus `manuscripts/A-plos-one/` of this repository, and cite its DOI in the Data availability statement and the cover letter. Until then the statement points to commit `77e71f5` on `master`.
 
-Done:
-- Affiliations: Kwon and Mnkandla, School of Computing, CSET, UNISA, Johannesburg; Koulla Moulla and Attipoe, Centre for Augmented Intelligence and Data Science (CAIDS), School of Computing, UNISA, Johannesburg (from the co-supervisors' e-mails of 28-29 July 2026).
-- Funding: "The authors received no specific funding for this work." (enter the same in the PLOS form). BigQuery cost under USD 20, paid by the first author, is stated in Data availability.
-- Acknowledgments written; AI-use statement completed (the tool's use in both repositories and the scripted number checks).
-- Data availability: both repositories are public; the tag `manuscripts-2026-11` in the thesis repository fixes the reported state; per-wallet frames are committed in `analysis/neutral-label/`.
-- Cover letter dated 2 November 2026; companion manuscript described as submitted at the same time to IEEE Access.
+## Claim discipline
 
-Still for the authors:
-1. **Ethics statement**: insert the clearance reference (left as a bracket; ethics wording is reserved for the authors).
-2. **Approval and ORCID**: every co-author approves the final PDF; enter ORCID iDs and CRediT roles in the submission form.
-3. **References**: access dates for the web sources (EIP-20, EIP-2612, GMX, Human Passport) and any missing DOIs/pages, after checking publishers' records (thesis list first).
-4. **Fig 1**: run PACE (https://pacev2.apexcovantage.com/) on `figures/Fig1.tif`.
-5. **AWP paper**: add the section of Do, Do and Nguyen (2023) that supports "no parameter values" and its validation claim, or ask its authors.
-6. Optional: a Zenodo DOI for a release of each repository (PLOS accepts GitHub; a DOI makes the archive permanent).
-7. Optional literature suggested by the reviewer (list in the previous version of this README, commit 680cb44).
-
-### Analyses the reviewers requested that only the authors' pipeline can produce
-
-These analyses were **not** run. The brief allows only numbers from the authors' pipeline outputs, and the reviewers asked that their own checks stay out of the manuscript until the pipeline reproduces them. The manuscript states each gap as a limitation, or narrows the claim instead. Running any of them would strengthen the paper; the most important come first.
-
-1. **Account type for every labelled trader.** Read `eth_getCode` at the freeze block for every labelled trader, not only spring spenders at end of September. Report a 2x2 table of account type by recipient status and the recipient contrast within contract accounts. Group recipient contracts by runtime code hash (vault, proxy, …) and record how EIP-7702 designators were treated. Reviewer 1, must-fix.
-2. **Overlap of the two windows.** Count the recipients and traders shared by W0 and W1 and the distinct recipient addresses across both. Reviewer checks on the frames found 37 of 44 W1 recipients in W0, 46 distinct recipients and 962 shared traders; these were verified on `frame_*.parquet` in this revision but are not in the manuscript. Add a cluster bootstrap that resamples recipient entities or code families. Reviewer 1, must-fix.
-3. **Past-behavior baselines and incremental value.** Compute τ and an AUC with ties counted as 0.5 for pre-freeze LFCR, the pre-freeze no-liquidation flag and leverage on the later outcomes. Fit a logistic or fractional model of later LFCR or no-liquidation on recipient status, log transfer in-degree, number of closes and account type. Label this exploratory. Reviewer 1, must-fix. Until it is done, the text makes no screening claim.
-4. **Tie-robust spender comparison and ablation.** Report the AUC for "gained ≥1 new pair" with ties counted as 0.5, or τ_b of the count with ties broken at random. Report the walk's within-tie-block association. Ablate the time weights, token weights and owner normalization on the same resamples. Reviewer 1, must-fix. Until it is done, the text does not attribute the shortfall to the normalization.
-5. **Label mechanics.**
-   - Compute a position-level liquidation rate.
-   - Run the analysis on all traders with ≥1 close in the label window, and report how many traders the 3-close rule excluded, by recipient status.
-   - Measure the share of `Approval` logs emitted inside `transferFrom` (same transaction, token, owner and spender as a `Transfer`), and rebuild the graph from `approve`/`permit` only.
-   - Report Permit2's share of edges.
-   - Report the share of pre-freeze transfer edges sent by GMX contracts, and rerun P and Q without them.
-   - Report τ_b of each score with the number of closes.
-6. **W0 without look-ahead.** Rebuild W0 with the seed defined on closes from 1 December to 28 February only. The look-ahead is currently stated as a limitation.
-7. **Isolated-node rule on trader labels.** Score traders absent from the allowance graph as isolated nodes on the trader labels, with bootstrap intervals, as an S-table sensitivity row only (do not promote it). Reviewer checks found τ ≈ 0.155 and 0.117 on LFCR for the raw-amount allowance walk under that rule; the analogous EndorseRank values are not available.
-8. **Inference.** Use B ≥ 2,000 for the spender holdouts as well, and add a cluster bootstrap by owner. Add Holm- or BH-adjusted intervals for the 6-label × 2-contrast × 2-window grid in S2 Table.
-9. **AWP with real value weights.** Run AWP with decimal-adjusted or USD-normalized amounts and b scaled so that V spans its range. Report the spender rows and Q.
-10. **EOA-only spender rows.** Report the spender rows for the 161 EOAs.
-11. **Market conditions.** Report the realized volatility of the main GMX markets in each label window.
-12. **Attachment kernel (optional).** Estimate mean new pairs by current degree. The text now says only "more likely the more it already has".
-
-### Found during this revision (for the thesis as well)
-
-- **Non-loss share.** `non_loss_close_rate` counts a **liquidated** close as non-losing (`loss_close = ~is_liquidation & basePnlUsd < 0` in `proxy_metrics.py`), so a trader whose every close was liquidated has a non-loss share of 1; this was verified on the 17 such W1 traders. Part of the negative P on the non-loss share is therefore built in. The manuscript says so and leans on the profitable share for R3. Thesis claim C6 and ledger sentence 4 should carry the same caveat.
-- **Manuscript B, sec. Data (line ~206).** B says that the post hoc rows use 2,000 resamples, but its post hoc *spender* rows use 400 (reviewer 2). This is B's file and was not edited here.
-- **Thesis wording.** Thesis Chapter 4 line ~181 and the appendix (line ~36) call `phd_works` "the public repository", but it is private. Either make it public or change the thesis wording. This is the thesis's file and was not edited here.
-
-## Submission checklist
-
-- [x] Cover letter (`cover-letter.pdf`) dated 2 November 2026 with the public repository links.
-- [ ] Manuscript PDF (`main.pdf`) with line and page numbers; LaTeX source (`main.tex`, `references.bib`) for the files step.
-- [ ] Title in sentence case, under 250 characters; abstract under 300 words (292), no citations.
-- [ ] Section order: Abstract, Introduction, Materials and methods, Results, Discussion, Conclusions, Acknowledgments, References, Supporting information.
-- [ ] Fig 1 uploaded as `figures/Fig1.tif`, checked with PACE. The caption sits after the paragraph that first cites it, and no figure is embedded in `main.tex`.
-- [ ] Tables 1–4 in the text after first citation, captions above.
-- [ ] Supporting information uploaded as separate files: S1 Text (`supporting/S1_Text.pdf`), S1 File (`supporting/S1_File.md`), S1 Table (`supporting/S1_Table.pdf`), S2 Table (`supporting/S2_Table.pdf`). Their captions are at the end of `main.tex`.
-- [ ] Manuscript B uploaded as a Related manuscript.
-- [ ] Ethics statement completed by the authors, and Data availability statement made consistent with it (Methods and submission form).
-- [x] AI-use disclosure completed in Methods; pointer in Acknowledgments.
-- [ ] Author contributions (CRediT), competing interests and funding entered in the form.
-- [x] Repositories public (tag `manuscripts-2026-11`); a Zenodo DOI is optional.
-- [x] Affiliations with cities.
-
-## Claim discipline (from the revision brief)
-
-- The trader comparison is always called a pre-specified post hoc analysis. The manuscript states:
-  - when the plan was committed, with commits and times;
-  - that the W1 point estimates of P (all labels) and Q (LFCR) were implied by known numbers, and that P was chosen with that knowledge;
-  - that EndorseRank − AWP in W1 had already been computed with 400 resamples;
-  - that no W0 trader association had been computed.
-- R1 holds; R2 fails, described as "not resolved at this precision"; R3 applies, with the non-loss caveat. Account type is an unresolved confound that this design cannot assess (40 of 44 and 38 of 39 recipients are contracts).
-- The manuscript describes the predictor on traders as "having received any approval" (44 and 39 traders) and the risk difference as the more direct description. It also states that W0 largely re-observes the same recipients.
-- The manuscript never claims that EndorseRank beats AWP on liquidation, or that any score measures creditworthiness, default risk or trading skill. It does not use "significant", "demonstrates", "confirms" or "proves", and it reports no P(Δτ>0).
-- No screening recommendation is made. The Practical implications state the count's coverage (zero for about 97% and 98% of traders) and its Sybil exposure. Any use is made conditional on a registered test with account type and past behavior controlled. The Conclusions use the wording Reviewer 1 proposed, with "a provisional yes" in the Discussion.
-- The coupled walk (C-PR/S-PR) appears in the text only in the sentence on the companion manuscript. Its plan rows are listed, undiscussed, in S2 Table to avoid selective reporting.
-- Every number in the manuscript and in S1/S2 Tables comes from `results.json`, `closed_form_check.json`, the thesis tables or the thesis text. No reviewer-computed number was inserted.
+- Scored and evaluated objects are always "contracts"; externally owned accounts appear only as owners, senders and recipients.
+- Same-window agreement with a score's own edges is an "intended-construct check", never validation.
+- Every τ comes with its 95% interval and every comparison is a paired contrast with its interval. `tau_score_vs_delta` of the closed-form check has no interval and is therefore not reported.
+- The text says plainly that the in-approve degree beats EndorseRank with uniform restarts in both windows; the activity-restart lead is a hypothesis.
+- Revised results are a re-analysis with the registered rules; registered values are labelled as such (Table 6, one paragraph in Results).
+- The runtime difference is a consequence of |E|, not a contribution.
+- No interpretation bands for τ, no p-values, no "significant", "demonstrates", "confirms" or "proves", no claim that any score measures creditworthiness, default risk, trading skill or code safety.
+- No mention of any earlier thesis, draft, pilot or proposal of the authors.

@@ -1,65 +1,75 @@
 #!/usr/bin/env python3
-"""S2 Table of Manuscript A: every contrast of the pre-specified trader comparison.
+"""S2 Table of Manuscript A: every registered contrast of the comparison on trader outcomes.
 
 Reads analysis/neutral-label/results.json (read only) and writes S2_Table_rows.tex, which
-S2_Table.tex inputs. No number is typed by hand. The share of resamples with a positive
-difference, which results.json also stores, is deliberately not exported.
+S2_Table.tex inputs: for the revised analysis (main) and the registered analysis, both
+windows, all six labels and all six pairs, with the stratified rows. No number is typed
+by hand. The share of resamples with a positive difference, which results.json also
+stores, is deliberately not exported.
+
+    python3 make_s2_table.py
 """
 import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
-R = json.loads((ROOT / "analysis/neutral-label/results.json").read_text())
+R = json.loads((ROOT / "analysis/neutral-label/results.json").read_text(encoding="utf-8"))
 
-WINDOWS = [("W1_registered_jun_aug_2026", "W1: freeze 31 May 2026, labels June--August 2026"),
-           ("W0_spring_mar_may_2026", "W0: freeze 28 February 2026, labels March--May 2026")]
-LABELS = [("future_liquidation_free_rate", "Liquidation-free close rate"),
-          ("future_zero_liquidation", "No-liquidation flag"),
-          ("close_success_count", "Profitable closes$^{\\dagger}$"),
-          ("realized_gain_proxy", "Realized gain$^{\\dagger}$"),
-          ("close_success_rate", "Profitable share"),
-          ("non_loss_close_rate", "Non-loss share")]
-CONTRASTS = [("P", "P: in-approve degree $-$ transfer in-degree"),
-             ("Q", "Q: EndorseRank (activity restarts) $-$ AWP"),
-             ("ER-AWP", "EndorseRank $-$ AWP"),
-             ("ER-deg", "EndorseRank $-$ in-approve degree"),
-             ("L1-L0", "C-PR($\\lambda{=}1$) $-$ C-PR($\\lambda{=}0$)$^{\\ddagger}$"),
-             ("L0-AWP", "C-PR($\\lambda{=}0$) $-$ AWP$^{\\ddagger}$"),
-             ("CPR-deg", "C-PR($\\lambda{=}0.5$) $-$ in-approve degree$^{\\ddagger}$")]
+ANALYSES = [("revised", "Revised analysis (amounts in US dollars, five tokens; registered rules applied as a re-analysis)"),
+            ("registered", "Registered analysis (raw base units, every ERC-20 token)")]
+WINDOWS = [("W1", "W1: freeze 30 June 2026, labels July--September 2026"),
+           ("W0", "W0: freeze 31 March 2026, labels April--June 2026")]
+LABELS = [("liquidation_free_rate", "Liquidation-free close rate"),
+          ("no_liquidation", "No-liquidation flag"),
+          ("profitable_closes", "Profitable closes$^{\\dagger}$"),
+          ("realized_gain", "Realized gain$^{\\dagger}$"),
+          ("profitable_share", "Profitable share"),
+          ("non_loss_share", "Non-loss share")]
+PAIRS = [("P", "P: in-approve degree $-$ transfer in-degree"),
+         ("Q", "Q: EndorseRank (activity restarts) $-$ AWP"),
+         ("er_awp", "EndorseRank $-$ AWP"),
+         ("layers", "C-PR($\\lambda{=}1$) $-$ C-PR($\\lambda{=}0$)$^{\\ddagger}$"),
+         ("cpr0_awp", "C-PR($\\lambda{=}0$) $-$ AWP$^{\\ddagger}$"),
+         ("er_degree", "EndorseRank $-$ in-approve degree$^{*}$")]
 
 
 def f(x: float) -> str:
-    s = f"{x:+.3f}" if x != 0 else "0.000"
+    s = f"{x:+.3f}"
+    if s.lstrip("+-") == "0.000":
+        s = "0.000"
     return s.replace("-", "$-$")
 
 
-def ci(pair) -> str:
-    lo, hi = pair
+def ci(lo, hi) -> str:
+    if lo is None:
+        return "--"
     return f"[{f(lo)}, {f(hi)}]"
+
+
+def row(name: str, c: dict) -> str:
+    return (f"\\quad {name} & {f(c['tau_a'])} & {f(c['tau_b'])} & {f(c['delta_tau'])} & "
+            f"{ci(c['ci95_low'], c['ci95_high'])} & {ci(c.get('ci975_low'), c.get('ci975_high'))} \\\\")
 
 
 def main() -> None:
     out = []
-    for wkey, wname in WINDOWS:
-        win = R["windows"][wkey]
-        out.append(f"\\midrule\n\\multicolumn{{6}}{{l}}{{\\textbf{{{wname}}}}} \\\\")
-        for lab, lname in LABELS:
-            block = win["plain"][lab]
-            out.append(f"\\multicolumn{{6}}{{l}}{{\\emph{{{lname}}} ($n={block['n']:,}$)}} \\\\".replace(",", "{,}"))
-            for cid, cname in CONTRASTS:
-                r = block["contrasts"][cid]
-                out.append(f"\\quad {cname} & {f(r['tau_a'])} & {f(r['tau_b'])} & {f(r['delta'])} & "
-                           f"{ci(r['ci95'])} & {ci(r['ci975'])} \\\\")
-        st = win["stratified_by_closes"]["future_liquidation_free_rate"]["contrasts"]
-        out.append("\\multicolumn{6}{l}{\\emph{Liquidation-free close rate, stratified by the number of closes}} \\\\")
-        for cid, cname in CONTRASTS:
-            if cid not in st:
-                continue
-            r = st[cid]
-            out.append(f"\\quad {cname} & {f(r['tau_a'])} & {f(r['tau_b'])} & {f(r['delta'])} & "
-                       f"{ci(r['ci95'])} & {ci(r['ci975'])} \\\\")
-    (HERE / "S2_Table_rows.tex").write_text("\n".join(out) + "\n")
+    for akey, aname in ANALYSES:
+        A = R["analyses"][akey]["windows"]
+        out.append(f"\\midrule\n\\multicolumn{{6}}{{l}}{{\\textbf{{{aname}}}}} \\\\")
+        for wkey, wname in WINDOWS:
+            W = A[wkey]
+            out.append(f"\\multicolumn{{6}}{{l}}{{\\textit{{{wname} ($n={W['n']}$ contract traders)}}}} \\\\")
+            for lab, lname in LABELS:
+                out.append(f"\\multicolumn{{6}}{{l}}{{\\quad\\emph{{{lname}}}}} \\\\")
+                for pid, pname in PAIRS:
+                    out.append(row(pname, W["contrasts"][pid][lab]))
+            out.append("\\multicolumn{6}{l}{\\quad\\emph{Liquidation-free close rate, stratified by the number of closes}} \\\\")
+            out.append(row("P, stratified", W["stratified"]["P"]))
+            out.append(row("Q, stratified", W["stratified"]["Q"]))
+    (HERE / "S2_Table_rows.tex").write_text(
+        "% Generated by make_s2_table.py from analysis/neutral-label/results.json; do not edit by hand.\n"
+        + "\n".join(out) + "\n", encoding="utf-8")
     print("wrote", HERE / "S2_Table_rows.tex")
 
 

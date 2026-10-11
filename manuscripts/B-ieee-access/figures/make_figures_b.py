@@ -1,159 +1,242 @@
 #!/usr/bin/env python3
-"""Figures of Manuscript B (static vector PDFs for print).
+"""Figures 2 and 3 of Manuscript B (static vector PDFs for print).
 
-Fig. 2  fig_lambda_sweep.pdf  Kendall tau_b of C-PR against lambda, with 95% intervals.
-Fig. 3  fig_contrasts.pdf     Forest plot of the decision and reported contrasts.
+Fig. 2  fig_contrasts.pdf     Forest plot of the contrasts of rules A and B, of the results reported
+                              beside rule B and of its two sensitivity analyses, both analyses.
+Fig. 3  fig_lambda_sweep.pdf  Kendall tau_b of C-PR against the authorization weight lambda,
+                              with 95% intervals, for both analyses and three cohort-label panels.
 
-Values with intervals are copied from the thesis tables named beside them; the
-extra lambda values are the exploratory point estimates in
-../supplement/exploratory_checks.json.
+Both figures are 7.16 in wide and are scaled to the text width (about 0.98), so every text size
+below is at least 8.2 pt in the figure and prints at 8 pt or more. The serif list puts a Times
+face first, falling back to Liberation Serif (metric-compatible with Times New Roman; a TrueType
+font, so it embeds cleanly with pdf.fonttype 42) and then to TeX Gyre Termes.
+
+Every value is read from the published evaluation summaries of the experiment pipeline in the
+authors' repository phd_works (data/3-published-results-for-thesis/ for the registered analysis,
+its subfolder revised-usd/ for the revised analysis); nothing is typed in by hand.
+
+    python make_figures_b.py --phd-works /path/to/phd_works      # or set PHD_WORKS
 """
+
+from __future__ import annotations
+
+import argparse
 import json
+import os
 from pathlib import Path
 
 import matplotlib
 
 matplotlib.use("pdf")
-import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
+import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-EXPL = json.loads((HERE.parent / "supplement" / "exploratory_checks.json").read_text())
+PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
+DELTA = 0.01  # registered margin of rule B (docs/registration_w1.md)
 
+FS = 8.2  # smallest text size in the figure (pt); prints at about 8 pt after scaling to the text width
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#d9d8d4"
-S1, S2, S3 = "#2a78d6", "#eb6834", "#1baf7a"  # validated categorical slots 1-3
+S1, S2, S3 = "#2a78d6", "#eb6834", "#1baf7a"  # categorical slots 1-3, validated all-pairs (light)
 plt.rcParams.update({
-    "font.family": "serif", "font.serif": ["Times New Roman", "Times", "Nimbus Roman", "DejaVu Serif"],
-    "mathtext.fontset": "stix", "font.size": 8, "axes.edgecolor": INK2, "axes.labelcolor": INK,
+    "font.family": "serif",
+    "font.serif": ["Times New Roman", "Times", "Nimbus Roman", "Liberation Serif", "TeX Gyre Termes", "DejaVu Serif"],
+    "mathtext.fontset": "stix", "font.size": FS, "axes.edgecolor": INK2, "axes.labelcolor": INK,
     "xtick.color": INK2, "ytick.color": INK2, "axes.linewidth": 0.6, "legend.frameon": False,
     "pdf.fonttype": 42,
 })
 
-# results/tables/holdout-spenders.tex (spring) and fresh-holdout.tex (registered):
-# tau [low, high] at lambda = 0, 0.25, 0.5, 0.75, 1.
-SPRING = {
-    "New approval pairs": [(0.044, -0.011, 0.098), (0.271, 0.231, 0.314), (0.295, 0.252, 0.336), (0.314, 0.271, 0.357), (0.479, 0.427, 0.529)],
-    "New transfer senders": [(0.270, 0.235, 0.310), (0.266, 0.231, 0.306), (0.277, 0.241, 0.318), (0.287, 0.253, 0.330), (0.372, 0.325, 0.424)],
-}
-REG = {
-    "New approval pairs": [(0.058, 0.012, 0.103), (0.228, 0.190, 0.265), (0.238, 0.200, 0.274), (0.243, 0.206, 0.280), (0.338, 0.292, 0.388)],
-    "New transfer senders": [(0.257, 0.229, 0.286), (0.245, 0.217, 0.273), (0.246, 0.218, 0.274), (0.248, 0.219, 0.275), (0.289, 0.247, 0.332)],
-    "Liquidation-free close rate": [(0.065, 0.030, 0.102), (0.077, 0.042, 0.114), (0.083, 0.047, 0.119), (0.086, 0.051, 0.121), (0.086, 0.037, 0.129)],
-}
-KEYS = {"New approval pairs": "future_new_approvers", "New transfer senders": "future_new_transfer_senders",
-        "Liquidation-free close rate": "future_liquidation_free_rate"}
-STYLE = {"New approval pairs": (S1, "o"), "New transfer senders": (S2, "s"), "Liquidation-free close rate": (S3, "^")}
+APPR, SEND, LIQ = "future_new_approvers", "future_new_transfer_senders", "liquidation_free_rate"
 LAM = [0.0, 0.25, 0.5, 0.75, 1.0]
-EXTRA = [0.01, 0.05, 0.95, 0.99]
+COL = {0.0: "cpr_l0", 0.25: "cpr_l25", 0.5: "cpr_l50", 0.75: "cpr_l75", 1.0: "cpr_l100"}
+STYLE = {APPR: (S1, "o", "New approval pairs"), SEND: (S2, "s", "New transfer senders"),
+         LIQ: (S3, "^", "Liquidation-free close rate")}
 
 
-def sweep():
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.1), sharey=True)
-    panels = [("(a) Spring: freeze 28 Feb, labels Mar–May", SPRING, "spring/spenders", None),
-              ("(b) Registered: freeze 31 May, labels Jun–Aug", REG, "registered/spenders", "registered/traders")]
-    for ax, (title, data, key_sp, key_tr) in zip(axes, panels):
-        for name, pts in data.items():
-            col, mk = STYLE[name]
-            key = key_tr if name == "Liquidation-free close rate" else key_sp
-            sweep_pts = EXPL["lambda_sweep"][key]
-            # interior: lambda in (0, 1), joined; intervals at the registered grid
-            xs = sorted([0.25, 0.5, 0.75] + EXTRA)
-            ys = [sweep_pts[str(x)][KEYS[name]] for x in xs]
-            ax.plot(xs, ys, "-", color=col, lw=1.4, zorder=2)
-            ax.plot(EXTRA, [sweep_pts[str(x)][KEYS[name]] for x in EXTRA], mk, ms=3.6, mfc="white", mec=col, mew=0.9, zorder=3)
-            for x, (t, lo, hi) in zip(LAM, pts):
-                interior = 0 < x < 1
-                ax.plot([x, x], [lo, hi], color=col, lw=1.0, alpha=0.9, zorder=2)
-                ax.plot([x], [t], mk, ms=4.6, color=col if interior else "white", mec=col, mew=1.1, zorder=4)
-        ax.axvspan(-0.03, 0.03, color=GRID, alpha=0.35, lw=0, zorder=0)
-        ax.axvspan(0.97, 1.03, color=GRID, alpha=0.35, lw=0, zorder=0)
-        ax.set_xticks(LAM)
-        ax.set_xticklabels(["0\npayment\nwalk", "0.25", "0.5", "0.75", "1\nauthorization\nwalk"])
-        ax.set_xlim(-0.06, 1.06)
-        ax.set_title(title, fontsize=7.6, color=INK, loc="left")
-        ax.grid(axis="y", color=GRID, lw=0.5)
-        ax.set_axisbelow(True)
-        for s in ("top", "right"):
-            ax.spines[s].set_visible(False)
-    axes[0].set_ylabel(r"Kendall $\tau_b$ with the later label")
-    fig.supxlabel(r"weight $\lambda$ on the authorization layer in C-PR", fontsize=8, color=INK, y=0.03)
-    handles = [Line2D([0], [0], color=STYLE[n][0], marker=STYLE[n][1], lw=1.4, ms=4.6, label=n) for n in KEYS]
-    handles += [Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.6, mfc="white", mec=INK2, label="end point (separate operator)"),
-                Line2D([0], [0], color=INK2, marker="o", lw=0, ms=3.6, mfc="white", mec=INK2, label="exploratory λ, point estimate")]
-    fig.legend(handles=handles, loc="upper center", ncol=3, fontsize=6.8, bbox_to_anchor=(0.5, 1.0), handlelength=1.8, columnspacing=1.4)
-    fig.tight_layout(rect=(0, 0.02, 1, 0.84))
+def published_dirs(phd_works: Path) -> dict[str, Path]:
+    for p in PROJECTS:
+        pub = phd_works / "1-Dissertation-Works" / p / "experiments" / "data" / "3-published-results-for-thesis"
+        if (pub / "results_digest.md").exists():
+            return {"registered": pub, "revised": pub / "revised-usd"}
+    raise SystemExit(f"no published results under {phd_works}")
+
+
+def load(pub: dict[str, Path]) -> dict:
+    out = {}
+    for name, d in pub.items():
+        w1 = "registered-w1" if name == "registered" else "window-w1"
+        out[name] = {
+            "w0": json.loads((d / "holdout-w0" / "eval_summary.json").read_text(encoding="utf-8")),
+            "w1": json.loads((d / w1 / "eval_summary.json").read_text(encoding="utf-8")),
+        }
+    return out
+
+
+def sweep(S: dict) -> None:
+    fig, axes = plt.subplots(2, 3, figsize=(7.16, 4.7), sharey="row")
+    rows = [("registered", "Registered analysis (pre-specified; raw base units, every ERC-20)"),
+            ("revised", "Revised analysis (re-analysis; US dollars, five tokens)")]
+    cols = [("W0 spenders (labels Apr–Jun)", "w0", "taus", [APPR, SEND]),
+            ("W1 spenders (labels Jul–Sep)", "w1", "spender_taus", [APPR, SEND]),
+            ("W1 traders (labels Jul–Sep)", "w1", "trader_taus", [LIQ])]
+    for r, (name, rtitle) in enumerate(rows):
+        for c, (ctitle, win, block, labels) in enumerate(cols):
+            ax = axes[r, c]
+            src = S[name][win][block]
+            for lab in labels:
+                col, mk, _ = STYLE[lab]
+                pts = []
+                for lam in LAM:
+                    e = src[COL[lam]][lab] if lab != LIQ else src[COL[lam]]
+                    pts.append((lam, e["kendall_tau"], e["ci_low"], e["ci_high"]))
+                inner = [p for p in pts if 0 < p[0] < 1]
+                ax.plot([p[0] for p in inner], [p[1] for p in inner], "-", color=col, lw=1.4, zorder=2)
+                for lam, t, lo, hi in pts:
+                    interior = 0 < lam < 1
+                    ax.plot([lam, lam], [lo, hi], color=col, lw=1.0, zorder=2)
+                    ax.plot([lam], [t], mk, ms=4.6, color=col if interior else "white", mec=col, mew=1.1, zorder=4)
+            ax.axvspan(-0.04, 0.04, color=GRID, alpha=0.35, lw=0, zorder=0)
+            ax.axvspan(0.96, 1.04, color=GRID, alpha=0.35, lw=0, zorder=0)
+            ax.set_xticks(LAM)
+            ax.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"])
+            ax.set_xlim(-0.08, 1.08)
+            ax.grid(axis="y", color=GRID, lw=0.5)
+            ax.set_axisbelow(True)
+            for s in ("top", "right"):
+                ax.spines[s].set_visible(False)
+            if r == 0:
+                ax.set_title(ctitle, fontsize=FS, color=INK, loc="left")
+            if c == 0:
+                ax.set_ylabel(r"Kendall $\tau_b$")
+    for ax in axes[1]:
+        ax.set_xlabel(r"weight $\lambda$ on the authorization layer", fontsize=FS)
+    handles = [Line2D([0], [0], color=STYLE[k][0], marker=STYLE[k][1], lw=1.4, ms=4.6, label=STYLE[k][2])
+               for k in (APPR, SEND, LIQ)]
+    handles.append(Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.6, mfc="white", mec=INK2,
+                          label=r"$\lambda=0$ or $1$: one layer walked alone"))
+    fig.legend(handles=handles, loc="upper center", ncol=4, fontsize=FS, bbox_to_anchor=(0.5, 1.0),
+               handlelength=1.6, columnspacing=1.0)
+    fig.subplots_adjust(left=0.075, right=0.99, top=0.855, bottom=0.09, hspace=0.62, wspace=0.10)
+    for r, (_, rtitle) in enumerate(rows):
+        box = axes[r, 0].get_position()
+        fig.text(box.x0 - 0.06, box.y1 + (0.058 if r == 0 else 0.045), rtitle, fontsize=FS + 0.2, color=INK,
+                 fontweight="bold", va="bottom", ha="left")
     fig.savefig(HERE / "fig_lambda_sweep.pdf")
+    plt.close(fig)
 
 
-# results/tables/holdout-diff.tex and fresh-contrasts.tex
+# (group, label, block path, test)
 ROWS = [
-    ("Rule A (spring)", [
-        ("A1  C-PR − authorization walk · approval pairs", -0.184, -0.213, -0.149, "no worse", "fails"),
-        ("A2  C-PR − payment walk · transfer senders", 0.007, -0.012, 0.028, "superiority", "fails"),
+    ("Rule A, primary part (plan, 13:41:27 UTC); W0", [
+        ("A1  C-PR − C-PR(1) · new approval pairs", ("w0", "contrasts_prefixed", 0), "no worse"),
+        ("A2  C-PR − C-PR(0) · new transfer senders", ("w0", "contrasts_prefixed", 1), "superiority"),
     ]),
-    ("Rule B (registered)", [
-        ("F1  C-PR − payment walk · approval pairs", 0.179, 0.132, 0.225, "superiority", "holds"),
-        ("F2  C-PR − payment walk · transfer senders", -0.011, -0.025, 0.003, "non-inferiority", "fails"),
-        ("F3  C-PR − payment walk · liquidation-free rate", 0.018, 0.011, 0.024, "non-inferiority", "holds"),
+    ("Rule B (registration, 16:49:32 UTC); W1; all three required", [
+        ("F1  C-PR − C-PR(0) · new approval pairs", ("w1", "rule_b", "F1"), "superiority"),
+        ("F2  C-PR − C-PR(0) · new transfer senders", ("w1", "rule_b", "F2"), "non-inferiority"),
+        ("F3  C-PR − C-PR(0) · liquidation-free rate", ("w1", "rule_b", "F3"), "non-inferiority"),
     ]),
-    ("Reported beside Rule B (nominal)", [
-        ("F4  as F3, superiority", 0.018, 0.011, 0.024, "superiority", "holds"),
-        ("F5  C-PR − authorization walk · liquidation-free rate", -0.003, -0.060, 0.051, "superiority", "fails"),
-        ("F6a  C-PR − authorization walk · approval pairs", -0.101, -0.127, -0.076, "no worse", "fails"),
-        ("F6b  C-PR − payment walk · transfer senders", -0.011, -0.025, 0.003, "superiority", "fails"),
+    ("Reported beside rule B (nominal)", [
+        ("F4  as F3, superiority", ("w1", "rule_b", "F4"), "superiority"),
+        ("F5  C-PR − C-PR(1) · liquidation-free rate", ("w1", "rule_b", "F5"), "superiority"),
+        ("F6a C-PR − C-PR(1) · new approval pairs", ("w1", "rule_b", "F6a"), "no worse"),
+        ("F6b C-PR − C-PR(0) · new transfer senders", ("w1", "rule_b", "F6b"), "superiority"),
     ]),
-    ("S1: AWP as comparator (nominal)", [
-        ("F1  C-PR − AWP · approval pairs", 0.119, 0.075, 0.169, "superiority", "holds"),
-        ("F2  C-PR − AWP · transfer senders", -0.073, -0.092, -0.055, "non-inferiority", "fails"),
-        ("F3/F4  C-PR − AWP · liquidation-free rate", 0.037, 0.011, 0.066, "both", "holds"),
+    ("Sensitivity 1: AWP as comparator (nominal)", [
+        ("F1  C-PR − AWP · new approval pairs", ("w1", "sensitivity_awp", "F1"), "superiority"),
+        ("F2  C-PR − AWP · new transfer senders", ("w1", "sensitivity_awp", "F2"), "non-inferiority"),
+        ("F3  C-PR − AWP · liquidation-free rate", ("w1", "sensitivity_awp", "F3"), "non-inferiority"),
     ]),
-    ("S2: absent wallets as isolated nodes (nominal)", [
-        ("F1  C-PR − payment walk · approval pairs", 0.185, 0.137, 0.232, "superiority", "holds"),
-        ("F2  C-PR − payment walk · transfer senders", -0.012, -0.027, 0.003, "non-inferiority", "fails"),
-        ("F3/F4  C-PR − payment walk · liquidation-free rate", 0.018, 0.010, 0.024, "both", "holds"),
-        ("F5  C-PR − authorization walk · liquidation-free rate", -0.072, -0.118, -0.028, "superiority", "fails"),
+    ("Sensitivity 2: contracts outside a graph as isolated nodes (nominal)", [
+        ("F1  C-PR − C-PR(0) · new approval pairs", ("w1", "sensitivity_isolated", "F1"), "superiority"),
+        ("F2  C-PR − C-PR(0) · new transfer senders", ("w1", "sensitivity_isolated", "F2"), "non-inferiority"),
+        ("F3  C-PR − C-PR(0) · liquidation-free rate", ("w1", "sensitivity_isolated", "F3"), "non-inferiority"),
+        ("F5  C-PR − C-PR(1) · liquidation-free rate", ("w1", "sensitivity_isolated", "F5"), "superiority"),
     ]),
 ]
+XMIN, XMAX = -0.25, 0.20
 
 
-def fmt(x):
-    return ("+" if x > 0 else "\u2212" if x < 0 else "") + f"{abs(x):.3f}"
+def holds(e: dict, test: str) -> bool:
+    if "holds" in e:
+        return bool(e["holds"])
+    if test == "superiority":
+        return e["ci_low"] > 0
+    if test == "non-inferiority":
+        return e["ci_low"] > -DELTA
+    return e["ci_high"] >= 0  # no worse
 
 
-def forest():
+def forest(S: dict) -> None:
     n = sum(len(r) for _, r in ROWS) + len(ROWS)
-    fig, ax = plt.subplots(figsize=(7.16, 0.19 * n + 0.75))
+    fig, ax = plt.subplots(figsize=(7.16, 0.235 * n + 0.85))
     y = n
-    yt = []
-    lab_tf = ax.get_yaxis_transform()
+    tf = ax.get_yaxis_transform()
+    offs = {"registered": (+0.17, S1, "o"), "revised": (-0.17, S2, "s")}
+    headers = []
     for group, rows in ROWS:
         y -= 1
-        ax.text(-0.02, y, group, transform=lab_tf, fontsize=7.2, color=INK, fontweight="bold", va="center", ha="right")
-        for lab, d, lo, hi, test, verdict in rows:
+        headers.append((y, group))  # drawn at the left edge of the figure once the layout is fixed
+        for lab, (win, block, key), test in rows:
             y -= 1
-            ax.plot([lo, hi], [y, y], color=S1, lw=1.4, solid_capstyle="round", zorder=2)
-            ax.plot([d], [y], "o", ms=4.4, color=S1 if verdict == "holds" else "white", mec=S1, mew=1.1, zorder=3)
-            ax.text(-0.02, y, lab, transform=lab_tf, fontsize=6.6, color=INK, va="center", ha="right")
-            ax.text(1.02, y, f"{fmt(d)} [{fmt(lo)}, {fmt(hi)}]  {verdict}", transform=lab_tf,
-                    fontsize=6.5, color=INK2, va="center", ha="left")
-            yt.append(y)
+            ax.text(-0.01, y, lab, transform=tf, fontsize=FS, color=INK, va="center", ha="right")
+            for name, (dy, col, mk) in offs.items():
+                e = S[name][win][block][key]
+                d, lo, hi = e["delta_tau"], e["ci_low"], e["ci_high"]
+                yy = y + dy
+                clo = lo if lo >= XMIN else XMIN + 0.016  # a clipped end becomes an arrowhead
+                chi = hi if hi <= XMAX else XMAX - 0.016
+                ax.plot([clo, chi], [yy, yy], color=col, lw=1.3, solid_capstyle="butt", zorder=2)
+                if lo < XMIN:
+                    ax.annotate("", xy=(XMIN, yy), xytext=(XMIN + 0.016, yy),
+                                arrowprops=dict(arrowstyle="-|>", color=col, lw=1.0, mutation_scale=7, shrinkA=0, shrinkB=0), zorder=3)
+                if hi > XMAX:
+                    ax.annotate("", xy=(XMAX, yy), xytext=(XMAX - 0.016, yy),
+                                arrowprops=dict(arrowstyle="-|>", color=col, lw=1.0, mutation_scale=7, shrinkA=0, shrinkB=0), zorder=3)
+                ok = holds(e, test)
+                ax.plot([d], [yy], mk, ms=4.3, color=col if ok else "white", mec=col, mew=1.1, zorder=4)
+            ax.text(1.01, y, test, transform=tf, fontsize=FS, color=INK2, va="center", ha="left")
     ax.axvline(0, color=INK2, lw=0.7, zorder=1)
-    ax.axvline(-0.02, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
+    ax.axvline(-DELTA, color=INK2, lw=0.7, ls=(0, (3, 2)), zorder=1)
     ax.set_yticks([])
     ax.set_ylim(-0.7, n - 0.3)
-    ax.set_xlim(-0.24, 0.25)
-    ax.set_xticks([-0.2, -0.1, 0, 0.1, 0.2])
-    ax.set_xticklabels(["\u22120.2", "\u22120.1", "0", "0.1", "0.2"])
+    ax.set_xlim(XMIN, XMAX)
+    ticks = [-0.2, -0.1, 0, 0.1, 0.2]
+    ax.set_xticks(ticks)
+    ax.set_xticklabels(["−0.2", "−0.1", "0", "0.1", "0.2"])
     ax.grid(axis="x", color=GRID, lw=0.5)
     ax.set_axisbelow(True)
     for sp in ("top", "right", "left"):
         ax.spines[sp].set_visible(False)
-    ax.set_xlabel(r"$\Delta\tau_b$ with 95% interval; dashed line: margin $-0.02$; filled: criterion met", fontsize=7.2)
-    fig.subplots_adjust(left=0.39, right=0.76, top=0.99, bottom=0.085)
+    ax.set_xlabel(r"$\Delta\tau_b$ with 95% paired-bootstrap interval; dashed line: margin $-\delta=-0.01$", fontsize=FS)
+    handles = [
+        Line2D([0], [0], color=S1, marker="o", lw=1.3, ms=4.3, label="registered analysis (pre-specified test)"),
+        Line2D([0], [0], color=S2, marker="s", lw=1.3, ms=4.3, label="revised analysis (re-analysis)"),
+        Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.3, mfc=INK2, mec=INK2, label="filled: criterion met"),
+        Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.3, mfc="white", mec=INK2, label="open: not met"),
+    ]
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=FS,
+               handlelength=1.4, columnspacing=0.9)
+    fig.subplots_adjust(left=0.40, right=0.885, top=0.95, bottom=0.075)
+    for yh, group in headers:  # group headers start at the left edge of the figure
+        _, ydisp = ax.transData.transform((0, yh))
+        _, yfig = fig.transFigure.inverted().transform((0, ydisp))
+        fig.text(0.008, yfig, group, fontsize=FS, color=INK, fontweight="bold", va="center", ha="left")
     fig.savefig(HERE / "fig_contrasts.pdf")
+    plt.close(fig)
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"))
+    args = ap.parse_args()
+    if not args.phd_works:
+        raise SystemExit("pass --phd-works PATH or set PHD_WORKS")
+    S = load(published_dirs(Path(args.phd_works).resolve()))
+    sweep(S)
+    forest(S)
+    print("ok")
 
 
 if __name__ == "__main__":
-    sweep()
-    forest()
-    print("ok")
+    main()
