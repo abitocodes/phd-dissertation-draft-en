@@ -15,19 +15,19 @@
 \toprule
 When & Commitment or event & Record & Already known \\
 \midrule
-9 Oct, 13:41:27 & Analysis plan and configuration committed: cohort rule, scores (C-PR at $\lambda\in\{0.25,0.5,0.75\}$ and its end points, S-PR), W0 labels, statistics and rule~A; amounts in raw base units, every ERC-20 token & \sha{43d8045} & Nothing: no log of this study extracted \\
+9 Oct, 13:41:27 & Analysis plan and configuration committed: cohort rule, scores (C-PR at $\lambda\in\{0.25,0.5,0.75\}$ and its end points, S-PR), W0 labels, statistics and rule~A; amounts in raw base units, every ERC-20 token & \sha{43d8045} & No log of this study extracted \\
 9 Oct, 13:41:37--13:43:54 & Scan~A of the observation window; the BigQuery job was created 10~s after the plan commit & Job metadata; cost ledger & --- \\
 9 Oct, before 16:49 & Cohort of 27{,}844 contracts, ego extraction, same-window and W0 evaluation; rule~A judged & Summaries committed in \sha{0d3a057} & Logs of the observation window \\
 9 Oct, 16:49:32 & Registration of W1: rule~B with $\delta=0.01$, F4--F6, sensitivity analyses S1 and S2, the companion study's comparison on trader outcomes (its rules R1--R3 and their wording); configuration status set to registered & \sha{0d3a057} & Every same-window and W0 result of the registered analysis; W0 profit labels of the traders (exploratory run) \\
 9 Oct, 16:49:33 & Extraction script checks the committed registration and writes its manifest (1~s after the commit): commit and both SHA-256 hashes & Manifest & --- \\
 9 Oct, 16:49:40--16:50:11 & Scan~B of July--September 2026; job created 8~s after the commit; manifest closed at 16:50:55 & Job metadata; manifest & No July--September log extracted for this study before this \\
-9 Oct, 18:00:55 & Registered W1 evaluation, then robustness and Sybil model, published & \sha{8d8b568} & W1 labels \\
-9 Oct, 23:24:39 & Registered benchmark and data description (BigQuery job times, amount shares) published & \sha{f33a87a} & W1 labels \\
+9 Oct, 18:00:55 & Registered W1 evaluation, then robustness and Sybil model, committed & \sha{8d8b568} & W1 labels \\
+9 Oct, 23:24:39 & Registered benchmark and data description (BigQuery job times, amount shares) committed & \sha{f33a87a} & W1 labels \\
 10 Oct, 07:54:35 & Revision document: amounts in US dollars, token rule, slopes $b=\ln 3/m$; a deviation from the plan and the registration & \sha{a897475} & Every registered result \\
 10 Oct, 08:12:44 & Five tokens (WETH, USDC, USDT0, ARB, WBTC) and the price inputs & \sha{09dfc32} & Every registered result \\
 10 Oct, 11:24:01 & Cap $U=20{,}000$ dollars of the C-PR authorization layer; $m_T=200$, $m_A=62$ dollars & \sha{2705b28} & Revised medians and percentiles; no revised score \\
 10 Oct, from 11:36 & Revised scores computed; rules A, B and R1--R3 applied unchanged & Authors' account; no commit & Every registered result \\
-10 Oct, 12:48:00 & Revised results published & \sha{77e71f5} & --- \\
+10 Oct, 12:48:00 & Revised results committed & \sha{77e71f5} & --- \\
 11 Oct & Exploratory checks of Appendix~\ref{app:explore} & This paper's supplement & Every result above \\
 \bottomrule
 \end{tabular}

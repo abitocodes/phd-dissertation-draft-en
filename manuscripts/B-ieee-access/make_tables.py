@@ -365,12 +365,12 @@ def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
     rows = [
         ("Plan and configuration (rule A)", "plan"),
         ("Registration of W1 (rule B, R1--R3)", "registration"),
-        ("Registered results published", "registered_results"),
+        ("Registered results committed", "registered_results"),
         ("Registered benchmark and data description", "registered_benchmark"),
         ("Revision document", "revision_doc"),
         ("Revision: five tokens and prices", "revision_tokens"),
         ("Revision: cap amended, constants", "revision_cap"),
-        ("Revised results published", "revised_results"),
+        ("Revised results committed", "revised_results"),
     ]
     out = [header(["git log of phd_works (commit identifiers and committer times, converted to UTC)",
                    "registered-w1/extraction_manifest.json : sha256 (CRLF checkout)",
@@ -430,7 +430,7 @@ def tab_timeline(phd: Path, D: dict) -> str:
     rows = [
         (f"9 Oct, {utc(t['plan'])}", "Analysis plan and configuration committed: cohort rule, scores (C-PR at $\\lambda\\in\\{0.25,0.5,0.75\\}$ "
          "and its end points, S-PR), W0 labels, statistics and rule~A; amounts in raw base units, every ERC-20 token",
-         "\\sha{43d8045}", "Nothing: no log of this study extracted"),
+         "\\sha{43d8045}", "No log of this study extracted"),
         (f"9 Oct, {utc(scan_a_c)}--{utc(scan_a_e)}", f"Scan~A of the observation window; the BigQuery job was created {gap_a}~s after the plan commit",
          "Job metadata; cost ledger", "---"),
         ("9 Oct, before 16:49", f"Cohort of {n(rg['same']['cohort'])} contracts, ego extraction, same-window and W0 evaluation; "
@@ -442,10 +442,10 @@ def tab_timeline(phd: Path, D: dict) -> str:
          "commit and both SHA-256 hashes", "Manifest", "---"),
         (f"9 Oct, {utc(scan_b_c)}--{utc(scan_b_e)}", f"Scan~B of July--September 2026; job created {gap_b}~s after the commit; manifest closed at {utc(m_f)}",
          "Job metadata; manifest", "No July--September log extracted for this study before this"),
-        (f"9 Oct, {utc(t['registered_results'])}", "Registered W1 evaluation, then robustness and Sybil model, published",
+        (f"9 Oct, {utc(t['registered_results'])}", "Registered W1 evaluation, then robustness and Sybil model, committed",
          "\\sha{8d8b568}", "W1 labels"),
         (f"{t['registered_benchmark'].day} {t['registered_benchmark'].strftime('%b')}, {utc(t['registered_benchmark'])}",
-         "Registered benchmark and data description (BigQuery job times, amount shares) published",
+         "Registered benchmark and data description (BigQuery job times, amount shares) committed",
          "\\sha{f33a87a}", "W1 labels"),
         (f"10 Oct, {utc(t['revision_doc'])}", "Revision document: amounts in US dollars, token rule, slopes $b=\\ln 3/m$; a deviation from the plan and the registration",
          "\\sha{a897475}", "Every registered result"),
@@ -453,7 +453,7 @@ def tab_timeline(phd: Path, D: dict) -> str:
         (f"10 Oct, {utc(t['revision_cap'])}", "Cap $U=20{,}000$ dollars of the C-PR authorization layer; $m_T=200$, $m_A=62$ dollars",
          "\\sha{2705b28}", "Revised medians and percentiles; no revised score"),
         ("10 Oct, from 11:36", "Revised scores computed; rules A, B and R1--R3 applied unchanged", "Authors' account; no commit", "Every registered result"),
-        (f"10 Oct, {utc(t['revised_results'])}", "Revised results published", "\\sha{77e71f5}", "---"),
+        (f"10 Oct, {utc(t['revised_results'])}", "Revised results committed", "\\sha{77e71f5}", "---"),
         ("11 Oct", "Exploratory checks of Appendix~\\ref{app:explore}", "This paper's supplement", "Every result above"),
     ]
     out = [header(["git log of phd_works (committer times converted to UTC)",

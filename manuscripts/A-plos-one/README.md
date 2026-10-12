@@ -63,7 +63,7 @@ All summaries are in `phd_works`, folder `1-Dissertation-Works/ERC20-Allowance-P
 | S1 Table | Descriptive | `revised-usd` summaries (`same-window`, `holdout-w0`, `window-w1`, `describe/describe.json`, `cohort/matched_cohort.json`), `results.json`; footnote counts 17,167 = 17,050 + 104 + 13 (`spender_account_types`) and 12 W0 traders with a liquidation = 48 × (1 − 0.750) (`recipients.others`) |
 | S2 Table | All trader contrasts | `analysis/neutral-label/results.json` |
 
-Numbers in the prose that `check_numbers.py` does not find in a source (last run 11 October 2026), all checked by hand:
+Numbers in the prose that `check_numbers.py` does not find in a source (last run 12 October 2026), all checked by hand:
 
 - `main.tex`: EIP numbers (721, 2612); block 513,216,506 and the 133 mapped tokens and 75.75% row share (thesis Chapter 3 and `docs/revision_price_weighting.md`); 17,167 W0 spenders (17,050 + 104 + 13); σ(0) = 0.858, σ(90) = 0.711, σ(182) = 0.495, σ(365) = 0.136 (computed from k = 0.01, t0 = 180; 0.495 also occurs in an unrelated source value, so the script passes it by chance); c = 7.64 × 10⁻⁸ (7.639e-08 rounded); the layout length 2.25 in.
 - `S1_Text.tex`: chain id 42161, block 513,216,506, EIP numbers, 133 tokens, 75.75%.
@@ -95,11 +95,11 @@ python3 check_numbers.py main.tex cover-letter.tex supporting/S1_Text.tex suppor
 python3 ../tools/overlap_check.py main.tex
 ```
 
-## Last build and checks (11 October 2026)
+## Last build and checks (12 October 2026)
 
 - `main.pdf` 25 pages, `main_preview.pdf` 26 pages, `cover-letter.pdf` 1 page, S1 Text 5 pages, S1 Table 1 page, S2 Table 5 pages. No errors, no undefined references or citations, no overfull boxes. All 42 DOIs in the reference list link to `https://doi.org/` (no relative links). Tables 1 to 6 and Fig 1 are first cited in ascending order, and each float follows the paragraph that first cites it (checked by script). BibTeX issues 8 benign warnings for the four `@misc` web sources (GMX, Human Passport, DefiLlama, Chainlink: no editor or publisher).
 - Abstract: 292 words in the PDF text (limit 300), no citations. Body from Introduction to Conclusions about 9,600 words counting numbers, without tables, the figure caption and display equations; about 400 of them are the required statements (Ethics, Data availability, Use of generative AI). 6 tables, 1 figure.
-- Text overlap with the thesis (`manuscripts/tools/overlap_check.py`, 8-word shingles; the tool now strips biblatex `\textcite`/`\parencite` keys as well as `\cite` keys): `main.tex` 2.7%, longest shared span 17 words (the registered wording of the decision contrasts, quoted on purpose); S1 Text 2.2%, longest 15 words; cover letter 0.8%. Manuscript B rerun with the same tool: 2.2%, longest 15 words, as its README states.
+- Text overlap with the thesis (`manuscripts/tools/overlap_check.py`, 8-word shingles; the tool now strips biblatex `\textcite`/`\parencite` keys as well as `\cite` keys): `main.tex` 2.7%, longest shared span 17 words (the registered wording of the decision contrasts, quoted on purpose); S1 Text 2.2%, longest 15 words; cover letter 0.8%. Manuscript B rerun with the same tool: 1.3%, longest 13 words, as its README states.
 - `check_numbers.py`: every data number in the prose occurs in a source; the exceptions are listed above.
 
 ## References style: vancouver.bst now, plos2015.bst at acceptance
@@ -118,7 +118,7 @@ The review PDF uses `\bibliographystyle{vancouver}` (numbered, in order of citat
 - **Author contributions (CRediT; to be confirmed by all authors):** Taehong Kwon: Conceptualization, Methodology, Software, Data curation, Formal analysis, Writing – original draft. Ernest Mnkandla: Supervision, Writing – review & editing. Donatien Koulla Moulla: Supervision, Writing – review & editing. David Sena Attipoe: Supervision, Writing – review & editing.
 - **Competing interests:** The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 - **Funding:** The authors received no specific funding for this work.
-- **Data availability:** use the "Data availability" subsection of `main.tex`. It names `phd_works`, folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments` as it stands on the default branch `master` (plan `43d8045`, registration `0d3a057`, registered results `8d8b568`, revision `a897475`/`09dfc32`/`2705b28`, revised results `77e71f5`, all on `origin/master`), with a commit-pinned link to that folder at `77e71f5`, and `phd-dissertation-draft-en` (folders `analysis/` and `manuscripts/A-plos-one/`). Both repositories are public (checked 11 October 2026 through the GitHub API). The folder `...-Wallet-Reputation/experiments` exists only on the unmerged branch `claude/beautiful-feynman-0sd7ov`; name it in the statement only after that branch is merged to `master`.
+- **Data availability:** use the "Data availability" subsection of `main.tex`. It names `phd_works`, folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments` as it stands on the default branch `master` (plan `43d8045`, registration `0d3a057`, registered results `8d8b568`, revision `a897475`/`09dfc32`/`2705b28`, revised results `77e71f5`, all on `origin/master`), with a commit-pinned link to that folder at `77e71f5`, and `phd-dissertation-draft-en` (folders `analysis/` and `manuscripts/A-plos-one/`). Both repositories are public. The folder `...-Wallet-Reputation/experiments` exists only on the unmerged branch `claude/beautiful-feynman-0sd7ov`; name it in the statement only after that branch is merged to `master`.
 - **Ethics statement:** Only public blockchain data and public token prices were used; no human participants; only contracts are scored. [ethics clearance reference to be added by the authors] Do not submit while this bracket is in `main.tex`: PLOS's technical check returns a manuscript with a placeholder.
 - **Use of AI tools:** the full statement is in Methods ("Use of generative AI"), with a pointer in Acknowledgments.
 - **Related manuscript:** upload Manuscript B (`manuscripts/B-ieee-access/main.pdf`) as a "Related manuscript" file.

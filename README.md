@@ -14,4 +14,4 @@ English PhD dissertation, University of South Africa: *Integrating ERC-20 Allowa
 
 Build: `build.ps1` (XeLaTeX, biber, XeLaTeX twice, then one PDF per chapter). On Overleaf, set the compiler to XeLaTeX (`latexmkrc` does this).
 
-The evaluation code, data and the Korean edition live in `phd_works` (`1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/`), where this repository is the submodule `dissertation/overleaf-github`. The manuscript of the earlier wallet-reputation study is at commit `7790f76`.
+The evaluation code, data and the Korean edition live in `phd_works` (`1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/`), where this repository is the submodule `dissertation/overleaf-github`.
