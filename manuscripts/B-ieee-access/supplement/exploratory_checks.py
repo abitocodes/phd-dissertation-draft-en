@@ -1,219 +1,244 @@
 #!/usr/bin/env python3
-"""Exploratory diagnostics for Manuscript B (IEEE Access), computed on 9 October 2026.
+"""Exploratory checks for Manuscript B (IEEE Access), run on 11 October 2026.
 
-Every registered result was known when this script was written, so nothing here enters
-a decision rule and nothing here was fixed in advance. The checks answer reviewer
-questions about the coupled walk C-PR: how much the coupling weight acts through the
-wallets active in both layers, whether bounded or binary weights change the picture,
-how the scores do in AUC terms, how precise the bootstrap endpoints are, how much
-dependence between spenders widens the intervals, whether the spring sample looks
-ahead, how often an apparently new approval pair is an old one, and how cheaply a farm
-inflates each walk.
+Every result of both analyses (registered and revised) was known when this script was
+written, so nothing here enters a decision rule and nothing here was fixed in advance.
+The script reads only the per-contract score files and the published evaluation
+summaries of the experiment pipeline in the authors' repository ``phd_works``; it builds
+no graph and computes no new score. It does four things.
 
-It reuses the evaluation code of the experiments folder (phd_works) unchanged and adds
-only a vectorised edge-matrix builder, checked below against the pipeline's own scores.
+1. ``recompute``: recomputes the decision contrasts of rule A (W0) and rule B (W1, with
+   F4-F6 and the first sensitivity analysis) from the score files, with the pipeline's
+   resampling (400 paired resamples drawn by ``numpy.random.default_rng(42)`` over the
+   cohort sorted by contract id) and SciPy's tau_b, and compares every value with the
+   published summary. The second sensitivity analysis (isolated nodes) cannot be
+   recomputed: its single-layer scores are not in the score files.
+2. ``seed_spread``: repeats the five decision contrasts (A1, A2, F1, F2, F3) with 50
+   further seeds (43-92) of 400 resamples and reports how far the interval ends move and
+   whether any verdict changes.
+3. ``lambda_steps``: paired contrasts between neighbouring values of the coupling weight
+   (0, 0.25, 0.5, 0.75, 1) and between 0.25 and 0.75, on every label, seed 42.
+4. ``lambda_rank_agreement``: Kendall tau_b between the C-PR score vectors at two values
+   of the weight over each cohort, with paired-bootstrap intervals (seed 42).
 
-    python exploratory_checks.py --experiments /path/to/wallet-reputation-experiments
+    python exploratory_checks.py --phd-works /path/to/phd_works      # or set PHD_WORKS
 
-Writes exploratory_checks.json next to this file.
+Writes exploratory_checks.json next to this file. About eight minutes on four cores.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import platform
+import subprocess
 import sys
 import time
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy import sparse
-from scipy.stats import kendalltau, norm, rankdata
+import scipy
+from scipy.stats import kendalltau
 
 HERE = Path(__file__).resolve().parent
 N_BOOT = 400
 SEED = 42
-ZERO = "0x0000000000000000000000000000000000000000"
-PERMIT2 = "0x000000000022d473030f116ddee9f6b43ac78ba3"
-LAMBDAS_EXTRA = (0.0, 0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99, 1.0)
-APPROVE = "future_new_approvers"
-SENDERS = "future_new_transfer_senders"
-LFCR = "future_liquidation_free_rate"
+EXTRA_SEEDS = list(range(43, 93))
+DELTA = 0.01  # margin of rule B, docs/registration_w1.md section 2
+APPR = "future_new_approvers"
+SEND = "future_new_transfer_senders"
+LIQ = "liquidation_free_rate"
+LAMBDA_COLS = {0.0: "cpr_l0", 0.25: "cpr_l25", 0.5: "cpr_l50", 0.75: "cpr_l75", 1.0: "cpr_l100"}
+PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
+
+# Score files (data/2-processed-tables-and-evaluations/...) and published summaries
+# (data/3-published-results-for-thesis/...) of each analysis.
+ANALYSES = {
+    "registered": {
+        "proc": "2-processed-tables-and-evaluations",
+        "pub": "3-published-results-for-thesis",
+        "w0": "holdout-w0",
+        "w1": "registered-w1",
+        "same": "same-window",
+    },
+    "revised": {
+        "proc": "2-processed-tables-and-evaluations/revised-usd",
+        "pub": "3-published-results-for-thesis/revised-usd",
+        "w0": "holdout-w0",
+        "w1": "window-w1",
+        "same": "same-window",
+    },
+}
+
+# name, cohort, score a, score b, label, test, where the published value lives
+DECISION = [
+    ("A1", "w0_spenders", "cpr_l50", "cpr_l100", APPR, "no_worse", ("w0", "contrasts_prefixed", 0)),
+    ("A2", "w0_spenders", "cpr_l50", "cpr_l0", SEND, "superiority", ("w0", "contrasts_prefixed", 1)),
+    ("F1", "w1_spenders", "cpr_l50", "cpr_l0", APPR, "superiority", ("w1", "rule_b", "F1")),
+    ("F2", "w1_spenders", "cpr_l50", "cpr_l0", SEND, "non_inferiority", ("w1", "rule_b", "F2")),
+    ("F3", "w1_traders", "cpr_l50", "cpr_l0", LIQ, "non_inferiority", ("w1", "rule_b", "F3")),
+]
+BESIDE = [
+    ("F4", "w1_traders", "cpr_l50", "cpr_l0", LIQ, "superiority", ("w1", "rule_b", "F4")),
+    ("F5", "w1_traders", "cpr_l50", "cpr_l100", LIQ, "superiority", ("w1", "rule_b", "F5")),
+    ("F6a", "w1_spenders", "cpr_l50", "cpr_l100", APPR, "no_worse", ("w1", "rule_b", "F6a")),
+    ("F6b", "w1_spenders", "cpr_l50", "cpr_l0", SEND, "superiority", ("w1", "rule_b", "F6b")),
+    ("S1-F1", "w1_spenders", "cpr_l50", "awp", APPR, "superiority", ("w1", "sensitivity_awp", "F1")),
+    ("S1-F2", "w1_spenders", "cpr_l50", "awp", SEND, "non_inferiority", ("w1", "sensitivity_awp", "F2")),
+    ("S1-F3", "w1_traders", "cpr_l50", "awp", LIQ, "non_inferiority", ("w1", "sensitivity_awp", "F3")),
+    ("W0 C-PR minus C-PR(0), new approval pairs", "w0_spenders", "cpr_l50", "cpr_l0", APPR, "none",
+     ("w0", "contrasts_after", 5)),
+]
+COHORT_LABELS = {"w0_spenders": [APPR, SEND], "w1_spenders": [APPR, SEND], "w1_traders": [LIQ]}
 
 
 # ---------------------------------------------------------------------------
-# Solver: the pipeline's coupled walk with a vectorised edge-matrix builder
+# Paths
 # ---------------------------------------------------------------------------
 
 
-def adjacency(edges: pd.DataFrame, idx: dict[str, int], n: int) -> tuple[sparse.csr_matrix, np.ndarray]:
-    w = edges["weight"].astype(float)
-    e = edges[w > 0]
-    u = e["from_node"].map(idx)
-    v = e["to_node"].map(idx)
-    ok = u.notna() & v.notna()
-    ui = u[ok].astype(np.int64).to_numpy()
-    vi = v[ok].astype(np.int64).to_numpy()
-    wi = e.loc[ok, "weight"].astype(float).to_numpy()
-    adj = sparse.csr_matrix((wi, (ui, vi)), shape=(n, n))
-    out = np.bincount(ui, weights=wi, minlength=n).astype(np.float64)
-    return adj, out
+def experiments_dir(phd_works: Path) -> Path:
+    for p in PROJECTS:
+        d = phd_works / "1-Dissertation-Works" / p / "experiments"
+        if (d / "data" / "3-published-results-for-thesis" / "results_digest.md").exists():
+            return d
+    raise SystemExit(f"no experiments folder with published results under {phd_works}")
 
 
-def coupled(layers, d=0.85, teleport=None, tol=1e-8, max_iter=300, extra_nodes=()):
-    """C-PR exactly as pagerank.coupled_pagerank (and weighted_pagerank for one layer).
-
-    ``layers`` is a list of (edges, weight). Returns (scores, nodes, rank, presence).
-    ``teleport`` maps node -> restart mass (uniform when None).
-    """
-    from pagerank import _power_iterate, _row_normalise, _teleport_vector
-
-    active = [(e, float(w)) for e, w in layers if e is not None and not e.empty and float(w) > 0]
-    node_set: set[str] = set(extra_nodes)
-    for e, _ in active:
-        node_set.update(e["from_node"])
-        node_set.update(e["to_node"])
-    nodes = sorted(node_set)
-    idx = {x: i for i, x in enumerate(nodes)}
-    n = len(nodes)
-    denom = np.zeros(n)
-    trans, pres, ws = [], [], []
-    for e, w in active:
-        adj, out = adjacency(e, idx, n)
-        trans.append(_row_normalise(adj, out))
-        pres.append((out > 0).astype(float))
-        ws.append(w)
-        denom += w * pres[-1]
-    mixed = sparse.csr_matrix((n, n))
-    for w, has, tr in zip(ws, pres, trans):
-        alpha = np.zeros(n)
-        pos = denom > 0
-        alpha[pos] = w * has[pos] / denom[pos]
-        mixed = mixed + sparse.diags(alpha, format="csr") @ tr
-    restart = _teleport_vector(nodes, teleport)
-    rank, _ = _power_iterate(mixed, denom <= 0, restart, d, tol, max_iter)
-    return {nodes[i]: float(rank[i]) for i in range(n)}, nodes, rank, pres
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def on_wallets(scores: dict[str, float], wallets: list[str]) -> np.ndarray:
-    return np.array([scores.get(w, 0.0) for w in wallets], dtype=float)
+def head_commit(repo: Path) -> str | None:
+    try:
+        return subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], capture_output=True,
+                              text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def read_parts(folder: Path, stem: str) -> pd.DataFrame:
+    parts = sorted(folder.glob(f"{stem}.part*.parquet"))
+    if not parts:
+        raise SystemExit(f"missing {folder}/{stem}.part*.parquet")
+    return pd.concat([pd.read_parquet(p) for p in parts], ignore_index=True)
 
 
 # ---------------------------------------------------------------------------
-# Statistics
+# Statistics (as in experiments/scripts/stats.py)
 # ---------------------------------------------------------------------------
 
 
-def tau(x, y) -> float:
-    return float(kendalltau(x, y).statistic)
+def dense(x: np.ndarray) -> np.ndarray:
+    values, inverse = np.unique(x, return_inverse=True)
+    return inverse.astype(np.int16 if values.size < 2**15 else np.int32)
 
 
-def auc(score, positive) -> float:
-    r = rankdata(score)
-    npos = int(positive.sum())
-    nneg = len(positive) - npos
-    return float((r[positive].sum() - npos * (npos + 1) / 2) / (npos * nneg))
+def tau(x: np.ndarray, y: np.ndarray) -> float:
+    if x.size < 5 or x.min() == x.max() or y.min() == y.max():
+        return float("nan")
+    t = kendalltau(x, y).statistic
+    return float(t) if np.isfinite(t) else float("nan")
 
 
-def paired_boot(a, b, y, stat="tau", n_boot=N_BOOT, seed=SEED):
-    """Point estimates and the 95% percentile interval of stat(a)-stat(b), as holdout_tau_diff."""
-    mask = ~np.isnan(y)
-    a, b, y = a[mask], b[mask], y[mask]
-    n = len(y)
-    f = (lambda s, t: tau(s, t)) if stat == "tau" else (lambda s, t: auc(s, t > 0))
-    rng = np.random.default_rng(seed)
-    ta, tb = f(a, y), f(b, y)
-    d, sa, sb = [], [], []
-    for _ in range(n_boot):
-        i = rng.integers(0, n, n)
-        ys, xa, xb = y[i], a[i], b[i]
-        if np.unique(ys).size < 2 or np.unique(xa).size < 2 or np.unique(xb).size < 2:
-            continue
-        va, vb = f(xa, ys), f(xb, ys)
-        if np.isfinite(va) and np.isfinite(vb):
-            sa.append(va)
-            sb.append(vb)
-            d.append(va - vb)
-    d, sa, sb = np.array(d), np.array(sa), np.array(sb)
-    q = lambda arr: [float(np.quantile(arr, 0.025)), float(np.quantile(arr, 0.975))]
-    return {
-        "a": ta, "a_ci": q(sa), "b": tb, "b_ci": q(sb),
-        "delta": ta - tb, "ci": q(d), "sd": float(d.std(ddof=1)), "n": int(n), "n_boot": int(len(d)),
-    }
+def resample_matrix(n: int, seed: int) -> np.ndarray:
+    return np.random.default_rng(seed).integers(0, n, size=(N_BOOT, n))
 
 
-def r3(x):
-    if isinstance(x, dict):
-        return {k: r3(v) for k, v in x.items()}
-    if isinstance(x, (list, tuple)):
-        return [r3(v) for v in x]
-    if isinstance(x, (float, np.floating)):
-        return float(round(float(x), 6))
-    if isinstance(x, np.integer):
-        return int(x)
-    return x
+def taus_on(x: np.ndarray, y: np.ndarray, idx: np.ndarray) -> np.ndarray:
+    """tau_b on every resample; NaN where the pipeline would skip the resample."""
+    rx, ry = dense(x), dense(y)
+    return np.array([tau(rx[row], ry[row]) for row in idx])
+
+
+def pct(a: np.ndarray, q: float) -> float:
+    return float(np.percentile(a, q))
+
+
+def contrast(sa: np.ndarray, sb: np.ndarray, pa: float, pb: float, ci: float = 0.95) -> dict:
+    ok = np.isfinite(sa) & np.isfinite(sb)
+    d = sa[ok] - sb[ok]
+    lo, hi = (1 - ci) / 2 * 100, (1 + ci) / 2 * 100
+    return {"a_tau": pa, "b_tau": pb, "delta_tau": pa - pb, "ci_low": pct(d, lo), "ci_high": pct(d, hi),
+            "sd": float(np.std(d, ddof=1)), "share_positive": float(np.mean(d > 0)),
+            "n_boot": int(d.size), "skipped": int((~ok).sum())}
+
+
+def verdict(r: dict, test: str) -> bool | None:
+    if test == "superiority":
+        return r["ci_low"] > 0
+    if test == "non_inferiority":
+        return r["ci_low"] > -DELTA
+    if test == "no_worse":
+        return r["ci_high"] >= 0
+    return None
 
 
 # ---------------------------------------------------------------------------
-# Label events (same rules as holdout.future_approval_labels / future_transfer_labels)
+# Data
 # ---------------------------------------------------------------------------
 
 
-def approval_label_events(approvals, latest_t1, start, end, wallets):
-    from holdout import normalize_approvals, t1_positive_pairs
-
-    pairs = t1_positive_pairs(latest_t1)
-    work = normalize_approvals(approvals)
-    win = work[(work["block_timestamp"] >= start) & (work["block_timestamp"] <= end) & (work["value"] > 0)]
-    ws = set(wallets)
-    ev = win[["spender", "owner"]].astype(str).drop_duplicates()
-    ev = ev[ev["spender"].isin(ws)]
-    keep = [(o, s) not in pairs for s, o in zip(ev["spender"], ev["owner"])]
-    return ev[keep].reset_index(drop=True)
-
-
-def sender_label_events(transfers, transfers_t1, start, end, wallets):
-    from holdout import normalize_transfers
-
-    ws = set(wallets)
-    t1 = normalize_transfers(transfers_t1)
-    t1 = t1[t1["to_address"].isin(ws) & (t1["from_address"] != t1["to_address"])]
-    seen = set(zip(t1["to_address"].astype(str), t1["from_address"].astype(str)))
-    work = normalize_transfers(transfers)
-    win = work[(work["block_timestamp"] >= start) & (work["block_timestamp"] <= end)
-               & work["to_address"].isin(ws) & (work["from_address"] != work["to_address"])]
-    ev = win[["to_address", "from_address"]].astype(str).drop_duplicates()
-    keep = [(t, f) not in seen for t, f in zip(ev["to_address"], ev["from_address"])]
-    out = ev[keep].rename(columns={"to_address": "spender", "from_address": "counterparty"})
-    return out.reset_index(drop=True), win
+def load(exp: Path) -> tuple[dict, dict, dict]:
+    data = exp / "data"
+    frames, summaries, files = {}, {}, {}
+    for name, a in ANALYSES.items():
+        proc, pub = data / a["proc"], data / a["pub"]
+        w0 = read_parts(proc / a["w0"], "spender_scores").sort_values("id").reset_index(drop=True)
+        w1 = read_parts(proc / a["w1"], "spender_scores").sort_values("id").reset_index(drop=True)
+        tr = read_parts(proc / a["w1"], "trader_scores").sort_values("id").reset_index(drop=True)
+        same = read_parts(proc / a["same"], "cohort_scores").sort_values("id").reset_index(drop=True)
+        frames[name] = {"w0_spenders": w0, "w1_spenders": w1, "w1_traders": tr, "same_window": same}
+        summaries[name] = {
+            "w0": json.loads((pub / a["w0"] / "eval_summary.json").read_text(encoding="utf-8")),
+            "w1": json.loads((pub / a["w1"] / "eval_summary.json").read_text(encoding="utf-8")),
+        }
+        files[name] = {
+            str(p.relative_to(exp)): sha256(p)
+            for sub in (a["w0"], a["w1"], a["same"])
+            for p in sorted((proc / sub).glob("*.part*.parquet"))
+        } | {str((pub / s / "eval_summary.json").relative_to(exp)): sha256(pub / s / "eval_summary.json")
+             for s in (a["w0"], a["w1"])}
+    return frames, summaries, files
 
 
-def incidence(events: pd.DataFrame, wallets: list[str], col: str) -> sparse.csr_matrix:
-    widx = {w: i for i, w in enumerate(wallets)}
-    cps = sorted(set(events[col]))
-    cidx = {c: j for j, c in enumerate(cps)}
-    rows = events["spender"].map(widx).to_numpy()
-    cols = events[col].map(cidx).to_numpy()
-    return sparse.csr_matrix((np.ones(len(rows)), (rows, cols)), shape=(len(wallets), len(cps)))
+def published(summ: dict, where: tuple) -> dict:
+    block = summ[where[0]][where[1]]
+    return block[where[2]]
 
 
-def twoway_boot(a, b, M, n_boot=N_BOOT, seed=SEED):
-    """Pigeonhole bootstrap: resample spenders and Poisson-reweight the counterparties that
-    generate their label events, so spenders that share a new owner or sender move together."""
-    rng = np.random.default_rng(seed)
-    n, m = M.shape
-    d = []
-    for _ in range(n_boot):
-        i = rng.integers(0, n, n)
-        w = rng.poisson(1.0, size=m).astype(float)
-        y = (M @ w)[i]
-        if np.unique(y).size < 2:
-            continue
-        d.append(tau(a[i], y) - tau(b[i], y))
-    d = np.array(d)
-    return {"ci": [float(np.quantile(d, 0.025)), float(np.quantile(d, 0.975))], "sd": float(d.std(ddof=1))}
+# ---------------------------------------------------------------------------
+# Worker for the seed spread (one analysis, cohort and seed per task)
+# ---------------------------------------------------------------------------
+
+_FRAMES: dict | None = None
+
+
+def _init(frames: dict) -> None:
+    global _FRAMES
+    _FRAMES = frames
+
+
+def _seed_task(args: tuple[str, str, int, list]) -> tuple[str, str, int, dict]:
+    analysis, cohort, seed, specs = args
+    df = _FRAMES[analysis][cohort]
+    idx = resample_matrix(len(df), seed)
+    cache: dict = {}
+    out = {}
+    for name, a, b, lab, test in specs:
+        for s in (a, b):
+            if (s, lab) not in cache:
+                cache[(s, lab)] = taus_on(df[s].to_numpy(float), df[lab].to_numpy(float), idx)
+        pa = tau(dense(df[a].to_numpy(float)), dense(df[lab].to_numpy(float)))
+        pb = tau(dense(df[b].to_numpy(float)), dense(df[lab].to_numpy(float)))
+        r = contrast(cache[(a, lab)], cache[(b, lab)], pa, pb)
+        r["holds"] = verdict(r, test)
+        out[name] = r
+    return analysis, cohort, seed, out
 
 
 # ---------------------------------------------------------------------------
@@ -222,479 +247,139 @@ def twoway_boot(a, b, M, n_boot=N_BOOT, seed=SEED):
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--experiments", required=True, type=Path)
-    ap.add_argument("--out", type=Path, default=HERE / "exploratory_checks.json")
-    ap.add_argument("--mc-seeds", type=int, default=50)
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"))
+    ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
-    exp = args.experiments.resolve()
-    os.chdir(exp)
-    sys.path.insert(0, str(exp / "scripts"))
-    from common import load_config
-    from fresh_holdout import (build_cohort_frame, combine_events, load_fresh_events, load_registration,
-                               load_spring_events, window_config)
-    from holdout import (filter_subgraph_edges, filter_transfers_as_of, holdout_bounds, latest_positive_as_of,
-                         normalize_approvals, normalize_transfers, score_awp_paper, score_endorserank_vt)
-    from pagerank import build_awp_edges, build_awp_paper_edges, build_endorserank_edges, build_endorserank_vt_edges
-    from run_fresh_holdout import _matched_wallets
-
+    if not args.phd_works:
+        raise SystemExit("pass --phd-works PATH or set PHD_WORKS")
+    phd = Path(args.phd_works).resolve()
+    exp = experiments_dir(phd)
     t0 = time.time()
-    log = lambda *a: print(f"[{time.time() - t0:7.1f}s]", *a, flush=True)
-    config = load_config()
-    reg = load_registration()
-    rep = config["reputation"]
-    K, T0, BV = float(rep["awp_decay_k"]), float(rep["awp_decay_t0_days"]), float(rep["awp_paper"]["value_b"])
-    spring = load_spring_events(config)
-    fresh = load_fresh_events(reg)
-    allev = {k: combine_events(spring[k], fresh[k]) for k in ("approvals", "transfers", "decoded")}
-    matched = _matched_wallets(config)
-    cfg = {"spring": config, "registered": window_config(config, reg)}
-    events = {"spring": spring, "registered": allev}
-    out: dict = {"computed": time.strftime("%Y-%m-%d"), "note": "exploratory; computed after every registered result was known"}
+    frames, summaries, files = load(exp)
 
-    # -- cohort frames from the pipeline (scores and labels exactly as registered) --
-    frames, ctx = {}, {}
-    for win in ("spring", "registered"):
-        c = cfg[win]
-        se, os_, oe = holdout_bounds(c)
-        latest = latest_positive_as_of(events[win]["approvals"], se)
-        trans = filter_transfers_as_of(events[win]["transfers"], se)
-        ctx[win] = {"se": se, "os": os_, "oe": oe, "latest": latest, "trans": trans}
-        for cohort in (("spenders", "traders") if win == "registered" else ("spenders",)):
-            merged, _, meta = build_cohort_frame(c, events[win], cohort, matched if cohort == "traders" else None,
-                                                 with_liquidation=(win == "registered"))
-            frames[(win, cohort)] = merged
-            log("frame", win, cohort, meta["n_wallets"])
+    result: dict = {
+        "what": "Exploratory checks of Manuscript B; computed after every registered and revised result was known",
+        "generated_by": "manuscripts/B-ieee-access/supplement/exploratory_checks.py",
+        "generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "phd_works_head": head_commit(phd),
+        "experiments": str(exp.relative_to(phd)),
+        "inputs_sha256": files,
+        "environment": {"python": platform.python_version(), "numpy": np.__version__,
+                        "scipy": scipy.__version__, "pandas": pd.__version__},
+        "bootstrap": {"resamples": N_BOOT, "seed": SEED, "extra_seeds": [EXTRA_SEEDS[0], EXTRA_SEEDS[-1]],
+                      "draw": "numpy.random.default_rng(seed).integers(0, n, size=(400, n)) over the cohort sorted by contract id"},
+        "margin_delta": DELTA,
+        "cohort_sizes": {a: {c: int(len(f)) for c, f in fr.items()} for a, fr in frames.items()},
+    }
 
-    def layers(win, wallets, k=K, t0_=T0, kind="raw"):
-        x = ctx[win]
-        seed = set(wallets)
-        if kind == "raw":
-            ea = filter_subgraph_edges(build_endorserank_edges(x["latest"]), seed)
-            et = filter_subgraph_edges(build_awp_edges(x["trans"], x["se"], k, t0_), seed)
-        elif kind == "bounded":
-            ea = filter_subgraph_edges(build_endorserank_vt_edges(x["latest"], x["se"], k, t0_, BV)[0], seed)
-            et = filter_subgraph_edges(build_awp_paper_edges(x["trans"], x["se"], k, t0_, BV)[0], seed)
-        elif kind == "binary":
-            ea, et = layers(win, wallets, k, t0_, "raw")
-            ea, et = ea.assign(weight=1.0), et[et["weight"] > 0].assign(weight=1.0)
-        return ea, et
-
-    def cpr(win, wallets, lam, d=0.85, kind="raw", k=K, t0_=T0):
-        ea, et = layers(win, wallets, k, t0_, kind)
-        s, *_ = coupled([(ea, lam), (et, 1.0 - lam)], d=d)
-        return on_wallets(s, wallets)
-
-    # -- 0. the vectorised solver reproduces the pipeline's scores --
-    check = {}
-    for (win, cohort), m in frames.items():
-        w = m["wallet"].tolist()
-        for col, lam in (("awp", 0.0), ("coupled_pr_l25", 0.25), ("coupled_pr", 0.5), ("coupled_pr_l75", 0.75), ("endorserank", 1.0)):
-            mine = cpr(win, w, lam)
-            check[f"{win}/{cohort}/{col}"] = float(np.max(np.abs(mine - m[f"{col}_score"].to_numpy())))
-    out["solver_check_max_abs_diff"] = check
-    log("solver check", max(check.values()))
-
-    # -- 1. graph sizes, self-loops, the set B --
-    sizes = {}
-    for (win, cohort), m in frames.items():
-        w = m["wallet"].tolist()
-        ea, et = layers(win, w)
-        na = set(ea["from_node"]) | set(ea["to_node"])
-        nt = set(et["from_node"]) | set(et["to_node"])
-        oa, ot = set(ea["from_node"]), set(et[et["weight"] > 0]["from_node"])
-        sizes[f"{win}/{cohort}"] = {
-            "auth_nodes": len(na), "auth_edges": int(len(ea)), "auth_self_loops": int((ea["from_node"] == ea["to_node"]).sum()),
-            "pay_nodes": len(nt), "pay_edges": int((et["weight"] > 0).sum()),
-            "union_nodes": len(na | nt), "B_size": len(oa & ot), "auth_out_nodes": len(oa),
-        }
-    if matched:
-        ea, et = layers("registered", [x.lower() for x in matched])
-        sizes["registered/matched_5521"] = {
-            "auth_nodes": len(set(ea["from_node"]) | set(ea["to_node"])), "auth_edges": int(len(ea)),
-            "auth_self_loops": int((ea["from_node"] == ea["to_node"]).sum()),
-            "pay_edges": int((et["weight"] > 0).sum()),
-            "union_nodes": len(set(ea["from_node"]) | set(ea["to_node"]) | set(et["from_node"]) | set(et["to_node"])),
-            "B_size": len(set(ea["from_node"]) & set(et[et["weight"] > 0]["from_node"])),
-        }
-    out["graph_sizes"] = sizes
-    log("sizes", sizes)
-
-    # -- 2. where the weight acts: r(B), interior distances, extra lambda values --
-    lam_block = {}
-    for (win, cohort), m in frames.items():
-        w = m["wallet"].tolist()
-        ea, et = layers(win, w)
+    # 1. Recompute the decision contrasts and those reported beside them (seed 42).
+    recompute, worst = {}, 0.0
+    for name in ANALYSES:
         rows = {}
-        interior = {}
-        for lam in LAMBDAS_EXTRA:
-            s, nodes, rank, pres = coupled([(ea, lam), (et, 1.0 - lam)])
-            entry = {}
-            if 0 < lam < 1:
-                inB = (pres[0] > 0) & (pres[1] > 0)
-                entry["r_B"] = float(rank[inB].sum())
-                entry["bound_2d_rB_over_1_minus_d"] = float(2 * 0.85 * rank[inB].sum() / 0.15)
-                interior[lam] = (nodes, rank)
-            sc = on_wallets(s, w)
-            labs = (APPROVE, SENDERS) if cohort == "spenders" else (LFCR,)
-            for lab in labs:
-                y = m[lab].to_numpy(float)
-                mask = ~np.isnan(y)
-                entry[lab] = tau(sc[mask], y[mask])
-            rows[str(lam)] = entry
-        n25, r25 = interior[0.25]
-        n75, r75 = interior[0.75]
-        assert n25 == n75
-        s25 = dict(zip(n25, r25))
-        s75 = dict(zip(n75, r75))
-        rows["l1_r075_minus_r025"] = float(np.abs(r75 - r25).sum())
-        rows["tau_between_lambda025_and_075_on_cohort"] = tau(on_wallets(s25, w), on_wallets(s75, w))
-        lam_block[f"{win}/{cohort}"] = rows
-    out["lambda_sweep"] = lam_block
-    log("lambda sweep done")
+        for spec in DECISION + BESIDE:
+            label, cohort, a, b, lab, test, where = spec
+            df = frames[name][cohort]
+            idx = resample_matrix(len(df), SEED)
+            sa = taus_on(df[a].to_numpy(float), df[lab].to_numpy(float), idx)
+            sb = taus_on(df[b].to_numpy(float), df[lab].to_numpy(float), idx)
+            pa = tau(dense(df[a].to_numpy(float)), dense(df[lab].to_numpy(float)))
+            pb = tau(dense(df[b].to_numpy(float)), dense(df[lab].to_numpy(float)))
+            r = contrast(sa, sb, pa, pb)
+            r["test"], r["holds"] = test, verdict(r, test)
+            pubr = published(summaries[name], where)
+            diffs = {k: abs(r[k] - pubr[k]) for k in ("delta_tau", "ci_low", "ci_high")}
+            r["published"] = {k: pubr[k] for k in ("delta_tau", "ci_low", "ci_high")}
+            if "holds" in pubr:
+                r["published"]["holds"] = pubr["holds"]
+            r["max_abs_diff_from_published"] = max(diffs.values())
+            r["half_width"] = (r["ci_high"] - r["ci_low"]) / 2
+            worst = max(worst, r["max_abs_diff_from_published"])
+            rows[label] = r
+        recompute[name] = rows
+    result["recompute"] = recompute
+    result["recompute_max_abs_diff"] = worst
+    print(f"recompute: largest difference from the published values {worst:.2e}")
+    if worst > 1e-9:
+        print("recomputed values differ from the published summaries", file=sys.stderr)
+        return 1
 
-    # -- 3. AUC beside tau (binary label: at least one arrival) --
-    auc_block = {}
-    for win in ("spring", "registered"):
-        m = frames[(win, "spenders")]
-        res = {}
-        for lab in (APPROVE, SENDERS):
-            y = m[lab].to_numpy(float)
-            pos = y > 0
-            entry = {"n_positive": int(pos.sum()), "n": int(len(y))}
-            for col in ("t1_in_approve_degree", "t1_in_degree", "awp_paper", "awp", "coupled_pr", "endorserank", "seeded_pr"):
-                entry[col] = auc(m[f"{col}_score"].to_numpy(float), pos)
-            entry["cpr_minus_l0"] = paired_boot(m["coupled_pr_score"].to_numpy(float), m["awp_score"].to_numpy(float), y, stat="auc")
-            entry["cpr_minus_l1"] = paired_boot(m["coupled_pr_score"].to_numpy(float), m["endorserank_score"].to_numpy(float), y, stat="auc")
-            res[lab] = entry
-        auc_block[win] = res
-    out["auc"] = auc_block
-    log("auc done")
+    # 2. Seed spread of the five decision contrasts.
+    tasks = []
+    for name in ANALYSES:
+        for cohort in ("w0_spenders", "w1_spenders", "w1_traders"):
+            specs = [(n_, a, b, lab, test) for n_, c, a, b, lab, test, _ in DECISION if c == cohort]
+            for seed in EXTRA_SEEDS:
+                tasks.append((name, cohort, seed, specs))
+    spread_raw: dict = {}
+    with ProcessPoolExecutor(max_workers=args.workers, initializer=_init, initargs=(frames,)) as pool:
+        for analysis, cohort, seed, out in pool.map(_seed_task, tasks, chunksize=2):
+            for k, r in out.items():
+                spread_raw.setdefault(analysis, {}).setdefault(k, []).append({"seed": seed, **r})
+    spread = {}
+    for name, per in spread_raw.items():
+        spread[name] = {}
+        for k, rows in per.items():
+            lo = np.array([r["ci_low"] for r in rows])
+            hi = np.array([r["ci_high"] for r in rows])
+            base = recompute[name][k]["holds"]
+            spread[name][k] = {
+                "seeds": len(rows),
+                "ci_low_mean": float(lo.mean()), "ci_low_sd": float(lo.std(ddof=1)),
+                "ci_low_min": float(lo.min()), "ci_low_max": float(lo.max()),
+                "ci_high_mean": float(hi.mean()), "ci_high_sd": float(hi.std(ddof=1)),
+                "ci_high_min": float(hi.min()), "ci_high_max": float(hi.max()),
+                "verdict_seed42": base,
+                "seeds_with_other_verdict": int(sum(r["holds"] != base for r in rows)),
+                "seeds_interval_contains_zero": int(sum(r["ci_low"] <= 0 <= r["ci_high"] for r in rows)),
+                "resamples_skipped_total": int(sum(r["skipped"] for r in rows)),
+            }
+    result["seed_spread"] = spread
+    print(f"seed spread done after {time.time() - t0:.0f} s")
 
-    # -- 4. bounded and binary weights on both layers --
-    weights_block = {}
-    for kind in ("bounded", "binary"):
-        res = {}
-        for (win, cohort), m in frames.items():
-            w = m["wallet"].tolist()
-            sc = {lam: cpr(win, w, lam, kind=kind) for lam in (0.0, 0.25, 0.5, 0.75, 1.0)}
-            labs = (APPROVE, SENDERS) if cohort == "spenders" else (LFCR,)
-            entry = {}
-            for lab in labs:
-                y = m[lab].to_numpy(float)
-                mask = ~np.isnan(y)
-                entry[lab] = {str(l): tau(s[mask], y[mask]) for l, s in sc.items()}
-                entry[lab]["mid_minus_l0"] = paired_boot(sc[0.5], sc[0.0], y)
-                entry[lab]["mid_minus_l1"] = paired_boot(sc[0.5], sc[1.0], y)
-            res[f"{win}/{cohort}"] = entry
-        weights_block[kind] = res
-        log("weights", kind)
-    out["weights"] = weights_block
+    # 3. Steps of the coupling weight (seed 42).
+    steps_def = [(0.0, 0.25), (0.25, 0.5), (0.5, 0.75), (0.75, 1.0), (0.25, 0.75)]
+    steps = {}
+    for name in ANALYSES:
+        steps[name] = {}
+        for cohort, labels in COHORT_LABELS.items():
+            df = frames[name][cohort]
+            idx = resample_matrix(len(df), SEED)
+            for lab in labels:
+                samp = {l: taus_on(df[c].to_numpy(float), df[lab].to_numpy(float), idx) for l, c in LAMBDA_COLS.items()}
+                pts = {l: tau(dense(df[c].to_numpy(float)), dense(df[lab].to_numpy(float))) for l, c in LAMBDA_COLS.items()}
+                key = f"{cohort}:{lab}"
+                steps[name][key] = {
+                    f"{hi_}-{lo_}": contrast(samp[hi_], samp[lo_], pts[hi_], pts[lo_]) for lo_, hi_ in steps_def
+                }
+    result["lambda_steps"] = steps
+    print(f"lambda steps done after {time.time() - t0:.0f} s")
 
-    # -- 5. Monte Carlo spread of the decision endpoints over bootstrap seeds --
-    contrasts = {
-        "A1": ("spring", "spenders", "coupled_pr", "endorserank", APPROVE),
-        "A2": ("spring", "spenders", "coupled_pr", "awp", SENDERS),
-        "F1": ("registered", "spenders", "coupled_pr", "awp", APPROVE),
-        "F2": ("registered", "spenders", "coupled_pr", "awp", SENDERS),
-        "F3": ("registered", "traders", "coupled_pr", "awp", LFCR),
-        "S1_F2": ("registered", "spenders", "coupled_pr", "awp_paper", SENDERS),
-    }
-    mc = {}
-    for cid, (win, cohort, a, b, lab) in contrasts.items():
-        m = frames[(win, cohort)]
-        av, bv, y = m[f"{a}_score"].to_numpy(float), m[f"{b}_score"].to_numpy(float), m[lab].to_numpy(float)
-        reg42 = paired_boot(av, bv, y, seed=SEED)
-        lows, highs = [], []
-        for s in range(args.mc_seeds):
-            r = paired_boot(av, bv, y, seed=1000 + s)
-            lows.append(r["ci"][0])
-            highs.append(r["ci"][1])
-        lows, highs = np.array(lows), np.array(highs)
-        mc[cid] = {
-            "seed42": reg42, "lower_mean": float(lows.mean()), "lower_sd": float(lows.std(ddof=1)),
-            "lower_min": float(lows.min()), "lower_max": float(lows.max()),
-            "upper_mean": float(highs.mean()), "upper_sd": float(highs.std(ddof=1)),
-            "share_seeds_lower_above_minus_0.02": float(np.mean(lows > -0.02)),
-            "share_seeds_lower_above_0": float(np.mean(lows > 0)),
-        }
-        log("mc", cid, mc[cid]["lower_sd"])
-    out["monte_carlo"] = mc
+    # 4. Rank agreement between values of the coupling weight (seed 42).
+    pairs = [(0.0, 0.25), (0.25, 0.75), (0.75, 1.0)]
+    agree = {}
+    for name in ANALYSES:
+        agree[name] = {}
+        for cohort in ("same_window", "w0_spenders", "w1_spenders"):
+            df = frames[name][cohort]
+            idx = resample_matrix(len(df), SEED)
+            agree[name][cohort] = {}
+            for l1, l2 in pairs:
+                x, y = df[LAMBDA_COLS[l1]].to_numpy(float), df[LAMBDA_COLS[l2]].to_numpy(float)
+                s = taus_on(x, y, idx)
+                s = s[np.isfinite(s)]
+                agree[name][cohort][f"{l1}-{l2}"] = {
+                    "tau_b": tau(dense(x), dense(y)), "ci_low": pct(s, 2.5), "ci_high": pct(s, 97.5),
+                    "n": int(len(df)), "n_boot": int(s.size),
+                }
+    result["lambda_rank_agreement"] = agree
+    result["runtime_s"] = round(time.time() - t0, 1)
 
-    # -- 6. prospective chance of passing F2 (normal approximation, bootstrap SD) --
-    sd_spring, sd_reg = mc["A2"]["seed42"]["sd"], mc["F2"]["seed42"]["sd"]
-    power = {}
-    for name, sd in (("spring_precision", sd_spring), ("registered_precision", sd_reg)):
-        power[name] = {"sd": sd}
-        for true in (0.0, 0.007):
-            power[name][f"P_pass_if_true_{true}"] = float(norm.cdf((true + 0.02 - 1.96 * sd) / sd))
-    out["f2_pass_probability"] = power
-
-    # -- 7. dependence: pigeonhole bootstrap for spender labels, week blocks for traders --
-    dep = {}
-    for cid in ("A1", "A2", "F1", "F2"):
-        win, cohort, a, b, lab = contrasts[cid]
-        m = frames[(win, cohort)]
-        w = m["wallet"].tolist()
-        x = ctx[win]
-        if lab == APPROVE:
-            ev = approval_label_events(events[win]["approvals"], x["latest"], x["os"], x["oe"], w)
-            M = incidence(ev, w, "owner")
-        else:
-            ev, _ = sender_label_events(events[win]["transfers"], x["trans"], x["os"], x["oe"], w)
-            M = incidence(ev, w, "counterparty")
-        assert np.allclose(np.asarray(M.sum(axis=1)).ravel(), m[lab].to_numpy(float)), cid
-        dep[cid] = {"wallet_only": mc[cid]["seed42"]["ci"], "two_way": twoway_boot(m[f"{a}_score"].to_numpy(float), m[f"{b}_score"].to_numpy(float), M),
-                    "n_counterparties": int(M.shape[1]), "events": int(M.sum())}
-    # traders: resample traders and calendar weeks of the label window
-    m = frames[("registered", "traders")]
-    x = ctx["registered"]
-    dec = allev["decoded"].copy()
-    dec["block_timestamp"] = pd.to_datetime(dec["block_timestamp"], utc=True)
-    dec = dec[(dec["block_timestamp"] >= x["os"]) & (dec["block_timestamp"] <= x["oe"])]
-    dec["wallet"] = dec["account"].astype(str).str.lower()
-    lab_mask = m[LFCR].notna().to_numpy()
-    tw = m.loc[lab_mask, "wallet"].tolist()
-    widx = {wv: i for i, wv in enumerate(tw)}
-    dec = dec[dec["wallet"].isin(widx)]
-    week = ((dec["block_timestamp"] - x["os"]).dt.days // 7).to_numpy()
-    nw = int(week.max()) + 1
-    rows = dec["wallet"].map(widx).to_numpy()
-    C = sparse.csr_matrix((np.ones(len(rows)), (rows, week)), shape=(len(tw), nw))
-    L = sparse.csr_matrix((dec["is_liquidation"].fillna(False).astype(float).to_numpy(), (rows, week)), shape=(len(tw), nw))
-    base_rate = 1 - np.asarray(L.sum(axis=1)).ravel() / np.asarray(C.sum(axis=1)).ravel()
-    assert np.allclose(base_rate, m.loc[lab_mask, LFCR].to_numpy(float))
-    a = m.loc[lab_mask, "coupled_pr_score"].to_numpy(float)
-    b = m.loc[lab_mask, "awp_score"].to_numpy(float)
-    rng = np.random.default_rng(SEED)
-    d = []
-    for _ in range(N_BOOT):
-        i = rng.integers(0, len(tw), len(tw))
-        ww = rng.multinomial(nw, np.full(nw, 1.0 / nw)).astype(float)
-        c = (C @ ww)[i]
-        ok = c > 0
-        y = 1 - (L @ ww)[i][ok] / c[ok]
-        d.append(tau(a[i][ok], y) - tau(b[i][ok], y))
-    d = np.array(d)
-    dep["F3"] = {"wallet_only": mc["F3"]["seed42"]["ci"], "two_way_weeks": {"ci": [float(np.quantile(d, 0.025)), float(np.quantile(d, 0.975))], "sd": float(d.std(ddof=1))}, "weeks": nw}
-    out["dependence"] = dep
-    log("dependence", dep)
-
-    # -- 8. spring sample and look-ahead --
-    sample = sorted({x.lower() for x in matched})
-    dsp = spring["decoded"].copy()
-    dsp["block_timestamp"] = pd.to_datetime(dsp["block_timestamp"], utc=True)
-    dsp["wallet"] = dsp["account"].astype(str).str.lower()
-    se0 = ctx["spring"]["se"]
-    pre = dsp[dsp["block_timestamp"] <= se0].groupby("wallet").size()
-    total = dsp.groupby("wallet").size()
-    late = {w for w in sample if pre.get(w, 0) < 3}
-    early = set(sample) - late
-    x = ctx["spring"]
-    m = frames[("spring", "spenders")]
-    w = m["wallet"].tolist()
-    ev_a = approval_label_events(spring["approvals"], x["latest"], x["os"], x["oe"], w)
-    ev_s, _ = sender_label_events(spring["transfers"], x["trans"], x["os"], x["oe"], w)
-    look = {
-        "sample": len(sample), "sample_min_total_closes": int(min(total.get(s, 0) for s in sample)),
-        "late_entrants_lt3_closes_by_freeze": len(late),
-        "approval_events": int(len(ev_a)), "approval_events_owner_in_sample": int(ev_a["owner"].isin(set(sample)).sum()),
-        "approval_events_owner_late": int(ev_a["owner"].isin(late).sum()),
-        "sender_events": int(len(ev_s)), "sender_events_sender_in_sample": int(ev_s["counterparty"].isin(set(sample)).sum()),
-        "sender_events_sender_late": int(ev_s["counterparty"].isin(late).sum()),
-        "spenders_that_are_late_entrants": int(sum(1 for s in w if s in late)),
-    }
-    # registered window: who generates the label events
-    xr = ctx["registered"]
-    mr = frames[("registered", "spenders")]
-    wr = mr["wallet"].tolist()
-    ev_ar = approval_label_events(allev["approvals"], xr["latest"], xr["os"], xr["oe"], wr)
-    ev_sr, win_tr = sender_label_events(allev["transfers"], xr["trans"], xr["os"], xr["oe"], wr)
-    look["registered_approval_events"] = int(len(ev_ar))
-    look["registered_approval_events_owner_in_sample"] = int(ev_ar["owner"].isin(set(sample)).sum())
-    look["registered_sender_events"] = int(len(ev_sr))
-    look["registered_sender_events_sender_in_sample"] = int(ev_sr["counterparty"].isin(set(sample)).sum())
-    # rerun the spring holdout on a sample chosen from December-February closes only
-    def keep_early(ev):
-        a = ev["approvals"].copy()
-        t = ev["transfers"].copy()
-        ao, asp = a["owner"].astype(str).str.lower(), a["spender"].astype(str).str.lower()
-        tf, tt = t["from_address"].astype(str).str.lower(), t["to_address"].astype(str).str.lower()
-        return {"approvals": a[ao.isin(early) | asp.isin(early)], "transfers": t[tf.isin(early) | tt.isin(early)], "decoded": ev["decoded"]}
-    ev_early = keep_early(spring)
-    me, _, meta_e = build_cohort_frame(config, ev_early, "spenders", None, with_liquidation=False)
-    rerun = {"n_spenders": int(meta_e["n_wallets"]), "early_sample": len(early)}
-    for lab in (APPROVE, SENDERS):
-        rerun[f"positives_{lab}"] = int((me[lab] > 0).sum())
-        rerun[lab] = {c: tau(me[f"{c}_score"].to_numpy(float), me[lab].to_numpy(float))
-                      for c in ("t1_in_approve_degree", "t1_in_degree", "awp", "coupled_pr", "endorserank", "awp_paper")}
-    rerun["A1"] = paired_boot(me["coupled_pr_score"].to_numpy(float), me["endorserank_score"].to_numpy(float), me[APPROVE].to_numpy(float))
-    rerun["A2"] = paired_boot(me["coupled_pr_score"].to_numpy(float), me["awp_score"].to_numpy(float), me[SENDERS].to_numpy(float))
-    rerun["exploratory_cpr_minus_l0_new_pairs"] = paired_boot(me["coupled_pr_score"].to_numpy(float), me["awp_score"].to_numpy(float), me[APPROVE].to_numpy(float))
-    look["rerun_dec_feb_sample"] = rerun
-    out["lookahead"] = look
-    log("lookahead", look)
-
-    # -- 9. edge-definition diagnostics --
-    diag = {}
-    apr = normalize_approvals(allev["approvals"])
-    full = latest_positive_as_of(allev["approvals"], xr["se"])
-    trunc = latest_positive_as_of(allev["approvals"][pd.to_datetime(allev["approvals"]["block_timestamp"], utc=True) >= pd.Timestamp("2026-03-01", tz="UTC")], xr["se"])
-    fullp = set(zip(full["owner"], full["spender"]))
-    truncp = set(zip(trunc["owner"], trunc["spender"]))
-    win_pos = apr[(apr["block_timestamp"] >= xr["os"]) & (apr["block_timestamp"] <= xr["oe"]) & (apr["value"] > 0)]
-    lab_pairs = set(zip(win_pos["owner"], win_pos["spender"]))
-    new_trunc = {p for p in lab_pairs if p not in truncp}
-    new_full = {p for p in lab_pairs if p not in fullp}
-    pre_apr = apr[apr["block_timestamp"] <= xr["se"]]
-    seen_pairs = set(zip(pre_apr["owner"], pre_apr["spender"]))
-    diag["left_censoring_proxy"] = {
-        "label_window_positive_pairs": len(lab_pairs),
-        "new_with_mar_may_history": len(new_trunc), "new_with_dec_may_history": len(new_full),
-        "share_of_mar_may_new_that_were_held_at_freeze": len(new_trunc - new_full) / max(len(new_trunc), 1),
-        "new_full_pairs_seen_earlier_but_zero_at_freeze": len({p for p in new_full if p in seen_pairs}),
-    }
-    diag["permit2"] = {
-        "registered_latest_allowances": int(len(full)), "to_permit2": int((full["spender"] == PERMIT2).sum()),
-        "owners_approving_permit2": int(full.loc[full["spender"] == PERMIT2, "owner"].nunique()),
-        "registered_label_pairs": int(len(ev_ar)), "label_pairs_to_permit2": int((ev_ar["spender"] == PERMIT2).sum()),
-        "spring_label_pairs_to_permit2": int((ev_a["spender"] == PERMIT2).sum()),
-        "permit2_in_spender_cohort_registered": PERMIT2 in set(wr),
-    }
-    tr = normalize_transfers(allev["transfers"])
-    win_tr_all = win_tr
-    zero_only = win_tr_all.groupby(["to_address", "from_address"])["value"].max()
-    zero_pairs = {(t, f) for (t, f), v in zero_only.items() if v == 0}
-    diag["transfers"] = {
-        "logs": int(len(tr)), "zero_value_logs": int((tr["value"] == 0).sum()),
-        "mints_from_zero": int((tr["from_address"] == ZERO).sum()), "burns_to_zero": int((tr["to_address"] == ZERO).sum()),
-        "self_transfers": int((tr["from_address"] == tr["to_address"]).sum()),
-        "registered_sender_events": int(len(ev_sr)),
-        "registered_sender_events_from_zero_address": int((ev_sr["counterparty"] == ZERO).sum()),
-        "registered_sender_events_zero_value_only": int(sum((s, c) in zero_pairs for s, c in zip(ev_sr["spender"], ev_sr["counterparty"]))),
-    }
-    diag["approvals"] = {"logs": int(len(apr)), "zero_value_logs": int((apr["value"] == 0).sum())}
-    out["edge_diagnostics"] = diag
-    log("diag", diag)
-
-    # -- 10. trader ties under the authorization walks --
-    mt = frames[("registered", "traders")]
-    lab = mt[LFCR]
-    ok = lab.notna()
-    sub = mt[ok]
-    er_vt = score_endorserank_vt(xr["latest"], xr["se"], mt["wallet"].tolist(), cfg["registered"])
-    sub = sub.assign(endorserank_vt_score=on_wallets(er_vt, sub["wallet"].tolist()))
-    ties = {}
-    for col in ("endorserank", "endorserank_isolated", "endorserank_vt", "t1_in_approve_degree"):
-        s = sub[f"{col}_score"].to_numpy(float)
-        vals, counts = np.unique(s, return_counts=True)
-        top = sorted(zip(counts, vals), reverse=True)[:3]
-        ties[col] = {"distinct_levels": int(len(vals)), "zero": int((s == 0).sum()),
-                     "largest_tied_groups": [[int(c), float(v)] for c, v in top],
-                     "tau": tau(s, sub[LFCR].to_numpy(float))}
-    s1 = sub["endorserank_score"].to_numpy(float)
-    nonzero = s1[s1 > 0]
-    cval = float(np.median(nonzero)) if len(nonzero) else 0.0
-    grp = np.where(s1 == 0, "absent", np.where(np.isclose(s1, cval, rtol=1e-9), "no_in_edges", "in_edges"))
-    ties["groups_lambda1"] = {g: {"n": int((grp == g).sum()), "mean_label": float(sub[LFCR].to_numpy(float)[grp == g].mean())} for g in ("absent", "no_in_edges", "in_edges") if (grp == g).any()}
-    out["trader_ties"] = ties
-    log("ties", ties)
-
-    # -- 11. S-PR at d = 0.5 --
-    spr = {}
-    for win in ("spring", "registered"):
-        m = frames[(win, "spenders")]
-        w = m["wallet"].tolist()
-        ea, et = layers(win, w)
-        er_s, *_ = coupled([(ea, 1.0)], d=0.85)
-        res = {}
-        for d_ in (0.85, 0.5):
-            pay, *_ = coupled([(et, 1.0)], d=d_)
-            seeded, *_ = coupled([(et, 1.0)], d=d_, teleport=er_s)
-            pv, sv = on_wallets(pay, w), on_wallets(seeded, w)
-            res[str(d_)] = {lab: paired_boot(sv, pv, m[lab].to_numpy(float)) for lab in (APPROVE, SENDERS)}
-        spr[win] = res
-    out["spr_damping"] = spr
-    log("spr done")
-
-    # -- 12. sensitivity of the decision contrasts to d, k and t0 --
-    sens = {}
-    for name, d_, k_, t0__ in (("d0.75", 0.75, K, T0), ("d0.95", 0.95, K, T0), ("k0.005", 0.85, 0.005, T0),
-                              ("k0.02", 0.85, 0.02, T0), ("t0_90", 0.85, K, 90.0), ("t0_270", 0.85, K, 270.0)):
-        res = {}
-        for cid in ("F1", "F2", "F3"):
-            win, cohort, _, _, lab = contrasts[cid]
-            m = frames[(win, cohort)]
-            w = m["wallet"].tolist()
-            a = cpr(win, w, 0.5, d=d_, k=k_, t0_=t0__)
-            b = cpr(win, w, 0.0, d=d_, k=k_, t0_=t0__)
-            res[cid] = paired_boot(a, b, m[lab].to_numpy(float))
-        sens[name] = res
-        log("sens", name)
-    out["parameter_sensitivity"] = sens
-
-    # -- 13. farms on each walk (matched-cohort graphs at 31 May 2026) --
-    sybil = {}
-    W = [x.lower() for x in matched]
-    Wset = set(W)
-    farm = [f"0xfa{i:038x}" for i in range(1, 11)]
-    target = "0xfb" + "0" * 38
-    ring = [f"0xfc{i:038x}" for i in range(20)]
-    se = xr["se"]
-
-    def star_edges(src_dst_weight):
-        return pd.DataFrame(src_dst_weight, columns=["from_node", "to_node", "weight"])
-
-    # (a) EndorseRank: bounded weights, uniform restarts
-    ea_vt = filter_subgraph_edges(build_endorserank_vt_edges(xr["latest"], se, K, T0, BV)[0], Wset)
-    base, nodes, rank, _ = coupled([(ea_vt, 1.0)])
-    has_in = set(ea_vt["to_node"])
-    c_common = float(np.median([base[u] for u in nodes if u not in has_in]))
-    w_sampled = max(base.get(u, 0.0) for u in W)
-    s_edges = star_edges([(f, target, 1.0) for f in farm] + [(target, f, 1.0) for f in farm])
-    aug, *_ = coupled([(pd.concat([ea_vt, s_edges], ignore_index=True), 1.0)])
-    r_edges = star_edges([(ring[i], ring[(i + 1) % 20], 1.0) for i in range(20)])
-    augr, nodes_r, _, _ = coupled([(pd.concat([ea_vt, r_edges], ignore_index=True), 1.0)])
-    sybil["endorserank"] = {"nodes": len(nodes), "b_common": c_common, "max_sampled": w_sampled,
-                            "max_all_nodes": max(base.values()), "star_target": aug[target],
-                            "star_over_max_sampled": aug[target] / w_sampled, "star_over_max_all": aug[target] / max(base.values()),
-                            "ring_multiple_of_share": sum(augr[x] for x in ring) / (20 / len(nodes_r))}
-    # (b) AWP, published form: bounded weights and activity restarts; the farm pays one base unit
-    trans = xr["trans"]
-    def fake_transfers(pairs):
-        return pd.DataFrame({"block_timestamp": se, "block_number": 0, "transaction_hash": [f"0xf{i}" for i in range(len(pairs))],
-                             "log_index": 0, "token_address": "0xfeed", "from_address": [p[0] for p in pairs],
-                             "to_address": [p[1] for p in pairs], "value": 1})
-    def awp_scores(tr_frame, wallets):
-        edges, act = build_awp_paper_edges(tr_frame, se, K, T0, BV)
-        edges = filter_subgraph_edges(edges, set(wallets))
-        s, nd, _, _ = coupled([(edges, 1.0)], teleport=act or None)
-        return s, nd
-    base_awp, nodes_awp = awp_scores(trans, W)
-    max_awp = max(base_awp.get(u, 0.0) for u in W)
-    star_tr = fake_transfers([(f, target) for f in farm] + [(target, f) for f in farm])
-    aug_awp, _ = awp_scores(pd.concat([trans, star_tr], ignore_index=True), W + farm + [target])
-    ring_tr = fake_transfers([(ring[i], ring[(i + 1) % 20]) for i in range(20)])
-    augr_awp, nodes_r_awp = awp_scores(pd.concat([trans, ring_tr], ignore_index=True), W + ring)
-    sybil["awp_published"] = {"nodes": len(nodes_awp), "max_sampled": max_awp, "max_all_nodes": max(base_awp.values()),
-                              "star_target": aug_awp[target], "star_over_max_sampled": aug_awp[target] / max_awp,
-                              "ring_multiple_of_share": sum(augr_awp[x] for x in ring) / (20 / len(nodes_r_awp))}
-    # (c) C-PR at lambda = 0.5 on the raw layers; farm edges in the authorization layer only
-    ea_raw, et_raw = layers("registered", W)
-    base_c, nodes_c, _, _ = coupled([(ea_raw, 0.5), (et_raw, 0.5)])
-    max_c = max(base_c.get(u, 0.0) for u in W)
-    aug_c, *_ = coupled([(pd.concat([ea_raw, s_edges], ignore_index=True), 0.5), (et_raw, 0.5)])
-    augr_c, nodes_rc, _, _ = coupled([(pd.concat([ea_raw, r_edges], ignore_index=True), 0.5), (et_raw, 0.5)])
-    sybil["cpr_0.5"] = {"nodes": len(nodes_c), "max_sampled": max_c, "max_all_nodes": max(base_c.values()),
-                        "star_target": aug_c[target], "star_over_max_sampled": aug_c[target] / max_c,
-                        "ring_multiple_of_share": sum(augr_c[x] for x in ring) / (20 / len(nodes_rc))}
-    out["sybil"] = sybil
-    log("sybil", sybil)
-
-    args.out.write_text(json.dumps(r3(out), indent=1), encoding="utf-8")
-    log("wrote", args.out)
+    out = HERE / "exploratory_checks.json"
+    out.write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")
+    print(f"wrote {out} after {result['runtime_s']} s")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())

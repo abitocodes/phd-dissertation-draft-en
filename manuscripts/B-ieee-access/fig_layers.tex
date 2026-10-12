@@ -1,7 +1,8 @@
 % Fig. 1: schematic of the two layers, the coupled row and the seeded restart.
+% Source: figures/fig_layers_standalone.tex (TikZ, compiled separately because ieeeaccess.cls clashes with TikZ).
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{figures/fig_layers.pdf}
-\caption{The two layers on one set of addresses (schematic). Circles are sampled traders and squares are contracts such as routers and vaults; $z$ is an address outside the sample, present only because a sampled trader paid it. Only $u$ has out-edges in both layers, so only its row depends on $\lambda$ for $0<\lambda<1$. At $\lambda=1$ the payment edges and $z$ are dropped, so $R$ becomes dangling; at $\lambda=0$ the authorization edges are dropped, so $w$ and $x$ become dangling and $S$ leaves the graph. \spr{} walks the solid edges only and restarts each jump in proportion to the authorization walk's score.}
+\caption{The two layers on one set of addresses (schematic). Squares are cohort contracts, the scored objects; circles are owners and counterparties, such as user accounts, and $z$ is an address that appears only because a cohort contract paid it. Only $u$ has out-edges in both layers, so only its row depends on $\lambda$ for $0<\lambda<1$. At $\lambda=1$ the payment edges and $z$ are dropped, so the contracts $R$ and $S$ become dangling; at $\lambda=0$ the authorization edges are dropped, so $w$ leaves the graph and $x$ becomes dangling. \spr{} walks the solid edges only and restarts each jump in proportion to the authorization walk's score.}
 \label{fig:layers}
 \end{figure}

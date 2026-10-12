@@ -19,7 +19,10 @@ def words(tex: str) -> list[str]:
     tex = "\n".join(re.sub(r"(?<!\\)%.*", "", l) for l in tex.splitlines())
     tex = re.sub(r"\\begin\{(table|figure|tabular|equation|align)\*?\}.*?\\end\{\1\*?\}", " ", tex, flags=re.S)
     tex = re.sub(r"\$[^$]*\$", " ", tex)
-    tex = re.sub(r"\\(cite|cend|ref|label|eqref|input|url|href)\*?(\[[^\]]*\])?\{[^}]*\}", " ", tex)
+    # citation commands of both bibtex (\cite) and biblatex (\textcite, \parencite, \autocite,
+    # \citeauthor, ...), with up to two optional arguments; their keys must not enter the words
+    tex = re.sub(r"\\[a-zA-Z]*cites?[a-zA-Z]*\*?(\[[^\]]*\]){0,2}\{[^}]*\}", " ", tex)
+    tex = re.sub(r"\\(cend|ref|label|eqref|input|url|href)\*?(\[[^\]]*\])?\{[^}]*\}", " ", tex)
     tex = re.sub(r"\\[a-zA-Z]+\*?", " ", tex)
     tex = re.sub(r"[^A-Za-z0-9\-']+", " ", tex).lower()
     return tex.split()

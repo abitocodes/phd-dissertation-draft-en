@@ -1,32 +1,253 @@
 {
- "W0_freeze_2026-02-28": {
-  "n_nodes": 4743,
-  "n_edges": 9765,
-  "n_pure_owners": 3408,
-  "n_pure_spenders": 1243,
-  "n_dual_role": 92,
-  "n_spenders_with_a_dual_role_in_neighbour": 50,
-  "common_owner_score_c": 0.00012888963739007917,
-  "spearman_er_vs_delta_spenders": 0.9454562338467711,
-  "spearman_er_vs_in_degree_spenders": 0.5840820000976553,
-  "spearman_delta_vs_in_degree_spenders": 0.5892556798031792,
-  "median_relative_error_closed_form": 4.790482031276593e-10,
-  "p95_relative_error_closed_form": 6.724978597038198e-09,
-  "share_spenders_within_1pct": 0.9640449438202248
- },
- "W1_freeze_2026-05-31": {
-  "n_nodes": 6442,
-  "n_edges": 14726,
-  "n_pure_owners": 4479,
-  "n_pure_spenders": 1852,
-  "n_dual_role": 111,
-  "n_spenders_with_a_dual_role_in_neighbour": 58,
-  "common_owner_score_c": 9.623802436988631e-05,
-  "spearman_er_vs_delta_spenders": 0.980443380047224,
-  "spearman_er_vs_in_degree_spenders": 0.5679144303431337,
-  "spearman_delta_vs_in_degree_spenders": 0.5703098649793908,
-  "median_relative_error_closed_form": 3.7580599102201095e-10,
-  "p95_relative_error_closed_form": 7.595904704869676e-06,
-  "share_spenders_within_1pct": 0.9735099337748344
- }
+  "what": "Closed-form check of EndorseRank, s(v) = c (1 + d delta(v)) for spenders whose owners have no in-edges, copied from the evaluation summaries of phd_works for both analyses and both graphs.",
+  "generated_by": "analysis/closed-form/export_closed_form.py",
+  "phd_works": {
+    "repository": "https://github.com/abitocodes/phd_works",
+    "head": "951923a9f0a0dc1379e8a2e1f41877d24393685f",
+    "experiments_dir": "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
+    "computed_by": "scripts/run_same_window.py (function closed_form; graph at T_obs) and scripts/run_holdout.py (same function; graph at t1); revised analysis with CONTRACT_REP_VARIANT=usd, registered analysis with the variable unset"
+  },
+  "definitions": {
+    "c": "common score of the nodes without in-edges (median over them; spread_of_c = max/min over them)",
+    "spenders": "contracts of the scored set with at least one allowance in-edge of positive weight",
+    "depth_one_spenders": "spenders none of whose owners has an in-edge; the closed form is exact for them",
+    "deeper_spenders": "spenders - depth_one_spenders (at least one owner is itself approved)",
+    "within_1pct_*": "share of the spenders whose EndorseRank is within 1% of c (1 + d delta(v))",
+    "tau_score_vs_delta": "Kendall tau_b between EndorseRank and delta(v) over all spenders; a point value without interval (the pipeline computes no bootstrap for it)",
+    "damping": "d, reputation.damping in config/contract_reputation.yaml"
+  },
+  "rows": [
+    {
+      "analysis": "revised",
+      "window": "same_window",
+      "graph": "allowance graph at T_obs = 2026-06-30 23:59:59 UTC (the W1 freeze; the W1 scores use the same graphs)",
+      "graph_date": "2026-06-30 23:59:59 UTC",
+      "scored_set": "matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct owners",
+      "scored_set_size": 15107,
+      "damping": 0.85,
+      "c": 7.638937222482332e-08,
+      "spread_of_c": 1.0,
+      "spenders": 14406,
+      "depth_one_spenders": 12039,
+      "deeper_spenders": 2367,
+      "within_1pct_all": 0.8791475773983063,
+      "within_1pct_depth_one": 1.0,
+      "within_1pct_deeper": 0.26446979298690326,
+      "tau_score_vs_delta": 0.9245496409831419,
+      "allowance_graph_nodes": 6221665,
+      "allowance_graph_edges": 11210114,
+      "source": {
+        "file": "data/3-published-results-for-thesis/revised-usd/same-window/eval_summary.json",
+        "key": "closed_form",
+        "sha256_published": "99f2c205a1ac89e88585f914a83fa04a4919481f78dccd71217326b48339df06",
+        "checksum_matches_SHA256SUMS": true
+      },
+      "score_file_check": {
+        "rows": 15107,
+        "score_zero": 535,
+        "score_equal_c": 173,
+        "score_above_c": 14399,
+        "score_between_0_and_c": 0,
+        "min_score_over_c_among_nonzero": 1.0,
+        "above_c_without_any_approval": 0,
+        "restart_floor": 2.410930193123545e-08,
+        "spenders_equal_score_above_c": false,
+        "checks": {
+          "rows_equal_scored_set": true,
+          "no_score_between_0_and_c": true,
+          "spenders_within_bounds": true,
+          "above_c_implies_approval_received": true,
+          "c_at_least_restart_floor": true
+        },
+        "all_checks_pass": true,
+        "not_checkable_without_edges": [
+          "depth_one_spenders",
+          "within_1pct_all",
+          "within_1pct_depth_one",
+          "within_1pct_deeper",
+          "tau_score_vs_delta",
+          "common_value_c (needs r_D)"
+        ],
+        "files": [
+          {
+            "file": "data/2-processed-tables-and-evaluations/revised-usd/same-window/cohort_scores.part000.parquet",
+            "sha256": "373860bcb2936863920adca8d8aeda1732cfcd3bc4ab14cd77c00b5c14323b18"
+          }
+        ]
+      }
+    },
+    {
+      "analysis": "revised",
+      "window": "W0",
+      "graph": "allowance graph at t1 = 2026-03-31 23:59:59 UTC (the W0 freeze)",
+      "graph_date": "2026-03-31 23:59:59 UTC",
+      "scored_set": "W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens at t1",
+      "scored_set_size": 17050,
+      "damping": 0.85,
+      "c": 8.140464241388893e-08,
+      "spread_of_c": 1.0,
+      "spenders": 17032,
+      "depth_one_spenders": 11326,
+      "deeper_spenders": 5706,
+      "within_1pct_all": 0.736672146547675,
+      "within_1pct_depth_one": 1.0,
+      "within_1pct_deeper": 0.21398527865404837,
+      "tau_score_vs_delta": 0.8125611381641151,
+      "allowance_graph_nodes": null,
+      "allowance_graph_edges": 10650258,
+      "source": {
+        "file": "data/3-published-results-for-thesis/revised-usd/holdout-w0/eval_summary.json",
+        "key": "closed_form",
+        "sha256_published": "db947772f18a0b9f05fde9f6f1469f40e279069c2871287948757c6aa1b7337b",
+        "checksum_matches_SHA256SUMS": true
+      },
+      "score_file_check": {
+        "rows": 17050,
+        "score_zero": 16,
+        "score_equal_c": 10,
+        "score_above_c": 17024,
+        "score_between_0_and_c": 0,
+        "min_score_over_c_among_nonzero": 1.0,
+        "above_c_without_any_approval": 0,
+        "spenders_equal_score_above_c": false,
+        "checks": {
+          "rows_equal_scored_set": true,
+          "no_score_between_0_and_c": true,
+          "spenders_within_bounds": true,
+          "above_c_implies_approval_received": true
+        },
+        "all_checks_pass": true,
+        "not_checkable_without_edges": [
+          "depth_one_spenders",
+          "within_1pct_all",
+          "within_1pct_depth_one",
+          "within_1pct_deeper",
+          "tau_score_vs_delta",
+          "common_value_c (needs r_D)"
+        ],
+        "files": [
+          {
+            "file": "data/2-processed-tables-and-evaluations/revised-usd/holdout-w0/spender_scores.part000.parquet",
+            "sha256": "d62e9f0c2f22f8ef7ef01a11e9e21ccb121a89d8db071ffe3c6ebd6a37373190"
+          }
+        ]
+      }
+    },
+    {
+      "analysis": "registered",
+      "window": "same_window",
+      "graph": "allowance graph at T_obs = 2026-06-30 23:59:59 UTC (the W1 freeze; the W1 scores use the same graphs)",
+      "graph_date": "2026-06-30 23:59:59 UTC",
+      "scored_set": "plan cohort: contracts approved on any ERC-20 by >= 3 distinct owners",
+      "scored_set_size": 27844,
+      "damping": 0.85,
+      "c": 3.4025809962632144e-08,
+      "spread_of_c": 1.0,
+      "spenders": 26512,
+      "depth_one_spenders": 20942,
+      "deeper_spenders": 5570,
+      "within_1pct_all": 0.8635712130356065,
+      "within_1pct_depth_one": 1.0,
+      "within_1pct_deeper": 0.35062836624775584,
+      "tau_score_vs_delta": 0.9080128628161801,
+      "allowance_graph_nodes": 13055150,
+      "allowance_graph_edges": 22321470,
+      "source": {
+        "file": "data/3-published-results-for-thesis/same-window/eval_summary.json",
+        "key": "closed_form",
+        "sha256_published": "a10f9071b3eed61d8f8f6e53ade7ea55ec4497fbceed56e763d0a856c0e32d96",
+        "checksum_matches_SHA256SUMS": true
+      },
+      "score_file_check": {
+        "rows": 27844,
+        "score_zero": 962,
+        "score_equal_c": 370,
+        "score_above_c": 26512,
+        "score_between_0_and_c": 0,
+        "min_score_over_c_among_nonzero": 1.0,
+        "above_c_without_any_approval": 0,
+        "restart_floor": 1.1489718616791077e-08,
+        "spenders_equal_score_above_c": true,
+        "checks": {
+          "rows_equal_scored_set": true,
+          "no_score_between_0_and_c": true,
+          "spenders_within_bounds": true,
+          "above_c_implies_approval_received": true,
+          "c_at_least_restart_floor": true
+        },
+        "all_checks_pass": true,
+        "not_checkable_without_edges": [
+          "depth_one_spenders",
+          "within_1pct_all",
+          "within_1pct_depth_one",
+          "within_1pct_deeper",
+          "tau_score_vs_delta",
+          "common_value_c (needs r_D)"
+        ],
+        "files": [
+          {
+            "file": "data/2-processed-tables-and-evaluations/same-window/cohort_scores.part000.parquet",
+            "sha256": "722ea806c3a49b3c3b598ed3d995431c31eb165fc8e7138ae3f5afe06da8fae6"
+          }
+        ]
+      }
+    },
+    {
+      "analysis": "registered",
+      "window": "W0",
+      "graph": "allowance graph at t1 = 2026-03-31 23:59:59 UTC (the W0 freeze)",
+      "graph_date": "2026-03-31 23:59:59 UTC",
+      "scored_set": "W0 spender cohort: contract spenders with a positive latest allowance of any ERC-20 at t1",
+      "scored_set_size": 33101,
+      "damping": 0.85,
+      "c": 3.557215970154282e-08,
+      "spread_of_c": 1.0,
+      "spenders": 33101,
+      "depth_one_spenders": 19955,
+      "deeper_spenders": 13146,
+      "within_1pct_all": 0.7355366907344189,
+      "within_1pct_depth_one": 1.0,
+      "within_1pct_deeper": 0.3340940209949795,
+      "tau_score_vs_delta": 0.7877494501956301,
+      "allowance_graph_nodes": null,
+      "allowance_graph_edges": 21550791,
+      "source": {
+        "file": "data/3-published-results-for-thesis/holdout-w0/eval_summary.json",
+        "key": "closed_form",
+        "sha256_published": "ae567ac958bd458e7db7a8b1739502beeeec5c7ef9eaad8e4edbe0f71c98d2f7",
+        "checksum_matches_SHA256SUMS": true
+      },
+      "score_file_check": {
+        "rows": 33101,
+        "score_zero": 0,
+        "score_equal_c": 0,
+        "score_above_c": 33101,
+        "score_between_0_and_c": 0,
+        "min_score_over_c_among_nonzero": 1.0000144006491307,
+        "above_c_without_any_approval": 0,
+        "spenders_equal_score_above_c": true,
+        "checks": {
+          "rows_equal_scored_set": true,
+          "no_score_between_0_and_c": true,
+          "spenders_within_bounds": true,
+          "above_c_implies_approval_received": true
+        },
+        "all_checks_pass": true,
+        "not_checkable_without_edges": [
+          "depth_one_spenders",
+          "within_1pct_all",
+          "within_1pct_depth_one",
+          "within_1pct_deeper",
+          "tau_score_vs_delta",
+          "common_value_c (needs r_D)"
+        ],
+        "files": [
+          {
+            "file": "data/2-processed-tables-and-evaluations/holdout-w0/spender_scores.part000.parquet",
+            "sha256": "ae5bb61b8f8e48a2a2e757541db782781ff9940fa8387affe4894b3e5bfc70cd"
+          }
+        ]
+      }
+    }
+  ]
 }

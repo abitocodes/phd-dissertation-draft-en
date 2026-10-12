@@ -1,57 +1,53 @@
-# Dissertation results tables
+# Results tables
 
-LaTeX fragments consumed by `Chapter-04-Implementation-and-Empirical-Results/index.tex` and Appendix.
-All numbers come from the summaries in `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments/data/3-published-results-for-thesis/`
-of `phd_works` (pipeline run of 2026-09-12: 5 timed PageRank solves after one warm-up, 400 paired
-wallet-bootstrap resamples with seed 42). The working copies are in `data/2-processed-tables-and-evaluations/`,
-and `data/README.md` in that folder describes every file.
-
-## Main dissertation tables (Chapter 4)
-
-| File | Description |
-|------|-------------|
-| `benchmark-runtime.tex` | Runtime (mean, SD), peak memory, iterations, \|V\|, \|E\| for EndorseRank and AWP on the matched cohort |
-| `benchmark-scaling.tex` | Expanded wallet-pool node-count sensitivity (10,000 / 50,000 / 99,080) with per-stage \|V\|, \|E\| |
-| `alignment-family-ci.tex` | Family-mean τ with 95% bootstrap CI for EndorseRank and AWP, plus inter-method τ |
-| `tau-diff.tex` | Six pre-specified paired-bootstrap Δτ contrasts |
-| `alignment-transfer.tex`, `alignment-allowance.tex`, `alignment-sybil-stability.tex` | Per-proxy detail with 95% CI (EndorseRank, AWP) |
-| `robustness-damping.tex`, `robustness-tokens.tex`, `robustness-sample-size.tex` | Robustness / sensitivity checks |
-
-## Appendix-only
-
-| File | Description |
-|------|-------------|
-| `benchmark-scaling-incohort.tex` | Matched-cohort subsample scaling ($n \leq 5{,}521$) with \|V\|, \|E\| |
-| `alignment-summary.tex` | Columnar family summary including the archived liquidation / inverse-risk / GMX families |
-| `alignment-gmx.tex`, `alignment-inverse-risk.tex`, `alignment-liquidation.tex` | Outcome-family detail (not used as validation evidence in the main text) |
-
-## Archived extended baselines
-
-Three-method (with GF-PR), seven-method and six-Aave matrices:
-[`../archive/extended-baselines/`](../archive/extended-baselines/README.md).
-GF-PR was withdrawn from the main narrative because it is built from the same GMX
-outcome data it would be validated against.
-
-## Regenerate (real BigQuery parquet + robustness)
+LaTeX fragments read by Chapter 4 and the appendix. Every file is written by `scripts/export_latex.py` in
+`1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/` of `phd_works` from the evaluation
+summaries in its `data/2-processed-tables-and-evaluations/` (revised analysis: `revised-usd/`); the copies behind the
+thesis, with every number and its JSON key, are in `data/3-published-results-for-thesis/revised-usd/results_digest.md`.
+Do not edit these files by hand; regenerate them:
 
 ```bash
-cd 1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/dissertation/wallet-reputation-experiments
-python scripts/run_dissertation_eval.py --real --robustness --benchmark-repeats 5
-python scripts/export_latex_results.py
-python scripts/export_method_matrix.py --preset three   # archive only
-python scripts/generate_dissertation_figures.py
+cd 1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments
+CONTRACT_REP_VARIANT=usd python scripts/export_latex.py
 ```
 
-## Regenerate (offline synthetic)
+The same command writes the five figures in `Figures/generated/`.
 
-Do not run `run_dissertation_eval.py --fixtures` in the `phd_works` checkout: it writes synthetic
-data over the real files in `data/2-processed-tables-and-evaluations/`, and with `--export-latex`
-it would write synthetic tables here.
+## Chapter 4
 
-## Figures
+| File | Caption |
+|------|---------|
+| `alignment-hybrid.tex` | Same-window family-mean Kendall τ for every score of this study. |
+| `benchmark-runtime.tex` | Computational benchmark on the full graphs of the matched cohort. |
+| `benchmark-scaling.tex` | Runtime against the size of the evaluation set. |
+| `endorserank-restarts.tex` | EndorseRank with uniform and with activity-weighted restarts, next to AWP. |
+| `fresh-contrasts.tex` | Window W1: the contrasts of rule B with their verdicts and the sensitivity analyses. |
+| `fresh-holdout.tex` | Window W1: Kendall τ on the three labels of rule B. |
+| `fresh-posthoc.tex` | EndorseRank and its variant with activity restarts in the window W1. |
+| `fresh-traders.tex` | Window W1: Kendall τ on the other trader labels. |
+| `holdout-diff.tex` | Paired bootstrap differences on the spender holdout W0. |
+| `holdout-receiving.tex` | Spender holdout W0 restricted to spenders that had received a transfer before the freeze. |
+| `holdout-spenders.tex` | Temporal holdout W0 on the spender cohort. |
+| `holdout-traders.tex` | W0 trader run on the GMX V2 profit labels. |
+| `neutral-label-contrasts.tex` | Allowance-side against transfer-side scores on the liquidation-free close rate. |
+| `neutral-label-recipients.tex` | Traders that receive approvals against all other labelled traders. |
+| `robustness-damping.tex` | Robustness: family-mean Kendall τ under PageRank damping d. |
+| `robustness-sample-size.tex` | Sensitivity of the family means to the evaluation set. |
+| `robustness-slope.tex` | Robustness: family-mean Kendall τ under ten times smaller and larger value slopes. |
+| `tau-diff-hybrid.tex` | Same-window paired contrasts of C-PR and S-PR against their two layers and of C-PR against EndorseRank and AWP. |
+| `tie-sensitivity.tex` | Same-window family means with missing contracts scored zero or kept as isolated nodes. |
 
-Generated PDFs live in `../Figures/generated/`. Regenerate with:
+## Appendix
 
-```bash
-python scripts/generate_dissertation_figures.py
-```
+| File | Caption |
+|------|---------|
+| `alignment-allowance.tex` | Domain alignment of EndorseRank and AWP with the allowance proxies. |
+| `alignment-family-ci.tex` | Family-mean Kendall τ of EndorseRank and AWP with bootstrap intervals. |
+| `alignment-sybil-stability.tex` | Domain alignment of EndorseRank and AWP with the Sybil-adjusted stability proxies. |
+| `alignment-transfer.tex` | Domain alignment of EndorseRank and AWP with the transfer proxies. |
+| `benchmark-runs.tex` | Every timed solver call of the benchmark. |
+| `endorserank-awp-holdout.tex` | Paired bootstrap differences between EndorseRank and AWP out of window. |
+| `neutral-label-grid.tex` | Allowance-side minus transfer-side scores on every trader label in both windows. |
+| `registered-vs-revised.tex` | Decision contrasts of the registered analysis and of the revised analysis. |
+| `tau-diff.tex` | Same-window paired contrasts between EndorseRank and AWP. |
+| `usd-tokens.tex` | The five tokens of the revised analysis, the rows they keep and their prices. |
