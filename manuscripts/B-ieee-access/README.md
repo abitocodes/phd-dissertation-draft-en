@@ -6,7 +6,7 @@
 
 **Authors.** Taehong Kwon (corresponding, thkwon@enu-tech.co.kr), Ernest Mnkandla, Donatien Koulla Moulla, David Sena Attipoe
 
-The title adds "for Smart-Contract Reputation" to the working title, because every scored address in the study is a contract. "Commit-gated" replaces the earlier "hash-gated": the extraction script refuses to run unless the registration files are committed without local changes, and it only records their SHA-256 hashes; it compares no hash.
+"Commit-gated" replaces the earlier "hash-gated": the extraction script refuses to run unless the registration files are committed without local changes, and it only records their SHA-256 hashes; it compares no hash.
 
 ## Target journal and why
 
@@ -23,7 +23,7 @@ The title adds "for Smart-Contract Reputation" to the working title, because eve
 - **The revised analysis** (US dollars, five tokens WETH/USDC/USDT0/ARB/WBTC, cohort 15,107; commits `a897475`, `09dfc32`, `2705b28` on 10 October 2026, after the registered results were known and before any revised score) is reported beside it as a re-analysis under the same rules, never as a registered result.
 - Verdicts are identical in the two analyses: rule A not met (A1 holds, A2 fails; the same-window part fails on all three families); rule B not met (F1 holds, F2 and F3 fail); F4, F5, F6 fail with F6a holding; S1 and S2 not met; R1 and R2 do not hold and R3 holds (reported in the companion paper). F3 fails differently: in the registered analysis C-PR was worse than the payment walk on the trader label (−0.044 [−0.100, −0.002]); in the revised analysis the two were level (+0.000 [−0.014, 0.010]) and F3 failed on precision.
 - The Sybil model is reported on the revised EndorseRank graph (22 / about 2,074 / about 135,895 farm addresses to pass the 90th percentile, the 99th percentile and the top of the cohort; `sybil_model.json` gives 21.4, 2,073.9 and 135,894.8), with the registered graph's 13 / 1,253 / about 1,080,271 beside it.
-- The record of the registration is described with its limits: commit times come from the committer's clock; the BigQuery job times are kept by Google but visible only to the project owner; GitHub's public push record (saved in `supplement/github_push_events.json`) does not show the plan or the registration commit before the W1 extraction, nor the cap amendment `2705b28` before 13:29:26 UTC on 10 October (after the revised results were committed). The queries of the cohort, ego network, pair tables and W0 labels, the score and bootstrap implementations, the same-window and W0 drivers and the unit tests were committed with the registration, after they had run on the observation window and after rule A had been judged. The script has no override; the manifest's `override_used` field is a constant.
+- The record of the registration is described with its limits: commit times come from the committer's clock; the BigQuery job times are kept by Google but visible only to the project owner; no third-party timestamp anchors the commits. The queries of the cohort, ego network, pair tables and W0 labels, the score and bootstrap implementations, the same-window and W0 drivers and the unit tests were committed with the registration, after they had run on the observation window and after rule A had been judged. The script has no override; the manifest's `override_used` field is a constant.
 
 ## Files
 
@@ -39,11 +39,11 @@ The title adds "for Smart-Contract Reputation" to the working title, because eve
 | `make_tables.py` | Writes every `tab_*.tex` from the published summaries, the extraction manifest, the job times, the git history of `phd_works` and `supplement/exploratory_checks.json`; checks each summary against `SHA256SUMS.txt` and the manifest hashes against the committed files |
 | `tab_bench.tex` | Table 1, solver time with \|V\| and \|E\|, both analyses |
 | `tab_timeline.tex` | Table 2, order of commitments with UTC times, records and what was known |
-| `tab_ids.tex` | Table 3, full commit identifiers (including `f33a87a`, which published the registered benchmark and the data description with the BigQuery job times) and SHA-256 of the registration files (CRLF as recorded, LF as stored) and of the plan |
+| `tab_ids.tex` | Table 3, full commit identifiers (including `f33a87a`, which committed the registered benchmark and the data description with the BigQuery job times) and SHA-256 of the registration files (CRLF as recorded, LF as stored) and of the plan |
 | `tab_holdout.tex` | Table 4, out-of-window tau_b with intervals, both analyses, W0 and W1 |
 | `tab_contrasts.tex` | Table 5, paired contrasts and verdicts of rules A and B, F4–F6, S1, S2 and the contrasts computed after the labels, both analyses |
 | `tab_explore.tex` | Table 6, exploratory checks (Appendix A) |
-| `supplement/` | The queries behind the reported results (extraction, pair tables, same-window proxies, labels), the exploratory-check script and its output, the GitHub push record (see `supplement/README.md`) |
+| `supplement/` | The queries behind the reported results (extraction, pair tables, same-window proxies, labels), the exploratory-check script and its output (see `supplement/README.md`) |
 | `cover-letter.tex` / `.pdf` | One-page cover letter, dated 11 October 2026 |
 | `main.pdf` | Built manuscript |
 | `ieeeaccess.cls`, `IEEEtran.bst`, `spotcolor.sty`, `t1*`, `*.png` | Official IEEE Access template files (pristine copy in `ieee-template/`) |
@@ -66,7 +66,6 @@ The title adds "for Smart-Contract Reputation" to the working title, because eve
 | Text: closed form | `analysis/closed-form/closed_form_check.json` (thesis repository) |
 | Text: Sybil model | `pub[/revised-usd]/sybil-model/sybil_model.json` |
 | Text: data counts | `pub[/revised-usd]/describe/describe.json`, `cohort/matched_cohort.json`, the eval summaries' `graph` blocks, `gmx/*.json`; revision constants from `pub/revised-usd/describe/describe.json` : `constants`; thesis Chapter 3 (account-type counts, token rule) |
-| Text: GitHub push record | `supplement/github_push_events.json` |
 
 Every number in the text was checked against these sources; derived ratios (time and edge ratios, interval widths) were computed from the same JSON files.
 
@@ -74,13 +73,13 @@ Every number in the text was checked against these sources; derived ratios (time
 
 Manuscript A compares the allowance edge and the transfer edge as separate scores against their raw degrees and compares them on GMX trader outcomes built from neither edge type (P, Q, R1–R3). Manuscript B covers the coupling operator (C-PR, S-PR), the two pre-specified rules, the commit-gated record, the revision as a deviation, and the Sybil exposure of the authorization layer. Results that appear in both: the data description, the reference rows (raw degrees, EndorseRank, AWP) and their degree contrasts in Tables 4–5, the closed form of the authorization walk (Section III-G), and the solver times of EndorseRank and AWP (Table 1); B attributes them to A (`kwon2026companion`) and states this in the Introduction. R1–R3 are named in B (Introduction, Tables 2 and 3) without their verdicts. A reports the revised analysis in its Results with the registered values beside them; B leads with the registered analysis because it is about the rules fixed for it, and says so in the Introduction.
 
-## Lengths and checks (11 October 2026)
+## Lengths and checks (12 October 2026)
 
 - Abstract: 250 words, one paragraph, no references or equations (IEEE Access limit 150 to 250).
-- Body text, Introduction to Conclusion plus Appendix A, without tables, captions, equations and the bibliography: about 9,800 words; 6 tables, 3 figures; 18 pages (IEEE Access recommends under 20). Fig. 2 sits in Section VI and Fig. 3 at the top of the page where Section VII starts (two full-width floats may share a page top).
+- Body text, Introduction to Conclusion plus Appendix A, without tables, captions, equations and the bibliography: about 9,700 words; 6 tables, 3 figures; 18 pages (IEEE Access recommends under 20). Fig. 2 sits in Section VI and Fig. 3 at the top of the second page of Section VII (two full-width floats may share a page top).
 - `../tools/overlap_check.py main.tex`: 1.3% 8-gram overlap with the thesis; longest shared span 13 words (the name of the public BigQuery table).
 - `make_tables.py`: every published summary matched `SHA256SUMS.txt` (CRLF form); the manifest hashes equal the CRLF hashes of the files committed in `0d3a057`.
-- `supplement/exploratory_checks.py`: every recomputed decision contrast (A1, A2, F1–F6, S1) equals the published value (largest difference 0).
+- `supplement/exploratory_checks.py` (run on 11 October 2026; its inputs and output are unchanged since): every recomputed decision contrast (A1, A2, F1–F6, S1) equals the published value (largest difference 0).
 - Build: no errors, no undefined citations or references. Remaining warnings: the template's own overfull header and title boxes and its font-shape substitutions (the same as when the pristine `ieee-template/access.tex` is built), a harmless T1/pcr font-series substitution from `\texttt`, and a few underfull lines in number-heavy paragraphs and the bibliography.
 
 ## Still for the authors
@@ -91,7 +90,6 @@ Manuscript A compares the allowance edge and the transfer edge as separate score
 4. Optional: anchor future registrations with a third-party timestamp (Section IV-C names the gap); measure the approval fee `c_gas` and the allowance state at the freeze block.
 5. Check the current IEEE Access APC and arrange payment or a waiver before acceptance.
 6. The thesis and the companion report the revised analysis as their main analysis; this paper leads with the registered one because it is about the rules fixed for it, and its Introduction says so.
-7. **Decide before submission (disclosure).** Before the plan of 9 October 2026, other work by the first author had extracted GMX V2 closes, approvals and transfers up to 31 August 2026 for a cohort of 5,521 trading accounts (registration committed 1 October 2026), and had computed C-PR, S-PR, EndorseRank and AWP on them. 63 of the 131 contract accounts with at least three GMX closes in W1 are in that cohort (80 counting any close), so July–August outcomes of about half of the possible W1 traders had been extracted before. The paper now scopes every "before extraction" claim to this study (abstract, Introduction, Section IV, Table 2, Conclusion, cover letter) but does not mention the other work, because the writing brief forbids naming earlier work. The authors and supervisors should decide whether Section IV-E should carry a sentence such as: "Before the plan, the first author had extracted GMX V2 closes up to 31 August 2026 for a cohort of 5,521 trading accounts in other work; 63 of the 131 contract accounts with at least three closes in W1 were among them, and no score of this study had been set against those closes." Do not submit until this is decided.
 
 ## Submission checklist (IEEE Access, ScholarOne)
 
@@ -102,7 +100,7 @@ Manuscript A compares the allowance edge and the transfer edge as separate score
 - [x] Tables: captions above, booktabs rules.
 - [x] References in IEEE style, numbered in order of citation (IEEEtran.bst).
 - [x] AI-use disclosure in the Acknowledgment (IEEE policy).
-- [ ] Supplementary material: `supplement/` (queries, exploratory script and output, push record); Manuscript A as confidential material for reviewers.
+- [ ] Supplementary material: `supplement/` (queries, exploratory script and output); Manuscript A as confidential material for reviewers.
 - [ ] Cover letter uploaded; it discloses that the work derives from the first author's UNISA doctoral research and that a related manuscript goes to PLOS ONE. IEEE runs a similarity check, and the thesis will be in the UNISA repository.
 - [ ] Article processing charge.
 - [ ] Optional: suggested reviewers; graphical abstract.

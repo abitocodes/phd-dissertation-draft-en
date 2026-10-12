@@ -2486,7 +2486,7 @@
    }
   },
   "registered": {
-   "status": "Registered analysis (raw base units, every ERC-20): rules fixed in docs/registration_w1.md (commit 0d3a057) before the W1 logs were extracted. Thesis Appendix 8.6.",
+   "status": "Registered analysis (raw base units, every ERC-20): rules fixed in docs/registration_w1.md (commit 0d3a057) before this study extracted the W1 logs. Thesis Appendix 8.6.",
    "source": {
     "file": "data/3-published-results-for-thesis/registered-w1/eval_summary.json",
     "sha256_published": "a78d76569f93508804bfb7fb926984480f6aff2653011a1c0317c3a8f684e4f3",

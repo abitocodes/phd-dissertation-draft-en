@@ -118,7 +118,7 @@ ANALYSES = {
         "proc": PROC,
         "w1_dir": "registered-w1",
         "status": ("Registered analysis (raw base units, every ERC-20): rules fixed in docs/registration_w1.md "
-                   "(commit 0d3a057) before the W1 logs were extracted. Thesis Appendix 8.6."),
+                   "(commit 0d3a057) before this study extracted the W1 logs. Thesis Appendix 8.6."),
     },
 }
 
