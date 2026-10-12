@@ -6,43 +6,29 @@ This appendix shows the three query patterns on which the graphs of both analyse
 
 \dissertationSubheading[sec:sql-materialize]{Log materialization pattern}
 
-Scan~A and scan~B run the same query, \texttt{sql/01\_materialize\_logs.sql}, over different windows. It reads the public log table once, tags each log by kind and keeps the four kinds the study needs in a project table partitioned by month. With the GMX and Aave branches shortened, it reads:
+Scan~A and scan~B run the same query, \texttt{sql/01\_materialize\_logs.sql}, over different windows. It reads the public log table once, tags each log by kind and keeps the four kinds the study needs in a project table partitioned by month. With the topic hashes and the GMX and Aave branches shortened, it reads:
 
-\begin{verbatim}
+\begin{verbatim}[baselinestretch=1]
 CREATE TABLE `__DEST__`
-PARTITION BY TIMESTAMP_TRUNC(block_timestamp, MONTH)
-CLUSTER BY kind
-AS
-WITH src AS (
-  SELECT block_timestamp, block_number, log_index,
-         LOWER(address) AS address, topics, data
-  FROM `bigquery-public-data.goog_blockchain_arbitrum_one_us.logs`
-  WHERE block_timestamp >= TIMESTAMP(@start_ts)
-    AND block_timestamp < TIMESTAMP(@end_ts)
-),
-tagged AS (
-  SELECT *,
-    CASE
-      WHEN ARRAY_LENGTH(topics) = 3 AND topics[OFFSET(0)] =
-        '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925'
+PARTITION BY TIMESTAMP_TRUNC(block_timestamp, MONTH) CLUSTER BY kind AS
+WITH tagged AS (
+  SELECT *, CASE
+      WHEN ARRAY_LENGTH(topics) = 3 AND topics[OFFSET(0)] = '0x8c5b...b925'
         THEN 'A'                                  -- ERC-20 Approval
-      WHEN ARRAY_LENGTH(topics) = 3 AND topics[OFFSET(0)] =
-        '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+      WHEN ARRAY_LENGTH(topics) = 3 AND topics[OFFSET(0)] = '0xddf2...b3ef'
         THEN 'T'                                  -- ERC-20 Transfer
       WHEN ... THEN 'G'                           -- GMX V2 PositionDecrease
       WHEN ... THEN 'V'                           -- Aave V3 pool events
     END AS kind
-  FROM src
-)
+  FROM `bigquery-public-data.goog_blockchain_arbitrum_one_us.logs`
+  WHERE block_timestamp >= TIMESTAMP(@start_ts)
+    AND block_timestamp < TIMESTAMP(@end_ts))
 SELECT block_timestamp, block_number, log_index, kind,
   FROM_HEX(SUBSTR(address, 3)) AS emitter,
   IF(kind IN ('A', 'T'), FROM_HEX(SUBSTR(topics[OFFSET(1)], 27)), NULL) AS a,
   IF(kind IN ('A', 'T'), FROM_HEX(SUBSTR(topics[OFFSET(2)], 27)), NULL) AS b,
-  IF(kind IN ('A', 'T'), SAFE.FROM_HEX(SUBSTR(data, 3)), NULL) AS val,
-  IF(kind IN ('G', 'V'), topics, NULL) AS raw_topics,
-  IF(kind IN ('G', 'V'), data, NULL) AS raw_data
-FROM tagged
-WHERE kind IS NOT NULL
+  IF(kind IN ('A', 'T'), SAFE.FROM_HEX(SUBSTR(data, 3)), NULL) AS val -- ...
+FROM tagged WHERE kind IS NOT NULL
 \end{verbatim}
 
 For an approval, \texttt{a} is the owner and \texttt{b} the spender; for a transfer, \texttt{a} is the sender and \texttt{b} the recipient. In both, \texttt{emitter} is the token contract and \texttt{val} the 32-byte amount, and addresses are stored as 20-byte values.
@@ -51,15 +37,9 @@ For an approval, \texttt{a} is the owner and \texttt{b} the spender; for a trans
 
 \texttt{sql/03\_ego\_events.sql} reads the materialized table of one window and keeps the approvals and transfers with a contract of the plan's cohort, held in \texttt{contract\_rep.cohort}, at one end. Abridged, for the approvals:
 
-\begin{verbatim}
-CREATE TEMP FUNCTION u256(v BYTES) AS (
-  IFNULL((SELECT SUM(c * POW(256.0, LENGTH(v) - 1 - o))
-          FROM UNNEST(TO_CODE_POINTS(v)) AS c WITH OFFSET o), 0.0)
-);
-
+\begin{verbatim}[baselinestretch=1]
 CREATE OR REPLACE TABLE `dissertation-bq.contract_rep.approvals___SUFFIX__`
-PARTITION BY TIMESTAMP_TRUNC(block_timestamp, MONTH)
-AS
+PARTITION BY TIMESTAMP_TRUNC(block_timestamp, MONTH) AS
 SELECT l.block_timestamp, l.block_number, l.log_index,
        l.emitter AS token_address, l.a AS owner, l.b AS spender,
        u256(l.val) AS value
@@ -69,23 +49,17 @@ WHERE l.kind = 'A'
   AND l.block_timestamp < TIMESTAMP(@end_ts)
   AND (l.a IN (SELECT address FROM `dissertation-bq.contract_rep.cohort`)
        OR l.b IN (SELECT address FROM `dissertation-bq.contract_rep.cohort`));
-
 -- transfers___SUFFIX__: the same with kind = 'T', from_address = a,
 -- to_address = b and zero amounts dropped: AND LTRIM(TO_HEX(l.val), '0') != ''
 \end{verbatim}
 
-The function \texttt{u256} reads the 32-byte amount as a double in raw base units. Approvals of zero are kept, because an approval of zero sets an allowance to zero, while zero-value transfers are dropped. The revised analysis does not run this query again: \texttt{sql/12\_usd\_ego.sql} forms the revised cohort from these tables, keeps the events of the five tokens with one of its contracts at one end and values a transfer at its token's price on the UTC day of its block.
+The function \texttt{u256}, defined at the top of the file, reads the 32-byte amount as a double in raw base units. Approvals of zero are kept, because an approval of zero sets an allowance to zero, while zero-value transfers are dropped. The revised analysis does not run this query again: \texttt{sql/12\_usd\_ego.sql} forms the revised cohort from these tables, keeps the events of the five tokens with one of its contracts at one end and values a transfer at its token's price on the UTC day of its block.
 
 \dissertationSubheading[sec:sql-pairs]{Latest-allowance and pair-table pattern}
 
 In the revised analysis \texttt{sql/14\_usd\_anchor\_pairs.sql} turns the ego events up to one anchor into the edge lists of both graphs; \texttt{sql/04\_anchor\_pairs.sql} did the same for the registered analysis in raw base units, with $b=1$ and no cap. Abridged:
 
-\begin{verbatim}
-CREATE TEMP FUNCTION sig(age_days FLOAT64) AS
-  (1.0 / (1.0 + EXP(0.01 * (age_days - 180.0))));
-CREATE TEMP FUNCTION vt(z FLOAT64, b FLOAT64) AS
-  (IF(b * z >= 40.0, 1.0, 2.0 / (1.0 + EXP(-b * z)) - 1.0));
-
+\begin{verbatim}[baselinestretch=1]
 CREATE OR REPLACE TABLE `dissertation-bq.contract_rep.u_allow_triples___TAG__` AS
 SELECT r.token_address, r.owner, r.spender, r.amount * p.price_usd AS usd,
        TIMESTAMP_DIFF(TIMESTAMP(@anchor_ts), r.block_timestamp, MICROSECOND)
@@ -109,12 +83,8 @@ SELECT owner, spender,
        MAX(sig(age_days)) AS max_sig
 FROM `dissertation-bq.contract_rep.u_allow_triples___TAG__`
 GROUP BY owner, spender;
-
--- u_transfer_pairs___TAG__: per (from_address, to_address) over u_transfers
--- up to the anchor, with
---   SUM(sig(age_days) * vt(usd, @b_transfer)) AS w_awp    -- AWP
---   SUM(usd * sig(age_days))                 AS w_raw    -- C-PR transfer layer
---   MAX(sig(age_days))                       AS max_sig  -- AWP activeness
+-- u_transfer_pairs___TAG__: per (from_address, to_address) up to the anchor,
+-- w_awp = SUM(sig * vt(usd, @b_transfer)), w_raw = SUM(usd * sig), MAX(sig)
 \end{verbatim}
 
-The function \texttt{sig} is the logistic decay of Equation~\eqref{eq:logistic-decay} with $k=0.01$ and $t_0=180$ days, and \texttt{vt} the value transform of Equation~\eqref{eq:value-transform}, set to one from $bz=40$ on, where it equals one in double precision. Among the approvals of one token, owner and spender up to the anchor, the latest is the one with the largest block number and, within the block, the largest log index. It is kept only when its value is positive, so a revocation removes that token from the pair, and it is valued at the price of the anchor's day. The slopes $b_A=\ln 3/62$ and $b_T=\ln 3/200$ per dollar and the cap $U=20{,}000$ dollars are passed as parameters from \texttt{constants.json}. Each pair row carries the weights of every method, so all scores at one anchor come from the same rows. The same query also writes the EndorseRank and AWP weights with the slope multiplied and divided by ten, from which the value-slope check of Table~\ref{tab:robustness-slope} is computed. W1 reuses the pair tables of $T_{\mathrm{obs}}$, its freeze date.
+The functions \texttt{sig} and \texttt{vt}, defined at the top of the file, are the logistic decay of Equation~\eqref{eq:logistic-decay} with $k=0.01$ and $t_0=180$ days and the value transform of Equation~\eqref{eq:value-transform}, set to one from $bz=40$ on, where it equals one in double precision. The window function picks the latest approval of each token, owner and spender by block number and log index; it is kept only when its value is positive, so a revocation removes that token from the pair, and it is valued at the price of the anchor's day. The slopes $b_A=\ln 3/62$ and $b_T=\ln 3/200$ per dollar and the cap $U=20{,}000$ dollars are passed as parameters from \texttt{constants.json}. Each pair row carries the weights of every method, so all scores at one anchor come from the same rows. The same query also writes the EndorseRank and AWP weights with the slope multiplied and divided by ten, from which the value-slope check of Table~\ref{tab:robustness-slope} is computed.

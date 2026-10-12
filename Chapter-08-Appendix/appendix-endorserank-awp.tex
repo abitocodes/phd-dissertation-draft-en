@@ -6,15 +6,13 @@ Chapter~\ref{ch:results} reports every score of the thesis together and reads ea
 
 \dissertationSubheading[sec:er-awp-same-window]{Same window}
 
-Table~\ref{tab:alignment-hybrid} gives the family means of the two scores with their intervals, and the last row of Table~\ref{tab:tie-sensitivity} their agreement. The two patterns cross. AWP tracks the transfer family most closely ($0.572$, interval $[0.564,0.580]$) and the allowance family least ($0.193$, $[0.182,0.203]$), while EndorseRank tracks the allowance family most closely ($0.585$, $[0.578,0.592]$) and reaches $0.158$ ($[0.147,0.169]$) on the transfer family. Table~\ref{tab:tau-diff} tests five paired differences on the same contract resamples (Section~\ref{sec:statistical-tests}), numbered i to v in the order of its rows.
+Table~\ref{tab:alignment-hybrid} gives the family means of the two scores with their intervals, and the last row of Table~\ref{tab:tie-sensitivity} their agreement. The two patterns cross: AWP tracks the transfer family most closely and the allowance family least, while EndorseRank tracks the allowance family most closely. Table~\ref{tab:tau-diff} tests five paired differences on the same contract resamples (Section~\ref{sec:statistical-tests}), numbered i to v in the order of its rows.
 
 \input{results/tables/tau-diff.tex}
 
 All five intervals lie above zero. AWP's transfer alignment is higher than EndorseRank's (contrast~ii, $+0.414$, $[0.401,0.427]$), EndorseRank's allowance alignment is higher than AWP's (contrast~iii, $+0.392$, $[0.380,0.405]$), and AWP leads EndorseRank on the Sybil-stability family (contrast~iv, $+0.388$, $[0.376,0.401]$). The remaining two compare EndorseRank with itself: its allowance alignment is higher than its transfer alignment (contrast~i, $+0.427$, $[0.416,0.440]$), and its in-approve-degree alignment is higher than its in-degree alignment (contrast~v, $+0.473$, $[0.461,0.486]$). EndorseRank ties only $0.17\%$ of the contract pairs, so its own ties cap none of these coefficients, and the ties of the proxies do not explain gaps of this size (Appendix~\ref{sec:kendall-properties}). With the contracts outside the allowance graph kept as isolated nodes instead of being scored zero, none of the family means changes (Table~\ref{tab:tie-sensitivity}).
 
-The opposite directions of contrasts~ii and~iii follow from the constructs. Each score is ahead on the family built from its own edges, and the main proxies of each family include the in-degree that the corresponding PageRank smooths, so the agreement is partly built in and checks the intended construct of each score. Neither difference says which score is the better measure of reputation.
-
-On the scaling stages of Table~\ref{tab:robustness-sample-size}, whose values are not comparable with those of the full cohort, the order of the two scores within each family is the same at every stage: AWP is ahead on the transfer and Sybil-stability families and EndorseRank on the allowance family.
+The opposite directions of contrasts~ii and~iii follow from the constructs. Each score is ahead on the family built from its own edges, and the main proxies of each family include the in-degree that the corresponding PageRank smooths, so the agreement is partly built in and checks the intended construct of each score. Neither difference says which score is the better measure of reputation. On every scaling stage of Table~\ref{tab:robustness-sample-size} the order of the two scores within each family is the same as on the full cohort.
 
 \dissertationSubheading[sec:proxy-family-detail]{Proxy detail}
 
@@ -26,7 +24,7 @@ Table~\ref{tab:alignment-transfer} gives the coefficients of the two scores with
 
 \input{results/tables/alignment-transfer.tex}
 
-AWP agrees with the in-value ($0.566$, $[0.558,0.575]$) almost as closely as with the in-degree ($0.578$, $[0.569,0.587]$), for the reason given in Section~\ref{sec:same-window-alignment}. EndorseRank's transfer coefficients ($0.182$, $[0.169,0.194]$, and $0.134$, $[0.123,0.145]$) have intervals that overlap neither zero nor AWP's intervals. They mainly reflect that contracts that many owners approve receive transfers from more senders than the rest of the cohort. A protocol that equates reputation with inbound flow could read that flow from the in-degree itself, but out of window AWP adds to the count it smooths (Section~\ref{sec:holdout-results}).
+AWP agrees with the in-value ($0.566$, $[0.558,0.575]$) almost as closely as with the in-degree ($0.578$, $[0.569,0.587]$), for the reason given in Section~\ref{sec:same-window-alignment}. EndorseRank's transfer coefficients have intervals that overlap neither zero nor AWP's intervals. They mainly reflect that contracts that many owners approve receive transfers from more senders than the rest of the cohort. A protocol that equates reputation with inbound flow could read that flow from the in-degree itself, but out of window AWP adds to the count it smooths (Section~\ref{sec:holdout-results}).
 
 \dissertationSubsubheading[sub:allowance-family]{Allowance family}
 
@@ -34,7 +32,7 @@ Table~\ref{tab:alignment-allowance} gives the coefficients of the two scores wit
 
 \input{results/tables/alignment-allowance.tex}
 
-EndorseRank follows the in-approve degree ($0.655$, $[0.648,0.662]$) more closely than the in-approve value ($0.515$, $[0.506,0.524]$), for the reason given in Section~\ref{sec:same-window-alignment}. AWP's coefficients are positive ($0.206$, $[0.193,0.217]$, and $0.180$, $[0.169,0.191]$): among the cohort's contracts, those that many owners approve also tend to be central in the transfer graph. The comparison is partly built in, since EndorseRank is computed from the same approvals.
+EndorseRank follows the in-approve degree more closely than the in-approve value, for the reason given in Section~\ref{sec:same-window-alignment}. AWP's coefficients lie above zero: among the cohort's contracts, those that many owners approve also tend to be central in the transfer graph. The comparison is partly built in, since EndorseRank is computed from the same approvals.
 
 \dissertationSubsubheading[sub:sybil-family]{Sybil-adjusted stability family}
 
@@ -42,7 +40,7 @@ Table~\ref{tab:alignment-sybil-stability} gives the coefficients of the two scor
 
 \input{results/tables/alignment-sybil-stability.tex}
 
-AWP is ahead of EndorseRank on tenure ($0.508$, $[0.499,0.517]$, against $0.080$, $[0.069,0.091]$) and active months ($0.549$, $[0.540,0.558]$, against $0.098$, $[0.087,0.109]$), as one would expect from a transfer score that rewards activity spread over the window; the paired difference on the family mean excludes zero (Table~\ref{tab:tau-diff}, contrast~iv). On the inbound counterparty ratio the two have opposite signs, $-0.156$ ($[-0.166,-0.147]$) for EndorseRank and $0.127$ ($[0.114,0.141]$) for AWP. The ratio falls when the same senders return, so contracts that many owners approve are, on this measure, contracts whose senders return. AWP's positive coefficient comes from coverage: the $2{,}670$ contracts outside the transfer graph have ratio zero and AWP score zero, so they fill the bottom of both orderings. The family describes how much longitudinal transfer information each score carries.
+AWP is ahead of EndorseRank on tenure and active months, as one would expect from a transfer score that rewards activity spread over the window; the paired difference on the family mean excludes zero (Table~\ref{tab:tau-diff}, contrast~iv). On the inbound counterparty ratio the two coefficients have opposite signs, negative for EndorseRank and positive for AWP. The ratio falls when the same senders return, so contracts that many owners approve are, on this measure, contracts whose senders return. AWP's positive coefficient comes from coverage: the $2{,}670$ contracts outside the transfer graph have ratio zero and AWP score zero, so they fill the bottom of both orderings. The family describes how much longitudinal transfer information each score carries.
 
 \dissertationSubheading[sec:er-awp-holdout]{Out of window}
 
@@ -50,11 +48,11 @@ Table~\ref{tab:endorserank-awp-holdout} collects the paired differences between 
 
 \input{results/tables/endorserank-awp-holdout.tex}
 
-On the spenders of W0, EndorseRank ranks new approval pairs at $\tau=0.231$ (interval $[0.220,0.242]$) against $0.196$ ($[0.181,0.210]$) for AWP, a paired difference of $+0.035$ ($[0.019,0.051]$). On new transfer senders the order reverses: AWP reaches $0.346$ ($[0.336,0.356]$) against $0.200$ ($[0.189,0.210]$) for EndorseRank, a difference of $-0.146$ ($[-0.156,-0.136]$). Every label falls after all scored events, so on this cohort each edge type carries information about its own construct that the other lacks. Coverage accounts for part of the first gap. AWP scores zero for the $2{,}891$ spenders without a transfer edge before the freeze, and these gained new approval pairs more often than the rest. On the $14{,}094$ spenders that had received a transfer from another address, the order on new approval pairs reverses, AWP at $0.298$ ($[0.287,0.308]$) and EndorseRank at $0.236$ ($[0.224,0.249]$), without a paired test (Table~\ref{tab:holdout-receiving}), and AWP stays ahead on new senders.
+On the spenders of W0, EndorseRank ranks new approval pairs above AWP, a paired difference of $+0.035$ (interval $[0.019,0.051]$). On new transfer senders the order reverses, with a difference of $-0.146$ ($[-0.156,-0.136]$). Every label falls after all scored events, so on this cohort each edge type carries information about its own construct that the other lacks. Coverage accounts for part of the first gap. AWP scores zero for the $2{,}891$ spenders without a transfer edge before the freeze, and these gained new approval pairs more often than the rest. On the $14{,}094$ spenders that had received a transfer from another address, AWP is ahead on both labels (Table~\ref{tab:holdout-receiving}), without a paired test.
 
-In July--September, with the contrasts computed from the W1 scores after all labels were known, the pattern repeats: EndorseRank leads on new approval pairs ($+0.065$, $[0.051,0.081]$) and AWP on new senders ($-0.136$, $[-0.146,-0.127]$). On the liquidation-free close rate of the traders the two scores cannot be told apart in either window ($-0.017$, $[-0.156,0.128]$, in W0 and $-0.032$, $[-0.133,0.066]$, in W1).
+In July--September, with the contrasts computed from the W1 scores after all labels were known, the pattern repeats: EndorseRank leads on new approval pairs ($+0.065$, $[0.051,0.081]$) and AWP on new senders ($-0.136$, $[-0.146,-0.127]$).
 
-On the W0 traders (Table~\ref{tab:holdout-traders}), AWP ranks the number of profitable closes at $0.155$ ($[0.005,0.297]$) against $0.150$ ($[-0.019,0.295]$) for EndorseRank, and the realized gain at $0.196$ ($[0.048,0.351]$) against $0.078$ ($[-0.094,0.226]$); both labels grow with the number of closes. On the two shares, which do not, both scores are negative, with intervals below zero on the non-loss share only: AWP at $-0.254$ ($[-0.404,-0.104]$) and EndorseRank at $-0.178$ ($[-0.298,-0.042]$). Neither score ranks these contract traders by the share of successful closes.
+On the W0 traders (Table~\ref{tab:holdout-traders}), only AWP's intervals lie above zero on the number of profitable closes and on the realized gain, two labels that grow with the number of closes. On the two shares, which do not, both scores are negative, with intervals below zero on the non-loss share only. Neither score ranks these contract traders by the share of successful closes.
 
 \dissertationSubheading[sec:er-awp-neutral-grid]{All trader labels in both windows}
 
