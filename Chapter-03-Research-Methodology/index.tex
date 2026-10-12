@@ -410,7 +410,7 @@ The pipeline also counts revocations and an approval-then-outbound drain heurist
 
 \dissertationSubsubheading[sub:trader-holdout]{Trader outcomes in W0}
 
-The spender cohort says little about contracts that trade. An exploratory run applied the freeze $t_1$ to the $88$ GMX~V2 accounts that are contracts, appear in the freeze-date graph and close at least three positions from April to June 2026, with success labels from that window: the number of profitable closes, the realized gain and the shares of closes that were profitable and that were not losses, a liquidation counting as neither. Every score of the spender holdout was set against these labels under no rule, with 400 paired resamples, and Chapter~\ref{ch:results} reports the run as exploratory. It has no liquidation label, and with so few contract traders every interval is wide.
+The spender cohort says little about contracts that trade. An exploratory run applied the freeze $t_1$ to the $88$ GMX~V2 accounts that are contracts, appear in the freeze-date graph and close at least three positions from April to June 2026, with success labels from that window: the number of profitable closes, the realized gain and the shares of closes that were profitable and that were not losses; a liquidated close counts as not profitable and, since the pipeline does not count it as a loss, as not a loss. Every score of the spender holdout was set against these labels under no rule, with 400 paired resamples, and Chapter~\ref{ch:results} reports the run as exploratory. It has no liquidation label, and with so few contract traders every interval is wide.
 
 \dissertationSubsubheading[sub:fresh-holdout]{Registered window W1: July to September 2026}
 
