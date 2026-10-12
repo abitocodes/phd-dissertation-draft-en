@@ -2,7 +2,7 @@
 \section{SQL Templates}
 \label{ch:appendix-sql}
 
-This appendix shows the three query patterns on which the graphs of both analyses rest. The listings are abridged; the full files are in \texttt{sql/} of the experiments folder (Appendix~\ref{sec:pipeline-stages}). Placeholders in double underscores, such as \texttt{\_\_DEST\_\_}, are filled in by \texttt{scripts/run\_bq.py} before a query runs, and names that start with \texttt{@} are query parameters.
+This appendix shows the three query patterns on which the graphs of both analyses rest, abridged; the full files are in \texttt{sql/} of the experiments folder (Appendix~\ref{sec:pipeline-stages}). Placeholders in double underscores, such as \texttt{\_\_DEST\_\_}, are filled in by \texttt{scripts/run\_bq.py} before a query runs, and names that start with \texttt{@} are query parameters.
 
 \dissertationSubheading[sec:sql-materialize]{Log materialization pattern}
 
@@ -74,7 +74,7 @@ WHERE l.kind = 'A'
 -- to_address = b and zero amounts dropped: AND LTRIM(TO_HEX(l.val), '0') != ''
 \end{verbatim}
 
-The function \texttt{u256} reads the 32-byte amount as a double in raw base units. Approvals of zero are kept, because an approval of zero sets an allowance to zero, while zero-value transfers are dropped. The revised analysis does not run this query again. \texttt{sql/12\_usd\_ego.sql} forms the revised cohort from these tables and keeps the events of the five tokens with one of its contracts at one end, dividing each amount by ten to the power of the token's decimals and valuing a transfer at its token's price on the UTC day of its block.
+The function \texttt{u256} reads the 32-byte amount as a double in raw base units. Approvals of zero are kept, because an approval of zero sets an allowance to zero, while zero-value transfers are dropped. The revised analysis does not run this query again: \texttt{sql/12\_usd\_ego.sql} forms the revised cohort from these tables, keeps the events of the five tokens with one of its contracts at one end and values a transfer at its token's price on the UTC day of its block.
 
 \dissertationSubheading[sec:sql-pairs]{Latest-allowance and pair-table pattern}
 
@@ -117,4 +117,4 @@ GROUP BY owner, spender;
 --   MAX(sig(age_days))                       AS max_sig  -- AWP activeness
 \end{verbatim}
 
-The function \texttt{sig} is the logistic decay of Equation~\eqref{eq:logistic-decay} with $k=0.01$ and $t_0=180$ days, and \texttt{vt} the value transform of Equation~\eqref{eq:value-transform}, set to one from $bz=40$ on, where it equals one in double precision. Among the approvals of one token, owner and spender up to the anchor, the latest is the one with the largest block number and, within the block, the largest log index. It is kept only when its value is positive, so a revocation removes that token from the pair, and it is valued at the price of the anchor's day. The slopes $b_A=\ln 3/62$ and $b_T=\ln 3/200$ per dollar and the cap $U=20{,}000$ dollars are passed as parameters from \texttt{constants.json}. An unlimited allowance reaches $bz\geq 40$, so it enters EndorseRank with $V=1$ and the allowance layer of C-PR with $U$. Each pair row carries the weights of every method, so all scores at one anchor come from the same rows. The same query also writes the EndorseRank and AWP weights with the slope multiplied and divided by ten, from which the value-slope check of Table~\ref{tab:robustness-slope} is computed. The tag is \texttt{tobs} for $T_{\mathrm{obs}}$ and \texttt{t1} for the freeze of W0; W1 reuses the pair tables of $T_{\mathrm{obs}}$, its freeze date.
+The function \texttt{sig} is the logistic decay of Equation~\eqref{eq:logistic-decay} with $k=0.01$ and $t_0=180$ days, and \texttt{vt} the value transform of Equation~\eqref{eq:value-transform}, set to one from $bz=40$ on, where it equals one in double precision. Among the approvals of one token, owner and spender up to the anchor, the latest is the one with the largest block number and, within the block, the largest log index. It is kept only when its value is positive, so a revocation removes that token from the pair, and it is valued at the price of the anchor's day. The slopes $b_A=\ln 3/62$ and $b_T=\ln 3/200$ per dollar and the cap $U=20{,}000$ dollars are passed as parameters from \texttt{constants.json}. Each pair row carries the weights of every method, so all scores at one anchor come from the same rows. The same query also writes the EndorseRank and AWP weights with the slope multiplied and divided by ten, from which the value-slope check of Table~\ref{tab:robustness-slope} is computed. W1 reuses the pair tables of $T_{\mathrm{obs}}$, its freeze date.
