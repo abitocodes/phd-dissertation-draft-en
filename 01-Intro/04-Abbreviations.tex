@@ -53,7 +53,8 @@ WETH, USDC, USDT0, ARB, WBTC & The five tokens of the revised analysis: wrapped 
 \centering
 \caption{Mathematical notation used in this research.}
 \label{tab:notation}
-\fitwidth{%
+\begin{adjustbox}{max width=\linewidth, max totalheight=0.9\textheight, center}%
+\small\setlength{\tabcolsep}{3.5pt}%
 \begin{tabular}{lp{0.72\linewidth}}
 \toprule
 Symbol & Meaning \\
@@ -90,8 +91,8 @@ $\mathcal{W}$ & Set of contracts in the evaluation cohort \\
 $s(w)$ & Reputation score of contract $w$ under a given method \\
 $p(w)$ & Proxy value for contract $w$ \\
 \bottomrule
-\end{tabular}
-}
+\end{tabular}%
+\end{adjustbox}
 \end{table}
 
 % Restore chapter-based table numbering for the main text.
