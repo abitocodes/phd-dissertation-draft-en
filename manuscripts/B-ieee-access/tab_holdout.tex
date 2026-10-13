@@ -10,6 +10,22 @@
 \setlength{\tabcolsep}{2.4pt}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
+\multicolumn{6}{@{}l}{\emph{Revised analysis, the main analysis: a re-analysis under the pre-specified rules (US dollars, five tokens)}} \\
+ & \multicolumn{2}{c}{W0 spenders ($n=17{,}050$)} & \multicolumn{2}{c}{W1 spenders ($n=18{,}152$)} & W1 traders ($n=70$) \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
+Score & New approval pairs & New transfer senders & New approval pairs & New transfer senders & Liquidation-free close rate \\
+\midrule
+In-approve degree at the freeze & 0.250 [0.237, 0.262] & 0.180 [0.169, 0.192] & 0.268 [0.257, 0.279] & 0.205 [0.193, 0.215] & 0.394 [0.261, 0.524] \\
+Transfer in-degree at the freeze & 0.135 [0.121, 0.150] & 0.303 [0.292, 0.315] & 0.131 [0.119, 0.143] & 0.308 [0.299, 0.319] & 0.310 [0.185, 0.416] \\
+EndorseRank & 0.231 [0.220, 0.242] & 0.200 [0.189, 0.210] & 0.234 [0.222, 0.244] & 0.194 [0.184, 0.205] & 0.297 [0.174, 0.418] \\
+AWP & 0.196 [0.181, 0.210] & 0.346 [0.336, 0.356] & 0.169 [0.157, 0.183] & 0.330 [0.321, 0.340] & 0.329 [0.215, 0.439] \\
+C-PR ($\lambda=1$), authorization walk & 0.223 [0.213, 0.233] & 0.188 [0.177, 0.199] & 0.228 [0.217, 0.238] & 0.188 [0.178, 0.198] & 0.301 [0.177, 0.425] \\
+C-PR ($\lambda=0.75$) & 0.249 [0.238, 0.260] & 0.253 [0.242, 0.265] & 0.249 [0.238, 0.259] & 0.256 [0.246, 0.266] & 0.347 [0.231, 0.462] \\
+C-PR ($\lambda=0.5$), primary & 0.252 [0.241, 0.262] & 0.262 [0.250, 0.273] & 0.250 [0.240, 0.260] & 0.263 [0.254, 0.273] & 0.350 [0.236, 0.461] \\
+C-PR ($\lambda=0.25$) & 0.253 [0.243, 0.264] & 0.269 [0.257, 0.280] & 0.251 [0.241, 0.260] & 0.270 [0.260, 0.279] & 0.349 [0.234, 0.459] \\
+C-PR ($\lambda=0$), payment walk & 0.160 [0.144, 0.174] & 0.296 [0.285, 0.307] & 0.141 [0.129, 0.154] & 0.291 [0.282, 0.301] & 0.350 [0.236, 0.461] \\
+S-PR & 0.172 [0.157, 0.185] & 0.295 [0.284, 0.305] & 0.155 [0.142, 0.168] & 0.291 [0.281, 0.301] & 0.374 [0.255, 0.498] \\
+\midrule
 \multicolumn{6}{@{}l}{\emph{Registered analysis, the pre-specified test (raw base units, every ERC-20 token)}} \\
  & \multicolumn{2}{c}{W0 spenders ($n=33{,}101$)} & \multicolumn{2}{c}{W1 spenders ($n=34{,}587$)} & W1 traders ($n=70$) \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
@@ -25,25 +41,9 @@ C-PR ($\lambda=0.5$), primary & 0.236 [0.229, 0.243] & 0.224 [0.216, 0.234] & 0.
 C-PR ($\lambda=0.25$) & 0.234 [0.227, 0.241] & 0.230 [0.222, 0.240] & 0.235 [0.228, 0.242] & 0.240 [0.232, 0.247] & 0.101 [$-$0.096, 0.280] \\
 C-PR ($\lambda=0$), payment walk & 0.142 [0.133, 0.151] & 0.254 [0.246, 0.262] & 0.136 [0.125, 0.145] & 0.260 [0.252, 0.266] & 0.138 [$-$0.048, 0.310] \\
 S-PR & 0.177 [0.167, 0.186] & 0.245 [0.236, 0.253] & 0.169 [0.159, 0.178] & 0.251 [0.244, 0.258] & 0.312 [0.183, 0.422] \\
-\midrule
-\multicolumn{6}{@{}l}{\emph{Revised analysis, a re-analysis after the registered results (US dollars, five tokens)}} \\
- & \multicolumn{2}{c}{W0 spenders ($n=17{,}050$)} & \multicolumn{2}{c}{W1 spenders ($n=18{,}152$)} & W1 traders ($n=70$) \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
-Score & New approval pairs & New transfer senders & New approval pairs & New transfer senders & Liquidation-free close rate \\
-\midrule
-In-approve degree at the freeze & 0.250 [0.237, 0.262] & 0.180 [0.169, 0.192] & 0.268 [0.257, 0.279] & 0.205 [0.193, 0.215] & 0.394 [0.261, 0.524] \\
-Transfer in-degree at the freeze & 0.135 [0.121, 0.150] & 0.303 [0.292, 0.315] & 0.131 [0.119, 0.143] & 0.308 [0.299, 0.319] & 0.310 [0.185, 0.416] \\
-EndorseRank & 0.231 [0.220, 0.242] & 0.200 [0.189, 0.210] & 0.234 [0.222, 0.244] & 0.194 [0.184, 0.205] & 0.297 [0.174, 0.418] \\
-AWP & 0.196 [0.181, 0.210] & 0.346 [0.336, 0.356] & 0.169 [0.157, 0.183] & 0.330 [0.321, 0.340] & 0.329 [0.215, 0.439] \\
-C-PR ($\lambda=1$), authorization walk & 0.223 [0.213, 0.233] & 0.188 [0.177, 0.199] & 0.228 [0.217, 0.238] & 0.188 [0.178, 0.198] & 0.301 [0.177, 0.425] \\
-C-PR ($\lambda=0.75$) & 0.249 [0.238, 0.260] & 0.253 [0.242, 0.265] & 0.249 [0.238, 0.259] & 0.256 [0.246, 0.266] & 0.347 [0.231, 0.462] \\
-C-PR ($\lambda=0.5$), primary & 0.252 [0.241, 0.262] & 0.262 [0.250, 0.273] & 0.250 [0.240, 0.260] & 0.263 [0.254, 0.273] & 0.350 [0.236, 0.461] \\
-C-PR ($\lambda=0.25$) & 0.253 [0.243, 0.264] & 0.269 [0.257, 0.280] & 0.251 [0.241, 0.260] & 0.270 [0.260, 0.279] & 0.349 [0.234, 0.459] \\
-C-PR ($\lambda=0$), payment walk & 0.160 [0.144, 0.174] & 0.296 [0.285, 0.307] & 0.141 [0.129, 0.154] & 0.291 [0.282, 0.301] & 0.350 [0.236, 0.461] \\
-S-PR & 0.172 [0.157, 0.185] & 0.295 [0.284, 0.305] & 0.155 [0.142, 0.168] & 0.291 [0.281, 0.301] & 0.374 [0.255, 0.498] \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-\parbox{\textwidth}{\footnotesize W0: scores frozen on 31 March 2026, labels counted from April to June 2026. W1: scores frozen on 30 June 2026, labels counted from July to September 2026. Spenders are the contracts that hold a positive latest allowance at the freeze; traders are the GMX~V2 accounts that hold contract code, are nodes of the freeze-date graph and close at least three positions in the label window. In the registered analysis 3{,}403 W0 spenders gained a new approval pair and 3{,}042 a new transfer sender, and 2{,}850 and 2{,}812 W1 spenders did; in the revised analysis 2{,}070, 1{,}695, 1{,}616 and 1{,}533. Of the 70 W1 traders, 9 had at least one liquidation. The degree, EndorseRank and AWP rows are reference scores; the companion study \cite{kwon2026companion} reports their comparisons in full. Intervals: 400 paired resamples over the contracts of the cohort, seed 42.}
+\parbox{\textwidth}{\footnotesize W0: scores frozen on 31 March 2026, labels counted from April to June 2026. W1: scores frozen on 30 June 2026, labels counted from July to September 2026. Spenders are the contracts that hold a positive latest allowance at the freeze; traders are the GMX~V2 accounts that hold contract code, are nodes of the freeze-date graph and close at least three positions in the label window. In the revised analysis 2{,}070 W0 spenders gained a new approval pair and 1{,}695 a new transfer sender, and 1{,}616 and 1{,}533 W1 spenders did; in the registered analysis 3{,}403, 3{,}042, 2{,}850 and 2{,}812. Of the 70 W1 traders, 9 had at least one liquidation. The degree, EndorseRank and AWP rows are reference scores; the companion study \cite{kwon2026companion} reports their comparisons in full. Intervals: 400 paired resamples over the contracts of the cohort, seed 42.}
 \end{table*}
