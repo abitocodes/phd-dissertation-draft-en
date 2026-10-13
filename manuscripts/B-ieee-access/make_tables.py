@@ -183,8 +183,8 @@ def tab_holdout(D: dict) -> str:
            "\\setlength{\\tabcolsep}{2.4pt}",
            "\\begin{tabular}{@{}lccccc@{}}",
            "\\toprule"]
-    for k, (name, title) in enumerate((("registered", "Registered analysis, the pre-specified test (raw base units, every ERC-20 token)"),
-                                       ("revised", "Revised analysis, a re-analysis after the registered results (US dollars, five tokens)"))):
+    for k, (name, title) in enumerate((("revised", "Revised analysis, the main analysis: a re-analysis under the pre-specified rules (US dollars, five tokens)"),
+                                       ("registered", "Registered analysis, the pre-specified test (raw base units, every ERC-20 token)"))):
         w0, w1 = D[name]["w0"], D[name]["w1"]
         if k:
             out.append("\\midrule")
@@ -205,11 +205,11 @@ def tab_holdout(D: dict) -> str:
             "W1: scores frozen on 30 June 2026, labels counted from July to September 2026. Spenders are the contracts that hold a "
             "positive latest allowance at the freeze; traders are the GMX~V2 accounts that hold contract code, are nodes of the "
             "freeze-date graph and close at least three positions in the label window. "
-            f"In the registered analysis {n(rg['w0']['gained_new_approvals'])} W0 spenders gained a new approval pair and "
-            f"{n(rg['w0']['gained_new_senders'])} a new transfer sender, and {n(rg['w1']['gained_new_approvals'])} and "
-            f"{n(rg['w1']['gained_new_senders'])} W1 spenders did; in the revised analysis {n(rv['w0']['gained_new_approvals'])}, "
-            f"{n(rv['w0']['gained_new_senders'])}, {n(rv['w1']['gained_new_approvals'])} and {n(rv['w1']['gained_new_senders'])}. "
-            f"Of the {rg['w1']['traders']} W1 traders, {rg['w1']['traders_liquidated']} had at least one liquidation. "
+            f"In the revised analysis {n(rv['w0']['gained_new_approvals'])} W0 spenders gained a new approval pair and "
+            f"{n(rv['w0']['gained_new_senders'])} a new transfer sender, and {n(rv['w1']['gained_new_approvals'])} and "
+            f"{n(rv['w1']['gained_new_senders'])} W1 spenders did; in the registered analysis {n(rg['w0']['gained_new_approvals'])}, "
+            f"{n(rg['w0']['gained_new_senders'])}, {n(rg['w1']['gained_new_approvals'])} and {n(rg['w1']['gained_new_senders'])}. "
+            f"Of the {rv['w1']['traders']} W1 traders, {rv['w1']['traders_liquidated']} had at least one liquidation. "
             "The degree, EndorseRank and AWP rows are reference scores; the companion study \\cite{kwon2026companion} reports their "
             "comparisons in full. Intervals: 400 paired resamples over the contracts of the cohort, seed 42.}",
             "\\end{table*}", ""]
@@ -234,16 +234,16 @@ def tab_contrasts(D: dict) -> str:
 
     def ruled(label: str, path: tuple, test: str) -> str:
         r, v = get(R, path), get(V, path)
-        return f"{label} & {test} & {delta_cell(r)} & {verdict_word(r)} & {delta_cell(v)} & {verdict_word(v)} \\\\"
+        return f"{label} & {test} & {delta_cell(v)} & {verdict_word(v)} & {delta_cell(r)} & {verdict_word(r)} \\\\"
 
     def a_row(label: str, idx: int, test: str, key: str) -> str:
         r, v = R["w0"]["contrasts_prefixed"][idx], V["w0"]["contrasts_prefixed"][idx]
         rr, vv = R["w0"]["rule_a_primary"][key], V["w0"]["rule_a_primary"][key]
-        return (f"{label} & {test} & {delta_cell(r)} & {'holds' if rr else 'fails'} & {delta_cell(v)} & "
-                f"{'holds' if vv else 'fails'} \\\\")
+        return (f"{label} & {test} & {delta_cell(v)} & {'holds' if vv else 'fails'} & {delta_cell(r)} & "
+                f"{'holds' if rr else 'fails'} \\\\")
 
     def plain(label: str, r: dict, v: dict) -> str:
-        return f"{label} & --- & {delta_cell(r)} & & {delta_cell(v)} & \\\\"
+        return f"{label} & --- & {delta_cell(v)} & & {delta_cell(r)} & \\\\"
 
     def met(x: bool) -> str:
         return "met" if x else "\\textbf{not met}"
@@ -264,20 +264,20 @@ def tab_contrasts(D: dict) -> str:
            "\\setlength{\\tabcolsep}{2.6pt}",
            "\\begin{tabular}{@{}llcccc@{}}",
            "\\toprule",
-           " & & \\multicolumn{2}{c}{Registered analysis (the test)} & \\multicolumn{2}{c}{Revised analysis (re-analysis)} \\\\",
+           " & & \\multicolumn{2}{c}{Revised analysis (re-analysis)} & \\multicolumn{2}{c}{Registered analysis (the test)} \\\\",
            "\\cmidrule(lr){3-4}\\cmidrule(l){5-6}",
            "Contrast ($a$ minus $b$) and label & Test & $\\Delta\\tau$ [95\\% CI] & Verdict & $\\Delta\\tau$ [95\\% CI] & Verdict \\\\"]
     out += group("Rule A, fixed in the plan (43d8045) before any log of this study was extracted; W0 spenders")
     out.append(a_row("A1: C-PR $-$ C-PR ($\\lambda=1$), new approval pairs", 0, "no worse", "no_worse_on_new_approvals"))
     out.append(a_row("A2: C-PR $-$ C-PR ($\\lambda=0$), new transfer senders", 1, "superiority", "better_on_new_senders"))
-    out.append(f"Rule A, primary part (A1 and A2) & & & {met(R['w0']['rule_a_primary']['pass'])} & & {met(V['w0']['rule_a_primary']['pass'])} \\\\")
-    out.append(f"Rule A, secondary part (same window) & & & {met(R['same']['rule_a_secondary']['pass'])} & & "
-               f"{met(V['same']['rule_a_secondary']['pass'])} \\\\")
+    out.append(f"Rule A, primary part (A1 and A2) & & & {met(V['w0']['rule_a_primary']['pass'])} & & {met(R['w0']['rule_a_primary']['pass'])} \\\\")
+    out.append(f"Rule A, secondary part (same window) & & & {met(V['same']['rule_a_secondary']['pass'])} & & "
+               f"{met(R['same']['rule_a_secondary']['pass'])} \\\\")
     out += group("Rule B, registered (0d3a057) before this study extracted the W1 logs; F1, F2 and F3 all required; margin $\\delta=0.01$")
     out.append(ruled("F1: C-PR $-$ C-PR ($\\lambda=0$), new approval pairs", ("w1", "rule_b", "F1"), "superiority"))
     out.append(ruled("F2: C-PR $-$ C-PR ($\\lambda=0$), new transfer senders", ("w1", "rule_b", "F2"), "non-inferiority"))
     out.append(ruled("F3: C-PR $-$ C-PR ($\\lambda=0$), liquidation-free rate", ("w1", "rule_b", "F3"), "non-inferiority"))
-    out.append(f"Rule B (F1, F2 and F3) & & & {met(R['w1']['rule_b']['decision'])} & & {met(V['w1']['rule_b']['decision'])} \\\\")
+    out.append(f"Rule B (F1, F2 and F3) & & & {met(V['w1']['rule_b']['decision'])} & & {met(R['w1']['rule_b']['decision'])} \\\\")
     out += group("Registered to be reported in a fixed order beside the decision (nominal)")
     out.append(ruled("F4: as F3", ("w1", "rule_b", "F4"), "superiority"))
     out.append(ruled("F5: C-PR $-$ C-PR ($\\lambda=1$), liquidation-free rate", ("w1", "rule_b", "F5"), "superiority"))
@@ -292,10 +292,10 @@ def tab_contrasts(D: dict) -> str:
     out.append(ruled("F2: C-PR $-$ C-PR ($\\lambda=0$), new transfer senders", ("w1", "sensitivity_isolated", "F2"), "non-inferiority"))
     out.append(ruled("F3: C-PR $-$ C-PR ($\\lambda=0$), liquidation-free rate", ("w1", "sensitivity_isolated", "F3"), "non-inferiority"))
     out.append(ruled("F5: C-PR $-$ C-PR ($\\lambda=1$), liquidation-free rate", ("w1", "sensitivity_isolated", "F5"), "superiority"))
-    out.append(f"S1, decision (F1, F2 and F3) & & & {met(R['w1']['sensitivity_awp']['decision'])} & & "
-               f"{met(V['w1']['sensitivity_awp']['decision'])} \\\\")
-    out.append(f"S2, decision (F1, F2 and F3) & & & {met(R['w1']['sensitivity_isolated']['decision'])} & & "
-               f"{met(V['w1']['sensitivity_isolated']['decision'])} \\\\")
+    out.append(f"S1, decision (F1, F2 and F3) & & & {met(V['w1']['sensitivity_awp']['decision'])} & & "
+               f"{met(R['w1']['sensitivity_awp']['decision'])} \\\\")
+    out.append(f"S2, decision (F1, F2 and F3) & & & {met(V['w1']['sensitivity_isolated']['decision'])} & & "
+               f"{met(R['w1']['sensitivity_isolated']['decision'])} \\\\")
     out += group("Computed after the labels of the window were known; no rule")
     out.append(plain("W0: C-PR $-$ C-PR ($\\lambda=0$), new approval pairs",
                      after(R, "cpr_l50", "cpr_l0", APPR), after(V, "cpr_l50", "cpr_l0", APPR)))
@@ -321,9 +321,9 @@ def tab_contrasts(D: dict) -> str:
     out += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
             "\\parbox{\\textwidth}{\\footnotesize $\\Delta\\tau=\\tau_a-\\tau_b$ on the same resamples. C-PR without a $\\lambda$ is the primary setting $\\lambda=0.5$; liquidation-free rate: the liquidation-free close rate of the W1 traders. Superiority holds "
             "when the interval lies above zero, non-inferiority when its lower end lies above $-\\delta=-0.01$, and ``no worse'' when "
-            "the interval contains zero or lies above it. The registered column is the test that the plan and the registration fixed; "
-            "the revised column applies the same rules and thresholds to scores defined after the registered results were known, so "
-            "none of its verdicts is a registered result. Nominal verdicts use unadjusted 95\\% intervals; the fixed order was an "
+            "the interval contains zero or lies above it. The revised column, the main analysis, applies the rules and thresholds of the "
+            "plan and the registration to scores defined after the registered results were known, so none of its verdicts is a "
+            "registered result; the registered column is the test that the plan and the registration fixed. Nominal verdicts use unadjusted 95\\% intervals; the fixed order was an "
             "order of reporting, not a gatekeeping sequence. The degree, EndorseRank and AWP rows are reference contrasts reported in "
             "full in \\cite{kwon2026companion}. Intervals: 400 paired resamples, seed 42.}",
             "\\end{table*}", ""]
@@ -342,7 +342,7 @@ def tab_bench(D: dict) -> str:
            "\\begin{tabular}{@{}lrrrr@{}}",
            "\\toprule",
            "Score & $|V|$ & $|E|$ & Iter. & Time (s) \\\\"]
-    for name, title in (("registered", "Registered analysis"), ("revised", "Revised analysis")):
+    for name, title in (("revised", "Revised analysis"), ("registered", "Registered analysis")):
         out += ["\\midrule", f"\\multicolumn{{5}}{{@{{}}l}}{{\\emph{{{title}}}}} \\\\"]
         B = D[name]["bench"]["main"]
         for label, k in rows:
@@ -484,7 +484,7 @@ def tab_timeline(phd: Path, D: dict) -> str:
 
 def tab_explore(D: dict) -> str:
     E = D["explore"]
-    names = (("registered", "Registered"), ("revised", "Revised"))
+    names = (("revised", "Revised"), ("registered", "Registered"))
     out = [header(["supplement/exploratory_checks.json (script supplement/exploratory_checks.py)"]),
            "\\begin{table*}[!t]",
            "\\centering",
@@ -494,7 +494,7 @@ def tab_explore(D: dict) -> str:
            "\\setlength{\\tabcolsep}{3.2pt}",
            "\\begin{tabular}{@{}llcc@{}}",
            "\\toprule",
-           " & & Registered analysis & Revised analysis \\\\"]
+           " & & Revised analysis & Registered analysis \\\\"]
     out += ["\\midrule",
             "\\multicolumn{4}{@{}l}{\\emph{(a) Decision contrasts under 50 further bootstrap seeds of 400 resamples: lower interval end, mean (SD) [range]; "
             "seeds whose verdict differs from seed 42}} \\\\"]

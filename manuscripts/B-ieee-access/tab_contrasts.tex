@@ -11,55 +11,55 @@
 \setlength{\tabcolsep}{2.6pt}
 \begin{tabular}{@{}llcccc@{}}
 \toprule
- & & \multicolumn{2}{c}{Registered analysis (the test)} & \multicolumn{2}{c}{Revised analysis (re-analysis)} \\
+ & & \multicolumn{2}{c}{Revised analysis (re-analysis)} & \multicolumn{2}{c}{Registered analysis (the test)} \\
 \cmidrule(lr){3-4}\cmidrule(l){5-6}
 Contrast ($a$ minus $b$) and label & Test & $\Delta\tau$ [95\% CI] & Verdict & $\Delta\tau$ [95\% CI] & Verdict \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Rule A, fixed in the plan (43d8045) before any log of this study was extracted; W0 spenders}} \\
-A1: C-PR $-$ C-PR ($\lambda=1$), new approval pairs & no worse & +0.008 [0.003, 0.013] & holds & +0.029 [0.022, 0.036] & holds \\
-A2: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & superiority & $-$0.030 [$-$0.034, $-$0.026] & fails & $-$0.034 [$-$0.040, $-$0.029] & fails \\
+A1: C-PR $-$ C-PR ($\lambda=1$), new approval pairs & no worse & +0.029 [0.022, 0.036] & holds & +0.008 [0.003, 0.013] & holds \\
+A2: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & superiority & $-$0.034 [$-$0.040, $-$0.029] & fails & $-$0.030 [$-$0.034, $-$0.026] & fails \\
 Rule A, primary part (A1 and A2) & & & \textbf{not met} & & \textbf{not met} \\
 Rule A, secondary part (same window) & & & \textbf{not met} & & \textbf{not met} \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Rule B, registered (0d3a057) before this study extracted the W1 logs; F1, F2 and F3 all required; margin $\delta=0.01$}} \\
-F1: C-PR $-$ C-PR ($\lambda=0$), new approval pairs & superiority & +0.101 [0.092, 0.111] & holds & +0.110 [0.098, 0.122] & holds \\
-F2: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & non-inferiority & $-$0.025 [$-$0.029, $-$0.021] & fails & $-$0.028 [$-$0.033, $-$0.023] & fails \\
-F3: C-PR $-$ C-PR ($\lambda=0$), liquidation-free rate & non-inferiority & $-$0.044 [$-$0.100, $-$0.002] & fails & +0.000 [$-$0.014, 0.010] & fails \\
+F1: C-PR $-$ C-PR ($\lambda=0$), new approval pairs & superiority & +0.110 [0.098, 0.122] & holds & +0.101 [0.092, 0.111] & holds \\
+F2: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & non-inferiority & $-$0.028 [$-$0.033, $-$0.023] & fails & $-$0.025 [$-$0.029, $-$0.021] & fails \\
+F3: C-PR $-$ C-PR ($\lambda=0$), liquidation-free rate & non-inferiority & +0.000 [$-$0.014, 0.010] & fails & $-$0.044 [$-$0.100, $-$0.002] & fails \\
 Rule B (F1, F2 and F3) & & & \textbf{not met} & & \textbf{not met} \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Registered to be reported in a fixed order beside the decision (nominal)}} \\
-F4: as F3 & superiority & $-$0.044 [$-$0.100, $-$0.002] & fails & +0.000 [$-$0.014, 0.010] & fails \\
-F5: C-PR $-$ C-PR ($\lambda=1$), liquidation-free rate & superiority & $-$0.215 [$-$0.472, 0.062] & fails & +0.049 [$-$0.055, 0.168] & fails \\
-F6a: C-PR $-$ C-PR ($\lambda=1$), new approval pairs & no worse & +0.010 [0.005, 0.014] & holds & +0.022 [0.015, 0.029] & holds \\
-F6b: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & superiority & $-$0.025 [$-$0.029, $-$0.021] & fails & $-$0.028 [$-$0.033, $-$0.023] & fails \\
+F4: as F3 & superiority & +0.000 [$-$0.014, 0.010] & fails & $-$0.044 [$-$0.100, $-$0.002] & fails \\
+F5: C-PR $-$ C-PR ($\lambda=1$), liquidation-free rate & superiority & +0.049 [$-$0.055, 0.168] & fails & $-$0.215 [$-$0.472, 0.062] & fails \\
+F6a: C-PR $-$ C-PR ($\lambda=1$), new approval pairs & no worse & +0.022 [0.015, 0.029] & holds & +0.010 [0.005, 0.014] & holds \\
+F6b: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & superiority & $-$0.028 [$-$0.033, $-$0.023] & fails & $-$0.025 [$-$0.029, $-$0.021] & fails \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Registered sensitivity analysis S1: AWP as the comparator (nominal)}} \\
-F1: C-PR $-$ AWP, new approval pairs & superiority & +0.060 [0.050, 0.070] & holds & +0.081 [0.069, 0.095] & holds \\
-F2: C-PR $-$ AWP, new transfer senders & non-inferiority & $-$0.087 [$-$0.093, $-$0.082] & fails & $-$0.067 [$-$0.072, $-$0.061] & fails \\
-F3: C-PR $-$ AWP, liquidation-free rate & non-inferiority & $-$0.145 [$-$0.348, 0.043] & fails & +0.021 [$-$0.019, 0.060] & fails \\
+F1: C-PR $-$ AWP, new approval pairs & superiority & +0.081 [0.069, 0.095] & holds & +0.060 [0.050, 0.070] & holds \\
+F2: C-PR $-$ AWP, new transfer senders & non-inferiority & $-$0.067 [$-$0.072, $-$0.061] & fails & $-$0.087 [$-$0.093, $-$0.082] & fails \\
+F3: C-PR $-$ AWP, liquidation-free rate & non-inferiority & +0.021 [$-$0.019, 0.060] & fails & $-$0.145 [$-$0.348, 0.043] & fails \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Registered sensitivity analysis S2: contracts outside a graph kept as isolated nodes (nominal)}} \\
-F1: C-PR $-$ C-PR ($\lambda=0$), new approval pairs & superiority & +0.101 [0.091, 0.111] & holds & +0.109 [0.098, 0.121] & holds \\
-F2: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & non-inferiority & $-$0.025 [$-$0.029, $-$0.022] & fails & $-$0.028 [$-$0.033, $-$0.023] & fails \\
-F3: C-PR $-$ C-PR ($\lambda=0$), liquidation-free rate & non-inferiority & $-$0.044 [$-$0.100, $-$0.002] & fails & +0.000 [$-$0.014, 0.010] & fails \\
-F5: C-PR $-$ C-PR ($\lambda=1$), liquidation-free rate & superiority & $-$0.227 [$-$0.426, $-$0.016] & fails & +0.028 [$-$0.047, 0.094] & fails \\
+F1: C-PR $-$ C-PR ($\lambda=0$), new approval pairs & superiority & +0.109 [0.098, 0.121] & holds & +0.101 [0.091, 0.111] & holds \\
+F2: C-PR $-$ C-PR ($\lambda=0$), new transfer senders & non-inferiority & $-$0.028 [$-$0.033, $-$0.023] & fails & $-$0.025 [$-$0.029, $-$0.022] & fails \\
+F3: C-PR $-$ C-PR ($\lambda=0$), liquidation-free rate & non-inferiority & +0.000 [$-$0.014, 0.010] & fails & $-$0.044 [$-$0.100, $-$0.002] & fails \\
+F5: C-PR $-$ C-PR ($\lambda=1$), liquidation-free rate & superiority & +0.028 [$-$0.047, 0.094] & fails & $-$0.227 [$-$0.426, $-$0.016] & fails \\
 S1, decision (F1, F2 and F3) & & & \textbf{not met} & & \textbf{not met} \\
 S2, decision (F1, F2 and F3) & & & \textbf{not met} & & \textbf{not met} \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Computed after the labels of the window were known; no rule}} \\
-W0: C-PR $-$ C-PR ($\lambda=0$), new approval pairs & --- & +0.094 [0.085, 0.103] & & +0.092 [0.080, 0.105] & \\
-W0: S-PR $-$ C-PR ($\lambda=1$), new approval pairs & --- & $-$0.051 [$-$0.060, $-$0.043] & & $-$0.051 [$-$0.066, $-$0.038] & \\
-W0: S-PR $-$ C-PR ($\lambda=0$), new transfer senders & --- & $-$0.009 [$-$0.012, $-$0.006] & & $-$0.001 [$-$0.004, 0.002] & \\
-W0: C-PR $-$ AWP, new transfer senders & --- & $-$0.116 [$-$0.122, $-$0.109] & & $-$0.085 [$-$0.092, $-$0.078] & \\
-W0: C-PR ($\lambda=1$) $-$ in-approve degree, new approval pairs & --- & $-$0.025 [$-$0.030, $-$0.019] & & $-$0.027 [$-$0.034, $-$0.019] & \\
-W0: EndorseRank $-$ in-approve degree, new approval pairs & --- & $-$0.011 [$-$0.016, $-$0.006] & & $-$0.019 [$-$0.026, $-$0.011] & \\
-W0: AWP $-$ transfer in-degree, new transfer senders & --- & +0.038 [0.035, 0.042] & & +0.043 [0.038, 0.048] & \\
-W1: EndorseRank $-$ in-approve degree, new approval pairs & --- & $-$0.029 [$-$0.032, $-$0.025] & & $-$0.034 [$-$0.038, $-$0.029] & \\
-W1: AWP $-$ transfer in-degree, new transfer senders & --- & +0.020 [0.016, 0.023] & & +0.022 [0.017, 0.027] & \\
-W1: C-PR $-$ EndorseRank, new approval pairs & --- & +0.004 [$-$0.001, 0.008] & & +0.016 [0.010, 0.024] & \\
+W0: C-PR $-$ C-PR ($\lambda=0$), new approval pairs & --- & +0.092 [0.080, 0.105] & & +0.094 [0.085, 0.103] & \\
+W0: S-PR $-$ C-PR ($\lambda=1$), new approval pairs & --- & $-$0.051 [$-$0.066, $-$0.038] & & $-$0.051 [$-$0.060, $-$0.043] & \\
+W0: S-PR $-$ C-PR ($\lambda=0$), new transfer senders & --- & $-$0.001 [$-$0.004, 0.002] & & $-$0.009 [$-$0.012, $-$0.006] & \\
+W0: C-PR $-$ AWP, new transfer senders & --- & $-$0.085 [$-$0.092, $-$0.078] & & $-$0.116 [$-$0.122, $-$0.109] & \\
+W0: C-PR ($\lambda=1$) $-$ in-approve degree, new approval pairs & --- & $-$0.027 [$-$0.034, $-$0.019] & & $-$0.025 [$-$0.030, $-$0.019] & \\
+W0: EndorseRank $-$ in-approve degree, new approval pairs & --- & $-$0.019 [$-$0.026, $-$0.011] & & $-$0.011 [$-$0.016, $-$0.006] & \\
+W0: AWP $-$ transfer in-degree, new transfer senders & --- & +0.043 [0.038, 0.048] & & +0.038 [0.035, 0.042] & \\
+W1: EndorseRank $-$ in-approve degree, new approval pairs & --- & $-$0.034 [$-$0.038, $-$0.029] & & $-$0.029 [$-$0.032, $-$0.025] & \\
+W1: AWP $-$ transfer in-degree, new transfer senders & --- & +0.022 [0.017, 0.027] & & +0.020 [0.016, 0.023] & \\
+W1: C-PR $-$ EndorseRank, new approval pairs & --- & +0.016 [0.010, 0.024] & & +0.004 [$-$0.001, 0.008] & \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-\parbox{\textwidth}{\footnotesize $\Delta\tau=\tau_a-\tau_b$ on the same resamples. C-PR without a $\lambda$ is the primary setting $\lambda=0.5$; liquidation-free rate: the liquidation-free close rate of the W1 traders. Superiority holds when the interval lies above zero, non-inferiority when its lower end lies above $-\delta=-0.01$, and ``no worse'' when the interval contains zero or lies above it. The registered column is the test that the plan and the registration fixed; the revised column applies the same rules and thresholds to scores defined after the registered results were known, so none of its verdicts is a registered result. Nominal verdicts use unadjusted 95\% intervals; the fixed order was an order of reporting, not a gatekeeping sequence. The degree, EndorseRank and AWP rows are reference contrasts reported in full in \cite{kwon2026companion}. Intervals: 400 paired resamples, seed 42.}
+\parbox{\textwidth}{\footnotesize $\Delta\tau=\tau_a-\tau_b$ on the same resamples. C-PR without a $\lambda$ is the primary setting $\lambda=0.5$; liquidation-free rate: the liquidation-free close rate of the W1 traders. Superiority holds when the interval lies above zero, non-inferiority when its lower end lies above $-\delta=-0.01$, and ``no worse'' when the interval contains zero or lies above it. The revised column, the main analysis, applies the rules and thresholds of the plan and the registration to scores defined after the registered results were known, so none of its verdicts is a registered result; the registered column is the test that the plan and the registration fixed. Nominal verdicts use unadjusted 95\% intervals; the fixed order was an order of reporting, not a gatekeeping sequence. The degree, EndorseRank and AWP rows are reference contrasts reported in full in \cite{kwon2026companion}. Intervals: 400 paired resamples, seed 42.}
 \end{table*}

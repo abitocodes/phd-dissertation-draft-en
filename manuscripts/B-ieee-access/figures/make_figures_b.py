@@ -74,8 +74,8 @@ def load(pub: dict[str, Path]) -> dict:
 
 def sweep(S: dict) -> None:
     fig, axes = plt.subplots(2, 3, figsize=(7.16, 4.7), sharey="row")
-    rows = [("registered", "Registered analysis (pre-specified; raw base units, every ERC-20)"),
-            ("revised", "Revised analysis (re-analysis; US dollars, five tokens)")]
+    rows = [("revised", "Revised analysis (main analysis, a re-analysis; US dollars, five tokens)"),
+            ("registered", "Registered analysis (the pre-specified test; raw base units, every ERC-20)")]
     cols = [("W0 spenders (labels Apr–Jun)", "w0", "taus", [APPR, SEND]),
             ("W1 spenders (labels Jul–Sep)", "w1", "spender_taus", [APPR, SEND]),
             ("W1 traders (labels Jul–Sep)", "w1", "trader_taus", [LIQ])]
@@ -172,7 +172,7 @@ def forest(S: dict) -> None:
     fig, ax = plt.subplots(figsize=(7.16, 0.235 * n + 0.85))
     y = n
     tf = ax.get_yaxis_transform()
-    offs = {"registered": (+0.17, S1, "o"), "revised": (-0.17, S2, "s")}
+    offs = {"revised": (+0.17, S1, "o"), "registered": (-0.17, S2, "s")}  # the main analysis on top
     headers = []
     for group, rows in ROWS:
         y -= 1
@@ -210,8 +210,8 @@ def forest(S: dict) -> None:
         ax.spines[sp].set_visible(False)
     ax.set_xlabel(r"$\Delta\tau_b$ with 95% paired-bootstrap interval; dashed line: margin $-\delta=-0.01$", fontsize=FS)
     handles = [
-        Line2D([0], [0], color=S1, marker="o", lw=1.3, ms=4.3, label="registered analysis (pre-specified test)"),
-        Line2D([0], [0], color=S2, marker="s", lw=1.3, ms=4.3, label="revised analysis (re-analysis)"),
+        Line2D([0], [0], color=S1, marker="o", lw=1.3, ms=4.3, label="revised analysis (main; re-analysis)"),
+        Line2D([0], [0], color=S2, marker="s", lw=1.3, ms=4.3, label="registered analysis (pre-specified test)"),
         Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.3, mfc=INK2, mec=INK2, label="filled: criterion met"),
         Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.3, mfc="white", mec=INK2, label="open: not met"),
     ]
