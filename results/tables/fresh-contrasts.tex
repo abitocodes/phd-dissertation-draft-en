@@ -2,12 +2,12 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-usd/window-w1/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Window W1: the contrasts of rule B with their verdicts and the sensitivity analyses.]{Window W1: the paired contrasts F1--F6 of rule B with their verdicts, and the two sensitivity analyses (rule B and its sensitivity analyses were registered for the raw-unit analysis; here they are applied to the revised scores). $\Delta\tau=\tau_a-\tau_b$, with C-PR ($\lambda=0.5$) as $a$. Superiority holds when the interval lies above zero; non-inferiority holds when its lower end lies above $-\delta=-0.01$; F6a, the first part of rule A, holds when the interval contains zero or lies above it. F1, F2, F6a and F6b are on the spenders ($n=18{,}152$ contracts), F3--F5 on the traders ($n=70$), as in Table~\ref{tab:fresh-holdout}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
+\caption[Window W1: the contrasts of rule B with their verdicts and the sensitivity analyses.]{Window W1: the paired contrasts F1--F6 of rule B with their verdicts, and the two sensitivity analyses (rule B and its sensitivity analyses were registered for the raw-unit analysis; here they are applied to the revised scores). $\Delta\tau=\tau(a)-\tau(b)$, with C-PR ($\lambda=0.5$) as $a$. Superiority holds when the interval lies above zero; non-inferiority holds when its lower end lies above $-\delta=-0.01$; F6a, the first part of rule A, holds when the interval contains zero or lies above it. F1, F2, F6a and F6b are on the spenders ($n=18{,}152$ contracts), F3--F5 on the traders ($n=70$), as in Table~\ref{tab:fresh-holdout}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
 \label{tab:fresh-contrasts}
 \fitwidth{%
 \begin{tabular}{lllcccll}
 \toprule
- & Contrast & Label & Test & $\tau_a$ & $\tau_b$ & $\Delta\tau$ [95\% CI] & Verdict \\
+ & Contrast & Label & Test & $\tau(a)$ & $\tau(b)$ & $\Delta\tau$ [95\% CI] & Verdict \\
 \midrule
 \multicolumn{8}{l}{\emph{Rule B: C-PR ($\lambda=0.5$) against its transfer layer walked alone, C-PR ($\lambda=0$)}} \\
 F1 & C-PR vs.\ C-PR ($\lambda=0$) & new approval pairs & superiority & 0.250 & 0.141 & +0.110 [0.098, 0.122] & holds \\
