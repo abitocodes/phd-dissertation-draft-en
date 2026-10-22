@@ -5,7 +5,7 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-usd/window-w1/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Post hoc comparisons of C-PR and C-AWP with AWP.]{Post hoc comparisons of C-PR and C-AWP with AWP on the spender cohorts of W0 and W1, their traders ($n=88$ and $70$) and the matched cohort. C-AWP mixes the edges of AWP and of EndorseRank with activity restarts in each node's transition row as C-PR does, with $\lambda=0.5$, and restarts in proportion to $(1-\lambda)$ times AWP's sending activeness plus $\lambda$ times the owners' approving activeness, so that $\lambda=0$ gives AWP and $\lambda=1$ EndorseRank with activity restarts. New counterparties are new approval pairs plus new transfer senders; the mean of the two spender labels averages $\tau$ on both. C-PR ($\lambda=0$) minus AWP was added after the other rows were known, at the same resamples. These comparisons were chosen after the labels of both windows were known and committed before they were computed; none is a registered test. The C-PR rows on all spenders repeat Tables~\ref{tab:holdout-diff} and~\ref{tab:fresh-contrasts}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
+\caption[Post hoc comparisons of C-PR and C-AWP with AWP.]{Post hoc comparisons of C-PR and C-AWP with AWP (Section~\ref{sub:cpr-awp-posthoc}): spender cohorts of W0 and W1, their traders ($n=88$ and $70$) and the matched cohort. New counterparties are new approval pairs plus new transfer senders; the mean of the two spender labels averages $\tau$ on both. All rows were chosen after the labels were known, C-PR ($\lambda=0$) minus AWP after the other rows, and none is a registered test; the C-PR rows on all spenders repeat Tables~\ref{tab:holdout-diff} and~\ref{tab:fresh-contrasts}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
 \label{tab:cpr-awp-posthoc}
 \fitwidth{%
 \begin{tabular}{lcc}
@@ -42,11 +42,6 @@ New transfer senders & +0.070 [0.064, 0.075] & +0.049 [0.045, 0.053] \\
 C-PR & 0.225 [0.200, 0.253] & 0.267 [0.239, 0.290] \\
 C-AWP & 0.342 [0.323, 0.364] & 0.346 [0.320, 0.366] \\
 In-approve degree & 0.246 [0.221, 0.274] & 0.285 [0.256, 0.308] \\
-\midrule
-\multicolumn{3}{l}{\emph{Share of the 1{,}000 highest-ranked spenders that gained any new counterparty}} \\
-AWP & 0.698 & 0.654 \\
-C-PR & 0.564 & 0.499 \\
-C-AWP & 0.677 & 0.624 \\
 \midrule
 \multicolumn{3}{l}{\emph{Same window, mean of the transfer and allowance families ($n=15{,}107$)}} \\
 C-PR minus AWP & \multicolumn{2}{c}{$\Delta\tau=+0.038$ [0.033, 0.043]} \\
