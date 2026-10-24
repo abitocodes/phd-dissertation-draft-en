@@ -3,7 +3,7 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-usd/supplementary/supplementary.json
 \begin{table}[htbp]
 \centering
-\caption[EndorseRank and its variant with activity restarts in the window W1.]{EndorseRank and its variant with activity restarts on the cohorts and labels of the window W1 (spenders $n=18{,}152$ contracts, traders $n=70$). Neither these rows nor the contrasts below them are part of rule B, and the contrasts were not named in the registration. The contrasts of EndorseRank with activity restarts were computed afterwards from the saved W1 scores. The AWP, C-PR and degree rows repeat Table~\ref{tab:fresh-holdout}, and every contrast uses the same contract resamples; the differences between EndorseRank and AWP are in Table~\ref{tab:endorserank-awp-holdout}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
+\caption[EndorseRank and its variant with activity restarts in the window W1.]{EndorseRank and its variant with activity restarts on the cohorts and labels of the window W1 (spenders $n=18{,}152$ contracts, traders $n=70$). Neither these rows nor the contrasts below them are part of rule B, and the contrasts were not named in the registration. The contrasts of EndorseRank with activity restarts were computed afterwards from the saved W1 scores. The AWP, C-PR and degree rows repeat Table~\ref{tab:fresh-holdout}, and every contrast uses the same contract resamples; the differences between EndorseRank and AWP are in Table~\ref{tab:endorserank-awp-holdout}, and those of C-PR in Table~\ref{tab:cpr-contrasts}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
 \label{tab:fresh-posthoc}
 \fitwidth{%
 \begin{tabular}{lccc}
@@ -22,8 +22,6 @@ C-PR ($\lambda=0.5$) & 0.250 [0.240, 0.260] & 0.263 [0.254, 0.273] & 0.350 [0.23
 \midrule
 EndorseRank minus in-approve degree, new approval pairs & \multicolumn{3}{l}{$\Delta\tau=-0.034$ [-0.038, -0.029]} \\
 AWP minus transfer in-degree, new transfer senders & \multicolumn{3}{l}{$\Delta\tau=+0.022$ [0.017, 0.027]} \\
-C-PR minus EndorseRank, new approval pairs & \multicolumn{3}{l}{$\Delta\tau=+0.016$ [0.010, 0.024]} \\
-C-PR minus EndorseRank, liquidation-free close rate & \multicolumn{3}{l}{$\Delta\tau=+0.053$ [-0.051, 0.171]} \\
 \midrule
 EndorseRank (activity restarts) minus in-approve degree, new approval pairs & \multicolumn{3}{l}{$\Delta\tau=+0.027$ [0.021, 0.034]} \\
 EndorseRank (activity restarts) minus EndorseRank, new approval pairs & \multicolumn{3}{l}{$\Delta\tau=+0.061$ [0.054, 0.067]} \\

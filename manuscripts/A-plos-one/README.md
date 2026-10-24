@@ -95,6 +95,12 @@ python3 check_numbers.py main.tex cover-letter.tex supporting/S1_Text.tex suppor
 python3 ../tools/overlap_check.py main.tex
 ```
 
+## Changes of 22 October 2026
+
+- The companion paragraph of the Introduction calls Manuscript B "unpublished" instead of "submitted to IEEE Access", and the uncited entry `kwon2026coupling` has the note "Unpublished manuscript"; restore the journal name when B is submitted.
+- Rebuilt `main.pdf` (25 pages) and `main_preview.pdf` (26 pages): no errors or undefined references; `check_numbers.py main.tex` lists the same 11 documented exceptions.
+- The thesis now presents C-PR as its method; this paper stays the single-layer comparison (EndorseRank, AWP and the raw degrees), as before.
+
 ## Last build and checks (13 October 2026)
 
 - `main.pdf` 25 pages, `main_preview.pdf` 26 pages and S1 Text 5 pages, rebuilt with pdflatex, bibtex and pdflatex twice; `cover-letter.pdf` 1 page, S1 Table 1 page and S2 Table 5 pages, whose sources did not change, are the builds of 12 October. No errors, no undefined references or citations, no overfull boxes. All 42 DOIs in the reference list link to `https://doi.org/` (no relative links). Tables 1 to 6 and Fig 1 are first cited in ascending order, and each float follows the paragraph that first cites it (checked by script). BibTeX issues 8 benign warnings for the four `@misc` web sources (GMX, Human Passport, DefiLlama, Chainlink: no editor or publisher).

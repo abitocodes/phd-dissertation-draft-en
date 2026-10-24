@@ -73,6 +73,15 @@ Every number in the text was checked against these sources; derived ratios (time
 
 Manuscript A compares the allowance edge and the transfer edge as separate scores against their raw degrees and compares them on GMX trader outcomes built from neither edge type (P, Q, R1–R3). Manuscript B covers the coupling operator (C-PR, S-PR), the two pre-specified rules, the commit-gated record, the revision as a deviation, and the Sybil exposure of the authorization layer. Results that appear in both: the data description, the reference rows (raw degrees, EndorseRank, AWP) and their degree contrasts in Tables 4–5, the closed form of the authorization walk (Section III-G), and the solver times of EndorseRank and AWP (Table 1); B attributes them to A (`kwon2026companion`) and states this in the Introduction. R1–R3 are named in B (Introduction, Tables 2 and 3) without their verdicts. Both report the revised analysis first, with the registered values beside them, and say so in the Introduction.
 
+## Changes of 22 October 2026
+
+- Thesis restructure: the thesis now presents C-PR as its method, with EndorseRank and AWP as single-layer references; this paper was already built around C-PR and keeps its structure.
+- New subsection "Against the Reference Walks, After the Labels" (Results) and one sentence in the Conclusion: post hoc contrasts from the revised score files, published in `supplementary/supplementary.json` of the revised analysis (computed on 22 October 2026, outside every rule). C-PR ranks both spender labels above EndorseRank in both windows, ranks new approval pairs below EndorseRank with activity restarts, and its lead over AWP on new approval pairs comes from the spenders AWP scores zero; among the spenders that had received a transfer, AWP leads on both labels.
+- "Walks Against Counts": the C-PR contrasts with the in-approve degree and the transfer in-degree (revised analysis) replace "no paired contrast was computed"; the registered analysis still has none.
+- Threats: other couplings "are not evaluated in this paper" (they were explored after the labels, outside this paper).
+- The companion entry's note is now "Unpublished manuscript"; change it to the journal name once Manuscript A is submitted.
+- Rebuilt: 18 pages, no errors or undefined references; `make_tables.py` regenerated identical tables; every new number occurs in the revised digest (`../A-plos-one/check_numbers.py main.tex` flags none of them).
+
 ## Lengths and checks (13 October 2026)
 
 - Abstract: 250 words, one paragraph, no references or equations (IEEE Access limit 150 to 250).
