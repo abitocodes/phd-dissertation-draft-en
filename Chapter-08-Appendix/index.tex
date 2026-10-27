@@ -18,11 +18,11 @@
 \section{Evaluation Pipeline and Reproducibility}
 \label{ch:appendix-eval}
 
-This appendix documents the evaluation pipeline behind Chapter~\ref{ch:results} and behind the registered analysis of Appendix~\ref{sec:map-registered}: its stages, the extraction design, the account-type classification, the timed runs and the default parameters.
+This appendix documents the evaluation pipeline behind Chapter~\ref{ch:results} and behind the registered analysis of Appendix~\ref{sec:map-registered}.
 
 \dissertationSubheading[sec:pipeline-stages]{Pipeline stages}
 
-The evaluation source is in the folder \texttt{1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments} of the public repository \url{https://github.com/abitocodes/phd_works}, and the paths below are relative to it. The evaluation has five stages. The first three run on Arbitrum One over the observation window, 1~October~2023 to 30~June~2026 (UTC, inclusive at both ends); the fourth adds July to September~2026, and the fifth reads only the tables that the first four left in BigQuery.
+The evaluation source is in the folder \texttt{1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments} of the public repository \url{https://github.com/abitocodes/phd_works}, and the paths below are relative to it. The evaluation has five stages. The first three run on Arbitrum One over the observation window, 1~October~2023 to 30~June~2026 (UTC, inclusive at both ends); the fourth adds July to September~2026, and the fifth reads the tables that the first four left in BigQuery, together with the DefiLlama daily prices and the Chainlink feeds.
 
 \begin{enumerate}
 \item Plan, cohort and graphs: Commit the analysis plan (\texttt{docs/analysis\_plan.md}) and the configuration before any log of the study is extracted (commit \texttt{43d8045}, 13:41~UTC on 9~October~2026). Copy the logs of the window into a project table (scan~A), list the spenders that at least three owners approved (\texttt{sql/02\_spender\_candidates.sql}), read their account types (\texttt{scripts/check\_account\_code.py}) and keep the contracts as the plan's cohort (\texttt{scripts/build\_cohort.py}). Extract the ego events of the cohort (\texttt{sql/03\_ego\_events.sql}) and aggregate them into the pair tables of both graphs at $T_{\mathrm{obs}}$ and at $t_1$ (\texttt{sql/04\_anchor\_pairs.sql}).
@@ -42,7 +42,7 @@ Synthetic tests check the solver, the edge weights, the paired bootstrap and the
 
 The public table \texttt{bigquery-public-data.goog\_blockchain\_arbitrum\_one\_us.logs} is read once for each window. Scan~A copies the ERC-20 \texttt{Approval} and \texttt{Transfer} logs of the observation window, the GMX~V2 position closes and the Aave~V3 pool events, which no analysis of this thesis uses, into one project table partitioned by month, and scan~B does the same for July to September~2026. Every later query reads these project tables, so the chain-wide scan is paid for once per window, and the ego extraction keeps only events with a cohort contract at one end, which ties the size of the extract to the cohort instead of the whole chain. Appendix~\ref{ch:appendix-sql} shows the queries.
 
-Every job is listed in \texttt{data/bq\_ledger.json} with its query, parameters, estimated and billed bytes and cost. The ledger holds 32 jobs that billed $5.57$\,TiB, or USD~34.80 at the on-demand rate of USD~6.25 per TiB, against the budget of USD~50 fixed in the configuration. Scan~A alone billed $3.29$\,TiB (USD~20.55) and scan~B $0.26$\,TiB (USD~1.64); the 17 jobs of the registered analysis billed USD~29.71 and the 15 jobs of the revision USD~5.09. Three jobs of the revision ran outside \texttt{scripts/run\_bq.py} and were entered in the ledger by hand.
+Every job is listed in \texttt{data/bq\_ledger.json} with its query, parameters, estimated and billed bytes and cost. The 32 jobs of the registered and revised analyses billed $5.57$\,TiB, or USD~34.80 at the on-demand rate of USD~6.25 per TiB, against the budget of USD~50 fixed in the configuration. Scan~A alone billed $3.29$\,TiB (USD~20.55) and scan~B $0.26$\,TiB (USD~1.64); the 17 jobs of the registered analysis billed USD~29.71 and the 15 jobs of the revision USD~5.09. Three jobs of the revision ran outside \texttt{scripts/run\_bq.py} and were entered in the ledger by hand. Thirteen later jobs, labeled exploratory, billed USD~4.95 for post hoc checks the thesis does not report.
 
 \dissertationSubheading[sec:account-type-classification]{Account-type classification}
 
