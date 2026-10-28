@@ -2,47 +2,47 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/same-window/eval_summary.json
 % Source: experiments/data/2-processed-tables-and-evaluations/holdout-w0/eval_summary.json
 % Source: experiments/data/2-processed-tables-and-evaluations/registered-w1/eval_summary.json
-% Source: experiments/data/2-processed-tables-and-evaluations/revised-usd/same-window/eval_summary.json
-% Source: experiments/data/2-processed-tables-and-evaluations/revised-usd/holdout-w0/eval_summary.json
-% Source: experiments/data/2-processed-tables-and-evaluations/revised-usd/window-w1/eval_summary.json
+% Source: experiments/data/2-processed-tables-and-evaluations/revised-usd-12m/same-window/eval_summary.json
+% Source: experiments/data/2-processed-tables-and-evaluations/revised-usd-12m/holdout-w0/eval_summary.json
+% Source: experiments/data/2-processed-tables-and-evaluations/revised-usd-12m/window-w1/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Decision contrasts of the registered analysis and of the revised analysis.]{Decision contrasts and verdicts of the registered analysis (amounts in raw base units, every ERC-20 token, $b=1$), exactly as obtained under the analysis plan and the W1 registration, beside the same contrasts on the revised scores (amounts in USD, listed tokens only). The revision was decided after the registered results were known; the revised column applies the registered rules and thresholds to the revised scores and is not a registered test. The last block holds degree contrasts that no rule of either analysis decides; they are reported in both. $\Delta\tau$ with 95\% paired bootstrap interval (400 and 2{,}000 resamples, seed 42); the rules and their thresholds are in Sections~\ref{sec:holdout-protocol} and~\ref{sub:fresh-holdout}.}
+\caption[Decision contrasts of the registered analysis and of the revised analysis.]{Decision contrasts and verdicts of the registered analysis (amounts in raw base units, every ERC-20 token, $b=1$, scores from every event since 1~October~2023), exactly as obtained under the analysis plan and the W1 registration, beside the same contrasts on the revised scores (amounts in USD, the five listed tokens, scores from the twelve months before each freeze). The revised analysis, its score windows included, was defined after the registered results were known; its column applies the registered rules and thresholds to the revised scores and is not a registered test. The last block holds degree contrasts that no rule of either analysis decides; they are reported in both. $\Delta\tau$ with 95\% paired bootstrap interval (400 and 2{,}000 resamples, seed 42); the rules and their thresholds are in Sections~\ref{sec:holdout-protocol} and~\ref{sub:fresh-holdout}.}
 \label{tab:registered-vs-revised}
 \fitwidth{%
 \begin{tabular}{lcc}
 \toprule
 Quantity & Registered analysis & Revised analysis \\
 \midrule
-Matched cohort (contracts) & 27{,}844 & 15{,}107 \\
-W0 spender cohort & 33{,}101 & 17{,}050 \\
-W1 spender cohort & 34{,}587 & 18{,}152 \\
+Matched cohort (contracts) & 27{,}844 & 6{,}483 \\
+W0 spender cohort & 33{,}101 & 7{,}914 \\
+W1 spender cohort & 34{,}587 & 7{,}960 \\
 W1 traders & 70 & 70 \\
-EndorseRank vs.\ AWP, same window ($\tau$) & 0.217 [0.209, 0.225] & 0.174 [0.163, 0.185] \\
+EndorseRank vs.\ AWP, same window ($\tau$) & 0.217 [0.209, 0.225] & 0.199 [0.181, 0.221] \\
 \midrule
-A, W0: C-PR minus C-PR ($\lambda=1$), new approval pairs & $+0.008$ [0.003, 0.013] & $+0.029$ [0.022, 0.036] \\
-A, W0: C-PR minus C-PR ($\lambda=0$), new transfer senders & $-0.030$ [-0.034, -0.026] & $-0.034$ [-0.040, -0.029] \\
+A, W0: C-PR minus C-PR ($\lambda=1$), new approval pairs & $+0.008$ [0.003, 0.013] & $+0.031$ [0.021, 0.042] \\
+A, W0: C-PR minus C-PR ($\lambda=0$), new transfer senders & $-0.030$ [-0.034, -0.026] & $-0.030$ [-0.040, -0.020] \\
 Rule A, primary part & not met & not met \\
 Rule A, secondary part & not met & not met \\
 \midrule
-B, F1: C-PR minus C-PR ($\lambda=0$), new approval pairs & $+0.101$ [0.092, 0.111] & $+0.110$ [0.098, 0.122] \\
-B, F2: C-PR minus C-PR ($\lambda=0$), new transfer senders & $-0.025$ [-0.029, -0.021] & $-0.028$ [-0.033, -0.023] \\
-B, F3: C-PR minus C-PR ($\lambda=0$), liquidation-free close rate & $-0.044$ [-0.100, -0.002] & $+0.000$ [-0.014, 0.010] \\
+B, F1: C-PR minus C-PR ($\lambda=0$), new approval pairs & $+0.101$ [0.092, 0.111] & $+0.170$ [0.149, 0.189] \\
+B, F2: C-PR minus C-PR ($\lambda=0$), new transfer senders & $-0.025$ [-0.029, -0.021] & $-0.025$ [-0.038, -0.015] \\
+B, F3: C-PR minus C-PR ($\lambda=0$), liquidation-free close rate & $-0.044$ [-0.100, -0.002] & $+0.000$ [-0.010, 0.010] \\
 Rule B (F1, F2 and F3) & not met & not met \\
 Rule B, sensitivity 1 (AWP as comparator) & not met & not met \\
 Rule B, sensitivity 2 (isolated nodes) & not met & not met \\
 F6 (rule A, primary part, on W1) & fails & fails \\
 \midrule
-P, W1: in-approve degree minus transfer in-degree & $+0.063$ [-0.026, 0.148] & $+0.084$ [-0.013, 0.176] \\
-Q, W1: EndorseRank (activity restarts) minus AWP & $+0.051$ [-0.085, 0.213] & $-0.041$ [-0.135, 0.050] \\
-R1 (count-level lead) & not met & not met \\
+P, W1: in-approve degree minus transfer in-degree & $+0.063$ [-0.026, 0.148] & $+0.141$ [0.037, 0.240] \\
+Q, W1: EndorseRank (activity restarts) minus AWP & $+0.051$ [-0.085, 0.213] & $+0.023$ [-0.062, 0.113] \\
+R1 (count-level lead) & not met & met \\
 R2 (PageRank-level lead) & not met & not met \\
 R3 (specificity) & applies & applies \\
 \midrule
-W0: EndorseRank minus in-approve degree, new pairs & $-0.011$ [-0.016, -0.006] & $-0.019$ [-0.026, -0.011] \\
-W0: AWP minus transfer in-degree, new senders & $+0.038$ [0.035, 0.042] & $+0.043$ [0.038, 0.048] \\
-W1: EndorseRank minus in-approve degree, new pairs & $-0.029$ [-0.032, -0.025] & $-0.034$ [-0.038, -0.029] \\
-W1: AWP minus transfer in-degree, new senders & $+0.020$ [0.016, 0.023] & $+0.022$ [0.017, 0.027] \\
+W0: EndorseRank minus in-approve degree, new pairs & $-0.011$ [-0.016, -0.006] & $-0.090$ [-0.100, -0.079] \\
+W0: AWP minus transfer in-degree, new senders & $+0.038$ [0.035, 0.042] & $-0.038$ [-0.043, -0.032] \\
+W1: EndorseRank minus in-approve degree, new pairs & $-0.029$ [-0.032, -0.025] & $-0.082$ [-0.090, -0.073] \\
+W1: AWP minus transfer in-degree, new senders & $+0.020$ [0.016, 0.023] & $-0.041$ [-0.047, -0.034] \\
 \bottomrule
 \end{tabular}
 }
