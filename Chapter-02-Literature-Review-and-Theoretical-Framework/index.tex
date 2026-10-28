@@ -20,7 +20,7 @@ Conventional credit scoring ties a credit history to a legal entity. On a public
 
 Most DeFi applications have been deployed on the Ethereum mainnet, historically the main venue for DeFi innovation and liquidity, but while Ethereum ran on proof of work, it could not raise its block size or shorten its block interval far without weakening its security \parencite{gervais2016pow}, so growing use of the mainnet raised gas costs and constrained throughput. Layer-2 (L2) protocols try to keep Ethereum's security guarantees while making transactions cheaper. Some execute transactions off-chain, while others batch them and post a succinct summary of the execution to the Ethereum mainnet \parencite{gudgeon2020layertwo}. \textcite{thibault2022rollups} survey rollups and compare their implementations. Optimistic L2s such as Arbitrum treat each submitted batch of transactions as valid unless evidence against it is presented within a dispute period \parencite{kalodner2018arbitrum}.
 
-Arbitrum One is an optimistic L2 of this kind and can execute EVM-based smart contracts. It has become a popular platform for DeFi applications, among them GMX, an exchange for perpetual swaps \parencite{gmxnddocs}. We use Arbitrum One because the public BigQuery dataset includes both its ERC-20 \texttt{Approval} and \texttt{Transfer} events, and because its fees are low enough that the observation window contains dense activity. We make no claim that our results generalize to other L2s or to Ethereum mainnet without further validation. The framework can be applied to any chain that emits the same logs.
+Arbitrum One is an optimistic L2 of this kind and can execute EVM-based smart contracts. It has become a popular platform for DeFi applications, among them GMX, an exchange for perpetual swaps \parencite{gmxnddocs}. We use Arbitrum One because the public BigQuery dataset includes both its ERC-20 \texttt{Approval} and \texttt{Transfer} events, and because its fees are low enough that the windows studied contain dense activity. We make no claim that our results generalize to other L2s or to Ethereum mainnet without further validation. The framework can be applied to any chain that emits the same logs.
 
 \dissertationSubheading[sec:erc20-allowance-lifecycle]{ERC-20 tokens and the allowance lifecycle}
 
@@ -61,7 +61,7 @@ Figure~\ref{fig:allowance-sequence} traces an ERC-20 allowance through its lifec
 % Message 3: revoke (owner -> token), dashed
 \draw[msg, dashed] (0,-5.8) -- node[above,font=\scriptsize] {\texttt{approve(spender,$0$)} (revoke)} (5.5,-5.8);
 \end{tikzpicture}
-\caption[{ERC-20 allowance lifecycle: approve (or permit), optional \texttt{transferFrom}, and revoke.}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. EndorseRank keeps the most recent \texttt{Approval} event of each owner, spender and token in the observation window and weights it by its age and US-dollar amount; a later approval replaces an earlier one.}
+\caption[{ERC-20 allowance lifecycle: approve (or permit), optional \texttt{transferFrom}, and revoke.}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. EndorseRank keeps the most recent \texttt{Approval} event of each owner, spender and token in the score window and weights it by its age and US-dollar amount; a later approval replaces an earlier one.}
 \label{fig:allowance-sequence}
 \end{figure}
 
