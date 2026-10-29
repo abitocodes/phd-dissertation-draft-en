@@ -20,10 +20,11 @@ import re
 import sys
 from pathlib import Path
 
-import data_sources as S
-from data_sources import ci, delta_ci, intc, num, pct, tau_ci
-
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))                   # also under python -I (isolated mode)
+import data_sources as S  # noqa: E402
+from data_sources import ci, delta_ci, intc, num, pct, tau_ci  # noqa: E402
+
 MAIN = HERE / "main.tex"
 S1_ROWS = HERE / "supporting" / "S1_Table_rows.tex"
 
@@ -43,14 +44,34 @@ def sci(x: float) -> str:
     return f"${m}\\times10^{{{int(e)}}}$"
 
 
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def score_window(rule: str) -> str:
+    """'1 Jul 2025 -- 30 Jun 2026' from the cohort rule of a freeze, whose end is exclusive."""
+    from datetime import date, timedelta
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2}) 00:00:00 UTC to (\d{4})-(\d{2})-(\d{2}) 00:00:00 UTC \(end exclusive\)", rule)
+    if not m:
+        sys.exit(f"no score window in the cohort rule: {rule}")
+    y0, m0, d0, y1, m1, d1 = map(int, m.groups())
+    a, b = date(y0, m0, d0), date(y1, m1, d1) - timedelta(days=1)
+    return f"{a.day} {MONTHS[a.month - 1]} {a.year} -- {b.day} {MONTHS[b.month - 1]} {b.year}"
+
+
 # --------------------------------------------------------------------------- Table 1
 def table1() -> str:
     sw, w0 = S.load("rev_same"), S.load("rev_w0")
+    coh, coh0 = S.load("rev_cohort"), S.load("rev_cohort_t1")
     cf_t, cf_0 = S.closed_form()[("revised", "same_window")], S.closed_form()[("revised", "W0")]
     assert cf_t["allowance_graph_edges"] == sw["graph"]["allowance"]["edges"]
     assert cf_0["allowance_graph_edges"] == w0["graph"]["allowance_edges"]
+    assert cf_t["scored_set_size"] == coh["cohort"] == sw["cohort"]
+    assert cf_0["scored_set_size"] == w0["spenders"]
     g = sw["graph"]
     rows = [
+        ("Score window", score_window(coh["rule"]), score_window(coh0["rule"])),
+        ("Cohort around which the graphs are built", f"{intc(coh['cohort'])} (matched cohort)",
+         f"{intc(coh0['cohort'])} (W0 cohort)"),
         ("Allowance graph, nodes", intc(g["allowance"]["nodes"]), "--"),
         ("Allowance graph, edges", intc(g["allowance"]["edges"]), intc(w0["graph"]["allowance_edges"]) + "$^{a}$"),
         ("Transfer graph, nodes", intc(g["transfer"]["nodes"]), "--"),
@@ -79,7 +100,7 @@ def table1() -> str:
 {body}
 \bottomrule
 \end{{tabular}}
-\begin{{flushleft}}Graphs built from the ego events of the matched cohort up to each freeze date (revised analysis: approvals and transfers of WETH, USDC, USDT0, ARB and WBTC, amounts in US dollars). At $T_{{\mathrm{{obs}}}}$ the edge counts are those of pairs with a positive EndorseRank or AWP weight. A spender is a contract of the checked set with an allowance in-edge of positive weight; it has depth one when none of its owners has an in-edge itself. Damping $d=0.85$. $^{{a}}$Owner--spender and sender--recipient pairs in the pair tables at $t_1$, counted before pairs whose value weight is zero in floating point are dropped; the node counts at $t_1$ are not recorded. $^{{b}}$\Eq{{eq:closed-form}}, derived in Results (What EndorseRank computes on depth-one spenders). Sources: \texttt{{same-window}} and \texttt{{holdout-w0/eval\_summary.json}}, keys \texttt{{graph}} and \texttt{{closed\_form}}, through \texttt{{analysis/closed-form/closed\_form\_check.json}}.
+\begin{{flushleft}}Each graph is built from the ego events of its freeze's cohort in the score window, the twelve months before the freeze (revised analysis: approvals and transfers of WETH, USDC, USDT0, ARB and WBTC, amounts in US dollars). At $T_{{\mathrm{{obs}}}}$ the edge counts are those of pairs with a positive EndorseRank or AWP weight. A spender is a contract of the checked set with an allowance in-edge of positive weight; it has depth one when none of its owners has an in-edge itself. Damping $d=0.85$. $^{{a}}$Owner--spender and sender--recipient pairs in the pair tables at $t_1$, counted before pairs whose value weight is zero in floating point are dropped; the node counts at $t_1$ are not recorded. $^{{b}}$\Eq{{eq:closed-form}}, derived in Results (What EndorseRank computes on depth-one spenders). Sources: \texttt{{revised-usd-12m/same-window}} and \texttt{{holdout-w0/eval\_summary.json}}, keys \texttt{{graph}} and \texttt{{closed\_form}}, through \texttt{{analysis/closed-form/closed\_form\_check.json}}; \texttt{{cohort/matched\_cohort.json}} and \texttt{{cohort\_t1.json}}.
 \end{{flushleft}}
 \label{{tab1}}
 \end{{adjustwidth}}
@@ -127,7 +148,7 @@ $\tau_b$ between EndorseRank and AWP & \multicolumn{{3}}{{l}}{{{tau_ci(im['endor
 \quad with missing contracts as isolated nodes & \multicolumn{{3}}{{l}}{{{tau_ci(im['isolated'])}}} \\
 \bottomrule
 \end{{tabular}}
-\begin{{flushleft}}Matched cohort, $n={intc(sw['cohort'])}$ contracts, scores at $T_{{\mathrm{{obs}}}}$ (30 June 2026). Each check is computed from the events of one graph: the transfer family from inbound transfers, the allowance family from latest allowances received. Agreement of a score with the checks of its own edge type is therefore partly built in. The Sybil-stability family averages the inbound-counterparty ratio, transfer tenure and active months. Family means are plain averages of the coefficients of their checks. Paired contract bootstrap, {fam['endorserank']['allowance']['n_boot']} resamples (seed 42); intervals are unadjusted. None of these comparisons decides a rule. Source: \texttt{{revised-usd/same-window/eval\_summary.json}}, keys \texttt{{families}}, \texttt{{per\_proxy}}, \texttt{{contrasts}}, \texttt{{inter\_method}}.
+\begin{{flushleft}}Matched cohort, $n={intc(sw['cohort'])}$ contracts, scores at $T_{{\mathrm{{obs}}}}$ (30 June 2026) from the score window {score_window(S.load('rev_cohort')['rule']).replace(' -- ', ' to ')}; the checks are computed over the same window. Each check is computed from the events of one graph: the transfer family from inbound transfers, the allowance family from latest allowances received. Agreement of a score with the checks of its own edge type is therefore partly built in. The Sybil-stability family averages the inbound-counterparty ratio, transfer tenure and active months. Family means are plain averages of the coefficients of their checks. Paired contract bootstrap, {fam['endorserank']['allowance']['n_boot']} resamples (seed 42); intervals are unadjusted. None of these comparisons decides a rule. Source: \texttt{{revised-usd-12m/same-window/eval\_summary.json}}, keys \texttt{{families}}, \texttt{{per\_proxy}}, \texttt{{contrasts}}, \texttt{{inter\_method}}.
 \end{{flushleft}}
 \label{{tab2}}
 \end{{adjustwidth}}
@@ -192,7 +213,7 @@ AWP $-$ transfer in-degree & {e} & {delta_ci(d['awp_deg'][0])} & {e} & {delta_ci
 EndorseRank $-$ AWP & {delta_ci(d['er_awp_a'][0])} & {delta_ci(d['er_awp_t'][0])} & {delta_ci(d['er_awp_a'][1])} & {delta_ci(d['er_awp_t'][1])} \\
 \bottomrule
 \end{{tabular}}
-\begin{{flushleft}}Kendall $\tau_b$ with 95\% percentile interval from 400 paired contract resamples (seed 42); intervals are unadjusted. Spenders are the contracts with a positive latest allowance of one of the five tokens at the freeze. In W0, {intc(w0['gained_new_approvals'])} spenders gained at least one new approval pair and {intc(w0['gained_new_senders'])} at least one new transfer sender; in W1, {intc(w1['gained_new_approvals'])} and {intc(w1['gained_new_senders'])} did. Every paired difference in this table was computed after the labels of its window were known, and none of them decides a rule; the variant with activity restarts was set against the in-approve degree last. Sources: \texttt{{revised-usd/holdout-w0/eval\_summary.json}} (\texttt{{taus}}, \texttt{{contrasts\_after}}), \texttt{{window-w1/eval\_summary.json}} (\texttt{{spender\_taus}}, \texttt{{endorserank\_results}}), \texttt{{supplementary/supplementary.json}}.
+\begin{{flushleft}}Kendall $\tau_b$ with 95\% percentile interval from 400 paired contract resamples (seed 42); intervals are unadjusted. Spenders are the contracts with a positive latest allowance of one of the five tokens, set in the score window, at the freeze. In W0, {intc(w0['gained_new_approvals'])} spenders gained at least one new approval pair and {intc(w0['gained_new_senders'])} at least one new transfer sender; in W1, {intc(w1['gained_new_approvals'])} and {intc(w1['gained_new_senders'])} did. Every paired difference in this table was computed after the labels of its window were known, and none of them decides a rule. Sources: \texttt{{revised-usd-12m/holdout-w0/eval\_summary.json}} (\texttt{{taus}}, \texttt{{contrasts\_after}}), \texttt{{window-w1/eval\_summary.json}} (\texttt{{spender\_taus}}, \texttt{{endorserank\_results}}), \texttt{{supplementary/supplementary.json}}.
 \end{{flushleft}}
 \label{{tab3}}
 \end{{adjustwidth}}
@@ -326,9 +347,13 @@ def table6() -> str:
     def applies(k):
         return "applies" if pick[k]["nl"]["rules"]["R3"]["holds"] else "does not apply"
 
+    # the revised score windows, read from the cohort rules (end exclusive)
+    win_t, win_0 = score_window(S.load("rev_cohort")["rule"]), score_window(S.load("rev_cohort_t1")["rule"])
     lines = [
         "\\multicolumn{3}{l}{\\emph{Data and same window}} \\\\",
         f"Amounts; tokens & raw base units; every ERC-20 & US dollars; five tokens \\\\",
+        f"Events behind the scores at $T_{{\\mathrm{{obs}}}}$ & 1 Oct 2023 -- 30 Jun 2026 & {win_t} \\\\",
+        f"Events behind the scores at $t_1$ & 1 Oct 2023 -- 31 Mar 2026 & {win_0} \\\\",
         f"Matched cohort (contracts) & {both(lambda k: intc(pick[k]['same']['cohort']))} \\\\",
         f"Allowance / transfer edges at $T_{{\\mathrm{{obs}}}}$ & "
         + both(lambda k: intc(pick[k]['same']['graph']['allowance']['edges']) + " / " + intc(pick[k]['same']['graph']['transfer']['edges'])) + " \\\\",
@@ -354,6 +379,7 @@ def table6() -> str:
         + both(lambda k: delta_ci(pick[k]['w1']['endorserank_results']['awp_minus_degree_send'])) + " \\\\",
         "\\midrule",
         "\\multicolumn{3}{l}{\\emph{Contract traders, liquidation-free close rate (registered pairs and rules)}} \\\\",
+        f"Trader cohorts, W1 / W0 & {both(lambda k: str(pick[k]['nl']['windows']['W1']['n']) + ' / ' + str(pick[k]['nl']['windows']['W0']['n']))} \\\\",
         f"P, W1, 95\\% CI & {both(lambda k: delta_ci(lfcr(k, 'W1', 'P')))} \\\\",
         f"P, W1, 97.5\\% CI & {both(lambda k: c975(lfcr(k, 'W1', 'P')))} \\\\",
         f"P stratified by closes, W1, 95\\% CI & {both(lambda k: delta_ci(pick[k]['nl']['windows']['W1']['stratified']['P']))} \\\\",
@@ -381,7 +407,7 @@ def table6() -> str:
 {body}
 \bottomrule
 \end{{tabular}}
-\begin{{flushleft}}The registered analysis follows the analysis plan and the W1 registration as committed; its values and verdicts are registered results only where a rule of the registration decides them (P, Q, R1--R3); the other trader rows are registered pairs that decide no rule. The revised analysis values amounts in US dollars over five tokens; it was decided after every registered result was known, and its verdicts apply the registered rules to scores defined afterwards. Degree contrasts are not decided by any rule in either analysis. $\dt$ with 95\% interval unless marked 97.5\% (spenders 400, traders 2,000 paired resamples, seed 42). Sources: same-window, \texttt{{holdout-w0}}, \texttt{{registered-w1}} and \texttt{{window-w1}} summaries and \texttt{{supplementary.json}} of each analysis in \texttt{{phd\_works}}; \texttt{{analysis/closed-form/closed\_form\_check.json}}; \texttt{{analysis/neutral-label/results.json}}.
+\begin{{flushleft}}The registered analysis follows the analysis plan and the W1 registration as committed, with scores from every event since 1 October 2023; its values and verdicts are registered results only where a rule of the registration decides them (P, Q, R1--R3); the other trader rows are registered pairs that decide no rule. The revised analysis values amounts in US dollars over five tokens and computes every score from the twelve months before its freeze; these definitions were made after every registered result was known, so its verdicts apply the registered rules to scores defined afterwards and are not registered tests. Degree contrasts are not decided by any rule in either analysis. $\dt$ with 95\% interval unless marked 97.5\% (spenders 400, traders 2,000 paired resamples, seed 42). Sources: same-window, \texttt{{holdout-w0}}, \texttt{{registered-w1}} and \texttt{{window-w1}} summaries and \texttt{{supplementary.json}} of each analysis in \texttt{{phd\_works}}; \texttt{{analysis/closed-form/closed\_form\_check.json}}; \texttt{{analysis/neutral-label/results.json}}.
 \end{{flushleft}}
 \label{{tab6}}
 \end{{adjustwidth}}
@@ -391,11 +417,13 @@ def table6() -> str:
 # --------------------------------------------------------------------------- S1 Table rows
 def s1_rows() -> str:
     sw, w0, w1, de = S.load("rev_same"), S.load("rev_w0"), S.load("rev_w1"), S.load("rev_desc")
-    coh = S.load("rev_cohort")
+    coh, coh0 = S.load("rev_cohort"), S.load("rev_cohort_t1")
     NL = S.neutral()["analyses"]["revised"]["windows"]
     rows, am, co = de["rows"], de["amounts"], de["constants"]
     at = w0["spender_account_types"]
+    assert at["contract"] == w0["spenders"]
     n1, n0 = NL["W1"], NL["W0"]
+    win_t, win_0 = score_window(coh["rule"]), score_window(coh0["rule"])
     # traders with a liquidation in W0: not stored as such; all recipients and the
     # stated share of the others had none
     o0 = n0["recipients"]["others"]
@@ -410,11 +438,13 @@ def s1_rows() -> str:
     add = L.append
     add(r"\multicolumn{4}{l}{\emph{Windows}} \\")
     add(r"Scores frozen at & 30 Jun 2026, 23:59:59 UTC & 31 Mar 2026, 23:59:59 UTC & 30 Jun 2026, 23:59:59 UTC \\")
-    add(r"Events behind the scores & 1 Oct 2023 -- 30 Jun 2026 & 1 Oct 2023 -- 31 Mar 2026 & 1 Oct 2023 -- 30 Jun 2026 \\")
+    add(f"Score window (events behind the scores) & {win_t} & {win_0} & {win_t} \\\\")
     add(r"Labels counted & -- & 1 Apr -- 30 Jun 2026 & 1 Jul -- 30 Sep 2026 \\")
     add(r"\addlinespace")
     add(r"\multicolumn{4}{l}{\emph{Contracts scored}} \\")
-    add(f"Matched cohort & {intc(coh['cohort'])} (of the plan's {intc(coh['registered_cohort'])}) & -- & -- \\\\")
+    add(f"Cohort of the freeze ($\\geq 3$ owners on the five tokens in the score window) & "
+        f"{intc(coh['cohort'])} (matched cohort, of the plan's {intc(coh['registered_cohort'])}) & "
+        f"{intc(coh0['cohort'])} (W0 cohort; {intc(coh0['in_tobs_cohort'])} also in the matched cohort) & as same window \\\\")
     add(f"Spender cohort & -- & {intc(w0['spenders'])}$^{{a}}$ & {intc(w1['spenders'])} \\\\")
     add(f"\\quad gained $\\geq 1$ new approval pair & -- & {intc(w0['gained_new_approvals'])} & {intc(w1['gained_new_approvals'])} \\\\")
     add(f"\\quad gained $\\geq 1$ new transfer sender & -- & {intc(w0['gained_new_senders'])} & {intc(w1['gained_new_senders'])} \\\\")
@@ -424,19 +454,19 @@ def s1_rows() -> str:
     add(f"\\quad traders with $\\geq 1$ liquidation & -- & {liq0}$^{{b}}$ & {w1['traders_liquidated']} \\\\")
     add(f"\\quad traders with every close liquidated & -- & not recorded & {w1['traders_all_liquidated']} \\\\")
     add(r"\addlinespace")
-    add(r"\multicolumn{4}{l}{\emph{Graphs (five tokens, ego network of the matched cohort)}} \\")
+    add(r"\multicolumn{4}{l}{\emph{Graphs (five tokens, ego network of the freeze's cohort in its score window)}} \\")
     add(f"Allowance graph, nodes / edges & {intc(g['allowance']['nodes'])} / {intc(g['allowance']['edges'])} & -- / {intc(w0['graph']['allowance_edges'])}$^{{c}}$ & as same window \\\\")
     add(f"Transfer graph, nodes / edges & {intc(g['transfer']['nodes'])} / {intc(g['transfer']['edges'])} & -- / {intc(w0['graph']['transfer_edges'])}$^{{c}}$ & as same window \\\\")
     add(f"Cohort contracts outside the allowance / transfer / both graphs & {intc(g['cohort_outside_allowance'])} / {intc(g['cohort_outside_transfer'])} / {intc(g['cohort_outside_both'])} & -- & -- \\\\")
     add(r"\addlinespace")
     add(r"\multicolumn{4}{l}{\emph{Events and amounts}} \\")
-    add(f"Approval logs kept (share of the plan's ego extraction) & {intc(rows['revised_ego']['approvals'])} ({pct(rows['revised_share_of_registered']['approvals'])}) & -- & {intc(rows['revised_ego']['approvals_w1'])} in Jul--Sep \\\\")
-    add(f"Transfer logs kept (share of the plan's ego extraction) & {intc(rows['revised_ego']['transfers'])} ({pct(rows['revised_share_of_registered']['transfers'])}) & -- & {intc(rows['revised_ego']['transfers_w1'])} in Jul--Sep \\\\")
-    add(f"Positive latest allowances at the anchor & {intc(am['latest_allowances_tobs'])} & -- & -- \\\\")
+    add(f"Approval logs kept (share of the plan's ego events in the same window) & {intc(rows['revised_ego']['approvals'])} ({pct(rows['revised_share_of_registered']['approvals'])}) & -- & {intc(rows['revised_ego']['approvals_w1'])} in Jul--Sep \\\\")
+    add(f"Transfer logs kept (share of the plan's ego events in the same window) & {intc(rows['revised_ego']['transfers'])} ({pct(rows['revised_share_of_registered']['transfers'])}) & -- & {intc(rows['revised_ego']['transfers_w1'])} in Jul--Sep \\\\")
+    add(f"Positive latest allowances at $T_{{\\mathrm{{obs}}}}$, set in the score window & {intc(am['latest_allowances_tobs'])} & -- & -- \\\\")
     add(f"\\quad unlimited & {intc(am['unlimited_allowances'])} ({pct(am['unlimited_share'])}) & -- & -- \\\\")
     add(f"\\quad worth at least the cap $U$ & {intc(am['allowances_at_or_above_cap'])} ({pct(am['allowances_at_or_above_cap_share'])}) & -- & -- \\\\")
     add(f"Owners with a positive latest allowance & {intc(am['owners'])} & -- & -- \\\\")
-    add(f"Medians $m_T$ / $m_A$ and cap $U$ (USD, from events up to $t_1$) & \\multicolumn{{3}}{{l}}{{{co['m_transfer_usd']:.0f} / {co['m_allowance_usd']:.0f} / {intc(int(co['cap_allowance_usd']))}}} \\\\")
+    add(f"Medians $m_T$ / $m_A$ and cap $U$ (USD, from the W0 score window) & \\multicolumn{{3}}{{l}}{{{co['m_transfer_usd']:.0f} / {co['m_allowance_usd']:.0f} / {intc(int(co['cap_allowance_usd']))}}} \\\\")
     return "\n".join(L) + "\n"
 
 

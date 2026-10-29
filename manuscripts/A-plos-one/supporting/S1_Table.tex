@@ -1,6 +1,6 @@
 % S1 Table of Manuscript A (PLOS ONE): windows, cohorts, graphs and amounts (descriptive).
 % The rows are written to S1_Table_rows.tex by ../make_tables.py from the published summaries
-% in phd_works (revised-usd/same-window, holdout-w0, window-w1, describe, cohort) and from
+% in phd_works (revised-usd-12m/same-window, holdout-w0, window-w1, describe, cohort) and from
 % analysis/neutral-label/results.json; nothing here is typed by hand or newly computed.
 % Build with latexmk -pdf S1_Table.tex.
 \documentclass[10pt,letterpaper]{article}
@@ -25,9 +25,9 @@
 \smallskip
 \begin{minipage}{22.5cm}
 \footnotesize
-Revised analysis: approvals and transfers of WETH, USDC, USDT0, ARB and WBTC, amounts in US dollars at DefiLlama daily closing prices. Every scored address holds contract code; externally owned accounts enter the graphs only as owners, senders and recipients. The W1 scores are the same-window scores. W0 and W1 share their score data up to 31 March 2026, and the W1 score window contains the W0 label window.
-$^{a}$Of 17,167 spenders with a positive latest allowance of one of the five tokens at the freeze, 104 had no code and 13 an EIP-7702 delegation designator when read with \texttt{eth\_getCode}; both groups are externally owned accounts and were left out.
-$^{b}$Not stored as a count: every one of the 40 recipients and 75.0\% of the 48 other traders had no liquidation, which leaves 12 traders with at least one.
+Revised analysis: approvals and transfers of WETH, USDC, USDT0, ARB and WBTC, amounts in US dollars at DefiLlama daily closing prices, every score from the twelve months before its freeze. Every scored address holds contract code; externally owned accounts enter the graphs only as owners, senders and recipients. The W1 scores are the same-window scores. The score windows of W0 and W1 overlap from July 2025 to March 2026, and the W1 score window contains the W0 label window.
+$^{a}$Of 7,962 spenders with a positive latest allowance of one of the five tokens, set in the score window, at the freeze, 39 had no code and 9 an EIP-7702 delegation designator when read with \texttt{eth\_getCode}; both groups are externally owned accounts and were left out.
+$^{b}$Not stored as a count: every one of the 39 recipients and 75.0\% of the 48 other traders had no liquidation, which leaves 12 traders with at least one.
 $^{c}$Owner--spender and sender--recipient pairs in the pair tables at the W0 freeze, counted before pairs whose value weight is zero in floating point are dropped; node counts at that freeze are not recorded.
 \end{minipage}
 \end{document}

@@ -2,7 +2,8 @@
 """Fig 1 of Manuscript A (PLOS ONE).
 
 Panel A: each PageRank minus the raw degree it smooths, on the spender label of its own
-edge type, in W0 and W1 (revised analysis; 400 paired resamples).
+edge type, in W0 and W1 (revised analysis, scores from the twelve months before each
+freeze; 400 paired resamples).
 Panels B and C: the registered trader contrasts P and Q on all six trader labels in
 W1 and W0, applied to the revised scores (2,000 paired resamples).
 
@@ -24,6 +25,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("pdf")
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 from matplotlib.lines import Line2D
 
 HERE = Path(__file__).resolve().parent
@@ -35,15 +37,26 @@ INK2 = "#52514e"
 GRID = "#d9d8d4"
 C_W1, C_W0 = "#2a78d6", "#eb6834"      # categorical slots 1-2 of the reference palette (validated)
 
+def _installed(family: str) -> bool:
+    try:
+        font_manager.findfont(font_manager.FontProperties(family=family), fallback_to_default=False)
+        return True
+    except ValueError:
+        return False
+
+
+# Arial-metric face: Liberation Sans where installed (Linux), else Arial (Windows, macOS)
+SANS = next((f for f in ("Liberation Sans", "Arial", "Helvetica") if _installed(f)), "DejaVu Sans")
+
 plt.rcParams.update({
     "font.family": "sans-serif",
-    "font.sans-serif": ["Liberation Sans", "Arial", "Helvetica", "DejaVu Sans"],
+    "font.sans-serif": [SANS, "DejaVu Sans"],
     "font.size": 8.5, "axes.edgecolor": INK2, "axes.labelcolor": INK,
     "xtick.color": INK2, "ytick.color": INK2, "xtick.labelsize": 8, "ytick.labelsize": 8.5,
     "axes.linewidth": 0.6, "legend.frameon": False, "pdf.fonttype": 42,
     # panel letters are set as mathtext bold; use the same Arial-metric face for them
-    "mathtext.fontset": "custom", "mathtext.rm": "Liberation Sans",
-    "mathtext.bf": "Liberation Sans:bold",
+    "mathtext.fontset": "custom", "mathtext.rm": SANS,
+    "mathtext.bf": f"{SANS}:bold",
 })
 
 WINDOWS = [("W1", "W1: freeze 30 Jun 2026, labels Jul–Sep 2026", C_W1, "o", -0.15),
@@ -73,6 +86,13 @@ def spender_contrasts() -> list[tuple[str, dict, dict]]:
          ca[("AWP minus t1 in-degree", "future_new_transfer_senders")],
          er["awp_minus_degree_send"]),
     ]
+
+
+def span(values: list[float], step: float, pad: float) -> tuple[float, float]:
+    """Axis limits that hold every value and zero, padded and rounded outward to `step`."""
+    import math
+    lo, hi = min(min(values), 0.0) - pad, max(max(values), 0.0) + pad
+    return math.floor(lo / step) * step, math.ceil(hi / step) * step
 
 
 def point(ax, y, d, lo, hi, col, mk, lw=1.8):
@@ -110,11 +130,16 @@ def main() -> None:
     ax_a.set_yticks(range(len(rows)))
     ax_a.set_yticklabels([r[0] for r in rows][::-1], fontsize=8)
     ax_a.set_ylim(-0.6, len(rows) - 0.4)
-    ax_a.set_xlim(-0.06, 0.08)
+    ax_a.set_xlim(*span([v for _, c0, c1 in rows for c in (c0, c1) for v in (c["ci_low"], c["ci_high"])],
+                        step=0.02, pad=0.005))
     ax_a.set_xlabel("Δτ, PageRank minus the raw degree it smooths (95% interval)", fontsize=8, color=INK)
     style(ax_a, "A", "Spender contracts: each PageRank minus its raw degree, on the label of its own edge type\n(new approval pairs for EndorseRank, new transfer senders for AWP)")
 
-    # B, C: trader contrasts P and Q
+    # B, C: trader contrasts P and Q, on one shared x range
+    xs = [v for w, *_ in WINDOWS for pid in ("P", "Q") for lab, _ in LABELS
+          for k in ("ci95_low", "ci95_high", "ci975_low", "ci975_high")
+          if (v := NL[w]["contrasts"][pid][lab].get(k)) is not None]
+    xlim_bc = span(xs, step=0.05, pad=0.03)
     for ax, pid, letter, title in ((ax_b, "P", "B", "Contract traders, counts (P):\nin-approve degree − transfer in-degree"),
                                    (ax_c, "Q", "C", "Contract traders, PageRanks (Q):\nEndorseRank (activity restarts) − AWP")):
         for w, _, col, mk, off in WINDOWS:
@@ -127,7 +152,7 @@ def main() -> None:
                     for xv in (lo2, hi2):
                         ax.plot([xv, xv], [y - 0.1, y + 0.1], color=col, lw=0.9, zorder=2)
                 point(ax, y, c["delta_tau"], c["ci95_low"], c["ci95_high"], col, mk)
-        ax.set_xlim(-0.65, 0.42)
+        ax.set_xlim(*xlim_bc)
         ax.set_xlabel("Δτ, allowance side minus transfer side", fontsize=8, color=INK)
         style(ax, letter, title)
     ax_b.set_yticks(range(len(LABELS)))

@@ -16,8 +16,9 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 R = json.loads((ROOT / "analysis/neutral-label/results.json").read_text(encoding="utf-8"))
 
-ANALYSES = [("revised", "Revised analysis (amounts in US dollars, five tokens; registered rules applied as a re-analysis)"),
-            ("registered", "Registered analysis (raw base units, every ERC-20 token)")]
+ANALYSES = [("revised", "Revised analysis (amounts in US dollars, five tokens, scores from the twelve months before each freeze; "
+                         "registered rules applied as a re-analysis)"),
+            ("registered", "Registered analysis (raw base units, every ERC-20 token, scores from every event since 1 October 2023)")]
 WINDOWS = [("W1", "W1: freeze 30 June 2026, labels July--September 2026"),
            ("W0", "W0: freeze 31 March 2026, labels April--June 2026")]
 LABELS = [("liquidation_free_rate", "Liquidation-free close rate"),

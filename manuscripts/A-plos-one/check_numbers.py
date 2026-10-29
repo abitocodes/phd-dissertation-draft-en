@@ -17,16 +17,17 @@ import re
 import sys
 from pathlib import Path
 
-import data_sources as S
-
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))                   # also under python -I (isolated mode)
+import data_sources as S  # noqa: E402
+
 
 
 def source_values() -> set[str]:
     vals: set[str] = set()
     exp = S.experiments_dir() / S.PUB
     texts = [(exp / "results_digest.md").read_text(encoding="utf-8"),
-             (exp / "revised-usd" / "results_digest.md").read_text(encoding="utf-8")]
+             (exp / S.REV / "results_digest.md").read_text(encoding="utf-8")]
     for t in texts:
         vals.update(re.findall(r"-?\d[\d,]*\.?\d*(?:e-?\d+)?", t))
 

@@ -5,8 +5,9 @@ Every number in the tables, Fig 1 and S2 Table comes from one of two places:
 
 * the machine-readable summaries published in the experiment repository ``phd_works``
   (``experiments/data/3-published-results-for-thesis/`` for the registered analysis and
-  its subfolder ``revised-usd/`` for the revised analysis), each checked here against the
-  ``SHA256SUMS.txt`` published next to it;
+  its subfolder ``revised-usd-12m/`` for the revised analysis, whose scores come from the
+  twelve months before each freeze), each checked here against the ``SHA256SUMS.txt``
+  published next to it;
 * the two JSON files of ``analysis/`` in this repository
   (``analysis/closed-form/closed_form_check.json`` and
   ``analysis/neutral-label/results.json``), which copy and check values from the same
@@ -29,24 +30,29 @@ HERE = Path(__file__).resolve().parent          # manuscripts/A-plos-one
 ROOT = HERE.parents[1]                          # repository root
 ANALYSIS = ROOT / "analysis"
 
-# The experiment folder moved after the results were produced; in the commits
-# 43d8045 to 77e71f5 it was the second entry.
+# The experiment folder has two names in the history: in the commits of the plan, the
+# registration and the registered results (43d8045 to 8d8b568) it was the second entry,
+# and in the commit of the revised results (950a7a4) it is the first.
 EXPERIMENT_DIRS = (
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
 )
 PUB = "data/3-published-results-for-thesis"
+REV = "revised-usd-12m"          # revised analysis: twelve-month score windows
 
 # name -> (analysis folder relative to PUB, file inside it)
 FILES = {
-    "rev_same": ("revised-usd", "same-window/eval_summary.json"),
-    "rev_w0": ("revised-usd", "holdout-w0/eval_summary.json"),
-    "rev_w1": ("revised-usd", "window-w1/eval_summary.json"),
-    "rev_sup": ("revised-usd", "supplementary/supplementary.json"),
-    "rev_bench": ("revised-usd", "benchmark/benchmark.json"),
-    "rev_desc": ("revised-usd", "describe/describe.json"),
-    "rev_cohort": ("revised-usd", "cohort/matched_cohort.json"),
-    "rev_manifest": ("revised-usd", "registered-w1/extraction_manifest.json"),
+    "rev_same": (REV, "same-window/eval_summary.json"),
+    "rev_w0": (REV, "holdout-w0/eval_summary.json"),
+    "rev_w1": (REV, "window-w1/eval_summary.json"),
+    "rev_sup": (REV, "supplementary/supplementary.json"),
+    "rev_bench": (REV, "benchmark/benchmark.json"),
+    "rev_desc": (REV, "describe/describe.json"),
+    "rev_cohort": (REV, "cohort/matched_cohort.json"),
+    "rev_cohort_t1": (REV, "cohort/cohort_t1.json"),
+    "rev_tokens": (REV, "usd/token_rows_12m.json"),
+    "rev_constants": (REV, "usd/constants.json"),
+    "rev_manifest": (REV, "registered-w1/extraction_manifest.json"),
     "reg_same": ("", "same-window/eval_summary.json"),
     "reg_w0": ("", "holdout-w0/eval_summary.json"),
     "reg_w1": ("", "registered-w1/eval_summary.json"),
