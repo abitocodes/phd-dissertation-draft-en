@@ -3,7 +3,7 @@
   "generated_by": "analysis/closed-form/export_closed_form.py",
   "phd_works": {
     "repository": "https://github.com/abitocodes/phd_works",
-    "head": "951923a9f0a0dc1379e8a2e1f41877d24393685f",
+    "head": "c5ef6f518fa69ad8410f59301c241a2875432679",
     "experiments_dir": "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
     "computed_by": "scripts/run_same_window.py (function closed_form; graph at T_obs) and scripts/run_holdout.py (same function; graph at t1); revised analysis with CONTRACT_REP_VARIANT=usd, registered analysis with the variable unset"
   },
@@ -22,36 +22,36 @@
       "window": "same_window",
       "graph": "allowance graph at T_obs = 2026-06-30 23:59:59 UTC (the W1 freeze; the W1 scores use the same graphs)",
       "graph_date": "2026-06-30 23:59:59 UTC",
-      "scored_set": "matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct owners",
-      "scored_set_size": 15107,
+      "scored_set": "matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct owners in the twelve months before T_obs",
+      "scored_set_size": 6483,
       "damping": 0.85,
-      "c": 7.638937222482332e-08,
+      "c": 1.9283853000813658e-07,
       "spread_of_c": 1.0,
-      "spenders": 14406,
-      "depth_one_spenders": 12039,
-      "deeper_spenders": 2367,
-      "within_1pct_all": 0.8791475773983063,
+      "spenders": 6224,
+      "depth_one_spenders": 5232,
+      "deeper_spenders": 992,
+      "within_1pct_all": 0.8754820051413882,
       "within_1pct_depth_one": 1.0,
-      "within_1pct_deeper": 0.26446979298690326,
-      "tau_score_vs_delta": 0.9245496409831419,
-      "allowance_graph_nodes": 6221665,
-      "allowance_graph_edges": 11210114,
+      "within_1pct_deeper": 0.21875,
+      "tau_score_vs_delta": 0.9084809304023469,
+      "allowance_graph_nodes": 2514846,
+      "allowance_graph_edges": 3808949,
       "source": {
-        "file": "data/3-published-results-for-thesis/revised-usd/same-window/eval_summary.json",
+        "file": "data/3-published-results-for-thesis/revised-usd-12m/same-window/eval_summary.json",
         "key": "closed_form",
-        "sha256_published": "99f2c205a1ac89e88585f914a83fa04a4919481f78dccd71217326b48339df06",
+        "sha256_published": "e4647884d59604b7e9fe9b55a762731cfbc12e28f566ab494350d6651566212c",
         "checksum_matches_SHA256SUMS": true
       },
       "score_file_check": {
-        "rows": 15107,
-        "score_zero": 535,
-        "score_equal_c": 173,
-        "score_above_c": 14399,
+        "rows": 6483,
+        "score_zero": 197,
+        "score_equal_c": 62,
+        "score_above_c": 6224,
         "score_between_0_and_c": 0,
         "min_score_over_c_among_nonzero": 1.0,
         "above_c_without_any_approval": 0,
-        "restart_floor": 2.410930193123545e-08,
-        "spenders_equal_score_above_c": false,
+        "restart_floor": 5.964579938493252e-08,
+        "spenders_equal_score_above_c": true,
         "checks": {
           "rows_equal_scored_set": true,
           "no_score_between_0_and_c": true,
@@ -70,8 +70,8 @@
         ],
         "files": [
           {
-            "file": "data/2-processed-tables-and-evaluations/revised-usd/same-window/cohort_scores.part000.parquet",
-            "sha256": "373860bcb2936863920adca8d8aeda1732cfcd3bc4ab14cd77c00b5c14323b18"
+            "file": "data\\2-processed-tables-and-evaluations\\revised-usd-12m\\same-window\\cohort_scores.part000.parquet",
+            "sha256": "9ceddfa333da59cab6b1a878167c58a5dfa63d9a05cec27c1472c348d8bbd0e2"
           }
         ]
       }
@@ -81,31 +81,31 @@
       "window": "W0",
       "graph": "allowance graph at t1 = 2026-03-31 23:59:59 UTC (the W0 freeze)",
       "graph_date": "2026-03-31 23:59:59 UTC",
-      "scored_set": "W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens at t1",
-      "scored_set_size": 17050,
+      "scored_set": "W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens, set in the twelve months before t1, at t1",
+      "scored_set_size": 7914,
       "damping": 0.85,
-      "c": 8.140464241388893e-08,
+      "c": 1.8066505652104933e-07,
       "spread_of_c": 1.0,
-      "spenders": 17032,
-      "depth_one_spenders": 11326,
-      "deeper_spenders": 5706,
-      "within_1pct_all": 0.736672146547675,
+      "spenders": 7905,
+      "depth_one_spenders": 5092,
+      "deeper_spenders": 2813,
+      "within_1pct_all": 0.7075268817204301,
       "within_1pct_depth_one": 1.0,
-      "within_1pct_deeper": 0.21398527865404837,
-      "tau_score_vs_delta": 0.8125611381641151,
+      "within_1pct_deeper": 0.1781016708140775,
+      "tau_score_vs_delta": 0.7820298693884798,
       "allowance_graph_nodes": null,
-      "allowance_graph_edges": 10650258,
+      "allowance_graph_edges": 4117103,
       "source": {
-        "file": "data/3-published-results-for-thesis/revised-usd/holdout-w0/eval_summary.json",
+        "file": "data/3-published-results-for-thesis/revised-usd-12m/holdout-w0/eval_summary.json",
         "key": "closed_form",
-        "sha256_published": "db947772f18a0b9f05fde9f6f1469f40e279069c2871287948757c6aa1b7337b",
+        "sha256_published": "beda0920839071fdd907f399e9746075ca73a92bc21a3c6d776892f3a321a7a3",
         "checksum_matches_SHA256SUMS": true
       },
       "score_file_check": {
-        "rows": 17050,
-        "score_zero": 16,
-        "score_equal_c": 10,
-        "score_above_c": 17024,
+        "rows": 7914,
+        "score_zero": 9,
+        "score_equal_c": 1,
+        "score_above_c": 7904,
         "score_between_0_and_c": 0,
         "min_score_over_c_among_nonzero": 1.0,
         "above_c_without_any_approval": 0,
@@ -127,8 +127,8 @@
         ],
         "files": [
           {
-            "file": "data/2-processed-tables-and-evaluations/revised-usd/holdout-w0/spender_scores.part000.parquet",
-            "sha256": "d62e9f0c2f22f8ef7ef01a11e9e21ccb121a89d8db071ffe3c6ebd6a37373190"
+            "file": "data\\2-processed-tables-and-evaluations\\revised-usd-12m\\holdout-w0\\spender_scores.part000.parquet",
+            "sha256": "9b1fb2920df10a45f87551d4def337c83e64affb0b3073c689ecd3b622258676"
           }
         ]
       }
@@ -186,7 +186,7 @@
         ],
         "files": [
           {
-            "file": "data/2-processed-tables-and-evaluations/same-window/cohort_scores.part000.parquet",
+            "file": "data\\2-processed-tables-and-evaluations\\same-window\\cohort_scores.part000.parquet",
             "sha256": "722ea806c3a49b3c3b598ed3d995431c31eb165fc8e7138ae3f5afe06da8fae6"
           }
         ]
@@ -243,7 +243,7 @@
         ],
         "files": [
           {
-            "file": "data/2-processed-tables-and-evaluations/holdout-w0/spender_scores.part000.parquet",
+            "file": "data\\2-processed-tables-and-evaluations\\holdout-w0\\spender_scores.part000.parquet",
             "sha256": "ae5bb61b8f8e48a2a2e757541db782781ff9940fa8387affe4894b3e5bfc70cd"
           }
         ]

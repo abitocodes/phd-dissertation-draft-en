@@ -29,7 +29,7 @@ EXPERIMENT_DIRS = (
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
 )
 PUB = "data/3-published-results-for-thesis"
-PREFIX = {"revised": f"{PUB}/revised-usd/", "registered": f"{PUB}/"}
+PREFIX = {"revised": f"{PUB}/revised-usd-12m/", "registered": f"{PUB}/"}
 CF_FIELDS = {"common_value_c": "c", "spread_of_c": "spread_of_c", "spenders": "spenders",
              "depth_one_spenders": "depth_one_spenders", "within_1pct_all": "within_1pct_all",
              "within_1pct_depth_one": "within_1pct_depth_one", "within_1pct_deeper": "within_1pct_deeper",

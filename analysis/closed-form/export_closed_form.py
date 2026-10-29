@@ -57,14 +57,17 @@ PROC = "data/2-processed-tables-and-evaluations"
 
 ANALYSES = {
     "revised": {
-        "pub": f"{PUB}/revised-usd",
-        "proc": f"{PROC}/revised-usd",
+        "pub": f"{PUB}/revised-usd-12m",
+        "proc": f"{PROC}/revised-usd-12m",
         "status": ("Main analysis of the thesis: amounts in USD over WETH, USDC, USDT0, ARB and WBTC "
-                   "(docs/revision_price_weighting.md). Decided after the registered results were known; "
+                   "(docs/revision_price_weighting.md) and score windows of the twelve months before each "
+                   "freeze (docs/revision_one_year_window.md). Defined after the registered results were known; "
                    "never a registered result."),
         "scored_set": {
-            "same_window": "matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct owners",
-            "W0": "W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens at t1",
+            "same_window": ("matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct "
+                            "owners in the twelve months before T_obs"),
+            "W0": ("W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens, "
+                   "set in the twelve months before t1, at t1"),
         },
     },
     "registered": {

@@ -1,6 +1,6 @@
 # Supporting analyses for the manuscripts
 
-Two analyses that the journal manuscripts (`manuscripts/A-plos-one/`, `manuscripts/B-ieee-access/`) report beyond the thesis tables: the closed form of EndorseRank on depth-one spenders, and the comparison of allowance-side with transfer-side scores on GMX V2 contract traders, an outcome built from neither edge type (rules R1–R3). The experiment pipeline in `phd_works` computes both. The scripts here copy the values of both analyses, the revised one (USD amounts, five tokens, cohort 15,107; the thesis's main analysis) and the registered one (raw base units, every ERC-20, cohort 27,844; thesis Appendix 8.6), into JSON files with their sources, and check them against the published checksums, the per-contract score files and the results digests. They compute no new statistic.
+Two analyses that the journal manuscripts (`manuscripts/A-plos-one/`, `manuscripts/B-ieee-access/`) report beyond the thesis tables: the closed form of EndorseRank on depth-one spenders, and the comparison of allowance-side with transfer-side scores on GMX V2 contract traders, an outcome built from neither edge type (rules R1–R3). The experiment pipeline in `phd_works` computes both. The scripts here copy the values of both analyses, the revised one (USD amounts, five tokens, scores from the twelve months before each freeze, cohort 6,483; the thesis's main analysis) and the registered one (raw base units, every ERC-20, cohort 27,844; thesis Appendix 8.6), into JSON files with their sources, and check them against the published checksums, the per-contract score files and the results digests. They compute no new statistic.
 
 | Path | Content |
 |---|---|
@@ -13,7 +13,7 @@ Two analyses that the journal manuscripts (`manuscripts/A-plos-one/`, `manuscrip
 
 ## Where the numbers are computed
 
-Repository <https://github.com/abitocodes/phd_works>, experiment folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/`. In the commits that produced the results (`43d8045` to `77e71f5`) the same folder was `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments/`; the scripts look for both.
+Repository <https://github.com/abitocodes/phd_works>, experiment folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/`. In the commits that produced the registered results (`43d8045` to `8d8b568`) the same folder was `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments/`; the scripts look for both.
 
 | Quantity | Code (in `experiments/`) | Summary file and key |
 |---|---|---|
@@ -21,10 +21,10 @@ Repository <https://github.com/abitocodes/phd_works>, experiment folder `1-Disse
 | Closed form at t1 (W0 freeze) | `scripts/run_holdout.py`, calling the same function | `holdout-w0/eval_summary.json` : `closed_form` |
 | Trader comparison, W1 and W0, rules R1–R3 | `scripts/run_registered.py`, function `neutral`, pairs `NEUTRAL_PAIRS`, rules in `main` | W1 summary : `neutral_w1`, `neutral_w0`, `neutral_rules` |
 
-- The switch `CONTRACT_REP_VARIANT=usd` selects the revised analysis; without it the registered one runs (`scripts/common.py`).
-- Published summaries: registered in `data/3-published-results-for-thesis/` (W1 summary `registered-w1/eval_summary.json`; commit `8d8b568`, 2026-10-09 18:00:55 UTC), revised in `data/3-published-results-for-thesis/revised-usd/` (W1 summary `window-w1/eval_summary.json`; commit `77e71f5`, 2026-10-10 12:48:00 UTC). Each folder holds `results_digest.md`, which names the code revision of the run (`8d8b568` and `2705b28`, each with the uncommitted changes it lists), and `SHA256SUMS.txt`. The checksums were taken on a Windows checkout with CRLF line ends, so the scripts hash each file in its CRLF form.
-- Per-contract score files used for the checks: `data/2-processed-tables-and-evaluations/[revised-usd/]same-window/cohort_scores`, `holdout-w0/spender_scores`, `holdout-w0/trader_scores` and `registered-w1/trader_scores` (registered) or `window-w1/trader_scores` (revised), as parquet parts.
-- Pre-specification: `docs/analysis_plan.md` (commit `43d8045`, 2026-10-09 13:41:27 UTC), `docs/registration_w1.md` (commit `0d3a057`, 2026-10-09 16:49:32 UTC), `docs/revision_price_weighting.md` (commits `a897475`, `09dfc32`, `2705b28`, 2026-10-10 07:54:35 to 11:24:01 UTC, after the registered results were known and before any revised score). R1–R3 are defined only in the registration, section 3; the plan (section 7) leaves the comparison to it.
+- The switch `CONTRACT_REP_VARIANT=usd12m` selects the revised analysis; without it the registered one runs (`scripts/common.py`).
+- Published summaries: registered in `data/3-published-results-for-thesis/` (W1 summary `registered-w1/eval_summary.json`; commit `8d8b568`, 2026-10-09 18:00:55 UTC), revised in `data/3-published-results-for-thesis/revised-usd-12m/` (W1 summary `window-w1/eval_summary.json`; commit `950a7a4`). Each folder holds `results_digest.md`, which names the code revision of the run (`8d8b568` with the uncommitted changes it lists, and `0a94215`), and `SHA256SUMS.txt`. The checksums were taken on a Windows checkout with CRLF line ends, so the scripts hash each file in its CRLF form.
+- Per-contract score files used for the checks: `data/2-processed-tables-and-evaluations/[revised-usd-12m/]same-window/cohort_scores`, `holdout-w0/spender_scores`, `holdout-w0/trader_scores` and `registered-w1/trader_scores` (registered) or `window-w1/trader_scores` (revised), as parquet parts.
+- Pre-specification: `docs/analysis_plan.md` (commit `43d8045`, 2026-10-09 13:41:27 UTC) and `docs/registration_w1.md` (commit `0d3a057`, 2026-10-09 16:49:32 UTC). The revised analysis (`docs/revision_price_weighting.md`, `docs/revision_one_year_window.md`: USD amounts, five tokens, scores from the twelve months before each freeze) was defined after the registered results were known. R1–R3 are defined only in the registration, section 3; the plan (section 7) leaves the comparison to it.
 
 ## How to regenerate
 
@@ -37,9 +37,9 @@ python analysis/neutral-label/export_neutral_label.py      # about 15 s; --no-re
 python analysis/compare_with_digest.py
 ```
 
-Each script exits with status 1 if a checksum, a quote, a verdict or a recomputed value does not match. On 11 October 2026 all three passed: every summary matched `SHA256SUMS.txt`, every score-file check passed, the recomputation reproduced all 2,204 neutral-label values to within 2 × 10⁻¹⁶, and the 520 digest rows of the closed-form and neutral-label sections equal the outputs.
+Each script exits with status 1 if a checksum, a quote, a verdict or a recomputed value does not match. On 29 October 2026 all three passed: every summary matched `SHA256SUMS.txt`, every score-file check passed, the recomputation reproduced all 2,204 neutral-label values to within 2 × 10⁻¹⁶, and the 520 digest rows of the closed-form and neutral-label sections equal the outputs.
 
-The summaries themselves can only be recomputed in `phd_works` with the graph tables, which are kept in BigQuery (project `dissertation-bq`, dataset `contract_rep`) and not in either repository (`data/1-raw-blockchain-extracts/graph-tables*/` hold only their manifests). After downloading them (`scripts/download_graph_tables.sh`; for the revised analysis `scripts/run_usd_pipeline.py download`), run `scripts/run_same_window.py`, `scripts/run_holdout.py` and `scripts/run_registered.py` from `experiments/` without the switch and again with `CONTRACT_REP_VARIANT=usd` (`scripts/run_usd_local.ps1` runs the revised steps in order), then `scripts/publish_results.py` for each analysis, and the three scripts above.
+The summaries themselves can only be recomputed in `phd_works` with the graph tables, which are kept in BigQuery (project `dissertation-bq`, dataset `contract_rep`) and not in either repository (`data/1-raw-blockchain-extracts/graph-tables*/` hold only their manifests). After downloading them (`scripts/download_graph_tables.sh`; for the revised analysis `scripts/run_usd12m_pipeline.py download`), run `scripts/run_same_window.py`, `scripts/run_holdout.py` and `scripts/run_registered.py` from `experiments/` without the switch and again with `CONTRACT_REP_VARIANT=usd12m` (`scripts/run_usd_local.ps1 -Variant usd12m` runs the revised steps in order), then `scripts/publish_results.py` for each analysis, and the three scripts above.
 
 ## closed-form/closed_form_check.json
 

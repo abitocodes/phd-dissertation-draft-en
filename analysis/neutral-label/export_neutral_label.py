@@ -53,8 +53,7 @@ PUB = "data/3-published-results-for-thesis"
 PROC = "data/2-processed-tables-and-evaluations"
 REGISTRATION_COMMIT = "0d3a057e4f0c8473d36d89fbe33c24deff0c9911"
 REGISTRATION_COMMITTED_UTC = "2026-10-09T16:49:32Z"
-REVISION_COMMITS = {"a897475": "2026-10-10T07:54:35Z", "09dfc32": "2026-10-10T08:12:44Z",
-                    "2705b28": "2026-10-10T11:24:01Z"}
+REVISION_DOCUMENTS = ("docs/revision_price_weighting.md", "docs/revision_one_year_window.md")
 
 N_BOOT, SEED = 2000, 42
 LIQ = "liquidation_free_rate"
@@ -105,13 +104,14 @@ WORDING = {
 }
 ANALYSES = {
     "revised": {
-        "pub": f"{PUB}/revised-usd",
-        "proc": f"{PROC}/revised-usd",
+        "pub": f"{PUB}/revised-usd-12m",
+        "proc": f"{PROC}/revised-usd-12m",
         "w1_dir": "window-w1",
-        "status": ("Re-analysis: amounts in USD over WETH, USDC, USDT0, ARB and WBTC "
-                   "(docs/revision_price_weighting.md), decided after the registered results were known and "
-                   "committed before any revised score (a897475, 09dfc32, 2705b28). The registered rules and "
-                   "thresholds are applied to it. Main analysis of the thesis (Chapter 4); never a registered result."),
+        "status": ("Re-analysis: amounts in USD over WETH, USDC, USDT0, ARB and WBTC and score windows of the "
+                   "twelve months before each freeze (docs/revision_price_weighting.md, "
+                   "docs/revision_one_year_window.md), defined after the registered results were known. The "
+                   "registered rules and thresholds are applied to it. Main analysis of the thesis (Chapter 4); "
+                   "never a registered result."),
     },
     "registered": {
         "pub": PUB,
@@ -184,7 +184,7 @@ def verify_registration(phd: Path, exp: Path) -> dict:
     manifest = json.loads((exp / manifest_rel).read_text(encoding="utf-8"))
     expected = manifest["sha256"]["docs/registration_w1.md"]
     copies = {}
-    for rel in ("docs/registration_w1.md", f"{PUB}/docs/registration_w1.md", f"{PUB}/revised-usd/docs/registration_w1.md"):
+    for rel in ("docs/registration_w1.md", f"{PUB}/docs/registration_w1.md", f"{PUB}/revised-usd-12m/docs/registration_w1.md"):
         b = (exp / rel).read_bytes()
         copies[rel] = {"sha256_lf": sha(b.replace(b"\r\n", b"\n")), "sha256_crlf": sha(crlf(b)),
                        "matches_manifest": sha(crlf(b)) == expected}
@@ -611,8 +611,8 @@ def main() -> int:
             "head": (git(phd, "rev-parse", "HEAD") or b"").decode().strip() or None,
             "experiments_dir": exp_rel,
             "computed_by": ("scripts/run_registered.py, function neutral (pairs NEUTRAL_PAIRS); revised analysis with "
-                            "CONTRACT_REP_VARIANT=usd, registered analysis with the variable unset"),
-            "revision_commits_utc": REVISION_COMMITS,
+                            "CONTRACT_REP_VARIANT=usd12m, registered analysis with the variable unset"),
+            "revision_documents": list(REVISION_DOCUMENTS),
         },
         "registration": registration,
         "plan_quotes": plan_quotes,
