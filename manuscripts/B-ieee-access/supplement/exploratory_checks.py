@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Exploratory checks for Manuscript B (IEEE Access), run on 11 October 2026.
+"""Exploratory checks for Manuscript B (IEEE Access).
 
 Every result of both analyses (registered and revised) was known when this script was
-written, so nothing here enters a decision rule and nothing here was fixed in advance.
+run, so nothing here enters a decision rule and nothing here was fixed in advance.
 The script reads only the per-contract score files and the published evaluation
 summaries of the experiment pipeline in the authors' repository ``phd_works``; it builds
 no graph and computes no new score. It does four things.
@@ -66,8 +66,8 @@ ANALYSES = {
         "same": "same-window",
     },
     "revised": {
-        "proc": "2-processed-tables-and-evaluations/revised-usd",
-        "pub": "3-published-results-for-thesis/revised-usd",
+        "proc": "2-processed-tables-and-evaluations/revised-usd-12m",
+        "pub": "3-published-results-for-thesis/revised-usd-12m",
         "w0": "holdout-w0",
         "w1": "window-w1",
         "same": "same-window",

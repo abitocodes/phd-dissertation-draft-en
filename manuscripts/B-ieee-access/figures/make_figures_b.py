@@ -13,7 +13,7 @@ font, so it embeds cleanly with pdf.fonttype 42) and then to TeX Gyre Termes.
 
 Every value is read from the published evaluation summaries of the experiment pipeline in the
 authors' repository phd_works (data/3-published-results-for-thesis/ for the registered analysis,
-its subfolder revised-usd/ for the revised analysis); nothing is typed in by hand.
+its subfolder revised-usd-12m/ for the revised analysis); nothing is typed in by hand.
 
     python make_figures_b.py --phd-works /path/to/phd_works      # or set PHD_WORKS
 """
@@ -57,7 +57,7 @@ def published_dirs(phd_works: Path) -> dict[str, Path]:
     for p in PROJECTS:
         pub = phd_works / "1-Dissertation-Works" / p / "experiments" / "data" / "3-published-results-for-thesis"
         if (pub / "results_digest.md").exists():
-            return {"registered": pub, "revised": pub / "revised-usd"}
+            return {"registered": pub, "revised": pub / "revised-usd-12m"}
     raise SystemExit(f"no published results under {phd_works}")
 
 
@@ -74,7 +74,7 @@ def load(pub: dict[str, Path]) -> dict:
 
 def sweep(S: dict) -> None:
     fig, axes = plt.subplots(2, 3, figsize=(7.16, 4.7), sharey="row")
-    rows = [("revised", "Revised analysis (main analysis, a re-analysis; US dollars, five tokens)"),
+    rows = [("revised", "Revised analysis (main analysis, a re-analysis; US dollars, five tokens, twelve-month score windows)"),
             ("registered", "Registered analysis (the pre-specified test; raw base units, every ERC-20)")]
     cols = [("W0 spenders (labels Apr–Jun)", "w0", "taus", [APPR, SEND]),
             ("W1 spenders (labels Jul–Sep)", "w1", "spender_taus", [APPR, SEND]),

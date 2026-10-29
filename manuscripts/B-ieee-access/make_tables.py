@@ -9,7 +9,7 @@ in a comment at the top of each table:
 
 - the published evaluation summaries, Sybil model and benchmark of both analyses
   (experiments/data/3-published-results-for-thesis/ for the registered analysis and its
-  subfolder revised-usd/ for the revised analysis), each checked against SHA256SUMS.txt;
+  subfolder revised-usd-12m/ for the revised analysis), each checked against SHA256SUMS.txt;
 - the extraction manifest of W1 and the job times in describe/describe.json;
 - the commit history of phd_works (git log), and SHA-256 of the registration files as git
   stores them (LF line ends) and as the manifest recorded them (CRLF line ends);
@@ -32,15 +32,22 @@ HERE = Path(__file__).resolve().parent
 PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
 APPR, SEND, LIQ = "future_new_approvers", "future_new_transfer_senders", "liquidation_free_rate"
 DELTA = 0.01
+REVISED = "revised-usd-12m"  # subfolder of the published results that holds the revised analysis
+# The dated record of the pre-specified test (commit times are printed in Tables 2 and 3).
 COMMITS = {
     "plan": "43d8045",
     "registration": "0d3a057",
     "registered_results": "8d8b568",
     "registered_benchmark": "f33a87a",
+}
+# The revised analysis, defined after the registered results were known; listed without times.
+REVISED_COMMITS = {
     "revision_doc": "a897475",
     "revision_tokens": "09dfc32",
     "revision_cap": "2705b28",
-    "revised_results": "77e71f5",
+    "revision_windows": "e6c352d",
+    "revised_code": "0a94215",
+    "revised_results": "950a7a4",
 }
 
 
@@ -98,7 +105,7 @@ def blob_sha(phd: Path, commit: str, project_dirs: list[str], rel: str) -> tuple
 def load(phd: Path) -> dict:
     exp, _ = locate(phd)
     base = exp / "data" / "3-published-results-for-thesis"
-    pubs = {"registered": base, "revised": base / "revised-usd"}
+    pubs = {"registered": base, "revised": base / REVISED}
     D: dict = {}
     for name, pub in pubs.items():
         w1 = "registered-w1" if name == "registered" else "window-w1"
@@ -121,6 +128,13 @@ def f3(x: float) -> str:
     s = f"{x:.3f}"
     if s in ("-0.000", "0.000"):
         s = "0.000"
+    return s.replace("-", "$-$")
+
+
+def f4(x: float) -> str:
+    s = f"{x:.4f}"
+    if s in ("-0.0000", "0.0000"):
+        s = "0.0000"
     return s.replace("-", "$-$")
 
 
@@ -174,7 +188,7 @@ def tab_holdout(D: dict) -> str:
         ("S-PR", "spr", "spr"),
     ]
     out = [header(["holdout-w0/eval_summary.json : taus (both analyses)",
-                   "registered-w1/eval_summary.json and revised-usd/window-w1/eval_summary.json : spender_taus, trader_taus"]),
+                   f"registered-w1/eval_summary.json and {REVISED}/window-w1/eval_summary.json : spender_taus, trader_taus"]),
            "\\begin{table*}[!t]",
            "\\centering",
            "\\caption{Kendall $\\tau_b$ Between Scores at the Freeze and Later Labels, With 95\\% Paired-Bootstrap Intervals}",
@@ -183,7 +197,8 @@ def tab_holdout(D: dict) -> str:
            "\\setlength{\\tabcolsep}{2.4pt}",
            "\\begin{tabular}{@{}lccccc@{}}",
            "\\toprule"]
-    for k, (name, title) in enumerate((("revised", "Revised analysis, the main analysis: a re-analysis under the pre-specified rules (US dollars, five tokens)"),
+    for k, (name, title) in enumerate((("revised", "Revised analysis, the main analysis, a re-analysis under the pre-specified rules "
+                                                   "(US dollars, five tokens, twelve-month score windows)"),
                                        ("registered", "Registered analysis, the pre-specified test (raw base units, every ERC-20 token)"))):
         w0, w1 = D[name]["w0"], D[name]["w1"]
         if k:
@@ -202,7 +217,9 @@ def tab_holdout(D: dict) -> str:
     rg, rv = D["registered"], D["revised"]
     out += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
             "\\parbox{\\textwidth}{\\footnotesize W0: scores frozen on 31 March 2026, labels counted from April to June 2026. "
-            "W1: scores frozen on 30 June 2026, labels counted from July to September 2026. Spenders are the contracts that hold a "
+            "W1: scores frozen on 30 June 2026, labels counted from July to September 2026. In the revised analysis every score is "
+            "computed from the twelve months before its freeze, in the registered analysis from every extracted event since "
+            "1 October 2023. Spenders are the contracts that hold a "
             "positive latest allowance at the freeze; traders are the GMX~V2 accounts that hold contract code, are nodes of the "
             "freeze-date graph and close at least three positions in the label window. "
             f"In the revised analysis {n(rv['w0']['gained_new_approvals'])} W0 spenders gained a new approval pair and "
@@ -253,7 +270,7 @@ def tab_contrasts(D: dict) -> str:
 
     out = [header(["holdout-w0/eval_summary.json : contrasts_prefixed, rule_a_primary, contrasts_after (both analyses)",
                    "same-window/eval_summary.json : rule_a_secondary (both analyses)",
-                   "registered-w1/eval_summary.json and revised-usd/window-w1/eval_summary.json : rule_b, "
+                   f"registered-w1/eval_summary.json and {REVISED}/window-w1/eval_summary.json : rule_b, "
                    "sensitivity_awp, sensitivity_isolated, endorserank_results"]),
            "\\begin{table*}[!t]",
            "\\centering",
@@ -322,7 +339,8 @@ def tab_contrasts(D: dict) -> str:
             "\\parbox{\\textwidth}{\\footnotesize $\\Delta\\tau=\\tau_a-\\tau_b$ on the same resamples. C-PR without a $\\lambda$ is the primary setting $\\lambda=0.5$; liquidation-free rate: the liquidation-free close rate of the W1 traders. Superiority holds "
             "when the interval lies above zero, non-inferiority when its lower end lies above $-\\delta=-0.01$, and ``no worse'' when "
             "the interval contains zero or lies above it. The revised column, the main analysis, applies the rules and thresholds of the "
-            "plan and the registration to scores defined after the registered results were known, so none of its verdicts is a "
+            "plan and the registration to scores defined after the registered results were known (amounts in US dollars, five tokens, "
+            "scores from the twelve months before each freeze), so none of its verdicts is a "
             "registered result; the registered column is the test that the plan and the registration fixed. Nominal verdicts use unadjusted 95\\% intervals; the fixed order was an "
             "order of reporting, not a gatekeeping sequence. The degree, EndorseRank and AWP rows are reference contrasts reported in "
             "full in \\cite{kwon2026companion}. Intervals: 400 paired resamples, seed 42.}",
@@ -332,10 +350,10 @@ def tab_contrasts(D: dict) -> str:
 
 def tab_bench(D: dict) -> str:
     rows = [("EndorseRank", "endorserank"), ("AWP", "awp"), ("C-PR ($\\lambda=0.5$)", "cpr_l50"), ("S-PR", "spr")]
-    out = [header(["benchmark/benchmark.json : main (registered analysis and revised-usd/)"]),
+    out = [header([f"benchmark/benchmark.json : main (registered analysis and {REVISED}/)"]),
            "\\begin{table}[!t]",
            "\\centering",
-           "\\caption{Solver Time on the Full Graphs at the End of the Observation Window (Mean and SD of Five Timed Runs After One Warm-Up)}",
+           "\\caption{Solver Time on the Full Graphs at the Freeze of 30 June 2026 (Mean and SD of Five Timed Runs After One Warm-Up)}",
            "\\label{tab:bench}",
            "\\footnotesize",
            "\\setlength{\\tabcolsep}{3pt}",
@@ -367,17 +385,23 @@ def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
         ("Registration of W1 (rule B, R1--R3)", "registration"),
         ("Registered results committed", "registered_results"),
         ("Registered benchmark and data description", "registered_benchmark"),
-        ("Revision document", "revision_doc"),
-        ("Revision: five tokens and prices", "revision_tokens"),
-        ("Revision: cap amended, constants", "revision_cap"),
+    ]
+    revised_rows = [
+        ("US-dollar amounts, token rule and slopes", "revision_doc"),
+        ("Five tokens and price inputs", "revision_tokens"),
+        ("Cap rule of the C-PR authorization layer", "revision_cap"),
+        ("Score windows: the twelve months before each freeze", "revision_windows"),
+        ("Cohorts and constants; code revision of the results", "revised_code"),
         ("Revised results committed", "revised_results"),
     ]
-    out = [header(["git log of phd_works (commit identifiers and committer times, converted to UTC)",
+    out = [header(["git log of phd_works (commit identifiers and committer times, converted to UTC; "
+                   "the revised analysis is listed without times)",
                    "registered-w1/extraction_manifest.json : sha256 (CRLF checkout)",
                    "git show <commit>:<experiments>/docs/registration_w1.md and config/contract_reputation.yaml (LF, as stored)"]),
            "\\begin{table}[!t]",
            "\\centering",
-           "\\caption{Commit Identifiers and SHA-256 Hashes of the Pre-Specification Record (Times in UTC)}",
+           "\\caption{Commit Identifiers of the Pre-Specification Record (Times in UTC) and of the Revised Analysis, "
+           "and SHA-256 Hashes of the Registration Files and the Plan}",
            "\\label{tab:ids}",
            "\\footnotesize",
            "\\setlength{\\tabcolsep}{0pt}",
@@ -386,6 +410,13 @@ def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
     for label, key in rows:
         full, t = commit_info(phd, COMMITS[key])
         out.append(f"{label}, {t.day} {t.strftime('%b')} {utc(t)}\\\\")
+        out.append(f"\\quad\\sha{{{full}}}\\\\")
+    out.append("\\midrule")
+    out.append("\\emph{Revised analysis (US-dollar amounts, five tokens, scores from the twelve months before each freeze), "
+               "defined after the registered results were known}\\\\")
+    for label, key in revised_rows:
+        full, _ = commit_info(phd, REVISED_COMMITS[key])
+        out.append(f"{label}\\\\")
         out.append(f"\\quad\\sha{{{full}}}\\\\")
     out.append("\\midrule")
     files = [("docs/registration_w1.md", "registration document"), ("config/contract_reputation.yaml", "configuration")]
@@ -427,6 +458,7 @@ def tab_timeline(phd: Path, D: dict) -> str:
     gap_b = int((scan_b_c - t["registration"]).total_seconds())
     gap_m = int((m_s - t["registration"]).total_seconds())
     rg = D["registered"]
+    c = D["revised"]["describe"]["constants"]
     rows = [
         (f"9 Oct, {utc(t['plan'])}", "Analysis plan and configuration committed: cohort rule, scores (C-PR at $\\lambda\\in\\{0.25,0.5,0.75\\}$ "
          "and its end points, S-PR), W0 labels, statistics and rule~A; amounts in raw base units, every ERC-20 token",
@@ -447,22 +479,20 @@ def tab_timeline(phd: Path, D: dict) -> str:
         (f"{t['registered_benchmark'].day} {t['registered_benchmark'].strftime('%b')}, {utc(t['registered_benchmark'])}",
          "Registered benchmark and data description (BigQuery job times, amount shares) committed",
          "\\sha{f33a87a}", "W1 labels"),
-        (f"10 Oct, {utc(t['revision_doc'])}", "Revision document: amounts in US dollars, token rule, slopes $b=\\ln 3/m$; a deviation from the plan and the registration",
-         "\\sha{a897475}", "Every registered result"),
-        (f"10 Oct, {utc(t['revision_tokens'])}", "Five tokens (WETH, USDC, USDT0, ARB, WBTC) and the price inputs", "\\sha{09dfc32}", "Every registered result"),
-        (f"10 Oct, {utc(t['revision_cap'])}", "Cap $U=20{,}000$ dollars of the C-PR authorization layer; $m_T=200$, $m_A=62$ dollars",
-         "\\sha{2705b28}", "Revised medians and percentiles; no revised score"),
-        ("10 Oct, from 11:36", "Revised scores computed; rules A, B and R1--R3 applied unchanged", "Authors' account; no commit", "Every registered result"),
-        (f"10 Oct, {utc(t['revised_results'])}", "Revised results committed", "\\sha{77e71f5}", "---"),
-        ("11 Oct", "Exploratory checks of Appendix~\\ref{app:explore}", "This paper's supplement", "Every result above"),
+        ("Later", "Revised analysis, a deviation from the plan and the registration: amounts in US dollars on five tokens (WETH, USDC, "
+         "USDT0, ARB, WBTC), slopes $b=\\ln 3/m$, a cap $U$ on the C-PR authorization layer, and scores from the twelve months "
+         f"before each freeze with one cohort per freeze; constants $m_T={c['m_transfer_usd']:.0f}$, $m_A={c['m_allowance_usd']:.0f}$ "
+         f"and $U={n(round(c['cap_allowance_usd']))}$ dollars; rules~A, B and R1--R3 applied with their thresholds; results committed",
+         "Commits in Table~\\ref{tab:ids}; results in \\sha{950a7a4}", "Every registered result"),
+        ("Later", "Exploratory checks of Appendix~\\ref{app:explore}", "This paper's supplement", "Every result above"),
     ]
-    out = [header(["git log of phd_works (committer times converted to UTC)",
+    out = [header(["git log of phd_works (committer times converted to UTC; the revised analysis is listed without times)",
                    "registered-w1/extraction_manifest.json : started_at, finished_at",
                    "describe/describe.json : timing (BigQuery job creation and end times of scans A and B)",
-                   "thesis Chapter 4, Section Implementation (revised scores computed from 11:36 UTC)"]),
+                   f"{REVISED}/describe/describe.json : constants (m_T, m_A, U)"]),
            "\\begin{table*}[!t]",
            "\\centering",
-           "\\caption{Order of Commitments, the Record That Dates Each, and What Was Known When It Was Made (2026, Times in UTC)}",
+           "\\caption{Order of Commitments, the Record of Each, and What Was Known When It Was Made (2026, Times in UTC)}",
            "\\label{tab:timeline}",
            "\\footnotesize",
            "\\setlength{\\tabcolsep}{3pt}",
@@ -491,7 +521,7 @@ def tab_explore(D: dict) -> str:
            "\\caption{Exploratory Checks, Computed After Every Result of Both Analyses Was Known}",
            "\\label{tab:explore}",
            "\\footnotesize",
-           "\\setlength{\\tabcolsep}{3.2pt}",
+           "\\setlength{\\tabcolsep}{2.4pt}",
            "\\begin{tabular}{@{}llcc@{}}",
            "\\toprule",
            " & & Revised analysis & Registered analysis \\\\"]
@@ -505,7 +535,7 @@ def tab_explore(D: dict) -> str:
         for name, _ in names:
             s = E["seed_spread"][name][k]
             end = "ci_high" if k == "A1" else "ci_low"
-            cells.append(f"{f3(s[end + '_mean'])} ({s[end + '_sd']:.4f}) [{f3(s[end + '_min'])}, {f3(s[end + '_max'])}]; "
+            cells.append(f"{f4(s[end + '_mean'])} ({s[end + '_sd']:.4f}) [{f4(s[end + '_min'])}, {f4(s[end + '_max'])}]; "
                          f"{s['seeds_with_other_verdict']} of {s['seeds']}")
         endname = "upper end" if k == "A1" else "lower end"
         out.append(f"{text} & {endname} & " + " & ".join(cells) + " \\\\")
@@ -531,8 +561,8 @@ def tab_explore(D: dict) -> str:
                 cells.append(f"{f3(e['tau_b'])} [{f3(e['ci_low'])}, {f3(e['ci_high'])}]")
             out.append(f"{text if i == 0 else ''} & {pl} & " + " & ".join(cells) + " \\\\")
     out += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
-            "\\parbox{\\textwidth}{\\footnotesize Computed on 11 October 2026 from the per-contract score files of the pipeline; "
-            "no row enters a rule. The script first recomputes every decision contrast of Table~\\ref{tab:contrasts} except those "
+            "\\parbox{\\textwidth}{\\footnotesize Computed from the per-contract score files of the pipeline after every result of "
+            "both analyses was known; no row enters a rule. The script first recomputes every decision contrast of Table~\\ref{tab:contrasts} except those "
             "of S2 and reproduces the published values exactly. In (a) the A1 row reports the upper end, which decides "
             "``no worse''; every other row the lower end.}",
             "\\end{table*}", ""]
