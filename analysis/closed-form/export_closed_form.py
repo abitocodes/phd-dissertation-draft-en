@@ -272,7 +272,7 @@ def main() -> int:
             "experiments_dir": exp_rel,
             "computed_by": ("scripts/run_same_window.py (function closed_form; graph at T_obs) and "
                             "scripts/run_holdout.py (same function; graph at t1); revised analysis with "
-                            "CONTRACT_REP_VARIANT=usd, registered analysis with the variable unset"),
+                            "CONTRACT_REP_VARIANT=usd12m, registered analysis with the variable unset"),
         },
         "definitions": {
             "c": "common score of the nodes without in-edges (median over them; spread_of_c = max/min over them)",

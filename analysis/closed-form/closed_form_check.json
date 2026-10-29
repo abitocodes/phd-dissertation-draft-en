@@ -5,7 +5,7 @@
     "repository": "https://github.com/abitocodes/phd_works",
     "head": "c5ef6f518fa69ad8410f59301c241a2875432679",
     "experiments_dir": "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
-    "computed_by": "scripts/run_same_window.py (function closed_form; graph at T_obs) and scripts/run_holdout.py (same function; graph at t1); revised analysis with CONTRACT_REP_VARIANT=usd, registered analysis with the variable unset"
+    "computed_by": "scripts/run_same_window.py (function closed_form; graph at T_obs) and scripts/run_holdout.py (same function; graph at t1); revised analysis with CONTRACT_REP_VARIANT=usd12m, registered analysis with the variable unset"
   },
   "definitions": {
     "c": "common score of the nodes without in-edges (median over them; spread_of_c = max/min over them)",
