@@ -1,14 +1,14 @@
 # Results tables
 
 LaTeX fragments read by Chapter 4 and the appendix. Every file is written by `scripts/export_latex.py` in
-`1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/` of `phd_works` from the evaluation
-summaries in its `data/2-processed-tables-and-evaluations/` (revised analysis: `revised-usd/`); the copies behind the
-thesis, with every number and its JSON key, are in `data/3-published-results-for-thesis/revised-usd/results_digest.md`.
+`experiments/` of the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation) from the evaluation
+summaries in its `data/2-processed-tables-and-evaluations/` (revised analysis: `revised-usd-12m/`); the copies behind the
+thesis, with every number and its JSON key, are in `data/3-published-results-for-thesis/revised-usd-12m/results_digest.md`.
 Do not edit these files by hand; regenerate them:
 
 ```bash
-cd 1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments
-CONTRACT_REP_VARIANT=usd python scripts/export_latex.py
+cd experiments                                  # of the public repository
+CONTRACT_REP_VARIANT=usd12m python scripts/export_latex.py --into-manuscript
 ```
 
 The same command writes the five figures in `Figures/generated/`.

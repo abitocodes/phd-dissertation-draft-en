@@ -1,19 +1,19 @@
 # Supporting analyses for the manuscripts
 
-Two analyses that the journal manuscripts (`manuscripts/A-plos-one/`, `manuscripts/B-ieee-access/`) report beyond the thesis tables: the closed form of EndorseRank on depth-one spenders, and the comparison of allowance-side with transfer-side scores on GMX V2 contract traders, an outcome built from neither edge type (rules R1–R3). The experiment pipeline in `phd_works` computes both. The scripts here copy the values of both analyses, the revised one (USD amounts, five tokens, scores from the twelve months before each freeze, cohort 6,483; the thesis's main analysis) and the registered one (raw base units, every ERC-20, cohort 27,844; thesis Appendix 8.6), into JSON files with their sources, and check them against the published checksums, the per-contract score files and the results digests. They compute no new statistic.
+Two analyses that the journal manuscripts (`manuscripts/A-plos-one/`, `manuscripts/B-ieee-access/`) report beyond the thesis tables: the closed form of EndorseRank on depth-one spenders, and the comparison of allowance-side with transfer-side scores on GMX V2 contract traders, an outcome built from neither edge type (rules R1–R3). The experiment pipeline (folder `experiments/` of the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation)) computes both. The scripts here copy the values of both analyses, the revised one (USD amounts, five tokens, scores from the twelve months before each freeze, cohort 6,483; the thesis's main analysis) and the registered one (raw base units, every ERC-20, cohort 27,844; thesis Appendix 8.6), into JSON files with their sources, and check them against the published checksums, the per-contract score files and the results digests. They compute no new statistic.
 
 | Path | Content |
 |---|---|
 | `closed-form/export_closed_form.py` | Writes `closed-form/closed_form_check.json` from the `closed_form` blocks of the same-window and W0 summaries of both analyses, with checks on the score files |
 | `closed-form/closed_form_check.json` | Output: one row per analysis and graph (4 rows) |
-| `neutral-label/PLAN.md` | The registered rules R1–R3 and comparisons, quoted verbatim from `docs/registration_w1.md` (commit `0d3a057`, SHA-256 from the W1 extraction manifest), and what was computed after the labels were known |
+| `neutral-label/PLAN.md` | The registered rules R1–R3 and comparisons, quoted verbatim from `docs/registration_w1.md` (commit `1747e64` of the public repository, `0d3a057` in the authors' repository; SHA-256 from the W1 extraction manifest), and what was computed after the labels were known |
 | `neutral-label/export_neutral_label.py` | Writes `neutral-label/results.json` from the `neutral_w1`, `neutral_w0` and `neutral_rules` blocks of the W1 summaries of both analyses, and recomputes them from the trader score files as a check |
 | `neutral-label/results.json` | Output: every contrast of the grid, stratified contrasts, single-score τ, recipient comparison, influence check, verdicts of R1–R3 |
 | `compare_with_digest.py` | Formats the outputs as the results digests do and compares every digest row of the two sections |
 
 ## Where the numbers are computed
 
-Repository <https://github.com/abitocodes/phd_works>, experiment folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/`. In the commits that produced the registered results (`43d8045` to `8d8b568`) the same folder was `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments/`; the scripts look for both.
+Public repository <https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation>, experiment folder `experiments/`. It holds the study's folder of the authors' private repository with its commit history; the copied commits keep the original times and contents but have new identifiers, and its `HISTORY.md` lists the original ones, which the manifests and digests record. The scripts also run in a checkout of the authors' repository, where the folder is the submodule `1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/` (before the study moved, `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments/`).
 
 | Quantity | Code (in `experiments/`) | Summary file and key |
 |---|---|---|
@@ -22,16 +22,16 @@ Repository <https://github.com/abitocodes/phd_works>, experiment folder `1-Disse
 | Trader comparison, W1 and W0, rules R1–R3 | `scripts/run_registered.py`, function `neutral`, pairs `NEUTRAL_PAIRS`, rules in `main` | W1 summary : `neutral_w1`, `neutral_w0`, `neutral_rules` |
 
 - The switch `CONTRACT_REP_VARIANT=usd12m` selects the revised analysis; without it the registered one runs (`scripts/common.py`).
-- Published summaries: registered in `data/3-published-results-for-thesis/` (W1 summary `registered-w1/eval_summary.json`; commit `8d8b568`, 2026-10-09 18:00:55 UTC), revised in `data/3-published-results-for-thesis/revised-usd-12m/` (W1 summary `window-w1/eval_summary.json`; commit `950a7a4`). Each folder holds `results_digest.md`, which names the code revision of the run (`8d8b568` with the uncommitted changes it lists, and `0a94215`), and `SHA256SUMS.txt`. The checksums were taken on a Windows checkout with CRLF line ends, so the scripts hash each file in its CRLF form.
+- Published summaries: registered in `data/3-published-results-for-thesis/` (W1 summary `registered-w1/eval_summary.json`; commit `344017e`, 2026-10-09 18:00:55 UTC), revised in `data/3-published-results-for-thesis/revised-usd-12m/` (W1 summary `window-w1/eval_summary.json`; commit `dbe9ad6`). Each folder holds `results_digest.md`, which names the code revision of the run by its original identifier (`8d8b568` with the uncommitted changes it lists, and `0a94215`; `344017e` and `77a1e49` in the public repository), and `SHA256SUMS.txt`. The checksums were taken on a Windows checkout with CRLF line ends, so the scripts hash each file in its CRLF form.
 - Per-contract score files used for the checks: `data/2-processed-tables-and-evaluations/[revised-usd-12m/]same-window/cohort_scores`, `holdout-w0/spender_scores`, `holdout-w0/trader_scores` and `registered-w1/trader_scores` (registered) or `window-w1/trader_scores` (revised), as parquet parts.
-- Pre-specification: `docs/analysis_plan.md` (commit `43d8045`, 2026-10-09 13:41:27 UTC) and `docs/registration_w1.md` (commit `0d3a057`, 2026-10-09 16:49:32 UTC). The revised analysis (`docs/revision_price_weighting.md`, `docs/revision_one_year_window.md`: USD amounts, five tokens, scores from the twelve months before each freeze) was defined after the registered results were known. R1–R3 are defined only in the registration, section 3; the plan (section 7) leaves the comparison to it.
+- Pre-specification: `docs/analysis_plan.md` (commit `d060f3a`, 2026-10-09 13:41:27 UTC) and `docs/registration_w1.md` (commit `1747e64`, 2026-10-09 16:49:32 UTC). The revised analysis (`docs/revision_price_weighting.md`, `docs/revision_one_year_window.md`: USD amounts, five tokens, scores from the twelve months before each freeze) was defined after the registered results were known. R1–R3 are defined only in the registration, section 3; the plan (section 7) leaves the comparison to it.
 
 ## How to regenerate
 
-Python 3.10 or later with numpy, pandas, pyarrow and PyYAML (run here with Python 3.13, numpy 2.5, pandas 3.0, pyarrow 26, PyYAML 6.0). The path to a `phd_works` checkout is required; nothing is guessed.
+Python 3.10 or later with numpy, pandas, pyarrow and PyYAML (run here with Python 3.13, numpy 2.5, pandas 3.0, pyarrow 26, PyYAML 6.0). The path to a checkout of the public repository is required (a checkout of the authors' repository also works); nothing is guessed. The per-contract score files are in the Google Drive folder listed in `experiments/drive-manifest.json`; `experiments/scripts/drive_sync.py pull` downloads them.
 
 ```bash
-export PHD_WORKS=/path/to/phd_works          # or pass --phd-works PATH to each script
+export CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation   # or pass --repo PATH to each script
 python analysis/closed-form/export_closed_form.py
 python analysis/neutral-label/export_neutral_label.py      # about 15 s; --no-recompute skips the check
 python analysis/compare_with_digest.py
@@ -39,7 +39,7 @@ python analysis/compare_with_digest.py
 
 Each script exits with status 1 if a checksum, a quote, a verdict or a recomputed value does not match. On 29 October 2026 all three passed: every summary matched `SHA256SUMS.txt`, every score-file check passed, the recomputation reproduced all 2,204 neutral-label values to within 2 × 10⁻¹⁶, and the 520 digest rows of the closed-form and neutral-label sections equal the outputs.
 
-The summaries themselves can only be recomputed in `phd_works` with the graph tables, which are kept in BigQuery (project `dissertation-bq`, dataset `contract_rep`) and not in either repository (`data/1-raw-blockchain-extracts/graph-tables*/` hold only their manifests). After downloading them (`scripts/download_graph_tables.sh`; for the revised analysis `scripts/run_usd12m_pipeline.py download`), run `scripts/run_same_window.py`, `scripts/run_holdout.py` and `scripts/run_registered.py` from `experiments/` without the switch and again with `CONTRACT_REP_VARIANT=usd12m` (`scripts/run_usd_local.ps1 -Variant usd12m` runs the revised steps in order), then `scripts/publish_results.py` for each analysis, and the three scripts above.
+The summaries themselves can only be recomputed in the experiment folder with the graph tables, which are kept in BigQuery (project `dissertation-bq`, dataset `contract_rep`) and not in either repository (`data/1-raw-blockchain-extracts/graph-tables*/` hold only their manifests). After downloading them (`scripts/download_graph_tables.sh`; for the revised analysis `scripts/run_usd12m_pipeline.py download`), run `scripts/run_same_window.py`, `scripts/run_holdout.py` and `scripts/run_registered.py` from `experiments/` without the switch and again with `CONTRACT_REP_VARIANT=usd12m` (`scripts/run_usd_local.ps1 -Variant usd12m` runs the revised steps in order), then `scripts/publish_results.py` for each analysis, and the three scripts above.
 
 ## closed-form/closed_form_check.json
 

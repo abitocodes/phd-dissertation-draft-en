@@ -8,7 +8,7 @@ depth-one spender) scores exactly
     s(v) = c * (1 + d * delta(v)),   delta(v) = sum_u w(u, v) / o(u),
 
 where o(u) is the out-strength of owner u (thesis, Chapter 5, "EndorseRank on
-depth-one spenders"). The experiment pipeline in phd_works computes the check on
+depth-one spenders"). The experiment pipeline (folder experiments/ of the public repository) computes the check on
 the allowance edges (function ``closed_form`` in ``scripts/run_same_window.py``,
 called by ``run_same_window.py`` on the graph at T_obs and by ``run_holdout.py`` on
 the graph at t1) and stores it under the key ``closed_form`` of each
@@ -22,10 +22,11 @@ recompute the check. It
 2. runs the checks that the per-contract score files allow without the edges
    (see ``score_file_check`` in the output and analysis/README.md).
 
-Usage (the path to a phd_works checkout is required):
+Usage (the path to a checkout of the public repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation
+is required; a checkout of the authors' repository, which holds it as a submodule, also works):
 
-    PHD_WORKS=/path/to/phd_works python export_closed_form.py
-    python export_closed_form.py --phd-works /path/to/phd_works
+    CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation python export_closed_form.py
+    python export_closed_form.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation
 """
 
 from __future__ import annotations
@@ -45,10 +46,11 @@ import yaml
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "closed_form_check.json"
 
-# Location of the experiment folder inside phd_works. The first entry is the
-# current folder; the second is where the same folder sat in the commits that
-# produced the results (43d8045 to 77e71f5).
+# Location of the experiment folder: experiments/ in a checkout of the public repository;
+# in a checkout of the authors' repository, the submodule that holds it, or the folder's
+# name there before the study moved.
 EXPERIMENT_DIRS = (
+    "experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
 )
@@ -103,15 +105,16 @@ WINDOWS = {
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    p.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"),
-                   help="path to a phd_works checkout (or set PHD_WORKS)")
+    p.add_argument("--repo", "--phd-works", dest="phd_works",
+                   default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                   help="path to a checkout of the public repository (or set CONTRACT_REP_REPO)")
     p.add_argument("--experiments-subdir", default=None,
-                   help="experiment folder relative to phd_works (default: the first of "
+                   help="experiment folder relative to the repository (default: the first of "
                         + ", ".join(EXPERIMENT_DIRS) + " that exists)")
     p.add_argument("--out", default=str(OUT), help="output JSON (default: %(default)s)")
     a = p.parse_args()
     if not a.phd_works:
-        p.error("give --phd-works PATH or set the environment variable PHD_WORKS")
+        p.error("give --repo PATH or set the environment variable CONTRACT_REP_REPO")
     return a
 
 
@@ -121,6 +124,11 @@ def experiments_dir(phd_works: Path, subdir: str | None) -> tuple[Path, str]:
         if (d / PUB).is_dir():
             return d, rel
     raise SystemExit(f"no experiment folder with {PUB} under {phd_works}")
+
+
+def repository_url(exp_rel: str) -> str:
+    """The repository the run read: the public one, or the authors' private one that holds it."""
+    return "https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation" if exp_rel == "experiments" else "https://github.com/abitocodes/phd_works"
 
 
 def git_head(repo: Path) -> str | None:
@@ -264,10 +272,10 @@ def main() -> int:
 
     report = {
         "what": ("Closed-form check of EndorseRank, s(v) = c (1 + d delta(v)) for spenders whose owners have no "
-                 "in-edges, copied from the evaluation summaries of phd_works for both analyses and both graphs."),
+                 "in-edges, copied from the evaluation summaries of the experiment pipeline for both analyses and both graphs."),
         "generated_by": "analysis/closed-form/export_closed_form.py",
         "phd_works": {
-            "repository": "https://github.com/abitocodes/phd_works",
+            "repository": repository_url(exp_rel),
             "head": git_head(phd),
             "experiments_dir": exp_rel,
             "computed_by": ("scripts/run_same_window.py (function closed_form; graph at T_obs) and "

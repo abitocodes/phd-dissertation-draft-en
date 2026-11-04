@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare the JSON files of analysis/ with the results digests of phd_works.
+"""Compare the JSON files of analysis/ with the results digests of the experiment pipeline.
 
 Each digest (``results_digest.md`` of the registered analysis and of the revised one)
 lists every quoted number with the summary file and key it comes from. This script
@@ -11,7 +11,7 @@ neutral-label sections were matched, lists any difference, and prints a sample.
 
 Usage:
 
-    PHD_WORKS=/path/to/phd_works python compare_with_digest.py [--show 12]
+    CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation python compare_with_digest.py [--show 12]
 """
 
 from __future__ import annotations
@@ -25,6 +25,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 EXPERIMENT_DIRS = (
+    "experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
 )
@@ -145,12 +146,13 @@ def expected_strings() -> dict[tuple[str, str, str], str]:
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    p.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"),
-                   help="path to a phd_works checkout (or set PHD_WORKS)")
+    p.add_argument("--repo", "--phd-works", dest="phd_works",
+                   default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                   help="path to a checkout of the public repository (or set CONTRACT_REP_REPO)")
     p.add_argument("--show", type=int, default=len(SAMPLE), help="number of sample rows to print")
     a = p.parse_args()
     if not a.phd_works:
-        p.error("give --phd-works PATH or set the environment variable PHD_WORKS")
+        p.error("give --repo PATH or set the environment variable CONTRACT_REP_REPO")
     phd = Path(a.phd_works).expanduser().resolve()
     exp_dir = next((phd / rel for rel in EXPERIMENT_DIRS if (phd / rel / PUB).is_dir()), None)
     if exp_dir is None:

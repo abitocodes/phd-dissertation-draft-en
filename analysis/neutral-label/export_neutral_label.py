@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Export the comparison on trader outcomes built from neither edge type (rules R1-R3).
 
-The W1 registration of phd_works (docs/registration_w1.md, commit 0d3a057; quoted in
-PLAN.md) sets allowance-side against transfer-side scores on GMX V2 contract traders,
+The W1 registration (experiments/docs/registration_w1.md, commit 1747e64 of the public
+repository, 0d3a057 in the authors' repository; quoted in PLAN.md) sets allowance-side against transfer-side scores on GMX V2 contract traders,
 whose closes enter neither graph, in W1 (primary) and W0 (secondary). The pipeline
 computes every value (scripts/run_registered.py, function ``neutral``) and stores it
 under the keys ``neutral_w1``, ``neutral_w0`` and ``neutral_rules`` of the W1 evaluation
@@ -20,10 +20,11 @@ summary. This script
    (2,000 resamples, seed 42) and reports the largest differences (``recompute_check``).
    This is a check of the copy; results.json reports the pipeline's values.
 
-Usage (the path to a phd_works checkout is required):
+Usage (the path to a checkout of the public repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation
+is required; a checkout of the authors' repository, which holds it as a submodule, also works):
 
-    PHD_WORKS=/path/to/phd_works python export_neutral_label.py
-    python export_neutral_label.py --phd-works /path/to/phd_works [--no-recompute]
+    CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation python export_neutral_label.py
+    python export_neutral_label.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation [--no-recompute]
 """
 
 from __future__ import annotations
@@ -46,12 +47,16 @@ OUT = HERE / "results.json"
 PLAN = HERE / "PLAN.md"
 
 EXPERIMENT_DIRS = (
+    "experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
 )
 PUB = "data/3-published-results-for-thesis"
 PROC = "data/2-processed-tables-and-evaluations"
+# The registration commit as the extraction manifest records it (authors' repository) and in the
+# public repository, which holds a copy of the history with new identifiers (its HISTORY.md).
 REGISTRATION_COMMIT = "0d3a057e4f0c8473d36d89fbe33c24deff0c9911"
+PUBLIC_REGISTRATION_COMMIT = "1747e64884a2fd0adf1f76433e604474387d5ce2"
 REGISTRATION_COMMITTED_UTC = "2026-10-09T16:49:32Z"
 REVISION_DOCUMENTS = ("docs/revision_price_weighting.md", "docs/revision_one_year_window.md")
 
@@ -128,17 +133,18 @@ ANALYSES = {
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    p.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"),
-                   help="path to a phd_works checkout (or set PHD_WORKS)")
+    p.add_argument("--repo", "--phd-works", dest="phd_works",
+                   default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                   help="path to a checkout of the public repository (or set CONTRACT_REP_REPO)")
     p.add_argument("--experiments-subdir", default=None,
-                   help="experiment folder relative to phd_works (default: the first of "
+                   help="experiment folder relative to the repository (default: the first of "
                         + ", ".join(EXPERIMENT_DIRS) + " that exists)")
     p.add_argument("--out", default=str(OUT), help="output JSON (default: %(default)s)")
     p.add_argument("--no-recompute", action="store_true",
                    help="skip the recomputation from the trader score files")
     a = p.parse_args()
     if not a.phd_works:
-        p.error("give --phd-works PATH or set the environment variable PHD_WORKS")
+        p.error("give --repo PATH or set the environment variable CONTRACT_REP_REPO")
     return a
 
 
@@ -148,6 +154,11 @@ def experiments_dir(phd_works: Path, subdir: str | None) -> tuple[Path, str]:
         if (d / PUB).is_dir():
             return d, rel
     raise SystemExit(f"no experiment folder with {PUB} under {phd_works}")
+
+
+def repository_url(exp_rel: str) -> str:
+    """The repository the run read: the public one, or the authors' private one that holds it."""
+    return "https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation" if exp_rel == "experiments" else "https://github.com/abitocodes/phd_works"
 
 
 def git(repo: Path, *args: str) -> bytes | None:
@@ -189,10 +200,11 @@ def verify_registration(phd: Path, exp: Path) -> dict:
         copies[rel] = {"sha256_lf": sha(b.replace(b"\r\n", b"\n")), "sha256_crlf": sha(crlf(b)),
                        "matches_manifest": sha(crlf(b)) == expected}
     at_commit = None
-    for rel in EXPERIMENT_DIRS:
-        b = git(phd, "show", f"{REGISTRATION_COMMIT}:{rel}/docs/registration_w1.md")
+    candidates = [(PUBLIC_REGISTRATION_COMMIT, "experiments")] + [(REGISTRATION_COMMIT, rel) for rel in EXPERIMENT_DIRS[1:]]
+    for commit, rel in candidates:
+        b = git(phd, "show", f"{commit}:{rel}/docs/registration_w1.md")
         if b is not None:
-            at_commit = {"path": f"{rel}/docs/registration_w1.md", "sha256_lf": sha(b),
+            at_commit = {"commit": commit, "path": f"{rel}/docs/registration_w1.md", "sha256_lf": sha(b),
                          "sha256_crlf": sha(crlf(b)), "matches_manifest": sha(crlf(b)) == expected}
             break
     return {
@@ -603,11 +615,11 @@ def main() -> int:
                  "edge type: every contrast of the grid, the stratified contrasts, single-score coefficients, the "
                  "recipient comparison, the influence check and the verdicts of R1-R3, for the revised and the "
                  "registered analysis in W1 (primary) and W0 (secondary). Copied from the evaluation summaries of "
-                 "phd_works; nothing is computed here except recompute_check."),
+                 "the experiment pipeline; nothing is computed here except recompute_check."),
         "generated_by": "analysis/neutral-label/export_neutral_label.py",
         "plan": "analysis/neutral-label/PLAN.md",
         "phd_works": {
-            "repository": "https://github.com/abitocodes/phd_works",
+            "repository": repository_url(exp_rel),
             "head": (git(phd, "rev-parse", "HEAD") or b"").decode().strip() or None,
             "experiments_dir": exp_rel,
             "computed_by": ("scripts/run_registered.py, function neutral (pairs NEUTRAL_PAIRS); revised analysis with "
