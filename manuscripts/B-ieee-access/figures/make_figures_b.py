@@ -12,10 +12,13 @@ face first, falling back to Liberation Serif (metric-compatible with Times New R
 font, so it embeds cleanly with pdf.fonttype 42) and then to TeX Gyre Termes.
 
 Every value is read from the published evaluation summaries of the experiment pipeline in the
-authors' repository phd_works (data/3-published-results-for-thesis/ for the registered analysis,
-its subfolder revised-usd-12m/ for the revised analysis); nothing is typed in by hand.
+public repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation
+(experiments/data/3-published-results-for-thesis/ for the registered analysis, its subfolder
+revised-usd-12m/ for the revised analysis); nothing is typed in by hand.
 
-    python make_figures_b.py --phd-works /path/to/phd_works      # or set PHD_WORKS
+    python make_figures_b.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation   # or set CONTRACT_REP_REPO
+
+A checkout of the authors' repository, which holds the public one as a submodule, also works.
 """
 
 from __future__ import annotations
@@ -53,12 +56,13 @@ STYLE = {APPR: (S1, "o", "New approval pairs"), SEND: (S2, "s", "New transfer se
          LIQ: (S3, "^", "Liquidation-free close rate")}
 
 
-def published_dirs(phd_works: Path) -> dict[str, Path]:
-    for p in PROJECTS:
-        pub = phd_works / "1-Dissertation-Works" / p / "experiments" / "data" / "3-published-results-for-thesis"
+def published_dirs(repo: Path) -> dict[str, Path]:
+    """Published results in a checkout of the public repository, or in the authors' repository that holds it."""
+    for exp in [repo / "experiments"] + [repo / "1-Dissertation-Works" / p / "experiments" for p in PROJECTS]:
+        pub = exp / "data" / "3-published-results-for-thesis"
         if (pub / "results_digest.md").exists():
             return {"registered": pub, "revised": pub / "revised-usd-12m"}
-    raise SystemExit(f"no published results under {phd_works}")
+    raise SystemExit(f"no published results under {repo}")
 
 
 def load(pub: dict[str, Path]) -> dict:
@@ -228,11 +232,12 @@ def forest(S: dict) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"))
+    ap.add_argument("--repo", default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                    help="checkout of the public repository (or set CONTRACT_REP_REPO)")
     args = ap.parse_args()
-    if not args.phd_works:
-        raise SystemExit("pass --phd-works PATH or set PHD_WORKS")
-    S = load(published_dirs(Path(args.phd_works).resolve()))
+    if not args.repo:
+        raise SystemExit("pass --repo PATH or set CONTRACT_REP_REPO")
+    S = load(published_dirs(Path(args.repo).resolve()))
     sweep(S)
     forest(S)
     print("ok")

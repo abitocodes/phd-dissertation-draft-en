@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-"""Tables of Manuscript B (IEEE Access), written from the published results of phd_works.
+"""Tables of Manuscript B (IEEE Access), written from the published results of the study.
 
-    python make_tables.py --phd-works /path/to/phd_works      # or set PHD_WORKS
+    python make_tables.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation   # or set CONTRACT_REP_REPO
+
+The path is a checkout of the public repository
+https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation, with its history.
+That repository holds the study's folder of the authors' Git repository; its commits keep the
+original times and file contents but have new identifiers, listed with the original ones in
+its HISTORY.md. A checkout of the authors' repository that contains the public repository as
+the submodule 1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation also works.
 
 Writes tab_timeline.tex, tab_ids.tex, tab_holdout.tex, tab_contrasts.tex, tab_bench.tex and
 tab_explore.tex next to this file. Every number comes from one of these sources, named again
@@ -11,8 +18,8 @@ in a comment at the top of each table:
   (experiments/data/3-published-results-for-thesis/ for the registered analysis and its
   subfolder revised-usd-12m/ for the revised analysis), each checked against SHA256SUMS.txt;
 - the extraction manifest of W1 and the job times in describe/describe.json;
-- the commit history of phd_works (git log), and SHA-256 of the registration files as git
-  stores them (LF line ends) and as the manifest recorded them (CRLF line ends);
+- the commit history of the public repository (git log), and SHA-256 of the registration files
+  as git stores them (LF line ends) and as the manifest recorded them (CRLF line ends);
 - supplement/exploratory_checks.json (Appendix A of the paper).
 
 Nothing is typed in by hand except the wording of the rows.
@@ -29,25 +36,33 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
+SUBMODULE = "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation"  # the public repository inside the authors' one
 APPR, SEND, LIQ = "future_new_approvers", "future_new_transfer_senders", "liquidation_free_rate"
 DELTA = 0.01
 REVISED = "revised-usd-12m"  # subfolder of the published results that holds the revised analysis
-# The dated record of the pre-specified test (commit times are printed in Tables 2 and 3).
+# Commit identifiers in the public repository. The dated record of the pre-specified test
+# (commit times are printed in Tables 2 and 3).
 COMMITS = {
-    "plan": "43d8045",
-    "registration": "0d3a057",
-    "registered_results": "8d8b568",
-    "registered_benchmark": "f33a87a",
+    "plan": "d060f3a",
+    "registration": "1747e64",
+    "registered_results": "344017e",
+    "registered_benchmark": "7054746",
 }
 # The revised analysis, defined after the registered results were known; listed without times.
 REVISED_COMMITS = {
-    "revision_doc": "a897475",
-    "revision_tokens": "09dfc32",
-    "revision_cap": "2705b28",
-    "revision_windows": "e6c352d",
-    "revised_code": "0a94215",
-    "revised_results": "950a7a4",
+    "revision_doc": "1d4b9d6",
+    "revision_tokens": "d4796eb",
+    "revision_cap": "52aa40b",
+    "revision_windows": "69c7d12",
+    "revised_code": "77a1e49",
+    "revised_results": "dbe9ad6",
+}
+# The same commits in the authors' Git repository (HISTORY.md of the public repository). The
+# extraction manifest and the results digests, written there, record these identifiers.
+ORIGINAL = {
+    "plan": "43d8045", "registration": "0d3a057", "registered_results": "8d8b568", "registered_benchmark": "f33a87a",
+    "revision_doc": "a897475", "revision_tokens": "09dfc32", "revision_cap": "2705b28", "revision_windows": "e6c352d",
+    "revised_code": "0a94215", "revised_results": "950a7a4",
 }
 
 
@@ -56,12 +71,12 @@ REVISED_COMMITS = {
 # ---------------------------------------------------------------------------
 
 
-def locate(phd: Path) -> tuple[Path, str]:
-    for p in PROJECTS:
-        exp = phd / "1-Dissertation-Works" / p / "experiments"
-        if (exp / "data" / "3-published-results-for-thesis" / "results_digest.md").exists():
-            return exp, p
-    raise SystemExit(f"no published results under {phd}")
+def locate(path: Path) -> Path:
+    """The checkout of the public repository: the path itself, or its submodule in the authors' repository."""
+    for repo in (path, path / SUBMODULE):
+        if (repo / "experiments" / "data" / "3-published-results-for-thesis" / "results_digest.md").exists():
+            return repo
+    raise SystemExit(f"no checkout of the public repository at {path}")
 
 
 def sha_crlf(path: Path) -> str:
@@ -80,30 +95,28 @@ def check_sums(pub: Path, files: list[str]) -> None:
             raise SystemExit(f"{pub / f} does not match SHA256SUMS.txt")
 
 
-def git(phd: Path, *args: str) -> str:
-    return subprocess.run(["git", "-C", str(phd), *args], capture_output=True, text=True, check=True).stdout
+def git(repo: Path, *args: str) -> str:
+    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, check=True).stdout
 
 
-def commit_info(phd: Path, short: str) -> tuple[str, datetime]:
-    out = git(phd, "show", "-s", "--format=%H %cI", short).split()
+def commit_info(repo: Path, short: str) -> tuple[str, datetime]:
+    out = git(repo, "show", "-s", "--format=%H %cI", short).split()
     return out[0], datetime.fromisoformat(out[1]).astimezone(timezone.utc)
 
 
-def blob_sha(phd: Path, commit: str, project_dirs: list[str], rel: str) -> tuple[str, str]:
-    """SHA-256 of a file in a commit, with LF line ends (as stored) and with CRLF line ends."""
-    for d in project_dirs:
-        try:
-            data = subprocess.run(["git", "-C", str(phd), "show", f"{commit}:{d}/{rel}"], capture_output=True,
-                                  check=True).stdout
-        except subprocess.CalledProcessError:
-            continue
-        crlf = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
-        return hashlib.sha256(data).hexdigest(), hashlib.sha256(crlf).hexdigest()
-    raise SystemExit(f"{rel} not found in {commit}")
+def blob_sha(repo: Path, commit: str, rel: str) -> tuple[str, str]:
+    """SHA-256 of a file of experiments/ in a commit, with LF line ends (as stored) and with CRLF line ends."""
+    try:
+        data = subprocess.run(["git", "-C", str(repo), "show", f"{commit}:experiments/{rel}"], capture_output=True,
+                              check=True).stdout
+    except subprocess.CalledProcessError:
+        raise SystemExit(f"experiments/{rel} not found in {commit}")
+    crlf = data.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    return hashlib.sha256(data).hexdigest(), hashlib.sha256(crlf).hexdigest()
 
 
-def load(phd: Path) -> dict:
-    exp, _ = locate(phd)
+def load(repo: Path) -> dict:
+    exp = repo / "experiments"
     base = exp / "data" / "3-published-results-for-thesis"
     pubs = {"registered": base, "revised": base / REVISED}
     D: dict = {}
@@ -284,13 +297,14 @@ def tab_contrasts(D: dict) -> str:
            " & & \\multicolumn{2}{c}{Revised analysis (re-analysis)} & \\multicolumn{2}{c}{Registered analysis (the test)} \\\\",
            "\\cmidrule(lr){3-4}\\cmidrule(l){5-6}",
            "Contrast ($a$ minus $b$) and label & Test & $\\Delta\\tau$ [95\\% CI] & Verdict & $\\Delta\\tau$ [95\\% CI] & Verdict \\\\"]
-    out += group("Rule A, fixed in the plan (43d8045) before any log of this study was extracted; W0 spenders")
+    out += group(f"Rule A, fixed in the plan ({COMMITS['plan']}) before any log of this study was extracted; W0 spenders")
     out.append(a_row("A1: C-PR $-$ C-PR ($\\lambda=1$), new approval pairs", 0, "no worse", "no_worse_on_new_approvals"))
     out.append(a_row("A2: C-PR $-$ C-PR ($\\lambda=0$), new transfer senders", 1, "superiority", "better_on_new_senders"))
     out.append(f"Rule A, primary part (A1 and A2) & & & {met(V['w0']['rule_a_primary']['pass'])} & & {met(R['w0']['rule_a_primary']['pass'])} \\\\")
     out.append(f"Rule A, secondary part (same window) & & & {met(V['same']['rule_a_secondary']['pass'])} & & "
                f"{met(R['same']['rule_a_secondary']['pass'])} \\\\")
-    out += group("Rule B, registered (0d3a057) before this study extracted the W1 logs; F1, F2 and F3 all required; margin $\\delta=0.01$")
+    out += group(f"Rule B, registered ({COMMITS['registration']}) before this study extracted the W1 logs; F1, F2 and F3 all required; "
+                 "margin $\\delta=0.01$")
     out.append(ruled("F1: C-PR $-$ C-PR ($\\lambda=0$), new approval pairs", ("w1", "rule_b", "F1"), "superiority"))
     out.append(ruled("F2: C-PR $-$ C-PR ($\\lambda=0$), new transfer senders", ("w1", "rule_b", "F2"), "non-inferiority"))
     out.append(ruled("F3: C-PR $-$ C-PR ($\\lambda=0$), liquidation-free rate", ("w1", "rule_b", "F3"), "non-inferiority"))
@@ -378,8 +392,11 @@ def tab_bench(D: dict) -> str:
     return "\n".join(out)
 
 
-def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
+def tab_ids(repo: Path, D: dict) -> str:
     man = D["registered"]["manifest"]
+    for field in ("head", "registration_commit"):
+        if not str(man[field]).startswith(ORIGINAL["registration"]):
+            raise SystemExit(f"manifest {field} is not the original registration commit {ORIGINAL['registration']}")
     rows = [
         ("Plan and configuration (rule A)", "plan"),
         ("Registration of W1 (rule B, R1--R3)", "registration"),
@@ -394,10 +411,10 @@ def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
         ("Cohorts and constants; code revision of the results", "revised_code"),
         ("Revised results committed", "revised_results"),
     ]
-    out = [header(["git log of phd_works (commit identifiers and committer times, converted to UTC; "
-                   "the revised analysis is listed without times)",
-                   "registered-w1/extraction_manifest.json : sha256 (CRLF checkout)",
-                   "git show <commit>:<experiments>/docs/registration_w1.md and config/contract_reputation.yaml (LF, as stored)"]),
+    out = [header(["git log of the public repository (commit identifiers and committer times, converted to UTC; "
+                   "the revised analysis is listed without times); original identifiers from its HISTORY.md",
+                   "registered-w1/extraction_manifest.json : sha256 (CRLF checkout), head and registration_commit (original identifier)",
+                   "git show <commit>:experiments/docs/registration_w1.md and config/contract_reputation.yaml (LF, as stored)"]),
            "\\begin{table}[!t]",
            "\\centering",
            "\\caption{Commit Identifiers of the Pre-Specification Record (Times in UTC) and of the Revised Analysis, "
@@ -408,20 +425,20 @@ def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
            "\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{\\columnwidth}@{}}",
            "\\toprule"]
     for label, key in rows:
-        full, t = commit_info(phd, COMMITS[key])
-        out.append(f"{label}, {t.day} {t.strftime('%b')} {utc(t)}\\\\")
+        full, t = commit_info(repo, COMMITS[key])
+        out.append(f"{label}, {t.day} {t.strftime('%b')} {utc(t)}; originally \\sha{{{ORIGINAL[key]}}}\\\\")
         out.append(f"\\quad\\sha{{{full}}}\\\\")
     out.append("\\midrule")
     out.append("\\emph{Revised analysis (US-dollar amounts, five tokens, scores from the twelve months before each freeze), "
                "defined after the registered results were known}\\\\")
     for label, key in revised_rows:
-        full, _ = commit_info(phd, REVISED_COMMITS[key])
-        out.append(f"{label}\\\\")
+        full, _ = commit_info(repo, REVISED_COMMITS[key])
+        out.append(f"{label}; originally \\sha{{{ORIGINAL[key]}}}\\\\")
         out.append(f"\\quad\\sha{{{full}}}\\\\")
     out.append("\\midrule")
     files = [("docs/registration_w1.md", "registration document"), ("config/contract_reputation.yaml", "configuration")]
     for rel, label in files:
-        lf, crlf = blob_sha(phd, COMMITS["registration"], project_dirs, rel)
+        lf, crlf = blob_sha(repo, COMMITS["registration"], rel)
         recorded = man["sha256"][rel]
         if recorded != crlf:
             raise SystemExit(f"manifest hash of {rel} is not the CRLF hash of the committed file")
@@ -431,19 +448,22 @@ def tab_ids(phd: Path, D: dict, project_dirs: list[str]) -> str:
         out.append(f"SHA-256 of the {label}, LF line ends (as git stores it)\\\\")
         out.append(f"\\quad\\sha{{{lf[:32]}}}\\\\")
         out.append(f"\\quad\\sha{{{lf[32:]}}}\\\\")
-    lf, _ = blob_sha(phd, COMMITS["plan"], project_dirs, "docs/analysis_plan.md")
-    out.append("SHA-256 of the plan in \\sha{43d8045}, LF line ends\\\\")
+    lf, _ = blob_sha(repo, COMMITS["plan"], "docs/analysis_plan.md")
+    out.append(f"SHA-256 of the plan in \\sha{{{COMMITS['plan']}}}, LF line ends\\\\")
     out.append(f"\\quad\\sha{{{lf[:32]}}}\\\\")
     out.append(f"\\quad\\sha{{{lf[32:]}}}\\\\")
     out += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
-            "\\parbox{\\columnwidth}{\\footnotesize Each SHA-256 value is printed over two lines; join them without a space.}",
+            "\\parbox{\\columnwidth}{\\footnotesize Identifiers are those of the public repository; ``originally'' names the "
+            "commit of the authors' Git repository from which each was copied with its times and contents, as recorded in the "
+            "extraction manifest, the results digests and the repository's HISTORY.md. "
+            "Each SHA-256 value is printed over two lines; join them without a space.}",
             "\\end{table}", ""]
     return "\n".join(out)
 
 
-def tab_timeline(phd: Path, D: dict) -> str:
+def tab_timeline(repo: Path, D: dict) -> str:
     desc, man = D["registered"]["describe"]["timing"], D["registered"]["manifest"]
-    t = {k: commit_info(phd, v)[1] for k, v in COMMITS.items()}
+    t = {k: commit_info(repo, v)[1] for k, v in COMMITS.items()}
     scan_a_c = datetime.fromisoformat(desc["scan_a"]["created"]).astimezone(timezone.utc)
     scan_a_e = datetime.fromisoformat(desc["scan_a"]["ended"]).astimezone(timezone.utc)
     scan_b_c = datetime.fromisoformat(desc["scan_b"]["created"]).astimezone(timezone.utc)
@@ -462,31 +482,31 @@ def tab_timeline(phd: Path, D: dict) -> str:
     rows = [
         (f"9 Oct, {utc(t['plan'])}", "Analysis plan and configuration committed: cohort rule, scores (C-PR at $\\lambda\\in\\{0.25,0.5,0.75\\}$ "
          "and its end points, S-PR), W0 labels, statistics and rule~A; amounts in raw base units, every ERC-20 token",
-         "\\sha{43d8045}", "No log of this study extracted"),
+         f"\\sha{{{COMMITS['plan']}}}", "No log of this study extracted"),
         (f"9 Oct, {utc(scan_a_c)}--{utc(scan_a_e)}", f"Scan~A of the observation window; the BigQuery job was created {gap_a}~s after the plan commit",
          "Job metadata; cost ledger", "---"),
         ("9 Oct, before 16:49", f"Cohort of {n(rg['same']['cohort'])} contracts, ego extraction, same-window and W0 evaluation; "
-         "rule~A judged", "Summaries committed in \\sha{0d3a057}", "Logs of the observation window"),
+         "rule~A judged", f"Summaries committed in \\sha{{{COMMITS['registration']}}}", "Logs of the observation window"),
         (f"9 Oct, {utc(t['registration'])}", "Registration of W1: rule~B with $\\delta=0.01$, F4--F6, sensitivity analyses S1 and S2, "
          "the companion study's comparison on trader outcomes (its rules R1--R3 and their wording); configuration status set to registered",
-         "\\sha{0d3a057}", "Every same-window and W0 result of the registered analysis; W0 profit labels of the traders (exploratory run)"),
+         f"\\sha{{{COMMITS['registration']}}}", "Every same-window and W0 result of the registered analysis; W0 profit labels of the traders (exploratory run)"),
         (f"9 Oct, {utc(m_s)}", f"Extraction script checks the committed registration and writes its manifest ({gap_m}~s after the commit): "
          "commit and both SHA-256 hashes", "Manifest", "---"),
         (f"9 Oct, {utc(scan_b_c)}--{utc(scan_b_e)}", f"Scan~B of July--September 2026; job created {gap_b}~s after the commit; manifest closed at {utc(m_f)}",
          "Job metadata; manifest", "No July--September log extracted for this study before this"),
         (f"9 Oct, {utc(t['registered_results'])}", "Registered W1 evaluation, then robustness and Sybil model, committed",
-         "\\sha{8d8b568}", "W1 labels"),
+         f"\\sha{{{COMMITS['registered_results']}}}", "W1 labels"),
         (f"{t['registered_benchmark'].day} {t['registered_benchmark'].strftime('%b')}, {utc(t['registered_benchmark'])}",
          "Registered benchmark and data description (BigQuery job times, amount shares) committed",
-         "\\sha{f33a87a}", "W1 labels"),
+         f"\\sha{{{COMMITS['registered_benchmark']}}}", "W1 labels"),
         ("Later", "Revised analysis, a deviation from the plan and the registration: amounts in US dollars on five tokens (WETH, USDC, "
          "USDT0, ARB, WBTC), slopes $b=\\ln 3/m$, a cap $U$ on the C-PR authorization layer, and scores from the twelve months "
          f"before each freeze with one cohort per freeze; constants $m_T={c['m_transfer_usd']:.0f}$, $m_A={c['m_allowance_usd']:.0f}$ "
          f"and $U={n(round(c['cap_allowance_usd']))}$ dollars; rules~A, B and R1--R3 applied with their thresholds; results committed",
-         "Commits in Table~\\ref{tab:ids}; results in \\sha{950a7a4}", "Every registered result"),
+         f"Commits in Table~\\ref{{tab:ids}}; results in \\sha{{{REVISED_COMMITS['revised_results']}}}", "Every registered result"),
         ("Later", "Exploratory checks of Appendix~\\ref{app:explore}", "This paper's supplement", "Every result above"),
     ]
-    out = [header(["git log of phd_works (committer times converted to UTC; the revised analysis is listed without times)",
+    out = [header(["git log of the public repository (committer times converted to UTC; the revised analysis is listed without times)",
                    "registered-w1/extraction_manifest.json : started_at, finished_at",
                    "describe/describe.json : timing (BigQuery job creation and end times of scans A and B)",
                    f"{REVISED}/describe/describe.json : constants (m_T, m_A, U)"]),
@@ -506,8 +526,8 @@ def tab_timeline(phd: Path, D: dict) -> str:
         out.append(" & ".join(row) + " \\\\")
     out += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
             "\\parbox{\\textwidth}{\\footnotesize Commit times are committer times, recorded in UTC+9 and converted. Job times are the "
-            "creation and end times that BigQuery reports for each job. Full commit identifiers and file hashes are in "
-            "Table~\\ref{tab:ids}.}",
+            "creation and end times that BigQuery reports for each job. Commit identifiers are those of the public repository; "
+            "the full identifiers, the original ones and the file hashes are in Table~\\ref{tab:ids}.}",
             "\\end{table*}", ""]
     return "\n".join(out)
 
@@ -571,17 +591,16 @@ def tab_explore(D: dict) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"))
+    ap.add_argument("--repo", default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                    help="checkout of the public repository (or set CONTRACT_REP_REPO)")
     args = ap.parse_args()
-    if not args.phd_works:
-        raise SystemExit("pass --phd-works PATH or set PHD_WORKS")
-    phd = Path(args.phd_works).resolve()
-    _, project = locate(phd)
-    project_dirs = [f"1-Dissertation-Works/{p}/experiments" for p in (project,) + PROJECTS]
-    D = load(phd)
+    if not args.repo:
+        raise SystemExit("pass --repo PATH or set CONTRACT_REP_REPO")
+    repo = locate(Path(args.repo).resolve())
+    D = load(repo)
     tables = {
-        "tab_timeline.tex": tab_timeline(phd, D),
-        "tab_ids.tex": tab_ids(phd, D, project_dirs),
+        "tab_timeline.tex": tab_timeline(repo, D),
+        "tab_ids.tex": tab_ids(repo, D),
         "tab_holdout.tex": tab_holdout(D),
         "tab_contrasts.tex": tab_contrasts(D),
         "tab_bench.tex": tab_bench(D),

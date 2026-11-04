@@ -4,8 +4,11 @@
 Every result of both analyses (registered and revised) was known when this script was
 run, so nothing here enters a decision rule and nothing here was fixed in advance.
 The script reads only the per-contract score files and the published evaluation
-summaries of the experiment pipeline in the authors' repository ``phd_works``; it builds
-no graph and computes no new score. It does four things.
+summaries of the experiment pipeline, folder ``experiments/`` of the public repository
+https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation (the score files
+are in the Google Drive folder listed in ``experiments/drive-manifest.json``; the script
+``experiments/scripts/drive_sync.py`` downloads them into place); it builds no graph and
+computes no new score. It does four things.
 
 1. ``recompute``: recomputes the decision contrasts of rule A (W0) and rule B (W1, with
    F4-F6 and the first sensitivity analysis) from the score files, with the pipeline's
@@ -21,7 +24,11 @@ no graph and computes no new score. It does four things.
 4. ``lambda_rank_agreement``: Kendall tau_b between the C-PR score vectors at two values
    of the weight over each cohort, with paired-bootstrap intervals (seed 42).
 
-    python exploratory_checks.py --phd-works /path/to/phd_works      # or set PHD_WORKS
+    python exploratory_checks.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation   # or set CONTRACT_REP_REPO
+
+A checkout of the authors' repository, which holds the public one as a submodule, also works;
+the published exploratory_checks.json was written there, so its field phd_works_head holds the
+head commit of the authors' repository under its original identifier.
 
 Writes exploratory_checks.json next to this file. About eight minutes on four cores.
 """
@@ -101,12 +108,12 @@ COHORT_LABELS = {"w0_spenders": [APPR, SEND], "w1_spenders": [APPR, SEND], "w1_t
 # ---------------------------------------------------------------------------
 
 
-def experiments_dir(phd_works: Path) -> Path:
-    for p in PROJECTS:
-        d = phd_works / "1-Dissertation-Works" / p / "experiments"
+def experiments_dir(repo: Path) -> Path:
+    """experiments/ of a checkout of the public repository, or of the authors' repository that holds it."""
+    for d in [repo / "experiments"] + [repo / "1-Dissertation-Works" / p / "experiments" for p in PROJECTS]:
         if (d / "data" / "3-published-results-for-thesis" / "results_digest.md").exists():
             return d
-    raise SystemExit(f"no experiments folder with published results under {phd_works}")
+    raise SystemExit(f"no experiments folder with published results under {repo}")
 
 
 def sha256(path: Path) -> str:
@@ -248,12 +255,13 @@ def _seed_task(args: tuple[str, str, int, list]) -> tuple[str, str, int, dict]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"))
+    ap.add_argument("--repo", default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                    help="checkout of the public repository (or set CONTRACT_REP_REPO)")
     ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
-    if not args.phd_works:
-        raise SystemExit("pass --phd-works PATH or set PHD_WORKS")
-    phd = Path(args.phd_works).resolve()
+    if not args.repo:
+        raise SystemExit("pass --repo PATH or set CONTRACT_REP_REPO")
+    phd = Path(args.repo).resolve()
     exp = experiments_dir(phd)
     t0 = time.time()
     frames, summaries, files = load(exp)
