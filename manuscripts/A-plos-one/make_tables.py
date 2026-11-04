@@ -9,10 +9,10 @@ between the markers
     % END GENERATED tabN
 
 of main.tex, and writes supporting/S1_Table_rows.tex for S1 Table. No number is typed by
-hand: every value is read from the summaries in phd_works (checked against their
+hand: every value is read from the summaries in the public repository (checked against their
 SHA256SUMS.txt by data_sources.py) or from analysis/*.json.
 
-    PHD_WORKS=/path/to/phd_works python3 make_tables.py
+    CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation python3 make_tables.py
 """
 from __future__ import annotations
 

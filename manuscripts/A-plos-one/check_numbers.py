@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Check that every number in the prose of main.tex (and the cover letter) occurs in a source.
 
-The sources are the two results digests published in phd_works (each row names its JSON
+The sources are the two results digests published in the public repository (each row names its JSON
 file and key), the JSON summaries themselves, analysis/closed-form/closed_form_check.json
 and analysis/neutral-label/results.json. Tables are skipped (make_tables.py writes them from
 the JSON). A number counts as found when its text, or for a percentage its value divided
 by 100 at three decimals, appears among the source values. Numbers that are not data
 (dates, times, commit fragments, section counts) are listed separately for a manual look.
 
-    PHD_WORKS=/path/to/phd_works python3 check_numbers.py [file.tex ...]
+    CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation python3 check_numbers.py [file.tex ...]
 """
 from __future__ import annotations
 

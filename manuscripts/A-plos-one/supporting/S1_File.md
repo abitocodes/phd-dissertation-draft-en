@@ -2,23 +2,23 @@
 
 Supporting information of the manuscript "Allowance edges or transfer edges? Evaluating on-chain smart contract reputation out of window against degree baselines".
 
-This file reproduces verbatim the two documents that fixed the design of the study before this study extracted the data they judge: the analysis plan and the registration of the window W1. Each is copied with `git show <commit>:<path>` from the authors' public repository <https://github.com/abitocodes/phd_works>, folder `1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments/docs/` at these commits, both on the repository's default branch `master`. Times are UTC; the commits record the local time of the machine on which they were made (UTC+9).
+This file reproduces verbatim the two documents that fixed the design of the study before this study extracted the data they judge: the analysis plan and the registration of the window W1. Each is copied with `git show <commit>:<path>` from the public repository <https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation>, folder `experiments/docs/` at these commits, both on the repository's default branch `main`. That repository holds the study's folder of the authors' private Git repository with its commit history: each copied commit keeps the original times and file contents but has a new identifier. The table gives both identifiers; the extraction manifest records the original one, and the repository's `HISTORY.md` lists every pair. Times are UTC; the commits record the local time of the machine on which they were made (UTC+9).
 
-| Document | Commit | Committed (UTC) | SHA-256 of the text as stored (LF line ends) | SHA-256 with CRLF line ends |
-|---|---|---|---|---|
-| Analysis plan, `analysis_plan.md` | `43d80457142dc002c4410d4af1c3c164f39a3272` | 2026-10-09 13:41:27 | `7ec80d49c17331bd10e086fecd909a3f36020dbb284f0dbfbb81a8549f84fd9f` | `35195ab5675c05c9a892d16a899a981be49aa564e00081a004fda3583f293212` |
-| W1 registration, `registration_w1.md` | `0d3a057e4f0c8473d36d89fbe33c24deff0c9911` | 2026-10-09 16:49:32 | `34cd6dfeb56b8fb8a553cb24afbff06c6a94e6f69a2eb7f7d642b0cc39e54b2c` | `2126c8dc3fe3c0f9273aa4ecfc1e15bddc1f5a6f65e98548b9528f2b18ca2a6b` |
+| Document | Commit | Original commit | Committed (UTC) | SHA-256 of the text as stored (LF line ends) | SHA-256 with CRLF line ends |
+|---|---|---|---|---|---|
+| Analysis plan, `analysis_plan.md` | `d060f3a68c15ed22bc2a566cfb83f0a546ca85b3` | `43d80457142dc002c4410d4af1c3c164f39a3272` | 2026-10-09 13:41:27 | `7ec80d49c17331bd10e086fecd909a3f36020dbb284f0dbfbb81a8549f84fd9f` | `35195ab5675c05c9a892d16a899a981be49aa564e00081a004fda3583f293212` |
+| W1 registration, `registration_w1.md` | `1747e64884a2fd0adf1f76433e604474387d5ce2` | `0d3a057e4f0c8473d36d89fbe33c24deff0c9911` | 2026-10-09 16:49:32 | `34cd6dfeb56b8fb8a553cb24afbff06c6a94e6f69a2eb7f7d642b0cc39e54b2c` | `2126c8dc3fe3c0f9273aa4ecfc1e15bddc1f5a6f65e98548b9528f2b18ca2a6b` |
 
 What each hash can be checked against:
 
-- The plan was committed before any log of the study was extracted. Its only later change is the heading of its section 7, which commit `0d3a057` changed from "(to be completed and registered before scan B)" to "(registered in docs/registration_w1.md before scan B)"; the published checksum of the plan (`SHA256SUMS.txt` of the results, CRLF form `2558729a...`) is that of the changed version.
-- The registration's CRLF hash is the one recorded in the extraction manifest of the July–September logs (`data/3-published-results-for-thesis/registered-w1/extraction_manifest.json`, key `sha256`). The manifest records the registration commit, no use of the testing override, and an extraction run from 16:49:33 to 16:50:55 UTC on 9 October 2026. The manifest was written on a Windows checkout, hence the CRLF form.
+- The plan was committed before any log of the study was extracted. Its only later change is the heading of its section 7, which commit `1747e64` changed from "(to be completed and registered before scan B)" to "(registered in docs/registration_w1.md before scan B)"; the published checksum of the plan (`SHA256SUMS.txt` of the results, CRLF form `2558729a...`) is that of the changed version.
+- The registration's CRLF hash is the one recorded in the extraction manifest of the July–September logs (`data/3-published-results-for-thesis/registered-w1/extraction_manifest.json`, key `sha256`). The manifest records the registration commit under its original identifier (`0d3a057`), no use of the testing override, and an extraction run from 16:49:33 to 16:50:55 UTC on 9 October 2026. The manifest was written on a Windows checkout, hence the CRLF form.
 
 The two documents fix the registered analysis: amounts in raw base units over every ERC-20 token, and every score computed from every extracted event since 1 October 2023. The article reports the revised analysis, with amounts in US dollars over five tokens and every score computed from the twelve months before its freeze. These were defined after the registered results were known, so the rules of the registration (R1–R3 in its section 3) are applied to the revised scores as a re-analysis, not as registered tests, and the registered results are given beside them in Table 6 of the article. The documents that define the revised analysis are published with its results (see the Data availability statement of the article). Rule A (section 6 of the plan) and rule B (section 2 of the registration) concern the coupled walk of a companion study and are not reported in this article.
 
 ---
 
-## 1. Analysis plan (commit 43d8045)
+## 1. Analysis plan (commit d060f3a)
 
 ````markdown
 # Analysis plan: contract reputation from ERC-20 allowance edges
@@ -80,7 +80,7 @@ Scores frozen at 2026-06-30 23:59:59 UTC, labels from 2026-07-01 to 2026-09-30. 
 
 ---
 
-## 2. Registration of the window W1 (commit 0d3a057)
+## 2. Registration of the window W1 (commit 1747e64)
 
 ````markdown
 # Registration of the window W1 (July–September 2026)

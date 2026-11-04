@@ -7,7 +7,7 @@ freeze; 400 paired resamples).
 Panels B and C: the registered trader contrasts P and Q on all six trader labels in
 W1 and W0, applied to the revised scores (2,000 paired resamples).
 
-Values are read from the published summaries in phd_works (checked against their
+Values are read from the published summaries in the public repository (checked against their
 SHA256SUMS.txt) and from analysis/neutral-label/results.json; none is typed here.
 Writes figures/fig1.pdf next to this script. Convert to the upload TIFF with
 
@@ -15,7 +15,7 @@ Writes figures/fig1.pdf next to this script. Convert to the upload TIFF with
 
 PLOS figure rules: Arial-metric sans serif (Liberation Sans), 8-12 pt, at most 7.5 in wide.
 
-    PHD_WORKS=/path/to/phd_works python3 make_fig1.py
+    CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation python3 make_fig1.py
 """
 from __future__ import annotations
 

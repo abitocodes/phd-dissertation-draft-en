@@ -3,7 +3,8 @@
 
 Every number in the tables, Fig 1 and S2 Table comes from one of two places:
 
-* the machine-readable summaries published in the experiment repository ``phd_works``
+* the machine-readable summaries published in the public repository
+  https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation
   (``experiments/data/3-published-results-for-thesis/`` for the registered analysis and
   its subfolder ``revised-usd-12m/`` for the revised analysis, whose scores come from the
   twelve months before each freeze), each checked here against the ``SHA256SUMS.txt``
@@ -13,8 +14,10 @@ Every number in the tables, Fig 1 and S2 Table comes from one of two places:
   ``analysis/neutral-label/results.json``), which copy and check values from the same
   summaries.
 
-The path to a ``phd_works`` checkout must be given with ``--phd-works PATH`` or the
-environment variable ``PHD_WORKS``; nothing is guessed.
+The path to a checkout of that repository must be given with ``--repo PATH`` or the
+environment variable ``CONTRACT_REP_REPO``; nothing is guessed. A checkout of the authors'
+private repository, which holds the public one as a submodule, also works (``--phd-works``
+and ``PHD_WORKS`` are kept as aliases).
 """
 from __future__ import annotations
 
@@ -30,10 +33,11 @@ HERE = Path(__file__).resolve().parent          # manuscripts/A-plos-one
 ROOT = HERE.parents[1]                          # repository root
 ANALYSIS = ROOT / "analysis"
 
-# The experiment folder has two names in the history: in the commits of the plan, the
-# registration and the registered results (43d8045 to 8d8b568) it was the second entry,
-# and in the commit of the revised results (950a7a4) it is the first.
+# The experiment folder: experiments/ in a checkout of the public repository; in a checkout
+# of the authors' repository, the first of the other two (the submodule that holds the public
+# repository); the last is its name in the authors' repository before the study moved.
 EXPERIMENT_DIRS = (
+    "experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
     "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
 )
@@ -66,11 +70,12 @@ _ARGS: argparse.Namespace | None = None
 def parse_args(description: str) -> argparse.Namespace:
     global _ARGS
     p = argparse.ArgumentParser(description=description)
-    p.add_argument("--phd-works", default=os.environ.get("PHD_WORKS"),
-                   help="path to a phd_works checkout (or set PHD_WORKS)")
+    p.add_argument("--repo", "--phd-works", dest="phd_works",
+                   default=os.environ.get("CONTRACT_REP_REPO") or os.environ.get("PHD_WORKS"),
+                   help="path to a checkout of the public repository (or set CONTRACT_REP_REPO)")
     a, _ = p.parse_known_args()
     if not a.phd_works:
-        p.error("give --phd-works PATH or set the environment variable PHD_WORKS")
+        p.error("give --repo PATH or set the environment variable CONTRACT_REP_REPO")
     _ARGS = a
     return a
 
