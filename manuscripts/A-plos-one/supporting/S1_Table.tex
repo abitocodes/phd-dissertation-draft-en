@@ -1,34 +1,96 @@
-% S1 Table of Manuscript A (PLOS ONE): windows, cohorts, graphs and amounts (descriptive).
-% The rows are written to S1_Table_rows.tex by ../make_tables.py from the published summaries
-% in the public repository ERC20-Allowance-PageRank-Wallet-Reputation (experiments/data/
-% 3-published-results-for-thesis/revised-usd-12m/same-window, holdout-w0, window-w1, describe, cohort) and from
-% analysis/neutral-label/results.json; nothing here is typed by hand or newly computed.
-% Build with latexmk -pdf S1_Table.tex.
+% S1 Table of Manuscript A (PLOS ONE): data, graphs, cohorts and the four runs of the
+% discovery-order test (descriptive). The rows of the four panels are written to
+% S1_Table_rows.tex (A), S1_Table_rows_b.tex (B), S1_Table_rows_c.tex (C) and
+% S1_Table_rows_d.tex (D) by ../make_tables.py from the published summaries in the public
+% repository ERC20-Allowance-PageRank-Wallet-Reputation (experiments/data/
+% 3-published-results-for-thesis/revised-contract-12m/: describe, cohort, same-window,
+% holdout-w0, window-w1, usd/constants.json, typing, discovery); nothing in the rows is typed
+% by hand. Build with latexmk -pdf S1_Table.tex.
 \documentclass[10pt,letterpaper]{article}
-\usepackage[landscape,margin=0.8in]{geometry}
-\usepackage{booktabs,array}
-\pagestyle{empty}
+\usepackage[landscape,margin=0.7in]{geometry}
+\usepackage{booktabs,array,longtable,graphicx}
+\pagestyle{plain}
+\setlength{\parindent}{0pt}
 \makeatletter\let\primitiveinput\@@input\makeatother
+\newcommand{\panelnote}[1]{\par\smallskip{\footnotesize #1\par}}
 \begin{document}
 \raggedright
-{\large\textbf{S1 Table. Windows, cohorts, graphs and amounts.}}
+{\large\textbf{S1 Table. Data, graphs, cohorts and the four runs of the discovery-order test.}}
 
 \smallskip
-\small
-\begin{tabular}{>{\raggedright\arraybackslash}p{7.2cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{4.3cm}}
+{\footnotesize Contract-graph analysis, the main analysis of the article: approvals and transfers of WETH, USDC, USDT0, ARB and WBTC, amounts in US dollars at DefiLlama daily closing prices, every score from the twelve months before its freeze, graphs whose nodes are contracts other than smart accounts, each allowance counted up to its owner's balance at the freeze. $T_{\mathrm{obs}}$ is 30 June 2026 and $t_1$ is 31 March 2026, each at 23:59:59 UTC. The W1 scores are the same-window scores. The two score windows overlap from July 2025 to March 2026, and the W1 score window contains the W0 label window. The discovery-order test was defined after the registered results were known; it decides no rule of the analysis plan or the registration.\par}
+
+\medskip
+\textbf{A. Events, account types, balances, graphs, universes, cohorts, labels and constants.}
+
+\setlength{\LTpre}{4pt}\setlength{\LTpost}{2pt}
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{9.8cm}>{\raggedright\arraybackslash}p{6.5cm}>{\raggedright\arraybackslash}p{6.5cm}}
 \toprule
- & Same window (matched cohort) & W0 & W1 \\
+ & $T_{\mathrm{obs}}$ (same window and W1) & $t_1$ (W0) \\
 \midrule
-\primitiveinput S1_Table_rows.tex 
+\endfirsthead
+\toprule
+ & $T_{\mathrm{obs}}$ (same window and W1) & $t_1$ (W0) \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\primitiveinput S1_Table_rows.tex
+\end{longtable}
+}
+\panelnote{A cell that spans both columns holds for both freezes. SCC: giant strongly connected component of the union graph; IN: contracts that reach it; OUT: contracts reached from it; WCC: the weakly connected component that holds the giant SCC. A user account is an address that sent a transaction, an address without code, an address with an EIP-7702 delegation designator or a smart account; every other typed address is a contract. $I_T$: US dollars that user accounts transferred to a contract in the score window; $I_A$: US dollars that they had authorized it to spend at the freeze, counted up to their balance; both counted up to $U_{\mathrm{user}}$ per account. $H_q(I)$: the contracts of a universe whose importance $I$ is positive and among its largest, $q=1\%$ of the universe with ties. A cohort list holds the addresses with contract code that received a non-zero approval of one of the five tokens from at least three distinct owners in the score window; a spender list holds the addresses with a positive latest allowance of one of the five tokens, set in the score window, at the freeze, among the approvals with an address of the cohort list as owner or spender. $^{a}$The addresses that sent no transaction and have a counterparty that is neither a transaction sender nor the zero address, the members of the cohort and spender lists, and two audit samples of 1,000 addresses each.}
+
+\newpage
+\textbf{B. $\mathrm{AUC}_{10\%}$ of every ordering in the four runs.}
+
+\smallskip
+{\footnotesize
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{2}{c}{$T_{\mathrm{obs}}$, \texttt{both} (decides)} & \multicolumn{2}{c}{$T_{\mathrm{obs}}$, \texttt{out}} & \multicolumn{2}{c}{$t_1$, \texttt{both}} & \multicolumn{2}{c}{$t_1$, \texttt{out}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+Ordering & $H_q(I_T)$ & $H_q(I_A)$ & $H_q(I_T)$ & $H_q(I_A)$ & $H_q(I_T)$ & $H_q(I_A)$ & $H_q(I_T)$ & $H_q(I_A)$ \\
+\midrule
+\primitiveinput S1_Table_rows_b.tex
 \bottomrule
 \end{tabular}
+}
+\panelnote{$\mathrm{AUC}_{10\%}$ is the mean over the hot contracts of $\max(0,1-t_h/\lceil 0.1|\mathcal{U}|\rceil)$, with $t_h$ the visit at which a crawl reaches hot contract $h$ and $\mathcal{U}$ the universe of the run, averaged over 20 seeds. In the \texttt{both} mode a visit reveals a contract's in-edges and out-edges and the universe is the WCC; in the \texttt{out} mode a visit reveals out-edges only and the universe is the giant SCC with OUT. A primed name is the count or walk computed on the contracts read so far; $\mathrm{IB}'_A$, $\mathrm{IB}'_T$ and $\mathrm{IB}'_U$ count the visited contracts with an allowance edge, a transfer edge or an edge of either layer to the frontier contract. C-PR$'$ ($\lambda=1$) and C-PR$'$ ($\lambda=0$) are the allowance and the transfer layer of the coupled walk walked alone. The references are not crawls. The decision of the test is read in the first two columns only (Table 2 of the article, with intervals).}
+
+\newpage
+\textbf{C. Contrasts outside the decision in the three runs that carry no verdict (items 1 and 2 of the protocol's list, and the replication contrast).}
 
 \smallskip
-\begin{minipage}{22.5cm}
-\footnotesize
-Revised analysis: approvals and transfers of WETH, USDC, USDT0, ARB and WBTC, amounts in US dollars at DefiLlama daily closing prices, every score from the twelve months before its freeze. Every scored address holds contract code; externally owned accounts enter the graphs only as owners, senders and recipients. The W1 scores are the same-window scores. The score windows of W0 and W1 overlap from July 2025 to March 2026, and the W1 score window contains the W0 label window.
-$^{a}$Of 7,962 spenders with a positive latest allowance of one of the five tokens, set in the score window, at the freeze, 39 had no code and 9 an EIP-7702 delegation designator when read with \texttt{eth\_getCode}; both groups are externally owned accounts and were left out.
-$^{b}$Not stored as a count: every one of the 39 recipients and 75.0\% of the 48 other traders had no liquidation, which leaves 12 traders with at least one.
-$^{c}$Owner--spender and sender--recipient pairs in the pair tables at the W0 freeze, counted before pairs whose value weight is zero in floating point are dropped; node counts at that freeze are not recorded.
-\end{minipage}
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{2}{c}{$T_{\mathrm{obs}}$, \texttt{out}} & \multicolumn{2}{c}{$t_1$, \texttt{both}} & \multicolumn{2}{c}{$t_1$, \texttt{out}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Contrast & On $H_q(I_T)$ & On $H_q(I_A)$ & On $H_q(I_T)$ & On $H_q(I_A)$ & On $H_q(I_T)$ & On $H_q(I_A)$ \\
+\midrule
+\primitiveinput S1_Table_rows_c.tex
+\bottomrule
+\end{tabular}}
+}
+\panelnote{Differences of $\mathrm{AUC}_{10\%}$ between two orderings with the 95\% percentile interval of a paired bootstrap over the hot contracts (400 resamples, seed 42); an interval above 0 means that the first ordering reached the hot contracts sooner. C-PR$'$ without a value of $\lambda$ is C-PR$'$ at $\lambda=0.5$. $H_q(\mathrm{IB}_U)$ is the hot set of the union in-degree of the full graph. The same contrasts of the deciding run are Table 3 of the article.}
+
+\newpage
+\textbf{D. Descriptive readings of the deciding run ($T_{\mathrm{obs}}$, \texttt{both} mode), by ordering.}
+
+\smallskip
+{\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccccccccc}
+\toprule
+ & \multicolumn{2}{c}{Hot contracts visited} & \multicolumn{2}{c}{Importance held by the} & \multicolumn{2}{c}{Importance held by the} & \multicolumn{2}{c}{Picks decided} & \multicolumn{2}{c}{Wasted visits} & \multicolumn{2}{c}{Per crawl} \\
+ & \multicolumn{2}{c}{after 10\% of the visits} & \multicolumn{2}{c}{contracts visited, after 1\%} & \multicolumn{2}{c}{contracts visited, after 10\%} & \multicolumn{2}{c}{by a tie} & \multicolumn{2}{c}{in the first} & \multicolumn{2}{c}{(mean over seeds)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}\cmidrule(lr){12-13}
+Ordering & $H_q(I_T)$ & $H_q(I_A)$ & $I_T$ & $I_A$ & $I_T$ & $I_A$ & \texttt{both} & \texttt{out} & 1\% & 10\% & Solves & Iterations \\
+\midrule
+\primitiveinput S1_Table_rows_d.tex
+\bottomrule
+\end{tabular}
+}
+\panelnote{Hot contracts visited: the discovery curve, the share of the hot set that a crawl has visited, read at the grid point nearest 10\% of the universe (mean over the 20 seeds); the random curve is at 10\% there and the ideal order at 100\%. Importance held: the share of the summed importance of the universe that the visited contracts hold, read at the grid points nearest 1\% and 10\% of the universe (mean over the seeds); the protocol reports these curves without intervals. Picks decided by a tie: the share of picks whose group of tied scores held more than one contract, in the deciding run and in the \texttt{out} mode at $T_{\mathrm{obs}}$. Wasted visits: the share of the first 1\% and of the first 10\% of the visits that went to contracts with $I_T=I_A=0$. Solves and power iterations: per crawl at the schedule of the deciding run ($\rho=1/50$, about 540 recomputes of the ordering per crawl); S-PR$'$ solves two walks at each recompute. None of these readings enters a verdict.}
 \end{document}
