@@ -391,7 +391,7 @@ def table5() -> str:
         row("Allowance family (mean)", lambda m: tau_ci(fam[m]["allowance"])),
         row("\\quad in-approve degree", lambda m: tau_ci(prx[m]["in_approve_degree"])),
         row("\\quad in-approve value (USD, capped)", lambda m: tau_ci(prx[m]["in_approve_value"])),
-        row("Sybil-stability family (mean)", lambda m: tau_ci(fam[m]["sybil_stability"])),
+        row("Stability family (mean)", lambda m: tau_ci(fam[m]["sybil_stability"])),
     ]
     con = {c["label"]: c for c in sw["contrasts"]}
     er_awp_all = con["EndorseRank allowance minus AWP allowance"]
@@ -421,7 +421,8 @@ def table5() -> str:
         "received. Agreement of a score with the checks of its own edge type is therefore partly built in. The "
         "in-degree of this check counts the distinct sender contracts with self-transfers included, whereas the transfer "
         "in-degree that serves as the baseline out of window (Table~\\ref{tab6}) counts other contracts only. The "
-        "Sybil-stability family averages the inbound-counterparty ratio, transfer tenure and active months. Family "
+        "stability family averages three transfer-based checks: the inbound-counterparty ratio, transfer tenure and "
+        "active months. Family "
         "means are plain averages of the coefficients of their checks. A contract outside a graph scores zero: "
         f"{intc(ties['endorserank']['zeros'])} cohort contracts score zero under EndorseRank and "
         f"{intc(ties['awp']['zeros'])} under AWP ({intc(g['cohort_outside_allowance'])} and "
@@ -489,7 +490,8 @@ def table6() -> str:
         hdr(f"The same in W0 among the {intc(b['uni_n'])} spenders inside the union graph$^{{a}}$", 5),
         f"EndorseRank $-$ in-approve degree & {delta_ci(b['uni_er_deg'])} & {e} & -- & {e} \\\\",
         f"AWP $-$ transfer in-degree & {e} & {delta_ci(b['uni_awp_deg'])} & {e} & -- \\\\",
-        hdr(f"The same in W0 among the {intc(b['rec_n'])} spenders that another contract had paid before the freeze$^{{a}}$", 5),
+        hdr(f"The same in W0 among the {intc(b['rec_n'])} spenders that had received a transfer from another contract "
+            f"before the freeze$^{{a}}$", 5),
         f"EndorseRank $-$ in-approve degree & {delta_ci(b['rec_er_deg'])} & {e} & -- & {e} \\\\",
         f"AWP $-$ transfer in-degree & {e} & {delta_ci(b['rec_awp_deg'])} & {e} & -- \\\\",
         "\\midrule",
@@ -503,7 +505,8 @@ def table6() -> str:
         "Kendall $\\tau_b$ with 95\\% percentile interval from 400 paired contract resamples (seed 42); intervals are "
         "unadjusted. Scores and counts are computed on the contract graph of the freeze. Spenders are the contracts "
         "that hold a positive latest allowance of one of the five tokens from any account, set in the score window, at "
-        "the freeze. The labels count every account that newly approves or pays a spender, user accounts included: in W0 "
+        "the freeze. The labels count every account that newly approves a spender or sends it a transfer, user accounts "
+        "included: in W0 "
         f"{pct(ls0[A]['share_user_accounts'])} of the {intc(ls0[A]['total'])} new approval pairs and "
         f"{pct(ls0[T]['share_user_accounts'])} of the {intc(ls0[T]['total'])} new senders are user accounts, in W1 "
         f"{pct(ls1[A]['share_user_accounts'])} of {intc(ls1[A]['total'])} and {pct(ls1[T]['share_user_accounts'])} of "

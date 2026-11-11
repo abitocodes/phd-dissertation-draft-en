@@ -7,7 +7,8 @@ for a breadth-first crawl and for crawls ordered by the number of contract backl
 the coupled walk C-PR' and by the transfer walk AWP', on the hot sets of the two
 importances (mean over the 20 seeds, with the range over the seeds as a band).
 Panel C: each single-layer walk minus the count it smooths on the spender label of its own
-edge type, in W0 and W1, and in W0 among the spenders that another contract had paid.
+edge type, in W0 and W1, and in W0 among the spenders that had received a transfer from
+another contract.
 
 Every value is read from the published summaries in the public repository (checked against
 their SHA256SUMS.txt), and the dates of the windows in the legend and the share over which
@@ -172,8 +173,8 @@ def main() -> None:
         ("EndorseRank − in-approve degree\n(new approval pairs)", b["er_deg"][0], b["er_deg"][1]),
         ("EndorseRank, activity restarts − in-approve degree\n(new approval pairs)", b["act_deg"][0], b["act_deg"][1]),
         ("AWP − transfer in-degree\n(new transfer senders)", b["awp_deg"][0], b["awp_deg"][1]),
-        (f"EndorseRank − in-approve degree, among the {rec} W0\nspenders that another contract had paid", b["rec_er_deg"], None),
-        (f"AWP − transfer in-degree, among the {rec} W0\nspenders that another contract had paid", b["rec_awp_deg"], None),
+        (f"EndorseRank − in-approve degree, among the {rec} W0\nspenders with a transfer from another contract", b["rec_er_deg"], None),
+        (f"AWP − transfer in-degree, among the {rec} W0\nspenders with a transfer from another contract", b["rec_awp_deg"], None),
     ]
     values = []
     for i, (_, c0, c1) in enumerate(rows):
