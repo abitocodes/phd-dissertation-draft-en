@@ -59,17 +59,20 @@ PROC = "data/2-processed-tables-and-evaluations"
 
 ANALYSES = {
     "revised": {
-        "pub": f"{PUB}/revised-usd-12m",
-        "proc": f"{PROC}/revised-usd-12m",
-        "status": ("Main analysis of the thesis: amounts in USD over WETH, USDC, USDT0, ARB and WBTC "
-                   "(docs/revision_price_weighting.md) and score windows of the twelve months before each "
-                   "freeze (docs/revision_one_year_window.md). Defined after the registered results were known; "
-                   "never a registered result."),
+        "pub": f"{PUB}/revised-contract-12m",
+        "proc": f"{PROC}/revised-contract-12m",
+        "status": ("Main analysis of the thesis, the contract-graph analysis: amounts in USD over WETH, USDC, USDT0, "
+                   "ARB and WBTC (docs/revision_price_weighting.md), score windows of the twelve months before each "
+                   "freeze (docs/revision_one_year_window.md), and graphs whose nodes are contracts, with each "
+                   "allowance counted up to its owner's balance at the freeze (docs/revision_contract_graph.md). "
+                   "Defined after the registered results were known; never a registered result."),
         "scored_set": {
             "same_window": ("matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct "
-                            "owners in the twelve months before T_obs"),
+                            "owners in the twelve months before T_obs, without the members typed as user accounts; "
+                            "the allowance graph holds contracts only"),
             "W0": ("W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens, "
-                   "set in the twelve months before t1, at t1"),
+                   "set in the twelve months before t1, at t1, without the members typed as user accounts; "
+                   "the allowance graph holds contracts only"),
         },
     },
     "registered": {
@@ -280,7 +283,7 @@ def main() -> int:
             "experiments_dir": exp_rel,
             "computed_by": ("scripts/run_same_window.py (function closed_form; graph at T_obs) and "
                             "scripts/run_holdout.py (same function; graph at t1); revised analysis with "
-                            "CONTRACT_REP_VARIANT=usd12m, registered analysis with the variable unset"),
+                            "CONTRACT_REP_VARIANT=contract12m, registered analysis with the variable unset"),
         },
         "definitions": {
             "c": "common score of the nodes without in-edges (median over them; spread_of_c = max/min over them)",
