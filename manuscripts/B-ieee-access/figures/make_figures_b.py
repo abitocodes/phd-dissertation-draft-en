@@ -57,7 +57,7 @@ APPR, SEND = "future_new_approvers", "future_new_transfer_senders"
 LAM = [0.0, 0.25, 0.5, 0.75, 1.0]
 COL = {0.0: "cpr_l0", 0.25: "cpr_l25", 0.5: "cpr_l50", 0.75: "cpr_l75", 1.0: "cpr_l100"}
 STYLE = {APPR: (S1, "o", "New approval pairs"), SEND: (S2, "s", "New transfer senders")}
-UNION = {"w0": "t1_in_degree_union", "w1": "in_degree_union"}  # the count of the edges C-PR walks (main analysis)
+UNION = {"w0": "t1_in_degree_union", "w1": "in_degree_union"}  # counts, apart from self-pairs, the edges C-PR walks (main analysis)
 
 
 def published_dirs(repo: Path) -> dict[str, Path]:

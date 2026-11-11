@@ -1,5 +1,7 @@
 # Supplement to Manuscript B
 
+## What the supplement holds
+
 | File | Content |
 |---|---|
 | `sql/02_spender_candidates.sql` | Registered analysis. Spenders that received non-zero approvals from at least three distinct owners in the observation window (the cohort candidates, before the account-type check). |
@@ -10,19 +12,20 @@
 | `exploratory_checks.py` | Exploratory checks of Appendix A (run after every result of both analyses was known). |
 | `exploratory_checks.json` | Output of that script; every number in Table 11 and Appendix A comes from it. |
 
-## Which queries are copied, and from which commit
+The five queries belong to the registered analysis. Each file is identical, line ends aside, to its file in `experiments/sql/` of the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation) at commit `1747e64`, the registration commit, and at commit `6b389df`. They entered the repository with the registration, after the queries of the observation window had run. The placeholders `__DEST__` and the parameters are filled in by `scripts/run_bq.py` of the experiment folder.
 
-The public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation) holds the study's folder of the authors' private Git repository with its commit history; the commits of the registered record keep their times and contents but have new identifiers, and its `HISTORY.md` lists those of the authors' repository.
+## Where every query of the study is
 
-- **Copied here: the five queries of the registered analysis above.** Each file is identical, line ends aside, to `experiments/sql/` of the public repository at commit `1747e64`, the registration commit, and has not changed since (checked against commit `6b389df` as well). They entered the repository with the registration, after the queries of the observation window had run. The placeholders `__DEST__` and the parameters are filled in by `scripts/run_bq.py` of the experiment folder.
-- **Not copied: the rest of the SQL of the registered analysis.** The full set is in `experiments/sql/` of the public repository at commit `344017e`, the commit of the registered results, and is read there. It includes the query that copies the logs of a time window from the public table (scan A and scan B; committed with the plan in `d060f3a`), the identifier export, the data description and the top-token check.
-- **Not copied: the queries of the main analysis (the contract-graph analysis).** They are in `experiments/sql/` of the public repository at commit `6b389df`, the commit of the published results, and are read there:
-  - `24_c12_logs5.sql` (the five-token events of the whole chain), `25_c12_ends.sql`, `26_c12_tx_senders.sql` and `29_c12_rpc_queue.sql` (the addresses, the transaction senders and the addresses whose code is read), `31_c12_contracts.sql` (contracts, user accounts and the events between contracts);
-  - `32_c12_bal_pre.sql`, `33_c12_bal.sql`, `34_c12_anchor_blocks.sql` and `43_c12_bal_audit.sql` (balances from `Transfer` logs, the blocks of the freezes and the sample of the balance check);
-  - `36_c12_allow_triples.sql` (latest allowances between contracts with the balance cap), `36_c12_constants.sql` (m_T, m_A, U), `37_c12_pairs.sql` (the pairs of both layers, capped and uncapped);
-  - `38_c12_cohorts.sql` and `38_c12_proxies.sql` (the cohorts and the same-window proxies), `39_c12_label_parts.sql` (the labels split by the class of the counted account), `42_c12_checks.sql` (64 invariants, all zero before the download);
-  - the cohort lists and the labels themselves are computed on the five-token events that name a cohort address, by `12_usd_ego.sql`, `14_usd_anchor_pairs.sql`, `16_usd_labels.sql` and `21_usd12m_cohorts.sql` of the same folder;
-  - `27`, `28`, `35`, `36_c12_user_events.sql`, `40` and `41` serve cross-checks, the export and the discovery-order test of the companion manuscript.
+The public repository holds the study's folder of the authors' private Git repository with its commit history; the commits of the registered record keep their times and contents but have new identifiers, and its `HISTORY.md` lists those of the authors' repository. The folder `experiments/sql/` of that repository holds every query, and the first lines of each file say what it computes.
+
+- **Registered analysis:** commit `344017e`, the commit of the registered results. Beside the five queries above, the folder holds the query that copies the logs of a time window from the public table (scan A and scan B; committed with the plan in `d060f3a`), the identifier export, the data description and the top-token check.
+- **Main analysis (the contract-graph analysis):** commit `6b389df`, the commit of the published results; the queries numbered 24 to 43 in the same folder. By number:
+  - 24 to 26, 29 and 31: the five-token events of the whole chain, the addresses they name, the transaction senders, the addresses whose code is read, and then the contracts, the user accounts and the events between contracts;
+  - 32 to 34 and 43: the balances from `Transfer` logs, the blocks of the freezes and the sample of the balance check;
+  - 36 and 37: the latest allowances between contracts with the balance cap, the constants m_T, m_A and U, and the pairs of both layers, capped and uncapped;
+  - 38, 39 and 42: the cohorts, the same-window proxies, the labels split by the class of the counted account, and 64 invariants, all zero before the download;
+  - 27, 28, 35, 40 and 41: cross-checks, the export and the discovery-order test of the companion manuscript;
+  - the cohort lists and the labels are computed on the five-token events that name a cohort address, by the queries numbered 12, 14, 16 and 21.
 
   The definitions that these queries implement are in `experiments/docs/revision_contract_graph.md` of the public repository, and the published summaries with their checksums in `experiments/data/3-published-results-for-thesis/revised-contract-12m/`.
 
