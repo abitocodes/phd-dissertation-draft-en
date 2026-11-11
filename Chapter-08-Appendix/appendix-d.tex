@@ -2,53 +2,61 @@
 \section{Data Description}
 \label{ch:appendix-data}
 
-This appendix describes the extracted data behind Chapter~\ref{ch:results}: the volume of the ego extraction and of the two graphs, the five tokens with their prices and allowance amounts, and the activity of GMX~V2 contract accounts by quarter.
+This appendix describes the data behind Chapter~\ref{ch:results}: the events and the layers of the contract graph, the five tokens with their prices and allowance amounts, the account types, balances and labels of the contract graph, and the detail of the discovery-order test.
 
 \dissertationSubheading[sec:data-events]{Extracted events and graphs}
 
-The ego extraction of scan~A, 1~October~2023 to 30~June~2026, was made for the plan's cohort of $27{,}844$ contracts. It holds $389{,}866{,}882$ approval logs, zero-value ones included, and $1{,}538{,}404{,}067$ transfer logs of non-zero value of every ERC-20 token, each with a contract of that cohort at one end. The revised analysis keeps, for each freeze, the approvals and transfers of the five tokens in its score window that have a contract of the freeze's cohort at one end (Section~\ref{sec:dataset} gives their number); of the July--September logs of W1 it keeps $12{,}200{,}682$ approvals and $58{,}625{,}425$ transfers. At $T_{\mathrm{obs}}$ the pair tables built from the kept events hold $3{,}810{,}253$ allowance pairs and $8{,}432{,}635$ transfer pairs, and at $t_1$, $4{,}117{,}103$ and $9{,}198{,}965$. The $1{,}304$ and $6{,}511$ pairs at $T_{\mathrm{obs}}$ whose value weight is zero in double precision, and the addresses that only they touch (Section~\ref{sec:dataset}), are not part of the solver graphs of EndorseRank and AWP (Table~\ref{tab:benchmark-runtime}).
+The events of the main analysis are the \texttt{Approval} logs of any value and the \texttt{Transfer} logs of non-zero value that the five tokens emitted from 1~April~2025 to 30~September~2026, the months that the two score windows and the two label windows cover; Section~\ref{sec:dataset} gives their number. They form $73{,}058{,}133$ distinct ordered pairs of addresses. Only the rows with a contract at both ends enter a graph (Table~\ref{tab:graph-layers}). The node table numbers $1{,}403{,}959$ contracts over both freezes: every contract that ends a pair of either layer, with or without the balance cap, and every contract of the cohort and spender lists. A further $152{,}257{,}072$ rows of the two score windows lead from a user account to a contract or to an address that was not typed; no score reads them, and the importance measures of the discovery-order test are computed from them (Section~\ref{sec:discovery-protocol}). The registered analysis extracted the events of every ERC-20 token with a contract of the plan's cohort at one end, from 1~October~2023 to 30~June~2026: $389{,}866{,}882$ approval logs, zero-value ones included, and $1{,}538{,}404{,}067$ transfer logs of non-zero value.
 
 \dissertationSubheading[sec:data-tokens]{Tokens, prices and allowance amounts}
 
-Section~\ref{sec:amount-revision} gives the rule by which the five tokens were chosen. In the score window of $T_{\mathrm{obs}}$ they hold $79.40\%$ of the rows of all tokens in the ego tables of the plan's cohort (transfers in the window and positive latest allowances at $T_{\mathrm{obs}}$ set in it). Table~\ref{tab:usd-tokens} gives for each of them the address, decimals and feed, the rows held and kept, the US-dollar volume of the kept transfers and the data behind the daily prices; its caption counts the rows left out, those of the other tokens and those of the five tokens in which no contract of the revised cohort takes part.
+Section~\ref{sec:amount-revision} gives the rule by which the five tokens were chosen. Table~\ref{tab:usd-tokens} gives for each of them the address, the decimals and the Chainlink feed, the positive latest allowances between contracts at $T_{\mathrm{obs}}$ before and after the balance cap, and the data behind the daily prices.
 
 \input{results/tables/usd-tokens.tex}
 
-DefiLlama's series under the Arbitrum One address begins in August~2024 for WETH and WBTC and in January~2025 for USDT0, before the first score window opens, so every one of the $548$ days that the windows cover is priced under the token's own address. No day of the five tokens is filled from the previous day or replaced as a data error, and no kept transfer precedes its token's first price. Against the Chainlink feeds read on the chain on $20$ of these days per token, the DefiLlama prices differ by a median of $0.010\%$ to $0.056\%$ per token and by at most $0.24\%$, for WBTC.
+Each of the five tokens has a DefiLlama price under its own Arbitrum One address on each of the $548$ days from 1~April~2025 to 30~September~2026: no day is taken from a second key of the service, filled from the previous day or corrected as a one-day error. Against the Chainlink feeds read on the chain on $20$ of these days per token, the DefiLlama prices differ by a median of $0.01\%$ to $0.06\%$ per token and by at most $0.24\%$.
 
-Unlimited allowances are common. Of the $4{,}185{,}287$ positive latest allowances at $T_{\mathrm{obs}}$, $2{,}084{,}669$ ($49.8\%$) are of $1.15\times10^{77}$ base units or more, close to $2^{256}-1$, and $2{,}331{,}420$ ($55.7\%$), the unlimited ones included, are worth at least the cap $U$. The $4{,}185{,}287$ allowances belong to $2{,}508{,}872$ owners, of whom $1{,}389{,}569$ hold at least one unlimited allowance and $256{,}803$ hold both an unlimited and a finite one. In the registered analysis, which kept every token in raw base units, $99.52\%$ of the ego transfers and $99.78\%$ of the $28{,}069{,}418$ latest allowances at $T_{\mathrm{obs}}$ were of ten base units or more, where $V$ with $b=1$ is within $10^{-4}$ of one, and $1{,}532{,}301$ of the $13{,}029{,}306$ owners with a positive latest allowance held both an unlimited and a smaller allowance.
+Unlimited allowances are common. Of the $339{,}282$ positive latest allowances between contracts at $T_{\mathrm{obs}}$, $223{,}892$ ($66.0\%$) are of $1.15\times10^{77}$ base units or more, close to $2^{256}-1$, and $230{,}313$, the unlimited ones included, are worth at least the cap $U$ before the balance cap (Table~\ref{tab:allowance-cap} gives the unlimited allowances per token). In the registered analysis, which kept every token in raw base units, $99.52\%$ of the ego transfers and $99.78\%$ of the $28{,}069{,}418$ latest allowances at $T_{\mathrm{obs}}$ were of ten base units or more, where $V$ with $b=1$ is within $10^{-4}$ of one, and $1{,}532{,}301$ of the $13{,}029{,}306$ owners with a positive latest allowance held both an unlimited and a smaller allowance.
 
-\dissertationSubheading[sec:data-gmx]{GMX~V2 contract traders by quarter}
+\dissertationSubheading[sec:data-contract-graph]{Contract graph: account types, smart accounts and balances}
 
-The trader cohorts are GMX~V2 accounts that hold contract code (Section~\ref{sub:cohorts}). Table~\ref{tab:gmx-quarters} counts their position closes, the \texttt{PositionDecrease} events of the protocol's event emitter \parencite{gmxnddocs}, by calendar quarter, together with the liquidations among them and the number of contract accounts that closed at least one and at least three positions in the quarter.
+Table~\ref{tab:contract-types} gives the account types behind the contract graph; Section~\ref{sub:account-types} states the rule and Appendix~\ref{sec:account-type-classification} the reads.
 
-\begin{table}[!htb]
+\input{results/tables/contract-types.tex}
+
+The reads alone miss ERC-4337 accounts whose proxy hides the \texttt{validateUserOp} selector. Two lists of code families, drawn from the code alone without reading a label, a cohort membership or a score of the addresses they move, type $192{,}656$ more addresses as smart accounts. The first holds $20$ code hashes of small proxies whose implementation the reads did not find and whose representative answers a canonical EntryPoint ($37{,}337$ addresses). The second holds seven pairs of a code hash and an implementation of ERC-1967 proxies whose implementation carries the selector and whose getter \texttt{entrypoint()} answers a canonical EntryPoint where \texttt{entryPoint()} answers none ($155{,}319$ addresses).
+
+Kinds of smart account that the rule does not find stay contracts and graph nodes. After the two lists, $115{,}084$ typed contracts still carry a \texttt{validateUserOp} selector and no paymaster selector in the code examined: $104{,}187$ of them share one code hash whose getter \texttt{entrypoint()} reverts or does not exist, and $8{,}793$ run one implementation whose EntryPoint is not a canonical one. Contracts whose code suggests a smart account of another kind, neither a Safe nor an ERC-4337 account, stay as well, as do the contracts that services create for each payment, order or user, which no rule picks out.
+
+The balance of an owner in a token at a freeze is the net flow of the token's \texttt{Transfer} logs to the owner from the first block of the chain up to the freeze, set to zero when it is negative or below $10^{-6}$ token (Section~\ref{sub:balances}). It was computed for the $6{,}033{,}263$ pairs of a token and an owner with an approval of that token from 1~April~2025 to $T_{\mathrm{obs}}$. A check compared $1{,}500$ of these pairs, for each token $150$ with a zero and $150$ with a positive reconstructed balance at $T_{\mathrm{obs}}$, with \texttt{balanceOf} at block $479{,}089{,}705$, the last block of 30~June~2026: $1{,}493$ agree ($99.5\%$, against a threshold of $98\%$). For the other seven, four of WETH and three of USDT0, each with a reconstructed balance that counts as zero, the call returned no value, and the check counts them as disagreements; no pair with an answer differs.
+
+Table~\ref{tab:allowance-cap} gives the effect of the balance cap on the latest allowances between contracts, per token. Most of the allowances that stay positive are counted at a balance below the allowed amount ($114{,}454$ of $116{,}723$ at $T_{\mathrm{obs}}$), and the two freezes differ in USDC, of which $108{,}916$ allowances stay positive at $T_{\mathrm{obs}}$ and $11{,}381$ at $t_1$. After the cap $150$ allowances at $T_{\mathrm{obs}}$ and $204$ at $t_1$ are worth $U$ or more, so the cap $U$ of the allowance layer of C-PR binds on few of them. The labels, unlike the graphs, count every account, and Table~\ref{tab:label-split} splits each label of the two label windows by the class of the account it counts (Section~\ref{sec:holdout-results}).
+
+\input{results/tables/allowance-cap.tex}
+
+\input{results/tables/label-split.tex}
+
+\dissertationSubheading[sec:discovery-detail]{Discovery-order test: universes, coverage, sensitivity and diagnostics}
+
+This section holds the tables of the discovery-order test that Section~\ref{sec:discovery-results} reads; Section~\ref{sec:discovery-protocol} defines their terms. The test was defined after the registered results were known, and it decides no rule of the analysis plan or the registration.
+
+Table~\ref{tab:discovery-sizes} gives the sizes of the contract graph, of its bow-tie and of the two universes at both freezes, with the sizes of the hot sets. Table~\ref{tab:discovery-coverage} shows how much of the two importances each universe holds: at $T_{\mathrm{obs}}$ the universe of the \texttt{both} mode holds $96.5\%$ of $I_T$ and $93.0\%$ of $I_A$ by value, but $64.2\%$ and $38.1\%$ of the contracts that make up the top $1\%$ by each.
+
+\input{results/tables/discovery-sizes.tex}
+
+\input{results/tables/discovery-coverage.tex}
+
+Table~\ref{tab:discovery-sensitivity} changes one setting of the deciding run at a time. In no row does the interval of $D_2$ lie above zero; the interval of $D_1$ on $H_q(I_A)$ lies below zero in two rows and contains zero in two others. Table~\ref{tab:discovery-diagnostics} gives the share of picks that each ordering decides by a tie, the share of early visits that go to contracts without user-account demand and the visit at which each ordering reaches the hubs: the median hub is visit $950$ under AWP$'$ and $4{,}088$ under C-PR$'$, against $25{,}565$ under $\mathrm{IB}'_U$.
+
+\input{results/tables/discovery-sensitivity.tex}
+
+\input{results/tables/discovery-diagnostics.tex}
+
+Figure~\ref{fig:discovery-curves-out} shows the curves of the \texttt{out} mode at $T_{\mathrm{obs}}$, which carries no verdict. In that mode C-PR$'$ reaches the hot contracts sooner than the breadth-first crawl and than $\mathrm{IB}'_U$ on both importances (Table~\ref{tab:discovery-decision}), but it does not lead the walks on the transfer layer alone: on $H_q(I_T)$ it lies below AWP$'$ ($-0.0617$, $[-0.0709,-0.0526]$) and below its own transfer layer, C-PR$'$ ($\lambda=0$) ($-0.0305$, $[-0.0343,-0.0264]$), and on $H_q(I_A)$ it is level with AWP$'$ ($-0.0016$, $[-0.0091,+0.0063]$) and above C-PR$'$ ($\lambda=0$) ($+0.0153$, $[+0.0108,+0.0206]$).
+
+\begin{figure}[htbp]
 \centering
-\caption[GMX~V2 closes of contract accounts by quarter.]{GMX~V2 closes of contract accounts by quarter. October~2023 to June~2026: closes by the $7{,}633$ contracts among the $40{,}307$ GMX~V2 accounts with at least three closes in these months (Table~\ref{tab:account-types}). July to September~2026 (the label window of W1): closes by the contract accounts of scan~A and of the W1 run. Liquidation: a close with the liquidation order type or emitted through the liquidation handler. Source: the decoded closes in \texttt{data/2-processed-tables-and-evaluations/gmx/}.}
-\label{tab:gmx-quarters}
-\fitwidth{%
-\begin{tabular}{lrrrr}
-\toprule
-Quarter & Closes & Liquidations & Accounts with a close & Accounts with $\geq 3$ closes \\
-\midrule
-2023 Q4 & 1{,}119 & 104 & 180 & 105 \\
-2024 Q1 & 7{,}956 & 692 & 1{,}247 & 961 \\
-2024 Q2 & 11{,}509 & 589 & 2{,}120 & 1{,}165 \\
-2024 Q3 & 7{,}947 & 456 & 1{,}807 & 724 \\
-2024 Q4 & 7{,}343 & 904 & 1{,}321 & 698 \\
-2025 Q1 & 6{,}929 & 498 & 497 & 273 \\
-2025 Q2 & 12{,}080 & 379 & 368 & 250 \\
-2025 Q3 & 28{,}753 & 897 & 1{,}750 & 1{,}567 \\
-2025 Q4 & 40{,}240 & 1{,}596 & 1{,}915 & 1{,}744 \\
-2026 Q1 & 6{,}026 & 233 & 269 & 171 \\
-2026 Q2 & 3{,}783 & 125 & 169 & 127 \\
-\midrule
-2026 Q3 (W1) & 6{,}805 & 182 & 165 & 131 \\
-\midrule
-October~2023 -- June~2026 & 133{,}685 & 6{,}473 & & \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-Contract accounts closed the most positions in the second half of 2025 and far fewer in 2026. A trader cohort further requires the account to be a node of the graph at the freeze: of the $127$ contract accounts with at least three closes in April--June~2026, $87$ form the trader cohort of W0, and of the $131$ in July--September, $70$ form that of W1.
+\includegraphics[width=\textwidth]{\figpath{discovery-curves-out.pdf}}
+\caption[{Discovery-order test: share of the hot contracts visited when a visit reveals out-edges only.}]{Discovery-order test at $T_{\mathrm{obs}}$ in the \texttt{out} mode, which carries no verdict: the share of the hot contracts visited, $P_{ST}$, against the contracts visited as a percentage of the universe, for the hot sets of user-account inflow $I_T$ (left) and of user-authorised value $I_A$ (right). In this mode a visit reveals out-edges only, and the universe is the giant strongly connected component with the contracts reachable from it. The curves are means over the 20 seeds for the breadth-first and random orderings, the backlink count $\mathrm{IB}'_U$, AWP$'$ and C-PR$'$; the shaded bands give the minimum and maximum over the seeds for $\mathrm{IB}'_U$ and C-PR$'$, the dotted line is the ideal order, and the vertical line marks $10\%$ of the universe, the range of $\mathrm{AUC}_{10\%}$. The test was defined after the registered results were known; it decides no rule of the analysis plan or the registration.}
+\label{fig:discovery-curves-out}
+\end{figure}
