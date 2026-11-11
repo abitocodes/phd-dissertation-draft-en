@@ -6,7 +6,6 @@
 \begin{tikzpicture}[x=1cm, y=1cm, font=\scriptsize, oneline/.style={text height=1.6ex, text depth=0.45ex}]
 \definecolor{dsApproval}{RGB}{0,114,178}
 \definecolor{dsTransfer}{RGB}{0,158,115}
-\definecolor{dsGMX}{RGB}{230,159,0}
 \definecolor{dsOther}{RGB}{140,140,140}
 \def\xa{1.95}% 1 Oct 2023
 \def\xq{3.75}% 1 Apr 2025: start of the W0 score window and of the uncompressed scale
@@ -23,8 +22,8 @@
   \fill[#1!35] (#3,{#2-\bh/2}) rectangle (#4,{#2+\bh/2});
   \draw[#1!75!black, line width=0.5pt] (#3,{#2-\bh/2}) rectangle (#4,{#2+\bh/2});
   \node[oneline, inner sep=0pt] at ({(#3+#4)/2},#2) {#5};}
-% \dsHeld{colour}{y}{x start}{x end}{text}: labels counted after a freeze date
-% and kept out of the scores.
+% \dsHeld{colour}{y}{x start}{x end}{text}: records kept out of the scores
+% (labels counted after a freeze date; events of user accounts).
 \def\dsHeld#1#2#3#4#5{%
   \fill[pattern=north east lines, pattern color=#1] (#3,{#2-\bh/2}) rectangle (#4,{#2+\bh/2});
   \draw[#1!75!black, line width=0.7pt] (#3,{#2-\bh/2}) rectangle (#4,{#2+\bh/2});
@@ -34,7 +33,7 @@
 \def\laneuse#1#2{\node[anchor=north west, text width=4.9cm, align=flush left, inner sep=0pt] at (\xr,#1) {#2};}
 \def\lanerule#1{\draw[black!25] (0,#1) -- (17.4,#1);}
 \def\ytop{-0.3}% top of the lanes
-\def\ybot{-10.5}% bottom of the lanes
+\def\ybot{-11.69}% bottom of the lanes
 
 % Calendar: year boundaries on the compressed part, month boundaries from April 2025
 \foreach \x in {1.95,2.25,3.45} {\draw[black!12] (\x,\ytop) -- (\x,\ybot);}
@@ -61,9 +60,9 @@
 % Lane 0: extraction
 \lanetitle{-0.6}{Extraction}
 \rowlabel{dsOther}{-1.0}{Logs}
-\dsInput{dsOther}{-1.0}{\xa}{\xt}{approval, transfer and GMX logs (scan~A)}
+\dsInput{dsOther}{-1.0}{\xa}{\xt}{approval and transfer logs (scan~A)}
 \dsHeld{dsOther}{-1.0}{\xt}{\xe}{scan~B}
-\laneuse{-0.5}{Ego events of the plan's cohort, $27{,}844$ contracts approved on any token (\S\ref{sec:data-sources}).}
+\laneuse{-0.5}{Every ERC-20 approval and transfer log of the chain; the main analysis reads those of five tokens (\S\ref{sec:data-sources}).}
 \lanerule{-1.35}
 
 % Lane A: matched cohort selection
@@ -74,60 +73,66 @@
 \lanerule{-2.40}
 
 % Lane B: same-window analysis
-\lanetitle{-2.70}{Same-window analysis, matched cohort ($n=6{,}483$)}
+\lanetitle{-2.70}{Same-window analysis, matched cohort ($n=6{,}443$)}
 \rowlabel{dsApproval}{-3.10}{Approval}
 \dsInput{dsApproval}{-3.10}{\xs}{\xt}{EndorseRank; allowance checks}
 \rowlabel{dsTransfer}{-3.54}{Transfer}
 \dsInput{dsTransfer}{-3.54}{\xs}{\xt}{AWP; transfer and Sybil checks}
-\laneuse{-2.60}{Both edge types together give \mbox{C-PR} and \mbox{S-PR}. RQ1, the benchmark of RQ2 and the same-window part of RQ4 (\S\S\ref{sec:benchmark-results}--\ref{sec:rank-divergence}, \S\ref{sec:coupled-results}).}
+\laneuse{-2.60}{Events between contracts; both edge types give \mbox{C-PR} and \mbox{S-PR}. RQ1 and the same-window part of RQ4 (\S\S\ref{sec:benchmark-results}--\ref{sec:rank-divergence}, \S\ref{sec:coupled-results}).}
 \lanerule{-3.89}
 
-% Lane C: holdout W0 on spender contracts
-\lanetitle{-4.19}{Holdout W0, spender contracts ($n=7{,}914$)}
+% Lane C: discovery-order test, drawn at T_obs; the arrow marks the months of the test at t1
+\lanetitle{-4.19}{Discovery-order test at $T_{\mathrm{obs}}$ and at $t_1$}
 \rowlabel{dsApproval}{-4.59}{Approval}
-\dsInput{dsApproval}{-4.59}{\xq}{\xw}{score input; W0 cohort}
-\dsHeld{dsApproval}{-4.59}{\xw}{\xt}{pairs}
+\dsInput{dsApproval}{-4.59}{\xs}{\xt}{allowance edges between contracts}
 \rowlabel{dsTransfer}{-5.03}{Transfer}
-\dsInput{dsTransfer}{-5.03}{\xq}{\xw}{score input}
-\dsHeld{dsTransfer}{-5.03}{\xw}{\xt}{senders}
-\laneuse{-4.09}{Contract spenders holding an allowance of the five tokens set in the twelve months before $t_1$. RQ3 and RQ4 (\S\ref{sec:holdout-protocol}, \S\S\ref{sec:holdout-results}--\ref{sec:cpr-results}).}
-\lanerule{-5.38}
+\dsInput{dsTransfer}{-5.03}{\xs}{\xt}{transfer edges between contracts}
+\rowlabel{dsApproval}{-5.47}{Approval}
+\dsHeld{dsApproval}{-5.47}{\xs}{\xt}{$I_A$: allowances from user accounts}
+\rowlabel{dsTransfer}{-5.91}{Transfer}
+\dsHeld{dsTransfer}{-5.91}{\xs}{\xt}{$I_T$: transfers from user accounts}
+\draw[black!60, line width=0.5pt, <->] (\xq,-6.33) -- (\xw,-6.33)
+  node[oneline, midway, fill=white, inner xsep=2pt, inner ysep=0pt] {at $t_1$: these months};
+\laneuse{-4.09}{The crawls read the edges between contracts. The events of user accounts, which no ordering reads, give the importance of a contract and mark the hot contracts. RQ2 (\S\ref{sec:discovery-protocol}, \S\ref{sec:discovery-results}).}
+\lanerule{-6.63}
 
-% Lane D: W0 trader run
-\lanetitle{-5.68}{W0 trader run, exploratory ($n=87$)}
-\rowlabel{dsApproval}{-6.08}{Approval}
-\dsInput{dsApproval}{-6.08}{\xq}{\xw}{score input}
-\rowlabel{dsTransfer}{-6.52}{Transfer}
-\dsInput{dsTransfer}{-6.52}{\xq}{\xw}{score input}
-\rowlabel{dsGMX}{-6.96}{GMX V2}
-\dsHeld{dsGMX}{-6.96}{\xw}{\xt}{outcomes}
-\laneuse{-5.58}{GMX~V2 contract accounts in the $t_1$ graph with at least three closes from April to June; profit labels under no rule (\S\ref{sub:trader-holdout}). Their liquidation labels enter only the outcome comparison.}
-\lanerule{-7.31}
+% Lane D: holdout W0 on spender contracts
+\lanetitle{-6.93}{Holdout W0, spender contracts ($n=7{,}864$)}
+\rowlabel{dsApproval}{-7.33}{Approval}
+\dsInput{dsApproval}{-7.33}{\xq}{\xw}{score input; W0 cohort}
+\dsHeld{dsApproval}{-7.33}{\xw}{\xt}{pairs}
+\rowlabel{dsTransfer}{-7.77}{Transfer}
+\dsInput{dsTransfer}{-7.77}{\xq}{\xw}{score input}
+\dsHeld{dsTransfer}{-7.77}{\xw}{\xt}{senders}
+\laneuse{-6.83}{Contract spenders with a five-token allowance set in the year before $t_1$; labels count every account. RQ3, RQ4 (\S\ref{sec:holdout-protocol}, \S\S\ref{sec:holdout-results}--\ref{sec:cpr-results}).}
+\lanerule{-8.12}
 
 % Lane E: registered window W1
-\lanetitle{-7.61}{Registered window W1}
-\rowlabel{dsApproval}{-8.01}{Approval}
-\dsInput{dsApproval}{-8.01}{\xs}{\xt}{score input}
-\dsHeld{dsApproval}{-8.01}{\xt}{\xe}{pairs}
-\rowlabel{dsTransfer}{-8.45}{Transfer}
-\dsInput{dsTransfer}{-8.45}{\xs}{\xt}{score input}
-\dsHeld{dsTransfer}{-8.45}{\xt}{\xe}{senders}
-\rowlabel{dsGMX}{-8.89}{GMX V2}
-\dsHeld{dsGMX}{-8.89}{\xt}{\xe}{outcomes}
-\laneuse{-7.51}{$7{,}960$ spenders and $70$ traders, all contracts: rule~B and the outcome comparison on the revised scores. Extracted by the study after the registration of 9~Oct 2026, 16:49~UTC (\S\ref{sub:fresh-holdout}).}
-\lanerule{-9.24}
+\lanetitle{-8.42}{Registered window W1, spender contracts ($n=7{,}915$)}
+\rowlabel{dsApproval}{-8.82}{Approval}
+\dsInput{dsApproval}{-8.82}{\xs}{\xt}{score input}
+\dsHeld{dsApproval}{-8.82}{\xt}{\xe}{pairs}
+\rowlabel{dsTransfer}{-9.26}{Transfer}
+\dsInput{dsTransfer}{-9.26}{\xs}{\xt}{score input}
+\dsHeld{dsTransfer}{-9.26}{\xt}{\xe}{senders}
+\laneuse{-8.32}{F1 and F2 of rule~B on the contract graph's scores; W1 logs extracted after the registration of 9~Oct 2026. RQ3, RQ5 (\S\ref{sub:fresh-holdout}).}
+\lanerule{-9.61}
 
-% Lane F: account type
-\lanetitle{-9.54}{Account type}
-\rowlabel{dsOther}{-10.0}{Code}
-\fill[dsOther!75!black] (12.1,-10.0) +(0,0.13) -- +(0.13,0) -- +(0,-0.13) -- +(-0.13,0) -- cycle;
-\node[anchor=east, fill=white, inner sep=1pt] at (11.9,-10.0) {\texttt{eth\_getCode} at pinned blocks, 9 Oct 2026};
-\laneuse{-9.44}{Which candidate, spender and trader addresses are contracts; an EIP-7702 delegation designator counts as an EOA (\S\ref{sec:data-sources}).}
+% Lane F: account types and balances
+\lanetitle{-9.91}{Account types and balances}
+\rowlabel{dsOther}{-10.31}{Senders}
+\dsInput{dsOther}{-10.31}{\xa}{\xe}{sent a transaction in any block before 1 Oct 2026: user account}
+\rowlabel{dsOther}{-10.75}{Code}
+\fill[dsOther!75!black] (12.1,-10.75) +(0,0.13) -- +(0.13,0) -- +(0,-0.13) -- +(-0.13,0) -- cycle;
+\node[anchor=east, fill=white, inner sep=1pt] at (11.9,-10.75) {\texttt{eth\_getCode} and smart-account calls at one pinned block, 9 Oct 2026};
+\rowlabel{dsTransfer}{-11.19}{Transfer}
+\dsInput{dsTransfer}{-11.19}{\xa}{\xt}{transfers of the five tokens up to each freeze: owner balances}
+\laneuse{-9.81}{Transaction senders, addresses without code or with an EIP-7702 delegation and smart accounts are user accounts; other code is a contract (\S\ref{sub:account-types}). Balances also take the transfers before October 2023 (\S\ref{sub:balances}).}
 
 % Legend: record colours, then bar styles
-\begin{scope}[shift={(0,-11.6)}]
+\begin{scope}[shift={(0,-12.79)}]
   \node[oneline, anchor=west, font=\scriptsize\bfseries, inner sep=0pt] at (0,0) {Records};
-  \foreach \c/\t/\x/\y in {dsApproval/ERC-20 Approval logs/1.4/0, dsTransfer/ERC-20 Transfer logs/5.0/0, dsGMX/GMX V2 position closes/8.6/0, dsOther/{all logs, or code read over RPC}/12.45/0} {
+  \foreach \c/\t/\x/\y in {dsApproval/ERC-20 Approval logs/1.4/0, dsTransfer/ERC-20 Transfer logs/5.0/0, dsOther/{all logs, transaction senders, or code read over RPC}/8.6/0} {
     \fill[\c!35] (\x,{\y-0.1}) rectangle ({\x+0.45},{\y+0.1});
     \draw[\c!75!black, line width=0.5pt] (\x,{\y-0.1}) rectangle ({\x+0.45},{\y+0.1});
     \node[oneline, anchor=west] at ({\x+0.5},\y) {\t};
@@ -139,7 +144,8 @@
   \node[oneline, anchor=west] at (1.9,-0.5) {solid: input to scores, cohorts or same-window checks};
   \fill[pattern=north east lines, pattern color=black!70] (9.4,-0.6) rectangle (9.85,-0.4);
   \draw[black!60, line width=0.7pt] (9.4,-0.6) rectangle (9.85,-0.4);
-  \node[oneline, anchor=west] at (9.9,-0.5) {hatched: held-out labels, counted after the freeze};
+  \node[oneline, anchor=west] at (9.9,-0.5) {hatched: kept out of the scores, as labels counted after};
+  \node[oneline, anchor=west] at (9.9,-0.92) {a freeze or as the importance from user accounts};
   \draw[black!70, dashed, line width=0.6pt] (1.625,-1.1) -- (1.625,-0.74);
   \node[oneline, anchor=west] at (1.9,-0.92) {dashed line: freeze date};
 \end{scope}
