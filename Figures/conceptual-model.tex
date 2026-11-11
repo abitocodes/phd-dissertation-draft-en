@@ -1,33 +1,31 @@
 % !TEX root = ../main.tex
 \begin{tikzpicture}[
   font=\small,
-  box/.style={draw, rounded corners, align=center, minimum width=10.5cm, minimum height=1.0cm},
-  smallbox/.style={draw, rounded corners, align=center, minimum width=3.4cm, minimum height=1.05cm},
-  refbox/.style={draw, dashed, rounded corners, align=center, minimum width=3.4cm, minimum height=0.95cm},
+  node distance=5mm,
+  wide/.style={draw, rounded corners, align=center, text width=10.2cm, minimum height=1.05cm},
+  side/.style={draw, dashed, rounded corners, align=center, text width=3.0cm, minimum height=4.8cm},
   arrow/.style={-{Stealth[length=2.5mm]}, thick}
 ]
-\node[box] (center) at (0,3.2) {Allowance and transfer scores on one contract cohort};
+% Input and scores
+\node[wide] (graph) {Contract graph at a freeze: nodes are contracts\\ allowance layer under the balance cap; transfer layer};
+\node[wide, below=of graph] (scores) {Scores: C-PR (coupled walk) and S-PR (its ablation);\\ EndorseRank, AWP (single-layer walks); raw counts};
 
-\node[smallbox] (rep) at (-5,1.2) {Reputation\\Structure};
-\node[smallbox] (risk) at (0,1.2) {Construct\\Checks};
-\node[smallbox] (eff) at (5,1.2) {Computational\\Cost};
+% Evaluations, from top to bottom in the order of the research questions
+\node[wide, below=7mm of scores] (e1) {RQ1 (H1--H3), same window: EndorseRank and AWP\\ divergence, checks of each walk's own edges, cost};
+\node[wide, below=4mm of e1] (e2) {RQ2, discovery order: a crawl ordered by C-PR\\ against breadth-first order and the backlink count};
+\node[wide, below=4mm of e2] (e3) {RQ3, out-of-window prediction in W0 and W1:\\ each walk against the raw count it smooths};
+\node[wide, below=4mm of e3] (e4) {RQ4 and RQ5, the rules for the coupled walk:\\ rule A; two criteria of rule B (F1, F2)};
 
-\node[smallbox] (h1) at (-5,-1.0) {H1 / RQ1\\EndorseRank--AWP\\divergence};
-\node[smallbox] (h2) at (0,-1.0) {H2 / RQ1\\Agreement with\\each construct};
-\node[smallbox] (h3) at (5,-1.0) {H3 / RQ2\\Cost of\\each score};
+% User accounts stand outside every graph
+\node[side, right=9mm of e3] (users) {User accounts: nodes of no graph. They enter only as the importance of the discovery-order test and through the labels};
 
-\node[refbox] (hold) at (0,-3.0) {RQ3: temporal holdouts\\scores vs.\ raw degrees};
-\node[refbox] (rq5) at (5,-3.0) {RQ4, RQ5: coupled walk C-PR\\rules A and B};
+\draw[arrow] (graph.south) -- (scores.north);
+\draw[arrow] (scores.west) -- ++(-0.7,0) |- (e1.west);
+\draw[arrow] (scores.west) -- ++(-0.7,0) |- (e2.west);
+\draw[arrow] (scores.west) -- ++(-0.7,0) |- (e3.west);
+\draw[arrow] (scores.west) -- ++(-0.7,0) |- (e4.west);
 
-\draw[arrow] (center.south -| rep.north) -- (rep.north);
-\draw[arrow] (center.south) -- (risk.north);
-\draw[arrow] (center.south -| eff.north) -- (eff.north);
-
-\draw[arrow] (rep.south) -- (h1.north);
-\draw[arrow] (risk.south) -- (h2.north);
-\draw[arrow] (eff.south) -- (h3.north);
-
-\draw[arrow, dashed] (h2.south) -- (hold.north);
-\draw[arrow, dashed] (h2.south east) -- (rq5.north west);
-\draw[arrow, dashed] (hold.east) -- (rq5.west);
+\draw[arrow, dashed] (users.west |- e2.east) -- (e2.east);
+\draw[arrow, dashed] (users.west) -- (e3.east);
+\draw[arrow, dashed] (users.west |- e4.east) -- (e4.east);
 \end{tikzpicture}
