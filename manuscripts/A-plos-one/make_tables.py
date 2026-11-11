@@ -326,6 +326,8 @@ def table4() -> str:
     sb, rq, xs = sens["seed_bootstrap"], sens["rho_quarter"], sens["x"]
     p = d["protocol"]
     assert rq["rho"] == p["rho_quarter"]
+    o = S.discovery("tobs", "out")
+    # the rows of block 5 keep the order in which the protocol lists its sensitivities (section 6, item 5)
     lines = [hdr(f"The decision ({TOBS}, \\texttt{{both}} mode, $x=10\\%$, $q=1\\%$, $\\rho={p['rho']}$)", 4),
              *two("As decided", dec["i_t"], dec["i_a"]), "\\midrule",
              hdr("5. Sensitivities of the deciding run, one setting varied at a time", 4),
@@ -334,11 +336,10 @@ def table4() -> str:
              *two(f"Hot share $q={100 * q2['q']:.0f}\\%$$^{{a}}$", q2["i_t@q2"], q2["i_a@q2"]),
              *two(f"Hot sets without the {intc(nh['hubs'])} hubs$^{{b}}$", nh["i_t@q-nohubs"], nh["i_a@q-nohubs"]),
              *two("Importance by counts ($N_T$, $N_A$)$^{c}$", cnt["n_t@q"], cnt["n_a@q"]),
-             *two("Bootstrap over the seeds", sb["i_t@q"], sb["i_a@q"]),
+             *two(f"The other reveal mode (\\texttt{{out}}) at {TOBS}$^{{d}}$", o["decision"]["i_t"], o["decision"]["i_a"]),
              *two(f"Recomputed four times as often ($\\rho={rq['rho']}$, {rq['seeds']} seeds)",
-                  rq["contrasts"]["i_t@q"], rq["contrasts"]["i_a@q"])]
-    o = S.discovery("tobs", "out")
-    lines += two(f"The other reveal mode (\\texttt{{out}}) at {TOBS}$^{{d}}$", o["decision"]["i_t"], o["decision"]["i_a"])
+                  rq["contrasts"]["i_t@q"], rq["contrasts"]["i_a@q"]),
+             *two("Bootstrap over the seeds", sb["i_t@q"], sb["i_a@q"])]
     lines += ["\\midrule", hdr("6. The other freeze, $t_1$", 4)]
     for mode in ("both", "out"):
         r = S.discovery("t1", mode)
@@ -354,7 +355,10 @@ def table4() -> str:
     note = (
         "Differences of $\\mathrm{AUC}$ with 95\\% percentile intervals: $D_1$ is C-PR$'$ minus BFS and $D_2$ is C-PR$'$ "
         f"minus $\\mathrm{{IB}}'_U$. Unless a row says otherwise the interval is that of the paired bootstrap over the hot "
-        f"contracts, {boot(d)}. The decision is read in the first block only; no other row carries a verdict. "
+        f"contracts, {boot(d)}. The decision is read in the first block only; no other row carries a verdict. The rows "
+        "of block 5 keep the order of the protocol's list. Three items of that list have no row: the share of the "
+        "summed importance held by the visited contracts (given in the text and in S1 Table), a second curve and the "
+        "share of the union pairs read (in the published summaries, not reported here). "
         + (f"$^{{a}}$Only {intc(hot['i_a@q'])} contracts of the universe have a positive $I_A$, fewer than 1\\% of it, so "
            "the hot set of $I_A$ is the same at both shares. " if same else "$^{a}$The secondary share of the protocol. ")
         + "$^{b}$The contracts with the highest union in-degree of the full graph, taken out of the hot sets and kept "
@@ -415,6 +419,8 @@ def table5() -> str:
         "computed over the same window from the events between contracts. Each check is computed from the events of one "
         "layer: the transfer family from inbound transfers, the allowance family from the capped latest allowances "
         "received. Agreement of a score with the checks of its own edge type is therefore partly built in. The "
+        "in-degree of this check counts the distinct sender contracts with self-transfers included, whereas the transfer "
+        "in-degree that serves as the baseline out of window (Table~\\ref{tab6}) counts other contracts only. The "
         "Sybil-stability family averages the inbound-counterparty ratio, transfer tenure and active months. Family "
         "means are plain averages of the coefficients of their checks. A contract outside a graph scores zero: "
         f"{intc(ties['endorserank']['zeros'])} cohort contracts score zero under EndorseRank and "

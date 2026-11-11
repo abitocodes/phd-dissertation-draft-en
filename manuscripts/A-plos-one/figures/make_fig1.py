@@ -9,9 +9,13 @@ importances (mean over the 20 seeds, with the range over the seeds as a band).
 Panel C: each single-layer walk minus the count it smooths on the spender label of its own
 edge type, in W0 and W1, and in W0 among the spenders that another contract had paid.
 
-Values are read from the published summaries in the public repository (checked against their
-SHA256SUMS.txt); none is typed here. Writes figures/fig1.pdf next to this script. Convert
-to the upload TIFF with
+Every value is read from the published summaries in the public repository (checked against
+their SHA256SUMS.txt), and the dates of the windows in the legend and the share over which
+the area is taken from the published configuration and the run's protocol block; none is
+typed here. The range of the horizontal axis of A and B (20% of the universe) is a layout
+constant, and the texts that name the published quantities (titles, axis labels, the 95%
+level of the published intervals) are typed. Writes figures/fig1.pdf next to this script.
+Convert to the upload TIFF with
 
     pdftoppm -tiff -tiffcompression lzw -r 300 -singlefile fig1.pdf Fig1
 
@@ -76,10 +80,18 @@ CURVES = (
     ("awp", "AWP′ (transfer walk)", C_AQUA, (0, (6, 1.5, 1.2, 1.5)), 1.6),
     ("bfs", "BFS (breadth-first)", INK2, "-", 1.0),
 )
-X_MAX = 0.20          # share of the universe shown
-X_AUC = 0.10          # the area of the statistic is taken over this share
-WINDOWS = [("W1", "W1: freeze 30 Jun 2026, labels Jul–Sep 2026", C_W1, "o", -0.16),
-           ("W0", "W0: freeze 31 Mar 2026, labels Apr–Jun 2026", C_W0, "s", 0.16)]
+X_MAX = 0.20          # share of the universe shown (layout)
+# window, key of its score window and of its label window in data_sources.windows(), colour, marker, offset
+WINDOWS = [("W1", "score_tobs", "label_w1", C_W1, "o", -0.16),
+           ("W0", "score_t1", "label_w0", C_W0, "s", 0.16)]
+
+
+def window_label(name: str, score_key: str, label_key: str) -> str:
+    """'W1: freeze 30 Jun 2026, labels Jul–Sep 2026', with the dates of the published configuration."""
+    w = S.windows()
+    (y1, m1, _), (y2, m2, _) = S._ymd(w[label_key][0]), S._ymd(w[label_key][1])
+    first = S.MONTHS[m1 - 1] if y1 == y2 else f"{S.MONTHS[m1 - 1]} {y1}"
+    return f"{name}: freeze {S.day(w[score_key][1])}, labels {first}–{S.MONTHS[m2 - 1]} {y2}"
 
 
 def span(values: list[float], step: float, pad: float) -> tuple[float, float]:
@@ -98,6 +110,7 @@ def letter(ax, char: str, title: str) -> None:
 def curves_panel(ax, run: dict, imp: str, char: str, title: str) -> None:
     grid = run["curves"]["grid"]
     n = run["sizes"]["universe"]["U"]
+    x_auc = run["protocol"]["x"][0]      # the primary share x: the area of the statistic is taken up to it
     keep = [i for i, k in enumerate(grid) if k / n <= X_MAX + 1e-9]
     x = [100.0 * grid[i] / n for i in keep]
     by = run["curves"]["P_ST"][imp]
@@ -114,7 +127,7 @@ def curves_panel(ax, run: dict, imp: str, char: str, title: str) -> None:
     ideal = by["ideal"]
     ax.plot(x, [(ideal["mean"] if isinstance(ideal, dict) else ideal)[i] for i in keep],
             color=INK, ls=(0, (1, 1.6)), lw=1.0, zorder=2)
-    ax.axvline(100 * X_AUC, color=INK2, lw=0.6, zorder=1)
+    ax.axvline(100 * x_auc, color=INK2, lw=0.6, zorder=1)
     ax.set_xlim(0, 100 * X_MAX)
     ax.set_ylim(0, min(1.0, math.ceil(1.25 * top / 0.05) * 0.05))
     ax.set_xticks([0, 5, 10, 15, 20])
@@ -165,7 +178,7 @@ def main() -> None:
     values = []
     for i, (_, c0, c1) in enumerate(rows):
         y = len(rows) - 1 - i
-        for (_, _, col, mk, off), c in zip(WINDOWS, (c1, c0)):
+        for (_, _, _, col, mk, off), c in zip(WINDOWS, (c1, c0)):
             if c is None:
                 continue
             point(ax_c, y + (off if c1 is not None else 0.0), c, col, mk)
@@ -183,8 +196,9 @@ def main() -> None:
     top_c = ax_c.get_position().y1
     fig.text(0.085, top_c + 0.012, r"$\mathbf{C}$   Spender contracts: each walk minus the count it smooths, on the label of its own edge type",
              fontsize=8.5, color=INK, ha="left", va="bottom")
-    w_handles = [Line2D([0], [0], color=col, marker=mk, lw=1.8, ms=4.8, mec="white", label=lab)
-                 for _, lab, col, mk, _ in WINDOWS]
+    w_handles = [Line2D([0], [0], color=col, marker=mk, lw=1.8, ms=4.8, mec="white",
+                        label=window_label(name, score_key, label_key))
+                 for name, score_key, label_key, col, mk, _ in WINDOWS]
     fig.legend(handles=w_handles, loc="lower center", bbox_to_anchor=(0.535, 0.004), ncol=2, fontsize=8,
                handlelength=2.2, columnspacing=1.6, labelcolor=INK)
 
