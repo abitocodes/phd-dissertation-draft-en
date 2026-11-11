@@ -3,12 +3,12 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/benchmark/benchmark.json
 \begin{table}[htbp]
 \centering
-\caption[Robustness: family-mean Kendall $\tau$ under PageRank damping $d$.]{Robustness: family-mean Kendall $\tau$ of EndorseRank (ER) and AWP under PageRank damping $d \in \{0.75, 0.85, 0.95\}$ on the matched cohort ($n=6{,}443$ contracts); all.\ = allowance, tr.\ = transfer, Syb.\ = Sybil stability. Runtimes are means of five timed solver calls on the full graphs; the $d=0.85$ runtimes are the measurements of Table~\ref{tab:benchmark-runtime}, reused, not timed again (Table~\ref{tab:benchmark-runs} lists every run). CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
+\caption[Robustness: family-mean Kendall $\tau$ under PageRank damping $d$.]{Robustness: family-mean Kendall $\tau$ of EndorseRank (ER) and AWP under PageRank damping $d \in \{0.75, 0.85, 0.95\}$ on the matched cohort ($n=6{,}443$ contracts); all.\ = allowance, tr.\ = transfer, Stab.\ = stability. Runtimes are means of five timed solver calls on the full graphs; the $d=0.85$ runtimes are the measurements of Table~\ref{tab:benchmark-runtime}, reused, not timed again (Table~\ref{tab:benchmark-runs} lists every run). CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
 \label{tab:robustness-damping}
 \fitwidth{%
 \begin{tabular}{rccccccrr}
 \toprule
-$d$ & ER all. & AWP all. & ER tr. & AWP tr. & ER Syb. & AWP Syb. & ER (s) & AWP (s) \\
+$d$ & ER all. & AWP all. & ER tr. & AWP tr. & ER Stab. & AWP Stab. & ER (s) & AWP (s) \\
 \midrule
 0.75 & \begin{tabular}[c]{@{}c@{}}0.839\\[-1pt]{\footnotesize [0.828, 0.849]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.224\\[-1pt]{\footnotesize [0.204, 0.244]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.297\\[-1pt]{\footnotesize [0.280, 0.317]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.750\\[-1pt]{\footnotesize [0.742, 0.757]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.220\\[-1pt]{\footnotesize [0.206, 0.237]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.643\\[-1pt]{\footnotesize [0.634, 0.651]}\end{tabular} & 0.086 & 1.755 \\
 0.85 & \begin{tabular}[c]{@{}c@{}}0.839\\[-1pt]{\footnotesize [0.828, 0.849]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.227\\[-1pt]{\footnotesize [0.206, 0.245]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.297\\[-1pt]{\footnotesize [0.280, 0.317]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.755\\[-1pt]{\footnotesize [0.748, 0.762]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.220\\[-1pt]{\footnotesize [0.206, 0.237]}\end{tabular} & \begin{tabular}[c]{@{}c@{}}0.643\\[-1pt]{\footnotesize [0.635, 0.651]}\end{tabular} & 0.101 & 2.821 \\

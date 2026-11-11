@@ -42,12 +42,6 @@ are rebuilt from the manuscript with `dissertation/tools/toc/make_results_readme
 | `cpr-contrasts.tex` | C-PR beside every other score | C-PR against every other score and the raw counts out of window. |
 | `union-members.tex` | C-PR beside every other score | The main out-of-window contrasts inside the union graph. |
 
-## Chapter 5
-
-| File | Section | Entry in the List of Tables |
-|------|---------|-----------------------------|
-| `sybil-threshold.tex` | A threshold on the balance | The Sybil cost model on the contract graph and its sensitivity to a balance threshold. |
-
 ## Appendix
 
 | File | Section | Entry in the List of Tables |
@@ -64,7 +58,7 @@ are rebuilt from the manuscript with `dissertation/tools/toc/make_results_readme
 | `tau-diff.tex` | Same window | Same-window paired contrasts between EndorseRank and AWP. |
 | `alignment-transfer.tex` | Proxy detail | Domain alignment of EndorseRank and AWP with the transfer proxies. |
 | `alignment-allowance.tex` | Proxy detail | Domain alignment of EndorseRank and AWP with the allowance proxies. |
-| `alignment-sybil-stability.tex` | Proxy detail | Domain alignment of EndorseRank and AWP with the Sybil-adjusted stability proxies. |
+| `alignment-sybil-stability.tex` | Proxy detail | Domain alignment of EndorseRank and AWP with the stability proxies. |
 | `endorserank-awp-holdout.tex` | Out of window | Paired bootstrap differences between EndorseRank and AWP out of window. |
 | `registered-vs-revised.tex` | The Registered Analysis | Decision contrasts of the registered analysis and of the contract-graph analysis. |
 

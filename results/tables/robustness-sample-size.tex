@@ -3,12 +3,12 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/benchmark/benchmark.json
 \begin{table}[htbp]
 \centering
-\caption[Sensitivity of the family means to the evaluation set.]{Sensitivity of the family means to the evaluation set: family-mean Kendall $\tau$ of EndorseRank (ER) and AWP on deterministic SHA256 subsamples of the matched cohort (seed \texttt{contract-benchmark-v1}, full cohort $n=6{,}443$ contracts), each row scored on the pairs incident to its contracts, whose numbers the columns $|E_A|$ (allowance) and $|E_T|$ (transfer) give; all.\ = allowance, tr.\ = transfer, Syb.\ = Sybil stability. Rows are evaluated on different contract sets and on other graphs than the whole contract graph, so their $\tau$ values are not comparable with Table~\ref{tab:alignment-hybrid}; they show how much the statistic moves with the evaluation population. No intervals were computed for the rows. Runtimes are the measurements of Table~\ref{tab:benchmark-scaling}; the graph of the pairs incident to the full cohort has no timing of its own (--).}
+\caption[Sensitivity of the family means to the evaluation set.]{Sensitivity of the family means to the evaluation set: family-mean Kendall $\tau$ of EndorseRank (ER) and AWP on deterministic SHA256 subsamples of the matched cohort (seed \texttt{contract-benchmark-v1}, full cohort $n=6{,}443$ contracts), each row scored on the pairs incident to its contracts, whose numbers the columns $|E_A|$ (allowance) and $|E_T|$ (transfer) give; all.\ = allowance, tr.\ = transfer, Stab.\ = stability. Rows are evaluated on different contract sets and on other graphs than the whole contract graph, so their $\tau$ values are not comparable with Table~\ref{tab:alignment-hybrid}; they show how much the statistic moves with the evaluation population. No intervals were computed for the rows. Runtimes are the measurements of Table~\ref{tab:benchmark-scaling}; the graph of the pairs incident to the full cohort has no timing of its own (--).}
 \label{tab:robustness-sample-size}
 \fitwidth{%
 \begin{tabular}{rccccccrrrr}
 \toprule
-$n$ & ER all. & AWP all. & ER tr. & AWP tr. & ER Syb. & AWP Syb. & $|E_A|$ & $|E_T|$ & ER (s) & AWP (s) \\
+$n$ & ER all. & AWP all. & ER tr. & AWP tr. & ER Stab. & AWP Stab. & $|E_A|$ & $|E_T|$ & ER (s) & AWP (s) \\
 \midrule
 1{,}000 & 0.860 & 0.246 & 0.322 & 0.771 & 0.230 & 0.666 & 1{,}611 & 120{,}296 & 0.001 & 0.095 \\
 2{,}000 & 0.853 & 0.248 & 0.324 & 0.762 & 0.237 & 0.657 & 4{,}788 & 235{,}934 & 0.002 & 0.134 \\
