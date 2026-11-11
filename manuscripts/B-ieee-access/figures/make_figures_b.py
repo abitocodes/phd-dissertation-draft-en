@@ -4,7 +4,7 @@
 Fig. 2  fig_contrasts.pdf     Forest plot of the contrasts of rule A, of the two criteria of rule B
                               that the paper applies (F1, F2), of F6 and of the two sensitivity
                               analyses, in both analyses.
-Fig. 3  fig_lambda_sweep.pdf  Kendall tau_b of C-PR against the authorization weight lambda, with
+Fig. 3  fig_lambda_sweep.pdf  Kendall tau_b of C-PR against the allowance weight lambda, with
                               95% intervals, for both analyses and both spender cohorts; in the
                               main analysis the union in-degree is drawn beside it.
 
@@ -119,7 +119,7 @@ def sweep(S: dict) -> None:
             if c == 0:
                 ax.set_ylabel(r"Kendall $\tau_b$")
     for ax in axes[1]:
-        ax.set_xlabel(r"weight $\lambda$ on the authorization layer", fontsize=FS)
+        ax.set_xlabel(r"weight $\lambda$ on the allowance layer", fontsize=FS)
     handles = [Line2D([0], [0], color=STYLE[k][0], marker=STYLE[k][1], lw=1.4, ms=4.6, label=STYLE[k][2])
                for k in (APPR, SEND)]
     handles.append(Line2D([0], [0], color=INK2, marker="o", lw=0, ms=4.6, mfc="white", mec=INK2,

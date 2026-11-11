@@ -5,16 +5,16 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
-\definecolor{authc}{HTML}{EB6834}
-\definecolor{payc}{HTML}{2A78D6}
+\definecolor{alwc}{HTML}{EB6834}
+\definecolor{trfc}{HTML}{2A78D6}
 \newcommand{\cpr}{C-PR}
 \begin{document}
 \begin{tikzpicture}[>=Stealth, font=\footnotesize,
   con/.style={rectangle, draw=black!80, thick, minimum size=6.4mm, inner sep=0pt, fill=white},
   coh/.style={con, fill=black!14},
   usr/.style={circle, draw=black!45, densely dotted, thick, minimum size=6.2mm, inner sep=0pt, text=black!55},
-  auth/.style={->, thick, dashed, draw=authc},
-  pay/.style={->, thick, draw=payc},
+  alw/.style={->, thick, dashed, draw=alwc},
+  trf/.style={->, thick, draw=trfc},
   off/.style={->, densely dotted, draw=black!45}]
   % the contract graph: every node is a contract
   \node[con] (u)  at (0,0)       {$u$};
@@ -23,27 +23,27 @@
   \node[coh] (r)  at (2.1,0.65)  {$R$};
   \node[coh] (s)  at (4.2,-0.35) {$S$};
   \node[con] (z)  at (6.1,-0.35) {$z$};
-  \draw[auth] (u) to[bend left=14] (r);
-  \draw[pay]  (u) to[bend right=14] (r);
-  \draw[auth] (u) to[bend right=10] (s);
-  \draw[auth] (w) -- (r);
-  \draw[auth] (x) -- (s);
-  \draw[pay]  (r) -- (x);
-  \draw[pay]  (s) -- (z);
+  \draw[alw] (u) to[bend left=14] (r);
+  \draw[trf]  (u) to[bend right=14] (r);
+  \draw[alw] (u) to[bend right=10] (s);
+  \draw[alw] (w) -- (r);
+  \draw[alw] (x) -- (s);
+  \draw[trf]  (r) -- (x);
+  \draw[trf]  (s) -- (z);
   % a user account: no node, and its approvals and transfers are edges of no graph
   \node[usr] (a) at (4.2,-1.55) {$a$};
   \draw[off] (a) -- (s);
   \node[right, text=black!60, inner sep=2pt] at (4.55,-1.55) {user account: no node, no edge};
   % legends
-  \draw[auth] (-0.4,2.5) -- (0.4,2.5) node[right, text=black] {authorization: capped latest allowance (owner $\to$ spender)};
-  \draw[pay] (-0.4,2.15) -- (0.4,2.15) node[right, text=black] {payment: token transfers (sender $\to$ recipient)};
+  \draw[alw] (-0.4,2.5) -- (0.4,2.5) node[right, text=black] {allowance edge: capped latest allowance (owner $\to$ spender)};
+  \draw[trf] (-0.4,2.15) -- (0.4,2.15) node[right, text=black] {transfer edge: token transfers (sender $\to$ recipient)};
   \node[coh, minimum size=3.2mm] at (4.75,1.35) {};
   \node[right] at (4.95,1.35) {cohort contract (evaluated)};
   \node[con, minimum size=3.2mm] at (4.75,0.95) {};
   \node[right] at (4.95,0.95) {other contract};
   \node[align=left, anchor=north west, inner sep=1pt] at (-0.45,-2.05)
     {$u\in B$: \cpr{} row $=\lambda P_A(u,\cdot)+(1-\lambda)P_T(u,\cdot)$\\
-     $w$, $x$: authorization out-edges only, follow $P_A$ for $\lambda>0$\\
-     $R$, $S$: payment out-edges only, follow $P_T$ for $\lambda<1$};
+     $w$, $x$: allowance out-edges only, follow $P_A$ for $\lambda>0$\\
+     $R$, $S$: transfer out-edges only, follow $P_T$ for $\lambda<1$};
 \end{tikzpicture}
 \end{document}

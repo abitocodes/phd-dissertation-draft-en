@@ -12,7 +12,7 @@ contains the public repository as the submodule
 1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation also works.
 
 Writes tab_bench.tex, tab_timeline.tex, tab_graph.tex, tab_cohorts.tex, tab_holdout.tex,
-tab_contrasts.tex, tab_cpr.tex, tab_union.tex, tab_sybil.tex and tab_explore.tex next to this
+tab_contrasts.tex, tab_cpr.tex, tab_union.tex and tab_explore.tex next to this
 file. Every number comes from one of these sources, named again in a comment at the top of
 each table:
 
@@ -132,12 +132,12 @@ def load(repo: Path) -> dict:
     spec = {
         "main": (base / REVISED, {
             "same": "same-window/eval_summary.json", "w0": "holdout-w0/eval_summary.json",
-            "w1": "window-w1/eval_summary.json", "sybil": "sybil-model/sybil_model.json",
+            "w1": "window-w1/eval_summary.json",
             "bench": "benchmark/benchmark.json", "describe": "describe/describe.json",
             "supp": "supplementary/supplementary.json", "rob": "robustness/robustness.json"}),
         "registered": (base, {
             "same": "same-window/eval_summary.json", "w0": "holdout-w0/eval_summary.json",
-            "w1": "registered-w1/eval_summary.json", "sybil": "sybil-model/sybil_model.json",
+            "w1": "registered-w1/eval_summary.json",
             "bench": "benchmark/benchmark.json", "describe": "describe/describe.json",
             "manifest": "registered-w1/extraction_manifest.json"}),
     }
@@ -265,7 +265,7 @@ def tab_bench(D: dict) -> str:
             "\\parbox{\\columnwidth}{\\footnotesize One session of one warm-up and five timed runs per graph and setting, the "
             "measurement cited throughout; the time covers matrix assembly and power "
             "iteration ($d=0.85$, tolerance $10^{-8}$, at most 300 iterations) on edge lists built in advance. S-PR includes the solve "
-            "of the authorization layer that supplies its restart vector. $|V|$ and $|E|$ are those of each solver graph, which holds "
+            "of the allowance layer that supplies its restart vector. $|V|$ and $|E|$ are those of each solver graph, which holds "
             "the pairs of positive weight (Section~\\ref{sec:graphs}); C-PR walks the union of both layers. In the main analysis the "
             "timed graph is the whole contract graph (all pairs between contracts, whether or not they touch the matched "
             "cohort); the registered graphs hold the events that name a contract of the registered cohort, user accounts "
@@ -310,7 +310,7 @@ def tab_timeline(repo: Path, D: dict) -> str:
         ("Registration of W1 committed: rule~B with $\\delta=0.01$, of which this paper applies the criteria F1 and F2; F6 and "
          "two sensitivity analyses to be reported beside it", "Every same-window and W0 result of the registered analysis"),
         ("Scan~B copies the logs of July to September 2026", "No July--September log extracted for this study before this"),
-        ("Registered W1 evaluation, then robustness checks, Sybil model, benchmark and data description", "W1 labels"),
+        ("Registered W1 evaluation, then robustness checks, benchmark and data description", "W1 labels"),
         ("After the registered results were known, the revised analysis was defined: amounts in US dollars on five tokens; "
          "scores from the twelve months before each freeze; graphs whose nodes are contracts other than smart accounts, with edges "
          "read from the whole chain; each allowance counted up to its owner's balance at the freeze, with balances reconstructed "
@@ -368,14 +368,14 @@ def tab_graph(D: dict) -> str:
         "\\quad capped below the allowance & " + both(lambda g: n(tot(g)["n_capped_below_allowance"])) + " \\\\",
         "\\quad positive after the cap & " + both(lambda g: n(tot(g)["n_positive_eff"])) + " \\\\",
         "\\midrule",
-        "\\multicolumn{3}{@{}l}{\\emph{Authorization layer (owner, spender)}} \\\\",
+        "\\multicolumn{3}{@{}l}{\\emph{Allowance layer (owner, spender)}} \\\\",
         "Pairs & " + both(lambda g: n(pr[g]["allowance_capped"]["pairs"])) + " \\\\",
         "\\quad owner contracts & " + both(lambda g: n(pr[g]["allowance_capped"]["sources"])) + " \\\\",
         "\\quad spender contracts & " + both(lambda g: n(pr[g]["allowance_capped"]["destinations"])) + " \\\\",
         "\\quad pairs of the largest owner & " + both(lambda g: n(pr[g]["allowance_capped"]["largest_source_pairs"])) + " \\\\",
         "Pairs without the cap (sensitivity) & " + both(lambda g: n(pr[g]["allowance_uncapped"]["pairs"])) + " \\\\",
         "\\midrule",
-        "\\multicolumn{3}{@{}l}{\\emph{Payment layer (sender, recipient)}} \\\\",
+        "\\multicolumn{3}{@{}l}{\\emph{Transfer layer (sender, recipient)}} \\\\",
         "Pairs & " + both(lambda g: n(pr[g]["transfer"]["pairs"])) + " \\\\",
         "\\quad sender contracts & " + both(lambda g: n(pr[g]["transfer"]["sources"])) + " \\\\",
         "\\quad recipient contracts & " + both(lambda g: n(pr[g]["transfer"]["destinations"])) + " \\\\",
@@ -501,11 +501,11 @@ HOLDOUT_ROWS = [
     ("EndorseRank", "endorserank", "endorserank"),
     ("EndorseRank with activity restarts", "endorserank_activity", "endorserank_activity"),
     ("AWP", "awp", "awp"),
-    ("C-PR ($\\lambda=1$), authorization walk", "cpr_l100", "cpr_l100"),
+    ("C-PR ($\\lambda=1$), allowance walk", "cpr_l100", "cpr_l100"),
     ("C-PR ($\\lambda=0.75$)", "cpr_l75", "cpr_l75"),
     ("C-PR ($\\lambda=0.5$), primary", "cpr_l50", "cpr_l50"),
     ("C-PR ($\\lambda=0.25$)", "cpr_l25", "cpr_l25"),
-    ("C-PR ($\\lambda=0$), payment walk", "cpr_l0", "cpr_l0"),
+    ("C-PR ($\\lambda=0$), transfer walk", "cpr_l0", "cpr_l0"),
     ("S-PR", "spr", "spr"),
 ]
 
@@ -709,9 +709,9 @@ def tab_cpr(D: dict) -> str:
                 (s1[f"cpr_minus_{key}_appr"], ""), (s1[f"cpr_minus_{key}_send"], "")]
 
     rows = [
-        ("Authorization walk, C-PR ($\\lambda=1$)", [(pre("cpr_l100", APPR), A), (s0["cpr_minus_l100_send"], ""),
+        ("Allowance walk, C-PR ($\\lambda=1$)", [(pre("cpr_l100", APPR), A), (s0["cpr_minus_l100_send"], ""),
                                                      (rb["F6a"], B), (s1["cpr_minus_l100_send"], "")]),
-        ("Payment walk, C-PR ($\\lambda=0$)", [(aft("cpr_l0", APPR), ""), (pre("cpr_l0", SEND), A), (rb["F1"], B), (rb["F2"], B)]),
+        ("Transfer walk, C-PR ($\\lambda=0$)", [(aft("cpr_l0", APPR), ""), (pre("cpr_l0", SEND), A), (rb["F1"], B), (rb["F2"], B)]),
         ("EndorseRank", [(aft("endorserank", APPR), ""), (s0["cpr_minus_er_send"], ""),
                          (er["cpr_minus_endorserank_appr"], ""), (s1["cpr_minus_er_send"], "")]),
         ("EndorseRank, activity restarts", both("er_activity")),
@@ -736,7 +736,7 @@ def tab_cpr(D: dict) -> str:
         label, cells = item
         lines.append(f"{label} & " + " & ".join(cell(r, m) for r, m in cells) + " \\\\")
     lines += ["\\midrule",
-              f"\\multicolumn{{5}}{{@{{}}l}}{{\\emph{{Spenders that another contract had paid before the freeze "
+              f"\\multicolumn{{5}}{{@{{}}l}}{{\\emph{{Spenders that had received a transfer from another contract before the freeze "
               f"(W0 $n={n(s0['recv_n'])}$, W1 $n={n(s1['recv_n'])}$)}}}} \\\\",
               "AWP & " + " & ".join(cell(s[f"recv_cpr_minus_awp_{k}"], "") for s in (s0, s1) for k in ("appr", "send")) + " \\\\",
               f"In-approve degree & {cell(s0['recv_cpr_minus_degree_appr'], '')} & --- & "
@@ -775,7 +775,7 @@ def tab_cpr(D: dict) -> str:
 
 def tab_union(D: dict) -> str:
     """The rule contrasts and the union in-degree contrasts on the whole cohorts, inside the union graph and with the
-    uncapped authorization layer (main analysis)."""
+    uncapped allowance layer (main analysis)."""
     V = D["main"]
     w0, w1, unc = V["w0"], V["w1"], V["rob"]["uncapped_allowances"]
     u0, u1, x0, x1 = w0["in_union_graph"], w1["in_union_graph"], unc["w0"], unc["w1"]
@@ -845,69 +845,12 @@ def tab_union(D: dict) -> str:
            "outside the union graph scores zero under every score and count, so on the whole cohort a contrast also reflects "
            "how the two scores order the spenders with a pair against those without one. Right: scores and the union in-degree "
            "recomputed with every positive latest allowance between contracts counted at its own value, which gives "
-           f"{n(p0['uncapped'])} authorization pairs at the W0 freeze where the cap leaves {n(p0['capped'])}, and {n(p1['uncapped'])} "
-           f"where it leaves {n(p1['capped'])} at the W1 freeze. Under the two contrasts with the authorization walk, "
+           f"{n(p0['uncapped'])} allowance pairs at the W0 freeze where the cap leaves {n(p0['capped'])}, and {n(p1['uncapped'])} "
+           f"where it leaves {n(p1['capped'])} at the W1 freeze. Under the two contrasts with the allowance walk, "
            "whose reading differs between the settings, the small figures give the two coefficients. The middle and right "
            "columns decide no rule. "
            "Intervals: 400 paired resamples, seed 42.}",
            "\\end{table*}", ""]
-    return "\n".join(out)
-
-
-def tab_sybil(D: dict) -> str:
-    S = D["main"]["sybil"]
-    th = S["balance_threshold"]
-    cols = [("None", S, None)] + [(f"\\${int(float(k))}", th[k], k) for k in sorted(th, key=float)]
-    farm, gas = S["contract_farm"], S["contract_farm"]["evm_gas"]
-    m = S["star"]["m"]
-
-    def cells(fn) -> str:
-        return " & ".join(fn(x, k) for _, x, k in cols)
-
-    def reach(x: dict) -> int:
-        return math.ceil(x["farm_size_to_reach_cohort_quantile"]["p100"]["farm_addresses"])
-
-    lines = [
-        "Authorization pairs kept & " + cells(lambda x, k: n(x["graph"]["edges"])) + " \\\\",
-        "\\quad share of the pairs & " + cells(lambda x, k: "100\\%" if k is None else pct(x["share_of_pairs_kept"])) + " \\\\",
-        "Owner contracts & " + cells(lambda x, k: n(x["owners"] if k is None else x["owners_kept"])) + " \\\\",
-        "Nodes of the graph & " + cells(lambda x, k: n(x["graph"]["nodes"])) + " \\\\",
-        "Cohort contracts with a positive score & "
-        + cells(lambda x, k: n(S["cohort"]["with_positive_score"] if k is None else x["cohort_with_positive_score"])) + " \\\\",
-        "$\\tau_b$ of the cohort's scores with the main ones & "
-        + cells(lambda x, k: "1" if k is None else f3(x["cohort_tau_with_main"])) + " \\\\",
-        "Dangling mass $r_D$ & " + cells(lambda x, k: f3(x["r_D"])) + " \\\\",
-        "\\midrule",
-        f"Target of a star of {m}: share of the cohort's highest score & " + cells(lambda x, k: f3(x["star"]["ratio_to_highest"])) + " \\\\",
-        "Farm contracts that reach the cohort's highest score & " + cells(lambda x, k: n(reach(x))) + " \\\\",
-        f"Balance the {m + 1} contracts of the star hold (USD) & "
-        + cells(lambda x, k: "---" if k is None else n(x["star_balance_usd"])) + " \\\\",
-    ]
-    if S["graph"]["edges"] != D["main"]["same"]["graph"]["allowance"]["edges"]:
-        raise SystemExit("the Sybil model is not on the EndorseRank graph of the same-window summary")
-    out = [header([f"{REVISED}/sybil-model/sybil_model.json : graph, owners, cohort, r_D, star, "
-                   "farm_size_to_reach_cohort_quantile, balance_threshold, contract_farm"]),
-           "\\begin{table}[!t]",
-           "\\centering",
-           "\\caption{Farms of Contracts on the Authorization Graph at the Freeze of 30 June 2026, Without and With a Balance "
-           "Threshold $\\theta$}",
-           "\\label{tab:sybil}",
-           "\\footnotesize",
-           "\\setlength{\\tabcolsep}{2.5pt}",
-           "\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{0.43\\columnwidth}rrrr@{}}",
-           "\\toprule",
-           "Threshold $\\theta$ & " + " & ".join(c for c, _, _ in cols) + " \\\\",
-           "\\midrule",
-           *lines,
-           "\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
-           "\\parbox{\\columnwidth}{\\footnotesize EndorseRank graph of contracts in the main analysis. With a threshold the graph "
-           "keeps only the pairs whose capped value is at least $\\theta$, so every farm contract that approves must hold $\\theta$ "
-           "of a token at the freeze. A farm address is a contract: its creation costs at least "
-           f"{n(gas['creation_by_create_at_least'])} gas from a factory and {n(gas['creation_by_transaction_at_least'])} gas by a "
-           f"transaction of its own, plus {n(gas['G_codedeposit_per_byte'])} gas per byte of code (execution gas, without the fee "
-           "for posting data to Ethereum). The farm sizes come from the closed form (\\ref{eq:star}) and count the farm contracts "
-           "beside the target. Computed after the W1 labels were known; the model decides no rule.}",
-           "\\end{table}", ""]
     return "\n".join(out)
 
 
@@ -998,7 +941,6 @@ def main() -> None:
         "tab_contrasts.tex": tab_contrasts(D),
         "tab_cpr.tex": tab_cpr(D),
         "tab_union.tex": tab_union(D),
-        "tab_sybil.tex": tab_sybil(D),
         "tab_explore.tex": tab_explore(D),
     }
     for name, text in tables.items():

@@ -7,10 +7,10 @@
 | `sql/02_spender_candidates.sql` | Registered analysis. Spenders that received non-zero approvals from at least three distinct owners in the observation window (the cohort candidates, before the account-type check). |
 | `sql/03_ego_events.sql` | Registered analysis. Extraction around the cohort: approvals with a cohort contract as owner or spender, non-zero transfers with a cohort contract as sender or recipient. Run for the observation window and, after the registration, for July to September 2026. |
 | `sql/04_anchor_pairs.sql` | Registered analysis. Pair tables at an anchor date: latest allowance per (token, owner, spender), EndorseRank, AWP and raw-amount C-PR weights, activeness. |
-| `sql/05_proxies_same_window.sql` | Registered analysis. Same-window transfer and Sybil-stability proxies of the matched cohort (Rule A, secondary part; the authorization proxies are computed from the pair tables). |
+| `sql/05_proxies_same_window.sql` | Registered analysis. Same-window transfer and stability proxies of the matched cohort (Rule A, secondary part; the allowance proxies are computed from the pair tables). |
 | `sql/06_holdout_labels.sql` | Registered analysis. Spender labels of a holdout window: new approval pairs, new transfer senders (and the revocation and drain counts, not used in this paper). |
 | `exploratory_checks.py` | Exploratory checks of Appendix A (run after every result of both analyses was known). |
-| `exploratory_checks.json` | Output of that script; every number in Table 10 and Appendix A comes from it. |
+| `exploratory_checks.json` | Output of that script; every number in Table 9 and Appendix A comes from it. |
 
 The five queries belong to the registered analysis. Each file is identical, line ends aside, to its file in `experiments/sql/` of the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation) at the commit that the paper's Data Availability statement names. They entered the repository with the registration, after the queries of the observation window had run. The placeholders `__DEST__` and the parameters are filled in by `scripts/run_bq.py` of the experiment folder.
 
@@ -46,5 +46,5 @@ The per-contract score files are not in the Git history; `experiments/scripts/dr
 ## Not computed, and why
 
 - The second sensitivity analysis (isolated nodes) cannot be recomputed: its isolated-node scores are not in the score files.
-- Checks that need the edges (the mass `r(B)` of Proposition 1, the analysis without the owner contract that holds most authorization pairs at the freeze of 30 June 2026, farms on the coupled graph, two-way bootstraps over the owners or senders behind the labels) need the pair tables; they are in the public Drive folder, and this script does not read them.
-- The fees of a deployment and of an approval (`c_dep` and `c_app` in the Sybil cost model) and the allowance in force at the freeze block need an Arbitrum node or further scans of the transactions table.
+- Checks that need the edges (the mass `r(B)` of Proposition 1, the analysis without the owner contract that holds most allowance pairs at the freeze of 30 June 2026, two-way bootstraps over the owners or senders behind the labels) need the pair tables; they are in the public Drive folder, and this script does not read them.
+- The allowance in force at the freeze block needs an Arbitrum node or further scans of the transactions table.

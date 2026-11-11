@@ -3,6 +3,6 @@
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{figures/fig_layers.pdf}
-\caption{The two layers on one set of contracts (schematic). Every node is a contract; the shaded squares are cohort contracts, the ones evaluated. A user account, such as $a$, is no node, and its approvals and transfers are edges of no graph, although the labels count them. Only $u$ has out-edges in both layers, so only its row depends on $\lambda$ for $0<\lambda<1$. At $\lambda=1$ the walk reads no payment edge and $z$ is no part of its graph, so $R$ and $S$ are dangling; at $\lambda=0$ it reads no authorization edge, so $w$ is no part of its graph and $x$ is dangling. \spr{} walks the solid edges only and restarts each jump in proportion to the authorization walk's score.}
+\caption{The two layers on one set of contracts (schematic). Every node is a contract; the shaded squares are cohort contracts, the ones evaluated. A user account, such as $a$, is no node, and its approvals and transfers are edges of no graph, although the labels count them. Only $u$ has out-edges in both layers, so only its row depends on $\lambda$ for $0<\lambda<1$. At $\lambda=1$ the walk reads no transfer edge and $z$ is no part of its graph, so $R$ and $S$ are dangling; at $\lambda=0$ it reads no allowance edge, so $w$ is no part of its graph and $x$ is dangling. \spr{} walks the solid edges only and restarts each jump in proportion to the allowance walk's score.}
 \label{fig:layers}
 \end{figure}
