@@ -149,11 +149,11 @@ def _w1(block: str, key: str):
 
 # (group, [(label, getter of the contrast, test)])
 ROWS = [
-    ("Rule A, primary part (plan, 13:41:27 UTC); W0", [
+    ("Rule A, primary part (analysis plan); W0", [
         ("A1  C-PR − C-PR(1) · new approval pairs", _w0("cpr_l50", "cpr_l100", APPR), "no worse"),
         ("A2  C-PR − C-PR(0) · new transfer senders", _w0("cpr_l50", "cpr_l0", SEND), "superiority"),
     ]),
-    ("Rule B (registration, 16:49:32 UTC); W1; its criteria F1 and F2", [
+    ("Rule B (registration of W1); W1; its criteria F1 and F2", [
         ("F1  C-PR − C-PR(0) · new approval pairs", _w1("rule_b", "F1"), "superiority"),
         ("F2  C-PR − C-PR(0) · new transfer senders", _w1("rule_b", "F2"), "non-inferiority"),
     ]),

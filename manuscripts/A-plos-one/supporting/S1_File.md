@@ -2,30 +2,20 @@
 
 Supporting information of the manuscript "Does PageRank find the smart contracts users rely on sooner than counting? A crawl-ordering test on an Ethereum rollup".
 
-This file gives excerpts of the two documents that fixed the design of the registered analysis before this study extracted the data they judge: the analysis plan and the registration of the window W1. The excerpts keep the passages that the article relies on: the data and the windows, the cohort and account-type rules, the scores, the checks, the spender labels, the statistics, rule A, and the two criteria of rule B with the sensitivity analyses that the companion study applies. Every omitted passage is marked `[…]`; the omitted passages are passages on outcomes that this paper does not study. Everything outside the marks is verbatim.
+This file gives excerpts of the two documents that fixed the design of the registered analysis before this study extracted the data they judge: the analysis plan and the registration of the window W1. The excerpts keep the passages that the article relies on: the data and the windows, the cohort and account-type rules, the scores, the checks, the spender labels, the statistics, rule A, and the two criteria of rule B with the sensitivity analyses that the companion study applies. Every omitted passage is marked `[…]`; apart from the date in the first line of the plan, the omitted passages are passages on outcomes that this paper does not study. Everything outside the marks is verbatim.
 
-The full files are in the public repository <https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation>, folder `experiments/docs/`, at the commits of the table below, both on the repository's default branch `main`; `git show <commit>:experiments/docs/<file>` prints them. Each piece of text between two marks was checked against that output (11 November 2026), and the four hashes of the table were computed from it. That repository holds the study's folder of the authors' private Git repository with its commit history: each copied commit keeps the original times and file contents but has a new identifier. The table gives both identifiers; the extraction manifest records the original one, and the repository's `HISTORY.md` lists every pair. Times are UTC; the commits record the local time of the machine on which they were made (UTC+9).
-
-| Document | Commit | Original commit | Committed (UTC) | SHA-256 of the full file as stored (LF line ends) | SHA-256 of the full file with CRLF line ends |
-|---|---|---|---|---|---|
-| Analysis plan, `analysis_plan.md` | `d060f3a68c15ed22bc2a566cfb83f0a546ca85b3` | `43d80457142dc002c4410d4af1c3c164f39a3272` | 2026-10-09 13:41:27 | `7ec80d49c17331bd10e086fecd909a3f36020dbb284f0dbfbb81a8549f84fd9f` | `35195ab5675c05c9a892d16a899a981be49aa564e00081a004fda3583f293212` |
-| W1 registration, `registration_w1.md` | `1747e64884a2fd0adf1f76433e604474387d5ce2` | `0d3a057e4f0c8473d36d89fbe33c24deff0c9911` | 2026-10-09 16:49:32 | `34cd6dfeb56b8fb8a553cb24afbff06c6a94e6f69a2eb7f7d642b0cc39e54b2c` | `2126c8dc3fe3c0f9273aa4ecfc1e15bddc1f5a6f65e98548b9528f2b18ca2a6b` |
-
-What each hash can be checked against:
-
-- The plan was committed before any log of the study was extracted. Its only later change is the heading of its section 7, which commit `1747e64` changed from "(to be completed and registered before scan B)" to "(registered in docs/registration_w1.md before scan B)"; the published checksum of the plan (`SHA256SUMS.txt` of the results, CRLF form `2558729a...`) is that of the changed version.
-- The registration's CRLF hash is the one recorded in the extraction manifest of the July–September logs (`data/3-published-results-for-thesis/registered-w1/extraction_manifest.json`, key `sha256`). The manifest records the registration commit under its original identifier (`0d3a057`), no use of the testing override, and an extraction run from 16:49:33 to 16:50:55 UTC on 9 October 2026. The manifest was written on a Windows checkout, hence the CRLF form.
+The full files are `experiments/docs/analysis_plan.md` and `experiments/docs/registration_w1.md` of the public repository <https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation>, at the commit named in the Data availability statement of the article. The plan was committed before any log of the study was extracted, and the registration after the W0 results were known and before the July–September logs were extracted. The excerpt of the plan gives its text as the plan was committed; the registration commit changed only the heading of its section 7, from "(to be completed and registered before scan B)" to "(registered in docs/registration_w1.md before scan B)".
 
 The two documents fix the registered analysis: amounts in raw base units over every ERC-20 token, every score computed from every extracted event since 1 October 2023, and graphs that hold every account of the cohort's events. The article reports the contract-graph analysis as its main analysis: amounts in US dollars on five tokens; scores from the twelve months before each freeze; graphs whose nodes are contracts other than smart accounts, with edges read from the whole chain; each allowance counted up to its owner's balance at the freeze, with balances reconstructed from Transfer logs; constants set on the contract graph; and the discovery-order test. It was defined after the registered results were known, so none of its results is a registered result, and the discovery-order test decides no rule of the plan or the registration. The documents that define it, with the protocol of the test, are published with its results (see the Data availability statement of the article), and the registered results are given beside the main ones in Table 7 of the article. Rule A (section 6 of the plan) and rule B (section 2 of the registration) concern the coupled walk. The article reports no verdict under them; the companion study reports them, applied to the scores of the contract graph as a re-analysis. Under the registration rule B holds only if each of its criteria holds.
 
 ---
 
-## 1. Analysis plan (commit d060f3a), excerpt
+## 1. Analysis plan, excerpt
 
 ````markdown
 # Analysis plan: contract reputation from ERC-20 allowance edges
 
-- Written and committed on 9 October 2026, before any log of this study was extracted.
+- Written and committed on […], before any log of this study was extracted.
 - Settings live in `config/contract_reputation.yaml`; this plan states what they mean and which results decide which question.
 - Sections 1–6 are fixed by this commit. Section 7 (the registered window) is completed and registered in a later commit, before scan B runs.
 
@@ -82,7 +72,7 @@ Scores frozen at 2026-06-30 23:59:59 UTC, labels from 2026-07-01 to 2026-09-30. 
 
 ---
 
-## 2. Registration of the window W1 (commit 1747e64), excerpt
+## 2. Registration of the window W1, excerpt
 
 ````markdown
 # Registration of the window W1 (July–September 2026)

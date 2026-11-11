@@ -10,16 +10,16 @@
 | `sql/05_proxies_same_window.sql` | Registered analysis. Same-window transfer and Sybil-stability proxies of the matched cohort (Rule A, secondary part; the authorization proxies are computed from the pair tables). |
 | `sql/06_holdout_labels.sql` | Registered analysis. Spender labels of a holdout window: new approval pairs, new transfer senders (and the revocation and drain counts, not used in this paper). |
 | `exploratory_checks.py` | Exploratory checks of Appendix A (run after every result of both analyses was known). |
-| `exploratory_checks.json` | Output of that script; every number in Table 11 and Appendix A comes from it. |
+| `exploratory_checks.json` | Output of that script; every number in Table 10 and Appendix A comes from it. |
 
-The five queries belong to the registered analysis. Each file is identical, line ends aside, to its file in `experiments/sql/` of the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation) at commit `1747e64`, the registration commit, and at commit `6b389df`. They entered the repository with the registration, after the queries of the observation window had run. The placeholders `__DEST__` and the parameters are filled in by `scripts/run_bq.py` of the experiment folder.
+The five queries belong to the registered analysis. Each file is identical, line ends aside, to its file in `experiments/sql/` of the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation) at the commit that the paper's Data Availability statement names. They entered the repository with the registration, after the queries of the observation window had run. The placeholders `__DEST__` and the parameters are filled in by `scripts/run_bq.py` of the experiment folder.
 
 ## Where every query of the study is
 
-The public repository holds the study's folder of the authors' private Git repository with its commit history; the commits of the registered record keep their times and contents but have new identifiers, and its `HISTORY.md` lists those of the authors' repository. The folder `experiments/sql/` of that repository holds every query, and the first lines of each file say what it computes.
+The folder `experiments/sql/` of the public repository holds every query of the study, and the first lines of each file say what it computes.
 
-- **Registered analysis:** commit `344017e`, the commit of the registered results. Beside the five queries above, the folder holds the query that copies the logs of a time window from the public table (scan A and scan B; committed with the plan in `d060f3a`), the identifier export, the data description and the top-token check.
-- **Main analysis (the contract-graph analysis):** commit `6b389df`, the commit of the published results; the queries numbered 24 to 43 in the same folder. By number:
+- **Registered analysis:** beside the five queries above, the folder holds the query that copies the logs of a time window from the public table (scan A and scan B; committed with the plan), the identifier export, the data description and the top-token check.
+- **Main analysis (the contract-graph analysis):** the queries numbered 24 to 43 in the same folder. By number:
   - 24 to 26, 29 and 31: the five-token events of the whole chain, the addresses they name, the transaction senders, the addresses whose code is read, and then the contracts, the user accounts and the events between contracts;
   - 32 to 34 and 43: the balances from `Transfer` logs, the blocks of the freezes and the sample of the balance check;
   - 36 and 37: the latest allowances between contracts with the balance cap, the constants m_T, m_A and U, and the pairs of both layers, capped and uncapped;
