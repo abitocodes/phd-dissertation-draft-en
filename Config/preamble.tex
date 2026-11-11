@@ -48,7 +48,7 @@
   pdftitle={Integrating ERC-20 Allowance Edges into PageRank for Enhanced On-Chain Wallet Reputation Scoring},
   pdfauthor={Taehong Kwon},
   pdfsubject={Doctor of Philosophy dissertation, Computer Science, University of South Africa},
-  pdfkeywords={DeFi, smart contracts, EndorseRank, PageRank, on-chain reputation, ERC-20 allowance, Arbitrum}
+  pdfkeywords={coupled PageRank, smart contract, crawl ordering, on-chain reputation, ERC-20 allowance, EndorseRank, Adaptive Weighted PageRank, decentralized finance, temporal holdout, pre-registration, Arbitrum One, Kendall's tau}
 }
 \def\UrlFont{\ttfamily}
 \emergencystretch=2em
@@ -60,6 +60,15 @@
 \setlength{\parskip}{0.03\baselineskip}
 \setlist[itemize]{leftmargin=2.2em,labelsep=0.55em,itemsep=0.08\baselineskip,topsep=0.1\baselineskip,parsep=0pt}
 \setlist[enumerate]{leftmargin=2.4em,labelsep=0.55em,itemsep=0.08\baselineskip,topsep=0.1\baselineskip,parsep=0pt}
+% Float placement: a table or figure may share a page with text, and a page holds floats alone only when they
+% fill at least four fifths of it.
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
 \usepackage{titlesec}
 \usepackage{etoolbox}
 \pretocmd{\chapter}{\phantomsection}{}{}

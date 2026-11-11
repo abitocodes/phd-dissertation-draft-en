@@ -22,24 +22,32 @@ The abbreviations and mathematical notation used throughout this research are li
 \toprule
 Abbreviation & Meaning \\
 \midrule
+AUC & Area under the curve; $\mathrm{AUC}_{10\%}$ is the normalized area under a crawl's discovery curve over the first 10\% of its visits \\
 AWP & Adaptive Weighted PageRank \\
+BFS & Breadth-first search (the crawl ordering that visits contracts in the order of their discovery) \\
 C-PR & Coupled PageRank (per-node mixture of the allowance and transfer layers, weight $\lambda$) \\
 DeFi & Decentralized Finance \\
-DEX & Decentralized Exchange \\
-EIP & Ethereum Improvement Proposal \\
-EOA & Externally owned account (an address controlled by a private key; the wallet of a user) \\
+EIP & Ethereum Improvement Proposal (EIP-2612 defines \texttt{permit}; an EIP-7702 account is an externally owned account that delegates to contract code) \\
+EOA & Externally owned account (an address controlled by a private key) \\
 ER & EndorseRank (in table headings) \\
 ERC-20 & Ethereum Request for Comments 20 (fungible token standard) \\
+ERC-4337 & Ethereum Request for Comments 4337 (account abstraction; an ERC-4337 account is a smart account that names a canonical EntryPoint contract) \\
+EVM & Ethereum Virtual Machine \\
 FC & Financial Cryptography and Data Security \\
+L1, L2 & Layer 1 (the Ethereum mainnet) and Layer 2 (a network, such as Arbitrum One, that posts its transaction data to Layer 1) \\
 PR & PageRank \\
+RPC & Remote procedure call (the interface of a node of Arbitrum One through which account code and contract state were read) \\
 RQ & Research Question \\
+SCC & Strongly connected component (here the giant one of the union graph of a freeze) \\
 SoK & Systematization of Knowledge \\
 S-PR & Endorsement-Seeded PageRank (transfer layer walked with restarts drawn from the allowance walk) \\
-USD & United States dollar, the unit of every amount in the revised analysis \\
+USD & United States dollar, the unit of every amount in the main analysis \\
 USENIX & USENIX Security Symposium \\
+UTC & Coordinated Universal Time \\
 W0 & Holdout window: scores frozen on 31~March~2026, labels counted from April to June~2026 \\
 W1 & Registered window: scores frozen on 30~June~2026, labels counted from July to September~2026 \\
-WETH, USDC, USDT0, ARB, WBTC & The five tokens of the revised analysis: wrapped ether, USD Coin, Tether USD on Arbitrum One, the Arbitrum governance token, wrapped bitcoin \\
+WCC & Weakly connected component (here the one that holds the giant SCC) \\
+WETH, USDC, USDT0, ARB, WBTC & The five tokens of the main analysis: wrapped ether, USD Coin, Tether USD on Arbitrum One, the Arbitrum governance token, wrapped bitcoin \\
 \bottomrule
 \end{tabular}
 }
@@ -59,8 +67,8 @@ WETH, USDC, USDT0, ARB, WBTC & The five tokens of the revised analysis: wrapped 
 \toprule
 Symbol & Meaning \\
 \midrule
-$G_{\mathrm{approve}}$ & Directed endorsement graph from latest ERC-20 allowances (owner $\to$ spender) \\
-$G_{\mathrm{transfer}}$ & Directed transfer graph (sender $\to$ receiver; AWP input) \\
+$G_{\mathrm{approve}}$ & Directed endorsement graph from latest ERC-20 allowances between contracts (owner $\to$ spender), each counted up to its owner's balance \\
+$G_{\mathrm{transfer}}$ & Directed transfer graph between contracts (sender $\to$ receiver; AWP input) \\
 $|V|$ & Number of nodes in a reputation graph \\
 $|E|$ & Number of directed edges in a reputation graph \\
 $w_{ij}$ & Weight of the directed edge from node $i$ to node $j$ \\
@@ -79,17 +87,47 @@ $k$ & Logistic time-decay steepness \\
 $t_0$ & Logistic time-decay midpoint (days) \\
 $\Delta t$ & Age in days of a transfer or approval \\
 $\sigma(\Delta t)$ & Logistic time weight of a transfer (AWP) or latest approval (EndorseRank) \\
-$V(z)$ & Bounded value weight of AWP and EndorseRank on a US-dollar amount $z$, $2/(1+e^{-bz})-1$ with $b=\ln 3/m$, so that the median amount $m$ ($m_T=170$ dollars for transfers, $m_A=100$ for allowances) gets $V=1/2$ \\
-$U$ & Cap on one allowance in the allowance layer of C-PR and in the in-approve value ($19{,}000$ dollars) \\
+$V(z)$ & Bounded value weight of AWP and EndorseRank on a US-dollar amount $z$, $2/(1+e^{-bz})-1$ with $b=\ln 3/m$, so that the median amount $m$ ($m_T=160$ dollars for transfers, $m_A=0.071$ dollars for capped allowances) gets $V=1/2$ \\
+$U$ & Cap on one allowance in the allowance layer of C-PR and in the in-approve value ($16{,}000$ dollars) \\
 $X_u$ & Activeness of address $u$, AWP's restart weight \\
-$n$ & Number of contracts in a correlation (matched cohort $n=6{,}483$; spender cohorts $n=7{,}914$ in W0 and $7{,}960$ in W1) \\
-$\rho$ & Spearman's rank correlation coefficient \\
+$n$ & Number of contracts in a correlation (matched cohort $n=6{,}443$; spender cohorts $n=7{,}864$ in W0 and $7{,}915$ in W1) \\
+$\rho$ & Spearman's rank correlation coefficient; in the discovery-order test, the share by which a crawl's visits grow before it recomputes its ordering ($1/50$) \\
 $\tau$ & Kendall's rank correlation coefficient; every reported value is $\tau_b$ \\
 $T_{\mathrm{obs}}$ & End of the score window of the same-window evaluation and score freeze of W1 (30~June~2026, 23:59:59 UTC) \\
 $t_1$, $t_2$ & Score freeze of W0 (31~March~2026, 23:59:59 UTC) and end of its label window (30~June~2026) \\
 $\mathcal{W}$ & Set of contracts in the evaluation cohort \\
 $s(w)$ & Reputation score of contract $w$ under a given method \\
 $p(w)$ & Proxy value for contract $w$ \\
+\bottomrule
+\end{tabular}%
+\end{adjustbox}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Notation of the discovery-order test.}
+\label{tab:notation-discovery}
+\begin{adjustbox}{max width=\linewidth, max totalheight=0.9\textheight, center}%
+\small\setlength{\tabcolsep}{3.5pt}%
+\begin{tabular}{lp{0.72\linewidth}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$G$ & Contract graph of a freeze: the contracts with their capped allowance pairs and transfer pairs; its union graph holds the distinct ordered pairs of different contracts with an edge in either layer \\
+$\mathcal{U}$, $|\mathcal{U}|$ & Universe of a run, the contracts that every crawl of the run visits, and its size \\
+\texttt{both}, \texttt{out} & Reveal modes: a visit reveals a contract's in-edges and out-edges (\texttt{both}, the primary mode, whose universe is the WCC) or its out-edges only (\texttt{out}, whose universe is the giant SCC with every contract reachable from it, $\mathrm{SCC}\cup\mathrm{OUT}$) \\
+$I_T$, $I_A$ & Importance of a contract: user-account inflow, the US dollars that user accounts transferred to it in the score window, and user-authorised value, the balance-capped US dollars that their latest allowances let it spend at the freeze \\
+$U_{\mathrm{user}}$ & Cap per user account in $I_T$ and $I_A$ ($31{,}000$ dollars) \\
+$N_T$, $N_A$ & Importance by counts: the user accounts that transferred at least one dollar to the contract, and those whose capped allowance to it is at least one dollar \\
+$\mathrm{IB}_U$, $\mathrm{IR}$ & Union in-degree (the number of contract backlinks) and C-PR, both on the full graph \\
+$\mathrm{IB}'_A$, $\mathrm{IB}'_T$, $\mathrm{IB}'_U$ & Counts on the visited part: the visited contracts with an allowance edge, a transfer edge, or an edge in either layer to a contract \\
+C-PR$'$, AWP$'$, $\ldots$ & A prime marks a walk or count computed on the contracts that a crawl has read so far \\
+$\delta'$ & Normalized in-strength on the visited part, a diagnostic outside every comparison \\
+$H_q(I)$ & Hot set: the contracts of the universe with the largest positive importance $I$, a share $q=1\%$ of the universe with ties included \\
+$t_h$ & Visit at which a crawl reaches the hot contract $h$ \\
+$\mathrm{AUC}_{x}$ & Mean over the hot contracts of $\max(0,1-t_h/\lceil x|\mathcal{U}|\rceil)$, averaged over the seeds; $x=10\%$ is primary \\
+$D_1$, $D_2$ & Decision contrasts of $\mathrm{AUC}_{10\%}$: C-PR$'$ minus BFS, and C-PR$'$ minus $\mathrm{IB}'_U$ \\
+V1, V2, V3 & Verdicts on one importance: both intervals above $0$ (V1); the interval of $D_1$ above $0$ and that of $D_2$ not (V2); the interval of $D_1$ not above $0$ (V3) \\
 \bottomrule
 \end{tabular}%
 \end{adjustbox}
