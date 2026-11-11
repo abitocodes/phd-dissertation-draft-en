@@ -337,7 +337,7 @@ Edge lists are stored as (from, to, weight) triples, with duplicate edges merged
 
 \dissertationSubsubheading[sub:coupled-graph]{Coupled operator over both layers (C-PR) and the seeded ablation (S-PR)}
 
-EndorseRank and AWP each walk on a single edge type, so each ranks a contract by one kind of act: the spending rights it is granted or the payments it receives. C-PR walks both edge types of the same contracts in one chain. The analysis plan fixed the coupled operator on two layers that weight each event by its amount; the main analysis values the amounts in US dollars and caps each allowance at its owner's balance:
+EndorseRank and AWP each walk on a single edge type, so each ranks a contract by one kind of act: the spending rights it is granted or the transfers it receives. C-PR walks both edge types of the same contracts in one chain. The analysis plan fixed the coupled operator on two layers that weight each event by its amount; the main analysis values the amounts in US dollars and caps each allowance at its owner's balance:
 \begin{equation}
 \label{eq:raw-layers}
 \tilde w_A(u,v)
@@ -639,7 +639,7 @@ Only publicly available blockchain data are used in this research, and it involv
 
 
 \item\phantomsection\label{sub:fairness-transparency}
-  Fairness and transparency: Decentralized scoring raises concerns about fairness as well as opacity \parencite{packin2024credit}. New, rarely used and unapproved contracts may be undervalued by graph-based reputation systems, EndorseRank and AWP among them: the allowance graph disadvantages an address that has received no spend authority, and the transfer graph favors addresses embedded in value-flow networks. On graphs of contracts, a contract that only user accounts approve or pay ends no edge and scores zero. Chapter~\ref{ch:discussion} discusses the limitations, among them cold-start effects.
+  Fairness and transparency: Decentralized scoring raises concerns about fairness as well as opacity \parencite{packin2024credit}. New, rarely used and unapproved contracts may be undervalued by graph-based reputation systems, EndorseRank and AWP among them: the allowance graph disadvantages an address that has received no spend authority, and the transfer graph favors addresses embedded in value-flow networks. On graphs of contracts, a contract that only user accounts approve or send transfers to ends no edge and scores zero. Chapter~\ref{ch:discussion} discusses the limitations, among them cold-start effects.
 
 
 \item\phantomsection\label{sub:responsible-disclosure}
