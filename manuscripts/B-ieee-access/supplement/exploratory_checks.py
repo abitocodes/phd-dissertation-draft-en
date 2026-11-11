@@ -1,36 +1,36 @@
 #!/usr/bin/env python3
 """Exploratory checks for Manuscript B (IEEE Access).
 
-Every result of both analyses (registered and revised) was known when this script was
-run, so nothing here enters a decision rule and nothing here was fixed in advance.
-The script reads only the per-contract score files and the published evaluation
-summaries of the experiment pipeline, folder ``experiments/`` of the public repository
-https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation (the score files
-are in the Google Drive folder listed in ``experiments/drive-manifest.json``; the script
+Every result of both analyses (the contract-graph analysis, which is the main analysis of the
+paper, and the registered analysis) was known when this script was run, so nothing here enters
+a decision rule. The script reads only the per-contract score files and the published
+evaluation summaries of the experiment pipeline, folder ``experiments/`` of the public
+repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation (the score
+files are in the Google Drive folder listed in ``experiments/drive-manifest.json``; the script
 ``experiments/scripts/drive_sync.py`` downloads them into place); it builds no graph and
 computes no new score. It does four things.
 
-1. ``recompute``: recomputes the decision contrasts of rule A (W0) and rule B (W1, with
-   F4-F6 and the first sensitivity analysis) from the score files, with the pipeline's
-   resampling (400 paired resamples drawn by ``numpy.random.default_rng(42)`` over the
-   cohort sorted by contract id) and SciPy's tau_b, and compares every value with the
-   published summary. The second sensitivity analysis (isolated nodes) cannot be
-   recomputed: its single-layer scores are not in the score files.
-2. ``seed_spread``: repeats the five decision contrasts (A1, A2, F1, F2, F3) with 50
-   further seeds (43-92) of 400 resamples and reports how far the interval ends move and
-   whether any verdict changes.
+1. ``recompute``: recomputes from the score files, with the pipeline's resampling (400 paired
+   resamples drawn by ``numpy.random.default_rng(42)`` over the cohort sorted by contract id)
+   and SciPy's tau_b, the contrasts of rule A (W0), the two criteria of rule B that the paper
+   applies (F1 and F2, W1), F6, the spender contrasts of the first sensitivity analysis and,
+   for the main analysis, the contrasts of C-PR with the union in-degree and the contrasts on
+   the spenders inside the union graph; it compares every value with the published summary.
+   The second sensitivity analysis (isolated nodes) cannot be recomputed: its scores are not
+   in the score files.
+2. ``seed_spread``: repeats the four rule-bound contrasts (A1, A2, F1, F2) and, for the main
+   analysis, A1 and F6a on the spenders inside the union graph, with 50 further seeds (43-92)
+   of 400 resamples, and reports how far the interval ends move and whether a verdict changes.
 3. ``lambda_steps``: paired contrasts between neighbouring values of the coupling weight
-   (0, 0.25, 0.5, 0.75, 1) and between 0.25 and 0.75, on every label, seed 42.
-4. ``lambda_rank_agreement``: Kendall tau_b between the C-PR score vectors at two values
-   of the weight over each cohort, with paired-bootstrap intervals (seed 42).
+   (0, 0.25, 0.5, 0.75, 1) and between 0.25 and 0.75, on both spender labels, seed 42.
+4. ``lambda_rank_agreement``: Kendall tau_b between the C-PR score vectors at two values of
+   the weight over each cohort, with paired-bootstrap intervals (seed 42).
 
     python exploratory_checks.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation   # or set CONTRACT_REP_REPO
 
-A checkout of the authors' repository, which holds the public one as a submodule, also works;
-the published exploratory_checks.json was written there, so its field phd_works_head holds the
-head commit of the authors' repository under its original identifier.
+A checkout of the authors' repository, which holds the public one as a submodule, also works.
 
-Writes exploratory_checks.json next to this file. About eight minutes on four cores.
+Writes exploratory_checks.json next to this file. A few minutes on four cores.
 """
 
 from __future__ import annotations
@@ -58,13 +58,20 @@ EXTRA_SEEDS = list(range(43, 93))
 DELTA = 0.01  # margin of rule B, docs/registration_w1.md section 2
 APPR = "future_new_approvers"
 SEND = "future_new_transfer_senders"
-LIQ = "liquidation_free_rate"
 LAMBDA_COLS = {0.0: "cpr_l0", 0.25: "cpr_l25", 0.5: "cpr_l50", 0.75: "cpr_l75", 1.0: "cpr_l100"}
 PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
+MAIN = "revised-contract-12m"  # folder of the contract-graph analysis, the main analysis of the paper
 
 # Score files (data/2-processed-tables-and-evaluations/...) and published summaries
 # (data/3-published-results-for-thesis/...) of each analysis.
 ANALYSES = {
+    "main": {
+        "proc": f"2-processed-tables-and-evaluations/{MAIN}",
+        "pub": f"3-published-results-for-thesis/{MAIN}",
+        "w0": "holdout-w0",
+        "w1": "window-w1",
+        "same": "same-window",
+    },
     "registered": {
         "proc": "2-processed-tables-and-evaluations",
         "pub": "3-published-results-for-thesis",
@@ -72,35 +79,59 @@ ANALYSES = {
         "w1": "registered-w1",
         "same": "same-window",
     },
-    "revised": {
-        "proc": "2-processed-tables-and-evaluations/revised-usd-12m",
-        "pub": "3-published-results-for-thesis/revised-usd-12m",
-        "w0": "holdout-w0",
-        "w1": "window-w1",
-        "same": "same-window",
-    },
 }
+UNION_W0 = {"main": "t1_in_degree_union"}  # column of the union in-degree at each freeze (main analysis only)
+UNION_W1 = {"main": "in_degree_union"}
 
-# name, cohort, score a, score b, label, test, where the published value lives
-DECISION = [
-    ("A1", "w0_spenders", "cpr_l50", "cpr_l100", APPR, "no_worse", ("w0", "contrasts_prefixed", 0)),
-    ("A2", "w0_spenders", "cpr_l50", "cpr_l0", SEND, "superiority", ("w0", "contrasts_prefixed", 1)),
-    ("F1", "w1_spenders", "cpr_l50", "cpr_l0", APPR, "superiority", ("w1", "rule_b", "F1")),
-    ("F2", "w1_spenders", "cpr_l50", "cpr_l0", SEND, "non_inferiority", ("w1", "rule_b", "F2")),
-    ("F3", "w1_traders", "cpr_l50", "cpr_l0", LIQ, "non_inferiority", ("w1", "rule_b", "F3")),
+
+def _row(rows: list, a: str, b: str, outcome: str) -> dict:
+    return next(r for r in rows if r["a"] == a and r["b"] == b and r["outcome"] == outcome)
+
+
+# name, cohort, score a, score b, label, test, where the published value lives (a function of the summaries)
+RULES = [
+    ("A1", "w0_spenders", "cpr_l50", "cpr_l100", APPR, "no_worse",
+     lambda s: _row(s["w0"]["contrasts_prefixed"], "cpr_l50", "cpr_l100", APPR)),
+    ("A2", "w0_spenders", "cpr_l50", "cpr_l0", SEND, "superiority",
+     lambda s: _row(s["w0"]["contrasts_prefixed"], "cpr_l50", "cpr_l0", SEND)),
+    ("F1", "w1_spenders", "cpr_l50", "cpr_l0", APPR, "superiority", lambda s: s["w1"]["rule_b"]["F1"]),
+    ("F2", "w1_spenders", "cpr_l50", "cpr_l0", SEND, "non_inferiority", lambda s: s["w1"]["rule_b"]["F2"]),
 ]
 BESIDE = [
-    ("F4", "w1_traders", "cpr_l50", "cpr_l0", LIQ, "superiority", ("w1", "rule_b", "F4")),
-    ("F5", "w1_traders", "cpr_l50", "cpr_l100", LIQ, "superiority", ("w1", "rule_b", "F5")),
-    ("F6a", "w1_spenders", "cpr_l50", "cpr_l100", APPR, "no_worse", ("w1", "rule_b", "F6a")),
-    ("F6b", "w1_spenders", "cpr_l50", "cpr_l0", SEND, "superiority", ("w1", "rule_b", "F6b")),
-    ("S1-F1", "w1_spenders", "cpr_l50", "awp", APPR, "superiority", ("w1", "sensitivity_awp", "F1")),
-    ("S1-F2", "w1_spenders", "cpr_l50", "awp", SEND, "non_inferiority", ("w1", "sensitivity_awp", "F2")),
-    ("S1-F3", "w1_traders", "cpr_l50", "awp", LIQ, "non_inferiority", ("w1", "sensitivity_awp", "F3")),
+    ("F6a", "w1_spenders", "cpr_l50", "cpr_l100", APPR, "no_worse", lambda s: s["w1"]["rule_b"]["F6a"]),
+    ("F6b", "w1_spenders", "cpr_l50", "cpr_l0", SEND, "superiority", lambda s: s["w1"]["rule_b"]["F6b"]),
+    ("S1-F1", "w1_spenders", "cpr_l50", "awp", APPR, "superiority", lambda s: s["w1"]["sensitivity_awp"]["F1"]),
+    ("S1-F2", "w1_spenders", "cpr_l50", "awp", SEND, "non_inferiority", lambda s: s["w1"]["sensitivity_awp"]["F2"]),
     ("W0 C-PR minus C-PR(0), new approval pairs", "w0_spenders", "cpr_l50", "cpr_l0", APPR, "none",
-     ("w0", "contrasts_after", 5)),
+     lambda s: _row(s["w0"]["contrasts_after"], "cpr_l50", "cpr_l0", APPR)),
 ]
-COHORT_LABELS = {"w0_spenders": [APPR, SEND], "w1_spenders": [APPR, SEND], "w1_traders": [LIQ]}
+# Main analysis only: the union in-degree as the count beside C-PR, and the spenders inside the union graph.
+MAIN_ONLY = [
+    ("W0 C-PR minus union in-degree, new approval pairs", "w0_spenders", "cpr_l50", "t1_in_degree_union", APPR, "none",
+     lambda s: _row(s["w0"]["baseline_contrasts"], "cpr_l50", "t1_in_degree_union", APPR)),
+    ("W0 C-PR minus union in-degree, new transfer senders", "w0_spenders", "cpr_l50", "t1_in_degree_union", SEND, "none",
+     lambda s: _row(s["w0"]["baseline_contrasts"], "cpr_l50", "t1_in_degree_union", SEND)),
+    ("W1 C-PR minus union in-degree, new approval pairs", "w1_spenders", "cpr_l50", "in_degree_union", APPR, "none",
+     lambda s: s["w1"]["baseline_contrasts"]["cpr_minus_union_in_degree_appr"]),
+    ("W1 C-PR minus union in-degree, new transfer senders", "w1_spenders", "cpr_l50", "in_degree_union", SEND, "none",
+     lambda s: s["w1"]["baseline_contrasts"]["cpr_minus_union_in_degree_send"]),
+    ("union:A1", "w0_spenders_in_union", "cpr_l50", "cpr_l100", APPR, "no_worse",
+     lambda s: _row(s["w0"]["in_union_graph"]["contrasts_prefixed"], "cpr_l50", "cpr_l100", APPR)),
+    ("union:A2", "w0_spenders_in_union", "cpr_l50", "cpr_l0", SEND, "superiority",
+     lambda s: _row(s["w0"]["in_union_graph"]["contrasts_prefixed"], "cpr_l50", "cpr_l0", SEND)),
+    ("union:F1", "w1_spenders_in_union", "cpr_l50", "cpr_l0", APPR, "superiority",
+     lambda s: s["w1"]["in_union_graph"]["contrasts"]["cpr_minus_cpr_l0_appr"]),
+    ("union:F2", "w1_spenders_in_union", "cpr_l50", "cpr_l0", SEND, "non_inferiority",
+     lambda s: s["w1"]["in_union_graph"]["contrasts"]["cpr_minus_cpr_l0_send"]),
+    ("union:F6a", "w1_spenders_in_union", "cpr_l50", "cpr_l100", APPR, "no_worse",
+     lambda s: s["w1"]["in_union_graph"]["contrasts"]["cpr_minus_cpr_l100_appr"]),
+]
+SEEDED = {"main": ("A1", "A2", "F1", "F2", "union:A1", "union:F6a"), "registered": ("A1", "A2", "F1", "F2")}
+COHORT_LABELS = {"w0_spenders": [APPR, SEND], "w1_spenders": [APPR, SEND]}
+
+
+def specs_of(name: str) -> list:
+    return RULES + BESIDE + (MAIN_ONLY if name == "main" else [])
 
 
 # ---------------------------------------------------------------------------
@@ -111,9 +142,9 @@ COHORT_LABELS = {"w0_spenders": [APPR, SEND], "w1_spenders": [APPR, SEND], "w1_t
 def experiments_dir(repo: Path) -> Path:
     """experiments/ of a checkout of the public repository, or of the authors' repository that holds it."""
     for d in [repo / "experiments"] + [repo / "1-Dissertation-Works" / p / "experiments" for p in PROJECTS]:
-        if (d / "data" / "3-published-results-for-thesis" / "results_digest.md").exists():
+        if (d / "data" / "3-published-results-for-thesis" / MAIN / "results_digest.md").exists():
             return d
-    raise SystemExit(f"no experiments folder with published results under {repo}")
+    raise SystemExit(f"no experiments folder with the published results of {MAIN} under {repo}")
 
 
 def sha256(path: Path) -> str:
@@ -197,25 +228,23 @@ def load(exp: Path) -> tuple[dict, dict, dict]:
         proc, pub = data / a["proc"], data / a["pub"]
         w0 = read_parts(proc / a["w0"], "spender_scores").sort_values("id").reset_index(drop=True)
         w1 = read_parts(proc / a["w1"], "spender_scores").sort_values("id").reset_index(drop=True)
-        tr = read_parts(proc / a["w1"], "trader_scores").sort_values("id").reset_index(drop=True)
         same = read_parts(proc / a["same"], "cohort_scores").sort_values("id").reset_index(drop=True)
-        frames[name] = {"w0_spenders": w0, "w1_spenders": w1, "w1_traders": tr, "same_window": same}
+        frames[name] = {"w0_spenders": w0, "w1_spenders": w1, "same_window": same}
+        if name == "main":  # the members that end a pair between contracts, in id order (the pipeline's subset)
+            for key in ("w0_spenders", "w1_spenders"):
+                df = frames[name][key]
+                frames[name][key + "_in_union"] = df[df["in_union_graph"].astype(bool)].reset_index(drop=True)
         summaries[name] = {
             "w0": json.loads((pub / a["w0"] / "eval_summary.json").read_text(encoding="utf-8")),
             "w1": json.loads((pub / a["w1"] / "eval_summary.json").read_text(encoding="utf-8")),
         }
         files[name] = {
-            str(p.relative_to(exp)): sha256(p)
-            for sub in (a["w0"], a["w1"], a["same"])
-            for p in sorted((proc / sub).glob("*.part*.parquet"))
-        } | {str((pub / s / "eval_summary.json").relative_to(exp)): sha256(pub / s / "eval_summary.json")
+            p.relative_to(exp).as_posix(): sha256(p)
+            for sub, stem in ((a["w0"], "spender_scores"), (a["w1"], "spender_scores"), (a["same"], "cohort_scores"))
+            for p in sorted((proc / sub).glob(f"{stem}.part*.parquet"))
+        } | {(pub / s / "eval_summary.json").relative_to(exp).as_posix(): sha256(pub / s / "eval_summary.json")
              for s in (a["w0"], a["w1"])}
     return frames, summaries, files
-
-
-def published(summ: dict, where: tuple) -> dict:
-    block = summ[where[0]][where[1]]
-    return block[where[2]]
 
 
 # ---------------------------------------------------------------------------
@@ -261,32 +290,36 @@ def main() -> int:
     args = ap.parse_args()
     if not args.repo:
         raise SystemExit("pass --repo PATH or set CONTRACT_REP_REPO")
-    phd = Path(args.repo).resolve()
-    exp = experiments_dir(phd)
+    repo = Path(args.repo).resolve()
+    exp = experiments_dir(repo)
     t0 = time.time()
     frames, summaries, files = load(exp)
 
     result: dict = {
-        "what": "Exploratory checks of Manuscript B; computed after every registered and revised result was known",
+        "what": "Exploratory checks of Manuscript B; computed after every result of the contract-graph analysis "
+                "(main) and of the registered analysis was known",
         "generated_by": "manuscripts/B-ieee-access/supplement/exploratory_checks.py",
         "generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "phd_works_head": head_commit(phd),
-        "experiments": str(exp.relative_to(phd)),
+        "repository_head": head_commit(repo),
+        "experiments": exp.relative_to(repo).as_posix(),
         "inputs_sha256": files,
         "environment": {"python": platform.python_version(), "numpy": np.__version__,
                         "scipy": scipy.__version__, "pandas": pd.__version__},
         "bootstrap": {"resamples": N_BOOT, "seed": SEED, "extra_seeds": [EXTRA_SEEDS[0], EXTRA_SEEDS[-1]],
-                      "draw": "numpy.random.default_rng(seed).integers(0, n, size=(400, n)) over the cohort sorted by contract id"},
+                      "draw": "numpy.random.default_rng(seed).integers(0, n, size=(400, n)) over the cohort sorted by "
+                              "contract id; a subset (the spenders inside the union graph) is resampled on its own"},
         "margin_delta": DELTA,
         "cohort_sizes": {a: {c: int(len(f)) for c, f in fr.items()} for a, fr in frames.items()},
     }
+    for key, win in (("w0_spenders_in_union", "w0"), ("w1_spenders_in_union", "w1")):
+        if len(frames["main"][key]) != summaries["main"][win]["in_union_graph"]["n"]:
+            raise SystemExit(f"{key}: the score file and the published summary disagree on the subset size")
 
-    # 1. Recompute the decision contrasts and those reported beside them (seed 42).
+    # 1. Recompute the rule-bound contrasts and those reported beside them (seed 42).
     recompute, worst = {}, 0.0
     for name in ANALYSES:
         rows = {}
-        for spec in DECISION + BESIDE:
-            label, cohort, a, b, lab, test, where = spec
+        for label, cohort, a, b, lab, test, where in specs_of(name):
             df = frames[name][cohort]
             idx = resample_matrix(len(df), SEED)
             sa = taus_on(df[a].to_numpy(float), df[lab].to_numpy(float), idx)
@@ -294,12 +327,14 @@ def main() -> int:
             pa = tau(dense(df[a].to_numpy(float)), dense(df[lab].to_numpy(float)))
             pb = tau(dense(df[b].to_numpy(float)), dense(df[lab].to_numpy(float)))
             r = contrast(sa, sb, pa, pb)
-            r["test"], r["holds"] = test, verdict(r, test)
-            pubr = published(summaries[name], where)
+            r["n"], r["test"], r["holds"] = int(len(df)), test, verdict(r, test)
+            pubr = where(summaries[name])
             diffs = {k: abs(r[k] - pubr[k]) for k in ("delta_tau", "ci_low", "ci_high")}
             r["published"] = {k: pubr[k] for k in ("delta_tau", "ci_low", "ci_high")}
             if "holds" in pubr:
                 r["published"]["holds"] = pubr["holds"]
+                if test != "none" and bool(pubr["holds"]) != bool(r["holds"]):
+                    raise SystemExit(f"{name} {label}: the recomputed verdict differs from the published one")
             r["max_abs_diff_from_published"] = max(diffs.values())
             r["half_width"] = (r["ci_high"] - r["ci_low"]) / 2
             worst = max(worst, r["max_abs_diff_from_published"])
@@ -312,11 +347,14 @@ def main() -> int:
         print("recomputed values differ from the published summaries", file=sys.stderr)
         return 1
 
-    # 2. Seed spread of the five decision contrasts.
+    # 2. Seed spread of the rule-bound contrasts (and, main analysis, of two contrasts inside the union graph).
     tasks = []
     for name in ANALYSES:
-        for cohort in ("w0_spenders", "w1_spenders", "w1_traders"):
-            specs = [(n_, a, b, lab, test) for n_, c, a, b, lab, test, _ in DECISION if c == cohort]
+        by_cohort: dict = {}
+        for n_, c, a, b, lab, test, _ in specs_of(name):
+            if n_ in SEEDED[name]:
+                by_cohort.setdefault(c, []).append((n_, a, b, lab, test))
+        for cohort, specs in by_cohort.items():
             for seed in EXTRA_SEEDS:
                 tasks.append((name, cohort, seed, specs))
     spread_raw: dict = {}
@@ -340,6 +378,7 @@ def main() -> int:
                 "verdict_seed42": base,
                 "seeds_with_other_verdict": int(sum(r["holds"] != base for r in rows)),
                 "seeds_interval_contains_zero": int(sum(r["ci_low"] <= 0 <= r["ci_high"] for r in rows)),
+                "seeds_interval_beyond_margin": int(sum(r["ci_high"] < -DELTA for r in rows)),
                 "resamples_skipped_total": int(sum(r["skipped"] for r in rows)),
             }
     result["seed_spread"] = spread

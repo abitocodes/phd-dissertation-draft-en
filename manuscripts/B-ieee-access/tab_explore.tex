@@ -9,45 +9,44 @@
 \setlength{\tabcolsep}{2.4pt}
 \begin{tabular}{@{}llcc@{}}
 \toprule
- & & Revised analysis & Registered analysis \\
+ & & Contract-graph analysis (main) & Registered analysis \\
 \midrule
-\multicolumn{4}{@{}l}{\emph{(a) Decision contrasts under 50 further bootstrap seeds of 400 resamples: lower interval end, mean (SD) [range]; seeds whose verdict differs from seed 42}} \\
-A1, W0, new approval pairs & upper end & 0.0415 (0.0006) [0.0400, 0.0431]; 0 of 50 & 0.0132 (0.0004) [0.0124, 0.0142]; 0 of 50 \\
-A2, W0, new transfer senders & lower end & $-$0.0399 (0.0006) [$-$0.0411, $-$0.0388]; 0 of 50 & $-$0.0336 (0.0002) [$-$0.0342, $-$0.0329]; 0 of 50 \\
-F1, W1, new approval pairs & lower end & 0.1507 (0.0015) [0.1479, 0.1531]; 0 of 50 & 0.0926 (0.0006) [0.0905, 0.0939]; 0 of 50 \\
-F2, W1, new transfer senders & lower end & $-$0.0352 (0.0008) [$-$0.0376, $-$0.0339]; 0 of 50 & $-$0.0281 (0.0003) [$-$0.0287, $-$0.0275]; 0 of 50 \\
-F3, W1, liquidation-free close rate & lower end & $-$0.0121 (0.0011) [$-$0.0146, $-$0.0098]; 1 of 50 & $-$0.1064 (0.0044) [$-$0.1173, $-$0.0969]; 0 of 50 \\
+\multicolumn{4}{@{}l}{\emph{(a) Rule contrasts under 50 further seeds of 400 resamples: interval end, mean (SD) [range]; seeds with another verdict than seed 42}} \\
+A1, W0, new approval pairs & upper end & $-$0.0060 (0.0011) [$-$0.0078, $-$0.0031]; 0 of 50 & 0.0132 (0.0004) [0.0124, 0.0142]; 0 of 50 \\
+A2, W0, new transfer senders & lower end & $-$0.0192 (0.0004) [$-$0.0202, $-$0.0186]; 0 of 50 & $-$0.0336 (0.0002) [$-$0.0342, $-$0.0329]; 0 of 50 \\
+F1, W1, new approval pairs & lower end & 0.0617 (0.0007) [0.0604, 0.0633]; 0 of 50 & 0.0926 (0.0006) [0.0905, 0.0939]; 0 of 50 \\
+F2, W1, new transfer senders & lower end & $-$0.0215 (0.0004) [$-$0.0224, $-$0.0209]; 0 of 50 & $-$0.0281 (0.0003) [$-$0.0287, $-$0.0275]; 0 of 50 \\
+ & upper end & $-$0.0110 (0.0004) [$-$0.0121, $-$0.0102]; 50 of 50$^{\dagger}$ & $-$0.0209 (0.0002) [$-$0.0214, $-$0.0204]; 50 of 50$^{\dagger}$ \\
+A1 in the union graph, W0 & lower end & $-$0.0030 (0.0017) [$-$0.0079, 0.0001]; 49 of 50$^{\ddagger}$ & --- \\
+F6a in the union graph, W1 & lower end & $-$0.0161 (0.0011) [$-$0.0184, $-$0.0130]; 50 of 50$^{\ddagger}$ & --- \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{(b) Steps of the weight: $\tau_b$ of C-PR at the higher $\lambda$ minus at the lower one, paired, 400 resamples, seed 42}} \\
-W0 spenders, new approval pairs & $0\to0.25$ & +0.151 [0.132, 0.170] & +0.092 [0.083, 0.101] \\
- & $0.25\to0.75$ & $-$0.002 [$-$0.005, 0.001] & +0.002 [0.000, 0.003] \\
- & $0.75\to1$ & $-$0.029 [$-$0.040, $-$0.018] & $-$0.008 [$-$0.013, $-$0.003] \\
-W0 spenders, new transfer senders & $0\to0.25$ & $-$0.021 [$-$0.030, $-$0.012] & $-$0.024 [$-$0.027, $-$0.020] \\
- & $0.25\to0.75$ & $-$0.018 [$-$0.021, $-$0.015] & $-$0.013 [$-$0.015, $-$0.012] \\
- & $0.75\to1$ & $-$0.060 [$-$0.071, $-$0.048] & $-$0.095 [$-$0.102, $-$0.087] \\
-W1 spenders, new approval pairs & $0\to0.25$ & +0.169 [0.149, 0.187] & +0.099 [0.090, 0.109] \\
- & $0.25\to0.75$ & +0.001 [$-$0.002, 0.004] & +0.002 [0.001, 0.003] \\
- & $0.75\to1$ & $-$0.020 [$-$0.031, $-$0.009] & $-$0.010 [$-$0.014, $-$0.006] \\
-W1 spenders, new transfer senders & $0\to0.25$ & $-$0.016 [$-$0.029, $-$0.007] & $-$0.020 [$-$0.023, $-$0.016] \\
- & $0.25\to0.75$ & $-$0.017 [$-$0.020, $-$0.014] & $-$0.012 [$-$0.013, $-$0.010] \\
- & $0.75\to1$ & $-$0.058 [$-$0.069, $-$0.045] & $-$0.095 [$-$0.102, $-$0.088] \\
-W1 traders, liquidation-free close rate & $0\to0.25$ & +0.000 [$-$0.007, 0.008] & $-$0.037 [$-$0.085, $-$0.001] \\
- & $0.25\to0.75$ & +0.002 [$-$0.010, 0.014] & $-$0.013 [$-$0.036, 0.002] \\
- & $0.75\to1$ & +0.018 [$-$0.091, 0.125] & +0.222 [$-$0.062, 0.487] \\
+W0, new approval pairs & $0\to0.25$ & +0.070 [0.058, 0.082] & +0.092 [0.083, 0.101] \\
+ & $0.25\to0.75$ & +0.001 [$-$0.0001, 0.002] & +0.002 [0.0001, 0.003] \\
+ & $0.75\to1$ & +0.026 [0.004, 0.045] & $-$0.008 [$-$0.013, $-$0.003] \\
+W0, new transfer senders & $0\to0.25$ & $-$0.011 [$-$0.016, $-$0.006] & $-$0.024 [$-$0.027, $-$0.020] \\
+ & $0.25\to0.75$ & $-$0.005 [$-$0.006, $-$0.004] & $-$0.013 [$-$0.015, $-$0.012] \\
+ & $0.75\to1$ & $-$0.167 [$-$0.189, $-$0.145] & $-$0.095 [$-$0.102, $-$0.087] \\
+W1, new approval pairs & $0\to0.25$ & +0.073 [0.058, 0.086] & +0.099 [0.090, 0.109] \\
+ & $0.25\to0.75$ & +0.002 [0.0005, 0.003] & +0.002 [0.001, 0.003] \\
+ & $0.75\to1$ & +0.043 [0.024, 0.060] & $-$0.010 [$-$0.014, $-$0.006] \\
+W1, new transfer senders & $0\to0.25$ & $-$0.013 [$-$0.019, $-$0.009] & $-$0.020 [$-$0.023, $-$0.016] \\
+ & $0.25\to0.75$ & $-$0.005 [$-$0.006, $-$0.004] & $-$0.012 [$-$0.013, $-$0.010] \\
+ & $0.75\to1$ & $-$0.170 [$-$0.191, $-$0.150] & $-$0.095 [$-$0.102, $-$0.088] \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{(c) Rank agreement: $\tau_b$ between the C-PR scores at two values of $\lambda$ over the cohort, 400 resamples, seed 42}} \\
-Matched cohort, end of window & $\lambda=0$ and $0.25$ & 0.587 [0.569, 0.602] & 0.624 [0.616, 0.632] \\
- & $\lambda=0.25$ and $0.75$ & 0.879 [0.875, 0.884] & 0.869 [0.867, 0.871] \\
- & $\lambda=0.75$ and $1$ & 0.596 [0.585, 0.610] & 0.618 [0.612, 0.624] \\
-W0 spenders & $\lambda=0$ and $0.25$ & 0.557 [0.542, 0.572] & 0.598 [0.592, 0.605] \\
- & $\lambda=0.25$ and $0.75$ & 0.889 [0.886, 0.893] & 0.884 [0.882, 0.886] \\
- & $\lambda=0.75$ and $1$ & 0.659 [0.648, 0.670] & 0.658 [0.652, 0.663] \\
-W1 spenders & $\lambda=0$ and $0.25$ & 0.558 [0.543, 0.573] & 0.594 [0.586, 0.600] \\
- & $\lambda=0.25$ and $0.75$ & 0.882 [0.879, 0.886] & 0.884 [0.882, 0.886] \\
- & $\lambda=0.75$ and $1$ & 0.622 [0.612, 0.634] & 0.660 [0.655, 0.665] \\
+Matched cohort & $\lambda=0$ and $0.25$ & 0.896 [0.887, 0.907] & 0.624 [0.616, 0.632] \\
+ & $\lambda=0.25$ and $0.75$ & 0.983 [0.981, 0.984] & 0.869 [0.867, 0.871] \\
+ & $\lambda=0.75$ and $1$ & 0.459 [0.443, 0.472] & 0.618 [0.612, 0.624] \\
+W0 spenders & $\lambda=0$ and $0.25$ & 0.892 [0.883, 0.901] & 0.598 [0.592, 0.605] \\
+ & $\lambda=0.25$ and $0.75$ & 0.979 [0.977, 0.980] & 0.884 [0.882, 0.886] \\
+ & $\lambda=0.75$ and $1$ & 0.456 [0.443, 0.467] & 0.658 [0.652, 0.663] \\
+W1 spenders & $\lambda=0$ and $0.25$ & 0.891 [0.881, 0.901] & 0.594 [0.586, 0.600] \\
+ & $\lambda=0.25$ and $0.75$ & 0.978 [0.977, 0.979] & 0.884 [0.882, 0.886] \\
+ & $\lambda=0.75$ and $1$ & 0.460 [0.449, 0.473] & 0.660 [0.655, 0.665] \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
-\parbox{\textwidth}{\footnotesize Computed from the per-contract score files of the pipeline after every result of both analyses was known; no row enters a rule. The script first recomputes every decision contrast of Table~\ref{tab:contrasts} except those of S2 and reproduces the published values exactly. In (a) the A1 row reports the upper end, which decides ``no worse''; every other row the lower end.}
+\parbox{\textwidth}{\footnotesize Computed from the per-contract score files of the pipeline after every result of both analyses was known; no row enters a rule and none is a registered result. The script first recomputes the contrasts of Table~\ref{tab:contrasts} except those of S2, the contrasts of C-PR with the union in-degree and those inside the union graph (Table~\ref{tab:union}), and reproduces the published values exactly. In (a) the A1 row reports the upper end, which decides ``no worse''. $^{\dagger}$Seeds in which the whole F2 interval lies beyond the margin $-0.01$. $^{\ddagger}$Seeds in which the interval contains zero, on the spenders inside the union graph.}
 \end{table*}
