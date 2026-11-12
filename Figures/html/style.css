@@ -1,0 +1,92 @@
+/* Shared style of the thesis diagrams drawn in HTML (see README.md in this folder).
+   Each figure links this file, sets its own @page height if it needs more than the default, and draws inside
+   <div class="fig"> (165 mm, the text width). Sizes are physical (mm, pt) so the PDF prints at true size. */
+
+@page { size: 180mm 260mm; margin: 0; }
+
+:root {
+  /* one colour per meaning */
+  --allow:#D97706;    --allow-bg:#FFF4DF;    --allow-line:#F2BF73;    --allow-ink:#7C3F00;
+  --transfer:#2563EB; --transfer-bg:#E7EEFF; --transfer-line:#93B2F5; --transfer-ink:#1E3A8A;
+  --coupled:#7C3AED;  --coupled-bg:#F1EAFF;  --coupled-line:#B79AF0;  --coupled-ink:#4C1D95;
+  --count:#475569;    --count-bg:#EEF2F6;    --count-line:#B7C2CF;
+  --contract:#0F766E; --contract-bg:#E4F5F2; --contract-line:#9FD7CF;
+  --user:#7A8594;     --user-bg:#F5F6F8;
+  --web:#0E7490;      --web-bg:#E0F2F7;
+  --ink:#1F2937; --muted:#5B6472; --line:#CBD5E1; --paper:#FFFFFF;
+  --rq1:#0891B2;  --rq1-bg:#E3F5FA;
+  --rq2:#059669;  --rq2-bg:#E2F6EE;
+  --rq3:#DB2777;  --rq3-bg:#FCE7F1;
+  --rq45:#7C3AED; --rq45-bg:#F1EAFF;
+  --good:#15803D; --good-bg:#DCFCE7; --bad:#B91C1C; --bad-bg:#FEE2E2; --mixed:#A16207; --mixed-bg:#FEF3C7;
+}
+
+* { box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+html, body { margin:0; padding:0; background:transparent; }
+body { font-family:"Segoe UI", Arial, sans-serif; color:var(--ink); font-size:7.6pt; line-height:1.25; }
+.fig { width:165mm; margin:6mm; }
+.mono { font-family:Consolas, "Cascadia Mono", monospace; }
+.mono:not(text):not(tspan) { font-size:0.94em; }   /* HTML only: in SVG, em sizes are read in user units */
+.muted { color:var(--muted); }
+sub, sup { font-size:0.72em; }
+
+/* numbered heading of a panel */
+.h { display:flex; align-items:center; font-weight:700; font-size:8.6pt; white-space:nowrap; margin-bottom:1mm; }
+.h .sub { font-weight:400; font-size:7pt; color:var(--muted); margin-left:1.5mm; white-space:normal; }
+.badge { display:inline-flex; align-items:center; justify-content:center; width:4.4mm; height:4.4mm; border-radius:50%;
+  color:#fff; font-weight:700; font-size:7.3pt; margin-right:1.4mm; flex:none; background:var(--ink); }
+
+/* boxes */
+.panel { border:0.3mm solid var(--line); border-radius:2.4mm; padding:2mm 2.4mm; background:var(--paper); }
+.panel.contract { border-color:var(--contract-line); background:linear-gradient(180deg,#F3FBF9,#fff 75%); }
+.panel.allow { border-color:var(--allow-line); background:var(--allow-bg); }
+.panel.transfer { border-color:var(--transfer-line); background:var(--transfer-bg); }
+.panel.coupled { border-color:var(--coupled-line); background:#FBF9FF; }
+.panel.users { border:0.35mm dashed var(--user); background:var(--user-bg); }
+.panel.soft { border-color:#E2E8F0; background:#F8FAFC; }
+
+/* chips (scores, terms) with optional layer bars: <span class="lay"><i class="a on"></i><i class="t"></i></span> */
+.chip { display:inline-flex; align-items:center; gap:1.2mm; border-radius:1.6mm; padding:0.8mm 1.6mm; border:0.3mm solid;
+  font-size:7.1pt; white-space:nowrap; }
+.chip b { font-size:7.8pt; }
+.chip.cpr { background:var(--coupled); border-color:var(--coupled); color:#fff; }
+.chip.spr { background:var(--coupled-bg); border-color:var(--coupled-line); color:var(--coupled-ink); }
+.chip.er, .chip.allow { background:var(--allow-bg); border-color:var(--allow-line); color:var(--allow-ink); }
+.chip.awp, .chip.transfer { background:var(--transfer-bg); border-color:var(--transfer-line); color:var(--transfer-ink); }
+.chip.cnt { background:var(--count-bg); border-color:var(--count-line); color:#334155; }
+.chip.user { background:var(--user-bg); border:0.3mm dashed var(--user); color:#374151; }
+.lay { display:inline-flex; gap:0.45mm; }
+.lay i { display:block; width:1.2mm; height:2.6mm; border-radius:0.35mm; border:0.25mm solid; }
+.lay .a { border-color:var(--allow); } .lay .a.on { background:var(--allow); }
+.lay .t { border-color:var(--transfer); } .lay .t.on { background:var(--transfer); }
+.chip.cpr .lay i { border-color:#fff; } .chip.cpr .lay .a.on { background:#FDD9A0; } .chip.cpr .lay .t.on { background:#BFD2FF; }
+
+/* research-question cards: <div class="card r2"><div class="head"><span class="rq">RQ2</span><span class="t">Title</span></div><p>…</p></div> */
+.card { border-radius:2mm; border-left:1.3mm solid; padding:1.3mm 2mm 1.3mm 2.1mm; }
+.card .head { display:flex; align-items:center; gap:1.2mm; margin-bottom:0.5mm; }
+.card .rq { color:#fff; font-weight:700; font-size:6.9pt; border-radius:1mm; padding:0.2mm 1.2mm; white-space:nowrap; }
+.card .t { font-weight:700; font-size:8pt; }
+.card p { margin:0; font-size:7pt; line-height:1.22; }
+.card.r1 { background:var(--rq1-bg); border-color:var(--rq1); } .card.r1 .rq { background:var(--rq1); }
+.card.r2 { background:var(--rq2-bg); border-color:var(--rq2); } .card.r2 .rq { background:var(--rq2); }
+.card.r3 { background:var(--rq3-bg); border-color:var(--rq3); } .card.r3 .rq { background:var(--rq3); }
+.card.r45 { background:var(--rq45-bg); border-color:var(--rq45); } .card.r45 .rq { background:var(--rq45); }
+
+/* pills for verdicts or tags */
+.pill { display:inline-flex; align-items:center; gap:1mm; border-radius:3mm; padding:0.3mm 1.8mm; font-size:6.9pt; font-weight:600; white-space:nowrap; }
+.pill.good { background:var(--good-bg); color:var(--good); }
+.pill.bad { background:var(--bad-bg); color:var(--bad); }
+.pill.mixed { background:var(--mixed-bg); color:var(--mixed); }
+.pill.no { background:#fff; border:0.3mm solid #B9C1CC; color:#4B5563; }
+
+/* small legend row */
+.legend { display:flex; flex-wrap:wrap; gap:0.6mm 3.4mm; font-size:6.9pt; color:var(--muted); }
+.legend span { display:inline-flex; align-items:center; gap:1mm; }
+.key { display:inline-block; width:5mm; border-top:0.55mm solid; }
+.key.allow { border-color:var(--allow); } .key.transfer { border-color:var(--transfer); }
+.key.dash { border-top-style:dashed; } .key.user { border-color:var(--user); border-top-style:dashed; }
+.sq { display:inline-block; width:2.6mm; height:2.6mm; border-radius:0.6mm; background:var(--contract); }
+
+svg { overflow:visible; }
+/* a font given on the element (fig.js sets one) wins over this default */
+svg text:not([font-family]) { font-family:"Segoe UI", Arial, sans-serif; }

@@ -7,7 +7,7 @@ English PhD dissertation, University of South Africa: *Integrating ERC-20 Allowa
 | `main.tex`, `01-Intro/`, `Chapter-01-…/` … `Chapter-08-Appendix/` | Thesis sources (front matter, six chapters, references, appendices) |
 | `Config/preamble.tex`, `Config/references.bib` | Layout (XeLaTeX) and APA 7 bibliography (biblatex, biber); `refmap.csv` and `references-candidates.md` are working notes for the bibliography |
 | `results/tables/`, `Figures/generated/` | Generated tables and figures (see `results/README.md`; never edited by hand) |
-| `Figures/*.tex` | TikZ figures |
+| `Figures/html/`, `Figures/*.pdf` | The 21 diagrams, drawn in HTML: `Figures/html/<name>.html` is the source and describes the figure in words; `python Figures/html/render.py Figures/html/<name>.html` prints it to `Figures/<name>.pdf`, which the chapter includes (`Figures/html/README.md` lists them) |
 | `main.pdf`, `Chapter-0*.pdf` | Built thesis and per-chapter PDFs |
 | `manuscripts/` | Two journal manuscripts drawn from the thesis (`A-plos-one/`, `B-ieee-access/`) |
 | `analysis/` | Supporting analyses for the manuscripts |

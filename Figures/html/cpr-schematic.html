@@ -1,0 +1,69 @@
+<!doctype html>
+<!--
+  Figure fig:cpr-schematic of the thesis (Chapter 3, coupled operator C-PR); the source of Figures/cpr-schematic.pdf.
+  LaTeX cannot read HTML: edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/cpr-schematic.html
+  See Figures/html/README.md.
+
+  What the figure shows: one step of the coupled walk C-PR (Equation eq:coupled-transition) on five contracts.
+  Allowance edges are orange and solid, transfer edges blue and dashed; each edge is labelled with its transition
+  probability before damping. Edges: x -> v (allowance, 1); u -> v (allowance, lambda); u -> w (transfer, 1 - lambda);
+  y -> w (transfer, 1). Contract u has out-edges in both layers and mixes them with weights lambda and 1 - lambda;
+  x and y have out-edges in one layer only and follow it whatever lambda is. With probability 1 - d the walk restarts at
+  a uniformly chosen contract.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>One step of C-PR</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+.row { display:grid; grid-template-columns:92mm 1fr; column-gap:4mm; align-items:center; }
+.side { display:flex; flex-direction:column; gap:1.5mm; font-size:7pt; color:#374151; }
+.side .it { display:grid; grid-template-columns:10mm 1fr; align-items:center; column-gap:1.6mm; }
+.m { font-family:"Times New Roman", serif; font-style:italic; font-size:8pt; }
+.mu { font-family:"Times New Roman", serif; font-size:8pt; }
+.tag { display:inline-block; border-radius:1mm; padding:0.2mm 1.2mm; font-weight:600; font-size:6.8pt; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row">
+    <svg id="g" width="92mm" height="40mm" viewBox="0 0 92 40"></svg>
+    <div class="side">
+      <div class="it"><svg width="10mm" height="3mm" viewBox="0 0 10 3"><path d="M0.5,1.5 H9" stroke="#D97706" stroke-width="0.6"/><path d="M7.6,0.4 L9.8,1.5 L7.6,2.6 z" fill="#D97706"/></svg><span><b style="color:#B45309">allowance edge</b>, row of <span class="m">P</span><sub>A</sub></span></div>
+      <div class="it"><svg width="10mm" height="3mm" viewBox="0 0 10 3"><path d="M0.5,1.5 H9" stroke="#2563EB" stroke-width="0.5" stroke-dasharray="1.1 0.7"/><path d="M7.6,0.4 L9.8,1.5 L7.6,2.6 z" fill="#2563EB"/></svg><span><b style="color:#1D4ED8">transfer edge</b>, row of <span class="m">P</span><sub>T</sub></span></div>
+      <div class="it"><span class="tag" style="background:#F1EAFF;color:#5B21B6;text-align:center"><span class="m">u</span></span><span>out-edges in both layers: the walk mixes them with <span class="m">λ</span> and <span class="mu">1 − </span><span class="m">λ</span></span></div>
+      <div class="it"><span class="tag" style="background:#EEF2F6;color:#334155;text-align:center"><span class="m">x</span>, <span class="m">y</span></span><span>out-edges in one layer only: the walk follows it whatever <span class="m">λ</span> is</span></div>
+      <div class="it"><svg width="10mm" height="3.4mm" viewBox="0 0 10 3.4"><path d="M0.6,2.6 C3,-0.6 6.5,-0.6 9,2.4" fill="none" stroke="#7A8594" stroke-width="0.45" stroke-dasharray="0.9 0.6"/><path d="M7.7,1.5 L9.6,2.9 L7.5,3.2 z" fill="#7A8594"/></svg><span>with probability <span class="mu">1 − </span><span class="m">d</span>: restart at a uniformly chosen contract</span></div>
+    </div>
+  </div>
+</div>
+<script>
+const svg = document.getElementById("g"), h = 3.4;
+const N = { x: [12, 6.5], u: [12, 20], y: [12, 33.5], v: [76, 11.5], w: [76, 28.5] };
+const ALLOW = "#D97706", TRANS = "#2563EB";
+const MATH = "font-family:'Times New Roman',serif";
+// dy: where the arrow meets the target node, as an offset from its centre, so that two arrows do not share one point
+const edge = (a, b, color, dash, label, pos, side, dy) => {
+  const to = [N[b][0], N[b][1] + dy];
+  Fig.edge(svg, N[a], to, { color, width: dash ? 0.5 : 0.6, dash, half: h, gap: 0.6 });
+  const [x1, y1] = N[a], [x2, y2] = to, t = pos;
+  const lx = x1 + (x2 - x1) * t, ly = y1 + (y2 - y1) * t + side;
+  const g = Fig.el(svg, "text", { x: lx, y: ly, "font-size": 3.4, fill: color === ALLOW ? "#B45309" : "#1D4ED8", "text-anchor": "middle", style: MATH });
+  for (const [s, it] of label) { const ts = Fig.el(g, "tspan", { "font-style": it ? "italic" : "normal" }); ts.textContent = s; }
+};
+edge("x", "v", ALLOW, null, [["1", false]], 0.5, -1.4, -1.6);
+edge("u", "v", ALLOW, null, [["λ", true]], 0.4, -1.7, 1.6);
+edge("u", "w", TRANS, "1.2 0.75", [["1 − ", false], ["λ", true]], 0.4, 4.3, -1.6);
+edge("y", "w", TRANS, "1.2 0.75", [["1", false]], 0.5, 3.8, 1.6);
+for (const [id, [x, y]] of Object.entries(N)) {
+  const both = id === "u";
+  Fig.el(svg, "rect", { x: x - h, y: y - h, width: 2 * h, height: 2 * h, rx: 1.4, fill: "#0F766E", stroke: both ? "#7C3AED" : "none", "stroke-width": both ? 0.9 : 0 });
+  const t = Fig.el(svg, "text", { x, y: y + 1.3, "font-size": 4.1, fill: "#fff", "text-anchor": "middle", "font-style": "italic", style: MATH });
+  t.textContent = id;
+}
+</script>
+</body>
+</html>

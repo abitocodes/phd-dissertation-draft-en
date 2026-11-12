@@ -32,38 +32,10 @@ Figure~\ref{fig:allowance-sequence} traces an ERC-20 allowance through its lifec
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-  font=\small,
-  actor/.style={draw, rounded corners, minimum width=2.4cm, minimum height=0.75cm, align=center},
-  msg/.style={-{Stealth[length=2.5mm]}, thick},
-  note/.style={font=\scriptsize\itshape, text=black!70, align=left}
-]
-% Actors
-\node[actor] (owner) at (0,0) {Owner};
-\node[actor] (token) at (5.5,0) {ERC-20 token};
-\node[actor] (spender) at (11,0) {Spender};
-
-% Lifelines (vertical dashed lines)
-\draw[dashed, gray] (owner.south) -- ++(0,-6.6);
-\draw[dashed, gray] (token.south) -- ++(0,-6.6);
-\draw[dashed, gray] (spender.south) -- ++(0,-6.6);
-
-% Message 1: approve (owner -> token), horizontal span 5.5cm
-\draw[msg] (0,-1.2) -- node[above,font=\scriptsize] {\texttt{approve(spender,$a$)}} (5.5,-1.2);
-\node[note] at (2.75,-1.7) {emit \texttt{Approval}; store allowance};
-
-% Alternative to message 1: EIP-2612 permit, submitted by the spender (or a relayer) with the owner's signature
-\draw[msg, densely dotted] (11,-2.6) -- node[above,font=\scriptsize] {\texttt{permit(owner,spender,$a$,sig)}} (5.5,-2.6);
-\node[note] at (8.25,-3.1) {alternative to \texttt{approve}: owner signs off-chain;\\ emit \texttt{Approval}; store allowance};
-
-% Message 2: transferFrom (spender -> token), horizontal span 5.5cm
-\draw[msg] (11,-4.2) -- node[above,font=\scriptsize] {\texttt{transferFrom(owner,to,$v\leq a$)}} (5.5,-4.2);
-\node[note] at (8.25,-4.7) {move tokens; reduce allowance};
-
-% Message 3: revoke (owner -> token), dashed
-\draw[msg, dashed] (0,-5.8) -- node[above,font=\scriptsize] {\texttt{approve(spender,$0$)} (revoke)} (5.5,-5.8);
-\end{tikzpicture}
-\caption[{ERC-20 allowance lifecycle: approve (or permit), optional \texttt{transferFrom}, and revoke.}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. EndorseRank keeps the most recent \texttt{Approval} event of each owner, spender and token in the score window and weights it by its age and by its US-dollar amount up to the owner's balance.}
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/allowance-sequence.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/allowance-sequence.html`.
+\includegraphics[width=\textwidth]{Figures/allowance-sequence.pdf}
+\caption[{ERC-20 allowance lifecycle: approve (or permit), optional \texttt{transferFrom}, and revoke.}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. Orange arrows set the allowance and the blue arrow moves tokens; the bars on the right show the allowance in force after each step. EndorseRank keeps the most recent \texttt{Approval} event of each owner, spender and token in the score window and weights it by its age and by its US-dollar amount up to the owner's balance.}
 \label{fig:allowance-sequence}
 \end{figure}
 
@@ -109,29 +81,10 @@ Equation~\eqref{eq:pagerank-node} can be read probabilistically. At each step a 
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-  font=\small,
-  vertex/.style={draw, circle, minimum size=0.95cm},
-  arrow/.style={-{Stealth[length=2.5mm]}, thick},
-  teleport/.style={arrow, dashed}
-]
-\node[vertex] (a) at (0,0) {$A$};
-\node[vertex] (b) at (3.2,1.5) {$B$};
-\node[vertex] (c) at (3.2,-1.5) {$C$};
-\node[vertex] (d) at (6.4,0) {$D$};
-% Graph transitions: A->B, A->C, B->D, C->D (same topology as the worked example; D is dangling)
-\draw[arrow] (a) -- node[above left, font=\footnotesize] {$2$} (b);
-\draw[arrow] (a) -- node[below left, font=\footnotesize] {$1$} (c);
-\draw[arrow] (b) -- node[below left=-1pt, font=\footnotesize] {$3$} (d);
-\draw[arrow] (c) -- node[above left=-1pt, font=\footnotesize] {$1$} (d);
-% Uniform teleportation, drawn from D only: one dashed arrow to every node, including D itself.
-% D->A runs through the gap between B and C, and D->B / D->C bend outward, so no dashed arrow crosses a solid edge.
-\draw[teleport] (d) -- (a);
-\draw[teleport] (d) to[bend right=32] (b);
-\draw[teleport] (d) to[bend left=32] (c);
-\draw[teleport] (d) to[loop right, min distance=12mm] (d);
-\end{tikzpicture}
-\caption[{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}.}]{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}; edge labels are the allowance weights. Solid arrows are graph transitions, followed with total probability $d$ in proportion to their weights. Dashed arrows show uniform teleportation, which reaches every node with probability $(1-d)/|V|$; the dashed fan is drawn only from $D$, although every node has one. $D$ has no outgoing edge, so under the dangling rule of Equation~\eqref{eq:transition} a surfer at $D$ always jumps to a uniformly chosen node.}
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/random-surfer.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/random-surfer.html`.
+\includegraphics[width=\textwidth]{Figures/random-surfer.pdf}
+\caption[{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}.}]{Random-surfer intuition for PageRank on the four-node graph of Section~\ref{sec:pagerank-worked-example}; edge labels are the allowance weights, with the share of a step that each edge takes in brackets. Solid arrows are graph transitions, followed with total probability $d$ in proportion to their weights. Dashed arrows show uniform teleportation, which reaches every node with probability $(1-d)/|V|$; the dashed fan is drawn only from $D$, although every node has one. $D$ has no outgoing edge, so under the dangling rule of Equation~\eqref{eq:transition} a surfer at $D$ always jumps to a uniformly chosen node. The bars give the stationary vector of the worked example, the long-run share of visits.}
 \label{fig:random-surfer}
 \end{figure}
 
@@ -152,11 +105,31 @@ A crawler has read only some pages and must choose which of the pages they link 
 
 \textcite{najork2001breadth} crawled 328 million pages in breadth-first order, found that pages with a high PageRank were downloaded early, and argue that this order is the better trade-off because recomputing PageRank during such a crawl is too costly; they ran no other ordering. \textcite{baezayates2005crawling} simulated crawls of the Chilean and the Greek web, between two and four million pages each, with PageRank as the importance: orderings by the backlink count and by a partially updated PageRank did worse than a random crawl, breadth-first order was close to the best orderings only over the first 20 to 30 percent of the pages, and the authors place PageRank recomputed in batches on the pages seen so far among the best, together with two cheaper strategies that they recommend. In both studies that compare orderings, the backlink count thus trails a PageRank that is recomputed in full on the pages seen so far.
 
-The discovery-order test of this thesis repeats the experiment of \textcite{cho1998crawling} on the contract graph (Section~\ref{sec:discovery-protocol}). A page becomes a contract and a link an allowance or transfer edge between two contracts; a visit reads a contract's edges, and the next contract is chosen by an ordering computed on what has been read so far: breadth-first order, the number of contract backlinks, or a walk such as C-PR. Importance is taken from outside the graph: it is the demand of user accounts, the US dollars they transferred to a contract and the balance-capped US dollars they authorized it to spend, which no ordering reads. Importance by backlink count and by PageRank, as in the original experiment, is an intended-construct check and is reported second.
+The discovery-order test of this thesis repeats the experiment of \textcite{cho1998crawling} on the contract graph (Section~\ref{sec:discovery-protocol}). A page becomes a contract and a link an allowance or transfer edge between two contracts; a visit reads a contract's edges, and the next contract is chosen by an ordering computed on what has been read so far: breadth-first order, the number of contract backlinks, or a walk such as C-PR. Importance is taken from outside the graph: it is the demand of user accounts, the US dollars they transferred to a contract and the balance-capped US dollars they authorized it to spend, which no ordering reads. Importance by backlink count and by PageRank, as in the original experiment, is an intended-construct check and is reported second. Figure~\ref{fig:crawl-ordering} shows the experiment and its counterpart on the contract graph.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/crawl-ordering.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/crawl-ordering.html`.
+\includegraphics[width=\textwidth]{Figures/crawl-ordering.pdf}
+\caption[{The crawl-ordering experiment and its counterpart in the discovery-order test (schematic).}]{The crawl-ordering experiment of \textcite{cho1998crawling}, drawn as a schematic without data. A crawl that began at a seed page has read some pages (filled, numbered in the order of reading); the frontier holds the pages they link to, and an ordering computed on the pages read so far chooses the next one. An ordering is judged by how soon it visits the hot pages, those above an importance threshold, between a random order and the ideal one. The bottom row gives the counterparts in the discovery-order test of this thesis (Section~\ref{sec:discovery-protocol}).}
+\label{fig:crawl-ordering}
+\end{figure}
 
 \dissertationSubheading[sec:reputation-systems]{Reputation systems lineage}
 
 PageRank belongs to a wider family of spectral and propagation-based reputation mechanisms. Kleinberg's HITS algorithm gives each page a hub score and an authority score \parencite{kleinberg1999hits}. EigenTrust extends the idea to peer-to-peer networks and normalizes local trust, so a malicious node cannot raise its own score at will \parencite{kamvar2003eigentrust}. To suppress web spam, TrustRank starts from a seed set of trusted nodes and propagates their trust outward \parencite{gyongyi2004trustrank}. Where trust flows only from a vetted seed set, a newcomer cannot raise its score without endorsements from nodes that already hold reputation. With uniform teleportation, which EndorseRank uses (Section~\ref{sub:endorserank-graph}), that protection is weaker.
+
+Figure~\ref{fig:reputation-lineage} places the ranking methods reviewed in this chapter by family and year, together with what the walks of this thesis take from each family.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/reputation-lineage.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/reputation-lineage.html`.
+\includegraphics[width=\textwidth]{Figures/reputation-lineage.pdf}
+\caption[{Ranking methods reviewed in this chapter, by family.}]{Ranking methods reviewed in this chapter, by family and, within a family, by year, with what the walks of this thesis take from each family (arrows). The ledger rankings take every address in their data as a node; the walks of this thesis take contracts only (Section~\ref{sec:graph-reputation}).}
+\label{fig:reputation-lineage}
+\end{figure}
 
 \dissertationSubheading[sec:allowance-endorsement]{ERC-20 allowances as endorsement}
 
@@ -190,6 +163,17 @@ Kendall's $\tau$ \parencite{kendall1938rank} rests on counts of concordant and d
 \end{equation}
 and without the tie corrections it becomes $\tau_a=(n_c-n_d)/n_0$. Every $\tau$ reported in this thesis is $\tau_b$, computed on the raw scores and proxies. The difference matters for heavily tied scores: the raw degrees are integer counts, and a walk gives one value to every contract that has no edge in its graph, which for EndorseRank is most of the matched cohort (Section~\ref{sec:rank-divergence}). Kendall's $\tau$ is usually the easier coefficient to interpret for pairwise orderings, and Chapter~\ref{ch:results} uses it as the main family-level summary. Its values are compared with those of other methods on the same cohort; no uncited absolute benchmark is used.
 
+Figure~\ref{fig:kendall-pairs} works through these counts on four contracts with made-up values.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/kendall-pairs.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/kendall-pairs.html`.
+\includegraphics[width=\textwidth]{Figures/kendall-pairs.pdf}
+\caption[{Concordant and discordant pairs and Kendall's $\tau_b$ on four contracts.}]{Concordant and discordant pairs and Kendall's $\tau_b$ (Equation~\eqref{eq:kendall}) on four contracts with made-up values. The lines of $Q$ and $R$ cross, so that pair is discordant; $R$ and $S$ tie in the score, so their pair is neither concordant nor discordant and enters $n_1$.}
+\label{fig:kendall-pairs}
+\end{figure}
+
 \dissertationSubheading[sec:theoretical-framework]{Theoretical framework}
 
 The study first compares the two single-layer walks, EndorseRank and AWP, on the same contracts: whether they order them differently (H1), whether each agrees with the checks of its own edge type (H2) and what each costs (H3); together these make up RQ1. It then tests the coupled walk C-PR, the method of the thesis, by the order in which a crawl that follows it reaches the contracts with the most user-account demand (RQ2), by the prediction of later approvals and senders against the raw counts (RQ3), and under its rules (RQ4 and RQ5). RQ4 and RQ5 follow the rules of the analysis plan and of the registration, applied to the scores of the contract graph as a re-analysis; RQ2 and RQ3 follow criteria defined after the registered results were known (Section~\ref{sec:amount-revision}). Six arguments frame these steps.
@@ -212,8 +196,10 @@ Figure~\ref{fig:conceptual-model} sets out these parts. Only EndorseRank and AWP
 
 \begin{figure}[htbp]
 \centering
-\input{Figures/conceptual-model.tex}
-\caption[{Conceptual model: the contract graph, the scores and the four evaluations.}]{Conceptual model. The contract graph of a freeze, whose nodes are contracts only, is the only input of the scores, and the scores enter four evaluations, from top to bottom in the order of the research questions. User accounts (dashed) are nodes of no graph: they enter only as the importance of the discovery-order test and through the out-of-window labels, which count every account.}
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/conceptual-model.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/conceptual-model.html`.
+\includegraphics[width=\textwidth]{Figures/conceptual-model.pdf}
+\caption[{Conceptual model: the contract graph, the scores and the four evaluations.}]{Conceptual model. The contract graph of a freeze has two layers, allowances and transfers, over the same contract nodes, and it is the only input of the scores; the bars beside a score mark the layers it reads. Every score enters the four evaluations, from top to bottom in the order of the research questions. User accounts (dashed) are nodes of no graph: they enter only as the importance of the discovery-order test and through the out-of-window labels, which count every account.}
 \label{fig:conceptual-model}
 \end{figure}
 
@@ -246,7 +232,16 @@ Transfers among the same contracts would in general join other pairs, or the sam
 
 \dissertationSubheading[sec:defi-risk-taxonomy]{DeFi risk taxonomy and where reputation fits}
 
-\textcite{werner2022sok} separate the technical security of DeFi protocols from their economic security, and \textcite{zhou2023sok} place the attacks and accidents seen in practice in one reference frame. Bugs in contract code are smart-contract risks \parencite{li2022defisecurity}; a stale price, or a feed under someone's control, is an oracle risk \parencite{angeris2020oracles}; volatility and liquidation cascades are market risks \parencite{perez2021liquidations}; and voting power held by a few addresses is a governance risk \parencite{fritsch2024voting}. Each layer starts from a given protocol and asks what can go wrong with it. The thesis asks the question that comes first: among very many contracts, which ones users rely on. A ranking of contracts by the relations between them is no substitute for auditing or oracle design; it is meant to say where such methods should be applied first, not to predict exploits or governance attacks.
+\textcite{werner2022sok} separate the technical security of DeFi protocols from their economic security, and \textcite{zhou2023sok} place the attacks and accidents seen in practice in one reference frame. Bugs in contract code are smart-contract risks \parencite{li2022defisecurity}; a stale price, or a feed under someone's control, is an oracle risk \parencite{angeris2020oracles}; volatility and liquidation cascades are market risks \parencite{perez2021liquidations}; and voting power held by a few addresses is a governance risk \parencite{fritsch2024voting}. Each layer starts from a given protocol and asks what can go wrong with it. The thesis asks the question that comes first: among very many contracts, which ones users rely on. A ranking of contracts by the relations between them is no substitute for auditing or oracle design; it is meant to say where such methods should be applied first, not to predict exploits or governance attacks. Figure~\ref{fig:defi-risk} sets this question before the risk layers.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/defi-risk.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/defi-risk.html`.
+\includegraphics[width=\textwidth]{Figures/defi-risk.pdf}
+\caption[{Where a ranking of contracts fits beside the DeFi risk layers.}]{Where a ranking of contracts fits beside the DeFi risk layers. Each risk layer starts from a given protocol and asks what can go wrong with it; the ranking asks first which of very many contracts users rely on, to say where those methods should be applied first. It replaces none of them and predicts no exploit.}
+\label{fig:defi-risk}
+\end{figure}
 
 Artificial activity makes any ranking from ledger data harder to trust. Wash trading inflates volume on decentralized exchanges \parencite{victor2021washtrading} and, on a larger scale, on unregulated centralized exchanges \parencite{cong2023washtrading}, extractable value creates transfers that follow ordering strategies rather than relationships \parencite{daian2020flashboys}, and scam tokens add transactions without sustained relationships \parencite{xia2021scamtokens}. The transfer layer is sensitive to such volume, and the study does not measure it. The allowance layer is sensitive to approvals granted only to raise a score; the contract-only graph and the balance cap raise their cost, and Section~\ref{sec:dataset} checks the graphs for closed groups of contracts, which would keep the mass of a walk.
 
@@ -259,6 +254,17 @@ Topic-sensitive PageRank \parencite{haveliwala2003topic} and personalized PageRa
 \dissertationSubheading[sec:account-model]{Accounts, gas, and why logs are the measurement surface}
 
 Ethereum has two kinds of account: externally owned accounts (EOAs) and contract accounts. A private key controls an EOA, whereas a contract account is governed by the code it stores \parencite{antonopoulos2018mastering}. The line between a user's account and a contract does not follow this division exactly: an EOA can delegate to code under EIP-7702 \parencite{buterin2024eip7702}, and a smart account, such as a Safe \parencite{safenddocs} or an ERC-4337 account \parencite{buterin2021erc4337}, is a contract account that acts for a user. This thesis therefore separates \emph{user accounts} (EOAs, EIP-7702 accounts and smart accounts) from \emph{contracts} (every other contract account; Section~\ref{sub:account-types}) and scores contracts only (Section~\ref{sec:data-sources}). Every state-changing transaction consumes gas. Logs come from a contract's \texttt{LOG} instructions, which run when its code emits an event (the Solidity \texttt{emit} statement); writing to storage produces no log. A reputation system that means to be auditable must prefer logs to off-chain databases, because logs are a permanent part of the blockchain history that any full node or index provider can recompute \parencite{wood2025yellowpaper}.
+
+Figure~\ref{fig:accounts-logs} shows the two kinds of account and the logs that the study reads.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/accounts-logs.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/accounts-logs.html`.
+\includegraphics[width=\textwidth]{Figures/accounts-logs.pdf}
+\caption[{Accounts, transactions and the logs that the study reads.}]{Accounts, transactions and the logs that the study reads. User accounts (dashed) send transactions, which pay gas; contracts run the code a transaction calls, and a token contract records \texttt{Approval} and \texttt{Transfer} events as logs, while writing to storage leaves none. An event whose two ends are contracts becomes an edge of the contract graph; an event with a user account at one end is no edge and enters only as importance and in the labels.}
+\label{fig:accounts-logs}
+\end{figure}
 
 \dissertationSubheading[sec:approval-security]{Approvals as security-relevant events}
 

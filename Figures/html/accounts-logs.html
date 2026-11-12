@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+  Figure fig:accounts-logs of the thesis (Chapter 2, Section "Accounts, gas, and why logs are the measurement
+  surface"); the source of Figures/accounts-logs.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/accounts-logs.html
+
+  What the figure shows, left to right:
+  1. User accounts (grey, dashed): EOAs, controlled by a private key; EIP-7702 accounts, EOAs that delegate to code;
+     and smart accounts, such as a Safe or an ERC-4337 account, contract accounts that act for a user.
+  2. A user account sends a transaction, which consumes gas. Contracts (every other contract account) run the code the
+     transaction calls. When that code emits an event, the contract's LOG instruction writes a log; a token contract
+     emits Approval and Transfer events. Writing to storage produces no log.
+  3. The logs are a permanent part of the chain's history that any full node or index provider can recompute; the
+     study reads the Approval and Transfer logs.
+  4. What the study keeps: an event whose two ends are contracts becomes an edge of the contract graph; an event
+     with a user account at one end is no edge and enters only as importance and in the labels.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Accounts and logs</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .flow { display:grid; grid-template-columns:37mm 6mm 39mm 6mm 31mm 6mm 1fr; align-items:stretch; }
+  .col { display:flex; flex-direction:column; }
+  .h { margin-bottom:1.3mm; }
+  .acct { display:flex; align-items:center; gap:1.4mm; margin-bottom:1.2mm; font-size:7pt; line-height:1.15; }
+  .acct b { display:block; font-size:7.3pt; }
+  .note { font-size:7pt; color:var(--muted); line-height:1.2; }
+  .arrow { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .arrow span { font-size:7pt; color:var(--muted); text-align:center; line-height:1.1; margin-top:0.6mm; }
+  .log { border-radius:1.4mm; padding:1mm 1.5mm; margin-bottom:1.3mm; font-family:Consolas, monospace; font-size:7pt; line-height:1.2; }
+  .log.a { background:var(--allow-bg); border:0.3mm solid var(--allow-line); color:var(--allow-ink); }
+  .log.t { background:var(--transfer-bg); border:0.3mm solid var(--transfer-line); color:var(--transfer-ink); }
+  .keep { display:flex; align-items:flex-start; gap:1.4mm; margin-bottom:1.6mm; font-size:7pt; line-height:1.2; }
+  .keep svg { margin-top:0.3mm; }
+  .pair { display:inline-flex; align-items:center; gap:0.7mm; vertical-align:middle; margin-right:0.6mm; }
+  .dot { display:inline-block; width:2.5mm; height:2.5mm; border-radius:0.6mm; background:var(--contract); }
+  .dot.u { border-radius:50%; background:#9AA4B2; }
+  .tiny { display:inline-block; width:3.2mm; border-top:0.4mm solid #475569; position:relative; top:-0.2mm; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="flow">
+    <!-- 1. user accounts -->
+    <div class="col panel users">
+      <div class="h">User accounts</div>
+      <div class="acct"><span data-icon="key" data-color="#6B7584" data-size="4.6"></span><span><b>EOA</b>controlled by a private key</span></div>
+      <div class="acct"><span data-icon="key" data-color="#9AA4B2" data-size="4.6"></span><span><b>EIP-7702 account</b>an EOA that delegates to code</span></div>
+      <div class="acct"><span data-icon="people" data-color="#6B7584" data-size="4.6"></span><span><b>Smart account</b>a Safe or an ERC-4337 account</span></div>
+      <div class="note" style="margin-top:auto">send transactions, which pay gas; no node of any graph</div>
+    </div>
+    <div class="arrow"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+
+    <!-- 2. contracts execute and emit events -->
+    <div class="col panel contract">
+      <div class="h"><span data-icon="contract" data-color="#0F766E" data-size="4.4"></span>&nbsp;Contracts</div>
+      <div class="note" style="color:var(--ink);font-size:7pt;margin-bottom:1.2mm">every other contract account; they run the code the transaction calls</div>
+      <div style="font-size:7pt;line-height:1.25">A token contract's <span style="font-family:Consolas,monospace">emit</span> runs its <span style="font-family:Consolas,monospace">LOG</span> instruction:
+        <b style="color:var(--allow-ink)">Approval</b> and <b style="color:var(--transfer-ink)">Transfer</b> events.</div>
+      <div class="note" style="margin-top:auto">writing to storage leaves no log</div>
+    </div>
+    <div class="arrow"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+
+    <!-- 3. the logs -->
+    <div class="col panel soft">
+      <div class="h"><span data-icon="database" data-color="#475569" data-size="4.4"></span>&nbsp;Logs</div>
+      <div class="log a">Approval(owner, spender, value)</div>
+      <div class="log t">Transfer(from, to, value)</div>
+      <div class="note" style="margin-top:auto">permanent; any full node or index provider can recompute them</div>
+    </div>
+    <div class="arrow"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+
+    <!-- 4. what the study keeps -->
+    <div class="col panel">
+      <div class="h">What the study reads</div>
+      <div class="keep"><span data-icon="check" data-color="#0F766E" data-size="3.8"></span>
+        <span><span class="pair"><i class="dot"></i><i class="tiny"></i><i class="dot"></i></span>both ends are contracts: an <b>edge of the contract graph</b></span></div>
+      <div class="keep"><span data-icon="cross" data-color="#9AA4B2" data-size="3.8"></span>
+        <span><span class="pair"><i class="dot u"></i><i class="tiny"></i><i class="dot"></i></span>a user account at one end: <b>no edge</b>; it enters only as importance and in the labels</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

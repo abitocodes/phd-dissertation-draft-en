@@ -1,0 +1,110 @@
+<!doctype html>
+<!--
+  Figure fig:data-funnel of the thesis (Chapter 4, Section "Case study setting: Arbitrum One"); the source of
+  Figures/data-funnel.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/data-funnel.html
+  Every number is copied from the prose of that section and equals the results digest
+  (experiments/data/3-published-results-for-thesis/revised-contract-12m/results_digest.md, describe/describe.json).
+
+  What the figure shows: how the events of the five tokens become the contract graph, in two lanes.
+  Rows lane: from 1 April 2025 to 30 September 2026 the five tokens (WETH, USDC, USDT0, ARB, WBTC) have
+  1,240,275,042 Approval and non-zero Transfer rows; only the 603,475,784 rows with a contract at both ends can make an edge.
+  Addresses lane: the rows name 25,537,280 addresses other than the zero address. The 17,477,779 that sent a transaction
+  are user accounts. The 6,230,270 addresses that could still end an edge between contracts (with the cohort members and
+  two audit samples) were read with eth_getCode at one block; those without code, EIP-7702 accounts, Safes and ERC-4337
+  accounts are user accounts too, which leaves 1,829,719 contracts.
+  Both lanes lead to the contract graph: 1,403,959 contracts over both freezes, in two layers (allowance and transfer);
+  no user account is a node. Bar lengths are proportional to the counts within each lane.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Data funnel</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+.fig { position:relative; }
+.grid { display:grid; grid-template-columns:minmax(0, 1fr) 39mm; column-gap:8mm; align-items:center; }
+.lane { margin-bottom:2.6mm; }
+.lane:last-child { margin-bottom:0; }
+.lh { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:1.4mm; font-weight:700; font-size:8.2pt; margin-bottom:1.1mm; }
+.lh > svg { align-self:center; }
+.lh .sub { font-weight:400; font-size:6.9pt; color:var(--muted); }
+.st { display:grid; grid-template-columns:38mm minmax(0, 1fr); column-gap:2.4mm; align-items:center; margin-bottom:1.1mm; }
+.track { height:4.4mm; border-radius:1.1mm; background:#F1F5F9; position:relative; }
+.bar { position:absolute; left:0; top:0; bottom:0; border-radius:1.1mm; }
+.bar.rows { background:#A9C0EC; }
+.bar.addr { background:#BCC5D1; }
+.bar.keep { background:var(--contract); }
+.lab { font-size:7.2pt; line-height:1.18; }
+.lab b { font-size:8pt; }
+.exit { display:flex; align-items:center; gap:1.2mm; margin:0 0 1.1mm 40.4mm; font-size:6.9pt; color:#4B5563;
+  border:0.3mm dashed var(--user); background:var(--user-bg); border-radius:1.6mm; padding:0.5mm 1.6mm; width:fit-content; max-width:calc(100% - 40.4mm); }
+.exit b { color:#374151; }
+.graph { text-align:left; }
+.panel.contract { background:#F3FBF9; } /* solid: a CSS gradient defeats the crop of render.py */
+.graph .big { font-size:8pt; margin-top:0.8mm; }
+.graph .big b { font-size:9.4pt; color:var(--contract); }
+.graph .note { font-size:6.9pt; color:var(--muted); margin-top:0.6mm; }
+svg.links { position:absolute; left:0; top:0; pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="fig" id="fig">
+  <div class="grid">
+    <div>
+      <div class="lane">
+        <div class="lh"><span data-icon="doc" data-color="#2563EB" data-size="4"></span>Rows of the five tokens
+          <span class="sub">Approval and non-zero Transfer logs, 1 April 2025 to 30 September 2026</span></div>
+        <div class="st"><div class="track"><div class="bar rows" style="width:100%"></div></div>
+          <div class="lab"><b>1,240,275,042</b> rows of WETH, USDC, USDT0, ARB and WBTC</div></div>
+        <div class="st" id="rows-keep"><div class="track"><div class="bar keep" style="width:48.7%"></div></div>
+          <div class="lab"><b>603,475,784</b> with a contract at both ends: only these can make an edge</div></div>
+      </div>
+      <div class="lane">
+        <div class="lh"><span data-icon="people" data-color="#5B6472" data-size="4"></span>Addresses named by the rows</div>
+        <div class="st"><div class="track"><div class="bar addr" style="width:100%"></div></div>
+          <div class="lab"><b>25,537,280</b> addresses other than the zero address</div></div>
+        <div class="exit"><span data-icon="person" data-color="#7A8594" data-size="3.2"></span><b>17,477,779</b> sent a transaction: user accounts</div>
+        <div class="st"><div class="track"><div class="bar addr" style="width:24.4%"></div></div>
+          <div class="lab"><b>6,230,270</b> could still end an edge between contracts; read with <span class="mono">eth_getCode</span> at one block</div></div>
+        <div class="exit"><span data-icon="person" data-color="#7A8594" data-size="3.2"></span>no code, EIP-7702 accounts, Safes, ERC-4337 accounts: user accounts too</div>
+        <div class="st" id="contracts"><div class="track"><div class="bar keep" style="width:7.2%"></div></div>
+          <div class="lab"><b>1,829,719</b> contracts</div></div>
+      </div>
+    </div>
+    <div class="panel contract graph" id="graph">
+      <div class="h" style="margin-bottom:0.6mm"><span class="badge" style="background:var(--contract)">G</span>Contract graph</div>
+      <svg id="mini" viewBox="0 0 34 15" width="34mm" height="15mm" style="display:block"></svg>
+      <div class="big"><b>1,403,959</b> contracts over both freezes</div>
+      <div class="legend" style="margin-top:0.8mm"><span><i class="key allow"></i>allowance</span><span><i class="key transfer"></i>transfer</span></div>
+      <div class="note">No user account is a node.</div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // the small two-layer graph inside the box
+  Fig.graph(document.getElementById("mini"), {
+    nodes: { a:[3,4], b:[13,3], c:[23,6], d:[31,3], e:[8,12], f:[19,12], g:[29,12] },
+    edges: [["a","c","allow",-1.5], ["e","f","allow",1], ["g","d","allow",1],
+            ["a","b","transfer",1], ["b","c","transfer",-1], ["e","a","transfer",1], ["f","c","transfer",-1], ["f","g","transfer",1], ["c","d","transfer",-1]],
+    kinds: { allow:{ color:"#D97706", width:0.5 }, transfer:{ color:"#2563EB", width:0.38 } },
+    node: { half:1.7 }
+  });
+  // arrows from the two kept stages to the graph box, measured after layout
+  const fig = document.getElementById("fig"), F = fig.getBoundingClientRect();
+  const svg = Fig.el(fig, "svg", { class: "links", width: F.width, height: F.height, viewBox: `0 0 ${F.width} ${F.height}` });
+  const g = document.getElementById("graph").getBoundingClientRect();
+  for (const id of ["rows-keep", "contracts"]) {
+    const lab = document.querySelector(`#${id} .lab`).getBoundingClientRect();
+    const x1 = lab.right - F.left + 3, y1 = lab.top + lab.height / 2 - F.top;
+    const x2 = g.left - F.left - 2, y2 = g.top + g.height * (id === "rows-keep" ? 0.38 : 0.62) - F.top;
+    const mx = (x1 + x2) / 2;
+    const p = Fig.el(svg, "path", { d: `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`, fill: "none", stroke: "#0F766E",
+      "stroke-width": 1.5, "marker-end": Fig.marker(svg, "#0F766E") });
+  }
+});
+</script>
+</body>
+</html>

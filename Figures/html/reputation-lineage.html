@@ -1,0 +1,102 @@
+<!doctype html>
+<!--
+  Figure fig:reputation-lineage of the thesis (Chapter 2, Section "Reputation systems lineage"); the source of
+  Figures/reputation-lineage.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/reputation-lineage.html
+
+  What the figure shows: the ranking methods that Chapter 2 reviews, in four families (rows), each ordered by year,
+  with author and year as the thesis cites them (Config/references.bib), and what the walks of this thesis take
+  from each family (arrows into the right-hand column).
+  - Web link analysis: crawl ordering (Cho et al., 1998); PageRank (Page et al., 1999); HITS (Kleinberg, 1999);
+    PageRank approximated from in-degree (Fortunato et al., 2008). Taken: the citation logic of PageRank and the
+    count as a baseline.
+  - Restarts and trust: topic-sensitive PageRank (Haveliwala, 2003); personalized PageRank (Jeh & Widom, 2003);
+    EigenTrust (Kamvar et al., 2003); TrustRank (Gyongyi et al., 2004). Taken: normalization, not seeding.
+  - Multilayer ranking: multiplex PageRank (Halu et al., 2013); ranking in multilayer networks (De Domenico et al.,
+    2015). Taken: two layers over one node set.
+  - Ledger rankings: PageRank and HodgeRank on Ethereum (H.-D. Do & Do, 2023); AWP (T. Do et al., 2023); RiskProp
+    (D. Lin et al., 2025). Taken: AWP as the transfer reference.
+  - This thesis: EndorseRank (the allowance walk), C-PR (the coupled walk, the method) and S-PR (its ablation).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reputation lineage</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .grid { display:grid; grid-template-columns:20mm minmax(0, 1fr) 20.5mm 29mm; grid-template-rows:repeat(4, auto);
+    row-gap:1.6mm; column-gap:0; align-items:stretch; }
+  .fam { border-radius:1.8mm 0 0 1.8mm; color:#fff; font-weight:700; font-size:7.2pt; line-height:1.15;
+    display:flex; align-items:center; padding:1mm 1.6mm; }
+  .items { display:flex; gap:1mm; align-items:stretch; padding:1mm 1mm; border-radius:0 1.8mm 1.8mm 0; }
+  .it { flex:1 1 auto; min-width:0; background:#fff; border-radius:1.3mm; padding:0.7mm 1mm; border:0.3mm solid; line-height:1.15; }
+  .it b { display:block; font-size:7.1pt; }
+  .it span { display:block; font-size:6.9pt; color:var(--muted); white-space:nowrap; }
+  .take { display:flex; flex-direction:column; justify-content:center; padding:0 1mm; }
+  .take span { font-size:6.9pt; color:#374151; line-height:1.12; text-align:center; margin-bottom:0.4mm; }
+  .thesis { grid-column:4; grid-row:1 / span 4; border-radius:2.2mm; background:#FBF9FF; border:0.35mm solid var(--coupled-line);
+    padding:1.6mm 1.8mm; display:flex; flex-direction:column; justify-content:center; gap:1.4mm; }
+  .thesis .ttl { font-weight:700; font-size:8pt; color:var(--coupled-ink); }
+  .thesis .chip { white-space:normal; display:flex; flex-direction:column; align-items:flex-start; gap:0.1mm; padding:0.9mm 1.6mm; }
+  .thesis .chip span { font-size:6.9pt; }
+  .w .fam { background:var(--web); } .w .items { background:var(--web-bg); } .w .it { border-color:#9CC9D6; }
+  .r .fam { background:#15803D; } .r .items { background:#E3F4E8; } .r .it { border-color:#A7D7B5; }
+  .m .fam { background:#9333EA; } .m .items { background:#F3E8FF; } .m .it { border-color:#D2B4F5; }
+  .l .fam { background:var(--transfer); } .l .items { background:var(--transfer-bg); } .l .it { border-color:var(--transfer-line); }
+  .row { display:contents; }
+  .r .it span { white-space:normal; }
+  .r .it { flex:1 1 0; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="h" style="margin-bottom:1.4mm">Ranking methods reviewed in this chapter<span class="sub">by family, each family in order of year</span></div>
+  <div class="grid">
+    <div class="row w">
+      <div class="fam">Web link analysis</div>
+      <div class="items">
+        <div class="it"><b>Crawl ordering</b><span>Cho et al., 1998</span></div>
+        <div class="it"><b>PageRank</b><span>Page et al., 1999</span></div>
+        <div class="it"><b>HITS</b><span>Kleinberg, 1999</span></div>
+        <div class="it"><b>PageRank ≈ in-degree</b><span>Fortunato et al., 2008</span></div>
+      </div>
+      <div class="take"><span>citation logic; counts as baselines</span><svg width="18.5mm" height="2.6mm" viewBox="0 0 18.5 2.6"><path d="M0.5,1.3 H16.5" stroke="#0E7490" stroke-width="0.5"/><path d="M15.7,0.2 L18.1,1.3 L15.7,2.4z" fill="#0E7490"/></svg></div>
+    </div>
+    <div class="row r">
+      <div class="fam">Restarts and trust</div>
+      <div class="items">
+        <div class="it"><b>Topic-sensitive PageRank</b><span>Haveliwala, 2003</span></div>
+        <div class="it"><b>Personalized PageRank</b><span>Jeh &amp; Widom, 2003</span></div>
+        <div class="it"><b>EigenTrust</b><span>Kamvar et al., 2003</span></div>
+        <div class="it"><b>TrustRank</b><span>Gyöngyi et al., 2004</span></div>
+      </div>
+      <div class="take"><span>normalization, not seeding</span><svg width="18.5mm" height="2.6mm" viewBox="0 0 18.5 2.6"><path d="M0.5,1.3 H16.5" stroke="#15803D" stroke-width="0.5"/><path d="M15.7,0.2 L18.1,1.3 L15.7,2.4z" fill="#15803D"/></svg></div>
+    </div>
+    <div class="row m">
+      <div class="fam">Multilayer ranking</div>
+      <div class="items">
+        <div class="it"><b>Multiplex PageRank</b><span>Halu et al., 2013</span></div>
+        <div class="it"><b>Ranking in multilayer networks</b><span>De Domenico et al., 2015</span></div>
+      </div>
+      <div class="take"><span>two layers over one node set</span><svg width="18.5mm" height="2.6mm" viewBox="0 0 18.5 2.6"><path d="M0.5,1.3 H16.5" stroke="#9333EA" stroke-width="0.5"/><path d="M15.7,0.2 L18.1,1.3 L15.7,2.4z" fill="#9333EA"/></svg></div>
+    </div>
+    <div class="row l">
+      <div class="fam">Ledger rankings</div>
+      <div class="items">
+        <div class="it"><b>PageRank and HodgeRank on Ethereum</b><span>H.-D. Do &amp; Do, 2023</span></div>
+        <div class="it"><b>AWP</b><span>T. Do et al., 2023</span></div>
+        <div class="it"><b>RiskProp</b><span>D. Lin et al., 2025</span></div>
+      </div>
+      <div class="take"><span>AWP as the transfer reference</span><svg width="18.5mm" height="2.6mm" viewBox="0 0 18.5 2.6"><path d="M0.5,1.3 H16.5" stroke="#2563EB" stroke-width="0.5"/><path d="M15.7,0.2 L18.1,1.3 L15.7,2.4z" fill="#2563EB"/></svg></div>
+    </div>
+    <div class="thesis">
+      <div class="ttl">This thesis</div>
+      <div class="chip er"><b>EndorseRank</b><span>the allowance walk</span></div>
+      <div class="chip cpr"><b>C&#8209;PR</b><span>the coupled walk, the method</span></div>
+      <div class="chip spr"><b>S&#8209;PR</b><span>its ablation</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

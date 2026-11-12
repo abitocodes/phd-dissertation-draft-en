@@ -1,0 +1,101 @@
+<!doctype html>
+<!--
+  Figure fig:pipeline-architecture of the thesis (Chapter 3, pipeline architecture); the source of
+  Figures/pipeline-architecture.pdf. LaTeX cannot read HTML: edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/pipeline-architecture.html
+  See Figures/html/README.md.
+
+  What the figure shows: the pipeline from public logs to the tables, in two parts.
+  Remote (acquisition, in the study's BigQuery project), left to right: BigQuery public logs -> extract logs (scans A and
+  B; topic filter) -> type end points (transaction senders; code over RPC) -> balances, pair tables between contracts,
+  cohorts and labels. The resulting tables are downloaded and never changed.
+  Local (reproducible from the downloaded tables): load tables, then four branches:
+    build edge lists -> PageRank scores (EndorseRank, AWP, C-PR, S-PR) -> alignment and benchmarks;
+    proxy metrics -> alignment and benchmarks;
+    temporal holdouts (W0 and W1);
+    discovery-order test (crawls at both freezes);
+  and the alignment and benchmarks, the holdouts and the discovery-order test feed the export of tables and figures.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pipeline overview</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+</head>
+<body>
+<div class="fig"><svg id="s" width="165mm" height="66mm" viewBox="0 0 165 66"></svg></div>
+<script>
+const svg = document.getElementById("s");
+const E = (tag, a, txt, parent) => Fig.el(parent || svg, tag, a, txt);
+const T = (x, y, s, o = {}, parent) => Fig.text(parent || svg, x, y, s, o);
+
+function icon(name, color, x, y, size) {
+  const g = E("svg", { x, y, width: size, height: size, viewBox: "0 0 12 12" });
+  g.innerHTML = Fig.ICONS[name](color);
+}
+// a stage box: accent colour on the left, icon, bold title and up to two lines of detail
+function box(x, y, w, h, title, lines, color, ic, fill = "#fff") {
+  E("rect", { x, y, width: w, height: h, rx: 1.4, fill, stroke: color, "stroke-width": 0.35 });
+  E("rect", { x: x + 0.05, y, width: 1.25, height: h, rx: 0.6, fill: color });
+  const tx = x + (ic ? 6.1 : 2.6);
+  if (ic) icon(ic, color, x + 2.0, y + h / 2 - 1.9, 3.8);
+  const n = lines.length, lh = 2.75, top = y + h / 2 - (n * lh) / 2 - 0.15;
+  T(tx, top + 2.1, title, { size: 2.6, weight: 700, fill: "#111827" });
+  lines.forEach((l, i) => T(tx, top + 2.1 + (i + 1) * lh, l, { size: 2.4, fill: "#4B5563" }));
+  return { x, y, w, h, cx: x + w / 2, cy: y + h / 2, r: x + w, b: y + h };
+}
+function arrow(d, color = "#475569", dash) {
+  E("path", { d, fill: "none", stroke: color, "stroke-width": 0.42, "stroke-dasharray": dash, "stroke-linejoin": "round", "marker-end": Fig.marker(svg, color) });
+}
+function band(x, y, w, h, label, stroke, fill) {
+  E("rect", { x, y, width: w, height: h, rx: 2.2, fill, stroke, "stroke-width": 0.35, "stroke-dasharray": "1.2 0.8" });
+  T(x + 2.2, y + 3.4, label, { size: 2.55, weight: 700, fill: stroke });
+}
+
+// ---- remote band
+band(0.4, 0.4, 164.2, 19.2, "Remote: acquisition in the study's BigQuery project", "#4F46E5", "#EEF2FF");
+const SLATE = "#475569", TEAL = "#0F766E";
+const r1 = box(3, 5.6, 34, 11.4, "BigQuery", ["public logs of", "Arbitrum One"], SLATE, "database");
+const r2 = box(43, 5.6, 34, 11.4, "Extract logs", ["scans A and B;", "topic filter"], SLATE, "doc");
+const r3 = box(83, 5.6, 36, 11.4, "Type end points", ["transaction senders;", "code over RPC"], TEAL, "contract");
+const r4 = box(125, 5.6, 37, 11.4, "Tables", ["balances; pairs between", "contracts; cohorts, labels"], TEAL, "database");
+arrow(`M${r1.r + 0.4},${r1.cy} H${r2.x - 0.6}`); arrow(`M${r2.r + 0.4},${r2.cy} H${r3.x - 0.6}`); arrow(`M${r3.r + 0.4},${r3.cy} H${r4.x - 0.6}`);
+
+// ---- local band
+band(0.4, 24.0, 164.2, 41.6, "Local: reproducible from the downloaded tables", "#047857", "#ECFDF5");
+const rowY = [29.6, 38.9, 48.2, 57.5], H = 7.4;            // rows: edge lists and scores, proxies, holdouts, discovery
+const load = box(3, 37.0, 25, 13.0, "Load", ["tables"], SLATE, "database");
+const VIO = "#7C3AED", CYAN = "#0891B2", PINK = "#DB2777", GREEN = "#059669";
+const edges = box(36, rowY[0], 25, H, "Build edge lists", [], TEAL);
+const scores = box(65.5, rowY[0], 36.5, H, "PageRank scores", ["EndorseRank, AWP, C-PR, S-PR"], VIO);
+const align = box(106.6, rowY[0] + 1.5, 25.4, H + 7.8, "Alignment", ["& benchmarks"], CYAN, "bars");
+const proxy = box(65.5, rowY[1] + 0.6, 36.5, H, "Proxy metrics", [], CYAN);
+const hold = box(65.5, rowY[2], 66.5, H, "Temporal holdouts", ["W0 and W1"], PINK, "calendar");
+const disc = box(65.5, rowY[3], 66.5, H, "Discovery-order test", ["crawls at both freezes"], GREEN, "search");
+const exp = box(139.4, 37.0, 23.1, 13.0, "Tables &", ["figures export"], SLATE, "doc");
+
+// download: from the remote tables to Load tables
+arrow(`M${r4.cx},${r4.b + 0.4} V21.8 H${load.cx} V${load.y - 0.6}`, "#4F46E5");
+const dl = T(78, 22.62, "downloaded once; never changed", { size: 2.35, fill: "#4F46E5", anchor: "middle" });
+{ const bb = dl.getBBox(); const r = E("rect", { x: bb.x - 1, y: 20.5, width: bb.width + 2, height: 2.6, fill: "#fff" }); svg.insertBefore(r, dl); }
+
+// fan-out from Load tables
+const fx = 31.5;
+E("path", { d: `M${load.r + 0.3},${load.cy} H${fx}`, stroke: SLATE, "stroke-width": 0.42 });
+E("path", { d: `M${fx},${edges.cy} V${disc.cy}`, stroke: SLATE, "stroke-width": 0.42 });
+arrow(`M${fx},${edges.cy} H${edges.x - 0.6}`);
+arrow(`M${fx},${proxy.cy} H${proxy.x - 0.6}`);
+arrow(`M${fx},${hold.cy} H${hold.x - 0.6}`);
+arrow(`M${fx},${disc.cy} H${disc.x - 0.6}`);
+// main line
+arrow(`M${edges.r + 0.4},${edges.cy} H${scores.x - 0.6}`);
+arrow(`M${scores.r + 0.4},${scores.cy} H${align.x - 0.6}`);
+arrow(`M${proxy.r + 0.4},${proxy.cy} H${align.x - 0.6}`);
+// fan-in to the export
+const gx = 135.7;
+E("path", { d: `M${align.r + 0.3},${align.cy} H${gx} M${hold.r + 0.3},${hold.cy} H${gx} M${disc.r + 0.3},${disc.cy} H${gx} M${gx},${align.cy} V${disc.cy}`, stroke: SLATE, "stroke-width": 0.42, fill: "none" });
+arrow(`M${gx},${exp.cy} H${exp.x - 0.6}`);
+</script>
+</body>
+</html>

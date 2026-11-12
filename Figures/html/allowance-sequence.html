@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+  Figure fig:allowance-sequence of the thesis (Chapter 2, Section "ERC-20 tokens and the allowance lifecycle");
+  the source of Figures/allowance-sequence.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/allowance-sequence.html
+
+  What the figure shows: a sequence diagram with three lanes, the owner (a user account or a contract), the ERC-20
+  token contract and the spender, and on the right the allowance in force after each step.
+  1. The owner calls approve(spender, a) on the token: the token emits Approval and stores the allowance a.
+  2. Alternative to step 1 (dotted): the spender or a relayer submits permit(owner, spender, a, sig) with a signature
+     the owner made off chain (EIP-2612): the token emits Approval and stores the allowance a.
+  3. The spender calls transferFrom(owner, to, v) with v <= a: the token moves v tokens (Transfer event) and the
+     allowance becomes a - v (some tokens also emit Approval with the remainder; the section says so).
+  4. The owner revokes by calling approve(spender, 0): the token emits Approval and the allowance becomes 0.
+  Orange arrows set an allowance; the blue arrow moves tokens.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ERC-20 allowance lifecycle</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .fig { position:relative; }
+  svg text.code { font-family:Consolas, "Cascadia Mono", monospace; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <svg id="s" viewBox="0 0 165 63" width="165mm" height="63mm"></svg>
+</div>
+<script>
+(function () {
+  const s = document.getElementById("s");
+  const X = { owner: 19, token: 67, spender: 115 };      // lane centres (mm)
+  const top = 1, head = 9.4, rows = [18.6, 30, 43.4, 56.8];
+  const C = { allow: "#D97706", transfer: "#2563EB", life: "#B8C0CC", muted: "#5B6472" };
+
+  // lane heads
+  const lane = (x, w, fill, title, sub) => {
+    Fig.el(s, "rect", { x: x - w / 2, y: top, width: w, height: head, rx: 1.8, fill });
+    Fig.text(s, x, top + 4.3, title, { size: 2.9, weight: 700, fill: "#fff", anchor: "middle" });
+    Fig.text(s, x, top + 7.7, sub, { size: 2.5, fill: "#fff", anchor: "middle" });
+  };
+  lane(X.owner, 34, "#334155", "Owner", "user account or contract");
+  lane(X.token, 34, "#B45309", "ERC-20 token", "the token contract");
+  lane(X.spender, 34, "#0F766E", "Spender", "e.g. a router or a vault");
+  for (const x of Object.values(X))
+    Fig.el(s, "path", { d: `M${x},${top + head + 0.6} V62.6`, stroke: C.life, "stroke-width": 0.35, "stroke-dasharray": "1 0.8" });
+
+  // one message: arrow, call above, note lines below
+  const msg = (from, to, y, color, dash, call, ...notes) => {
+    const x1 = X[from], x2 = X[to], dir = Math.sign(x2 - x1);
+    Fig.el(s, "path", { d: `M${x1 + dir * 1.2},${y} H${x2 - dir * 1.6}`, stroke: color, "stroke-width": 0.55,
+      "stroke-dasharray": dash, "marker-end": Fig.marker(s, color) });
+    const mid = (x1 + x2) / 2;
+    Fig.text(s, mid, y - 1.4, call, { size: 2.6, weight: 600, fill: color === C.transfer ? "#1E3A8A" : "#7C3F00",
+      anchor: "middle" }).setAttribute("class", "code");
+    notes.forEach((n, i) => Fig.text(s, mid, y + 3.3 + i * 2.75, n, { size: 2.42, fill: C.muted, anchor: "middle" }));
+  };
+  msg("owner", "token", rows[0], C.allow, null, "approve(spender, a)", "emits Approval; stores the allowance a");
+  msg("spender", "token", rows[1], C.allow, "0.9 0.7", "permit(owner, spender, a, sig)",
+      "signed by the owner off chain, sent by", "the spender or a relayer; emits Approval");
+  msg("spender", "token", rows[2], C.transfer, null, "transferFrom(owner, to, v ≤ a)",
+      "moves v tokens and emits Transfer;", "the allowance falls to a − v");
+  msg("owner", "token", rows[3], C.allow, "2 1", "approve(spender, 0)", "revoke: emits Approval; the allowance is 0");
+
+  // "either" bracket joining approve and permit
+  Fig.el(s, "path", { d: `M3.6,${rows[0] - 1} H2.4 V${rows[1] + 1} H3.6`, stroke: "#9AA4B2", "stroke-width": 0.35, fill: "none" });
+  const cy = (rows[0] + rows[1]) / 2;
+  const e = Fig.text(s, 1.1, cy + 0.9, "either", { size: 2.5, fill: "#5B6472", anchor: "middle" });
+  e.setAttribute("transform", `rotate(-90 1.1 ${cy})`);
+
+  // allowance in force after each step
+  const mx = 137, mw = 15.5;
+  Fig.text(s, mx, top + 4.3, "allowance", { size: 2.8, weight: 700, fill: "#B45309" });
+  Fig.text(s, mx, top + 7.7, "in force after the step", { size: 2.5, fill: C.muted });
+  const bar = (y, frac, label) => {
+    Fig.el(s, "rect", { x: mx, y: y - 1.9, width: mw, height: 3.8, rx: 0.9, fill: "#FFF4DF", stroke: "#F2BF73", "stroke-width": 0.3 });
+    if (frac > 0) Fig.el(s, "rect", { x: mx, y: y - 1.9, width: mw * frac, height: 3.8, rx: 0.9, fill: "#D97706" });
+    Fig.text(s, mx + mw + 1.5, y + 0.95, label, { size: 2.7, weight: 700, fill: "#7C3F00" }).setAttribute("class", "code");
+  };
+  bar(rows[0], 1, "a"); bar(rows[1], 1, "a"); bar(rows[2], 0.58, "a − v"); bar(rows[3], 0, "0");
+})();
+</script>
+</body>
+</html>

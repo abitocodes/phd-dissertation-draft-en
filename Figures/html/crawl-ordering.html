@@ -1,0 +1,113 @@
+<!doctype html>
+<!--
+  Figure fig:crawl-ordering of the thesis (Chapter 2, Section "Crawl ordering"); the source of
+  Figures/crawl-ordering.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/crawl-ordering.html
+
+  What the figure shows (a schematic; it holds no data):
+  1. A crawl in progress (the experiment of Cho, Garcia-Molina and Page, 1998): the crawl began at a seed page; pages
+     already read are filled and numbered in the order of reading; the frontier holds the pages that read pages link
+     to but that have not been read; further pages are not yet seen. The crawler reads next the frontier page that an
+     ordering puts first.
+  2. The orderings use only the pages read so far: breadth-first order (the page found earliest first), the backlink
+     count (the most links from read pages first) and PageRank computed on the read pages.
+  3. An ordering is judged by its discovery curve: the share of the hot pages (pages above an importance threshold,
+     importance being the backlink count over the whole collection or PageRank) visited after a given number of
+     pages; a curve that rises sooner is better. The ideal order and a random order bound the curves.
+  4. The discovery-order test of this thesis repeats the experiment on the contract graph: a page becomes a contract,
+     a link an allowance or transfer edge between two contracts, the hot pages the contracts with the most
+     user-account demand (which no ordering reads), and the orderings breadth-first order, the number of contract
+     backlinks and walks such as C-PR.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crawl ordering</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .top { display:grid; grid-template-columns:56mm 47mm minmax(0, 1fr); column-gap:2.6mm; align-items:stretch; }
+  .ord { display:flex; align-items:flex-start; gap:1.4mm; margin-bottom:1.3mm; font-size:7pt; line-height:1.2; }
+  .ord b { display:block; font-size:7.4pt; }
+  .num { flex:none; width:4mm; height:4mm; border-radius:50%; background:var(--web); color:#fff; font-weight:700; font-size:6.9pt;
+    display:inline-flex; align-items:center; justify-content:center; margin-top:0.3mm; }
+  .map { margin-top:2mm; display:grid; grid-template-columns:30mm repeat(4, 1fr); column-gap:1.6mm; align-items:stretch; }
+  .map .lbl { font-weight:700; font-size:7.3pt; color:var(--coupled-ink); display:flex; align-items:center; line-height:1.15; }
+  .map .m { border-radius:1.6mm; background:#FBF9FF; border:0.3mm solid var(--coupled-line); padding:0.9mm 1.4mm; font-size:6.9pt; line-height:1.18; }
+  .map .m .w { color:var(--web); font-weight:600; }
+  .map .m .c { color:var(--coupled-ink); font-weight:600; }
+  .legend { margin-top:0.6mm; }
+  .k { display:inline-block; width:2.8mm; height:2.8mm; border-radius:0.6mm; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="top">
+    <div class="panel">
+      <div class="h"><span class="badge" style="background:var(--web)">1</span>A crawl in progress</div>
+      <svg id="g" viewBox="0 0 51 29" width="51mm" height="29mm" style="display:block"></svg>
+      <div class="legend">
+        <span><i class="k" style="background:var(--web)"></i>read</span>
+        <span><i class="k" style="background:#fff;border:0.35mm solid var(--web)"></i>frontier</span>
+        <span><i class="k" style="background:#fff;border:0.3mm dashed #A3ACB9"></i>not yet seen</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="h"><span class="badge" style="background:#7C3AED">2</span>Ordering of the frontier</div>
+      <div class="muted" style="font-size:7pt;margin:-0.3mm 0 1.3mm">each uses only the pages read so far</div>
+      <div class="ord"><span class="num">a</span><span><b>Breadth-first order</b>the page found earliest first</span></div>
+      <div class="ord"><span class="num">b</span><span><b>Backlink count</b>the most links from read pages first</span></div>
+      <div class="ord"><span class="num">c</span><span><b>PageRank</b>computed on the read pages</span></div>
+    </div>
+    <div class="panel">
+      <div class="h"><span class="badge" style="background:#334155">3</span>Discovery curve<span class="sub">schematic</span></div>
+      <svg id="c" viewBox="0 0 51 33" width="51mm" height="33mm" style="display:block"></svg>
+    </div>
+  </div>
+  <div class="map">
+    <div class="lbl">In this thesis, the discovery-order test</div>
+    <div class="m"><span class="w">page</span> → <span class="c">contract</span></div>
+    <div class="m"><span class="w">link</span> → <span class="c">allowance or transfer edge between two contracts</span></div>
+    <div class="m"><span class="w">hot pages</span> → <span class="c">contracts with the most user-account demand</span>, which no ordering reads</div>
+    <div class="m"><span class="w">orderings</span> → <span class="c">breadth-first, contract backlinks, walks such as C&#8209;PR</span></div>
+  </div>
+</div>
+<script>
+(function () {
+  // 1. the crawl
+  const g = document.getElementById("g"), h = 2.6, web = "#0E7490";
+  const P = { s: [5, 14.5, "read", "1"], b: [17, 6, "read", "2"], c: [17, 23, "read", "3"],
+              f1: [30, 3.5, "front"], f2: [30, 14.5, "front"], f3: [30, 25.5, "front"],
+              u1: [44, 6, "unseen"], u2: [44.5, 17, "unseen"], u3: [44, 26.5, "unseen"] };
+  const seen = { color: "#5B8A99", width: 0.4, half: h }, faint = { color: "#B5BDC8", width: 0.35, dash: "0.8 0.6", half: h };
+  [["s", "b"], ["s", "c"], ["b", "f1"], ["b", "f2"], ["c", "f2"], ["c", "f3"]].forEach(([a, b]) => Fig.edge(g, P[a], P[b], Object.assign({}, seen)));
+  [["f1", "u1"], ["f2", "u1"], ["f2", "u2"], ["f3", "u3"]].forEach(([a, b]) => Fig.edge(g, P[a], P[b], Object.assign({}, faint)));
+  for (const [k, [x, y, kind, n]] of Object.entries(P)) {
+    const attrs = kind === "read" ? { fill: web } : kind === "front" ? { fill: "#fff", stroke: web, "stroke-width": 0.45 }
+      : { fill: "#fff", stroke: "#A3ACB9", "stroke-width": 0.35, "stroke-dasharray": "0.8 0.6" };
+    Fig.el(g, "rect", Object.assign({ x: x - h, y: y - h, width: 2 * h, height: 2 * h, rx: 0.9 }, attrs));
+    if (n) Fig.text(g, x, y + 0.95, n, { size: 2.6, weight: 700, fill: "#fff", anchor: "middle" });
+  }
+  // the page read next: the frontier page the ordering puts first
+  Fig.el(g, "rect", { x: 30 - h - 0.9, y: 14.5 - h - 0.9, width: 2 * h + 1.8, height: 2 * h + 1.8, rx: 1.4, fill: "none", stroke: "#7C3AED", "stroke-width": 0.5 });
+  Fig.text(g, 30, 9.1, "next", { size: 2.45, weight: 700, fill: "#6D28D9", anchor: "middle" });
+  Fig.text(g, 5, 9.4, "seed", { size: 2.45, fill: "#155E75", anchor: "middle" });
+
+  // 3. the discovery curve (schematic)
+  const c = document.getElementById("c");
+  const X0 = 7, Y0 = 26.5, X1 = 49, Y1 = 2.5;
+  Fig.el(c, "path", { d: `M${X0},${Y1 - 0.5} V${Y0} H${X1}`, stroke: "#475569", "stroke-width": 0.35, fill: "none" });
+  Fig.el(c, "path", { d: `M${X0},${Y0} L${X0 + 9},${Y1 + 0.6} H${X1}`, stroke: "#1F2937", "stroke-width": 0.45, "stroke-dasharray": "0.5 0.6", fill: "none" });
+  Fig.el(c, "path", { d: `M${X0},${Y0} L${X1},${Y1 + 0.6}`, stroke: "#9AA4B2", "stroke-width": 0.4, "stroke-dasharray": "1.4 0.9", fill: "none" });
+  Fig.el(c, "path", { d: `M${X0},${Y0} C${X0 + 7},${Y0 - 16} ${X0 + 18},${Y1 + 3} ${X1},${Y1 + 1.8}`, stroke: "#7C3AED", "stroke-width": 0.6, fill: "none" });
+  Fig.text(c, X0 + 10, Y1 + 0.1, "ideal", { size: 2.45, fill: "#1F2937" });
+  Fig.text(c, X0 + 21, Y1 + 7.4, "an ordering", { size: 2.45, weight: 700, fill: "#6D28D9" });
+  Fig.text(c, X0 + 29, Y0 - 11.6, "random", { size: 2.45, fill: "#6B7280" });
+  Fig.text(c, (X0 + X1) / 2, Y0 + 3.6, "pages visited", { size: 2.45, fill: "#5B6472", anchor: "middle" });
+  const yl = Fig.text(c, 2.2, (Y0 + Y1) / 2, "hot pages visited", { size: 2.45, fill: "#5B6472", anchor: "middle" });
+  yl.setAttribute("transform", `rotate(-90 2.2 ${(Y0 + Y1) / 2})`);
+  Fig.text(c, X1, Y0 - 1.4, "sooner is better", { size: 2.45, fill: "#5B6472", anchor: "end", italic: true });
+})();
+</script>
+</body>
+</html>

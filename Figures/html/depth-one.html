@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  Figure fig:depth-one of the thesis (Chapter 5, subsection "Depth-one spenders: what a walk adds to a count"); the source
+  of Figures/depth-one.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/depth-one.html
+
+  What the figure shows: the closed form of Equation eq:closed-form on a small allowance graph (orange arrows; the
+  weights are an example, not data).
+  Left, a depth-one spender v: its owners u1 and u2 receive no allowances, so each has the score c of a node without
+  in-edges. u1 approves only v, so the whole of its walk goes to v (P = 1); u2 approves v and two other spenders with
+  equal weights, so a third goes to each (P = w(u,v)/o(u) = 1/3). Then delta(v) = sum over u of P_uv = 1 + 1/3, the
+  owner-normalized in-strength, and r_v = c (1 + d delta(v)): the walk only reweights the count of the contracts that
+  authorize v.
+  Right, a deeper spender x: its owner u3 itself receives an allowance from u4, so the score of u3 is not c and the
+  score of x departs from the closed form; propagation over more than one step is present.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Depth-one spender</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+.row { display:grid; grid-template-columns:minmax(0, 1fr) 52mm; column-gap:4mm; align-items:stretch; }
+.panel.allow { background:#FFFAF0; }
+.formula { margin-top:1.2mm; padding:1.4mm 2mm; border-radius:1.8mm; background:#fff; border:0.3mm solid var(--allow-line);
+  font-size:8pt; display:flex; flex-wrap:wrap; align-items:baseline; gap:1mm 4mm; }
+.formula .eq { font-size:9.2pt; font-family:"Times New Roman", serif; }
+.formula i, .note i, .legend i i { font-family:"Times New Roman", serif; font-style:italic; font-size:1.08em; }
+.note { font-size:6.9pt; color:var(--muted); margin-top:1mm; }
+.legend { margin-top:0.8mm; }
+.tagc { display:inline-flex; align-items:center; justify-content:center; width:3.6mm; height:3.6mm; border-radius:50%;
+  background:#fff; border:0.3mm solid var(--contract); color:var(--contract); font-weight:700; font-size:7pt; font-style:italic; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row">
+    <div class="panel allow">
+      <div class="h"><span class="badge" style="background:var(--allow)">1</span>Depth-one spender
+        <span class="sub">its owners receive no allowances</span></div>
+      <svg id="g1" viewBox="0 0 100 34" width="100mm" height="34mm" style="display:block;margin:0 auto"></svg>
+      <div class="formula">
+        <span class="eq"><i>δ</i>(<i>v</i>) = Σ<sub><i>u</i></sub> <i>P<sub>uv</sub></i> = 1 + ⅓</span>
+        <span class="eq"><i>r<sub>v</sub></i> = <i>c</i> (1 + <i>d</i> <i>δ</i>(<i>v</i>))</span>
+        <span class="muted" style="font-size:7pt">EndorseRank: <i>P<sub>uv</sub></i> = <i>w</i>(<i>u</i>,<i>v</i>) / <i>o</i>(<i>u</i>), an owner's endorsement divided over its spenders</span>
+      </div>
+    </div>
+    <div class="panel soft">
+      <div class="h"><span class="badge" style="background:var(--count)">2</span>Deeper spender</div>
+      <svg id="g2" viewBox="0 0 46 34" width="46mm" height="34mm" style="display:block;margin:0 auto"></svg>
+      <div class="note">Its owner <i>u</i><sub>3</sub> receives an allowance, so <i>u</i><sub>3</sub> does not score <i>c</i> and
+        the score of <i>x</i> departs from the closed form: propagation over more than one step.</div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i class="key allow"></i>allowance edge, labelled with its transition probability <i>P<sub>uv</sub></i> (example weights)</span>
+    <span><span class="tagc">c</span> score of a node without in-edges</span>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const kinds = { allow:{ color:"#D97706", width:0.55, labelColor:"#9A4A00", labelSize:2.8, labelOffset:2 } };
+  const kindsFar = { allow:Object.assign({}, kinds.allow, { labelPos:0.72 }) };
+  const tag = (svg, x, y) => {
+    Fig.el(svg, "circle", { cx:x, cy:y, r:2.1, fill:"#fff", stroke:"#0F766E", "stroke-width":0.3 });
+    Fig.text(svg, x, y + 0.95, "c", { size:2.7, weight:700, fill:"#0F766E", anchor:"middle", italic:true, family:"Times New Roman, serif" });
+  };
+  const name = (svg, x, y, s) => Fig.text(svg, x, y, s, { size:2.7, weight:600, fill:"#374151", anchor:"middle", italic:true, family:"Times New Roman, serif" });
+
+  const g1 = document.getElementById("g1");
+  const N1 = Fig.graph(g1, {
+    nodes: { u1:[12,9], u2:[12,26], v:{x:52,y:14,half:3.6}, w1:[88,22], w2:[88,31] },
+    edges: [["u1","v","allow",-1.5,"1"], ["u2","v","allow",1.5,"⅓"]],
+    kinds, node:{ half:3 }
+  });
+  Fig.graph(g1, { nodes: { u2:[12,26], w1:[88,22], w2:[88,31] },
+    edges: [["u2","w1","allow",-1,"⅓"], ["u2","w2","allow",1,"⅓"]], kinds: kindsFar, node:{ half:3 }
+  });
+  tag(g1, 5, 3.6); tag(g1, 5, 20.6);
+  name(g1, 12, 16.8, "u₁"); name(g1, 12, 33.8, "u₂"); name(g1, 58.6, 15.2, "v"); name(g1, 95.5, 23, "w₁"); name(g1, 95.5, 32, "w₂");
+  Fig.text(g1, 52, 7.4, "spender of depth one", { size:2.5, fill:"#5B6472", anchor:"middle" });
+
+  const g2 = document.getElementById("g2");
+  Fig.graph(g2, {
+    nodes: { u4:[6,8], u3:[23,8], x:[40,24] },
+    edges: [["u4","u3","allow",0,""], ["u3","x","allow",1.5,""]],
+    kinds, node:{ half:3 }
+  });
+  tag(g2, 6, 1.4);
+  name(g2, 6, 15.8, "u₄"); name(g2, 23, 15.8, "u₃"); name(g2, 40, 31.8, "x");
+  Fig.text(g2, 23, 1.6, "score ≠ c", { size:2.5, fill:"#B91C1C", anchor:"middle", weight:600 });
+});
+</script>
+</body>
+</html>

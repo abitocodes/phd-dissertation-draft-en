@@ -6,7 +6,16 @@ Chapter~\ref{ch:discussion} interpreted the findings and judged whether the stud
 
 \dissertationSubheading[sec:summary-findings]{Answers to the research questions}
 
-The thesis built a coupled PageRank (C-PR), one walk over the ERC-20 allowance and transfer edges between Arbitrum One contracts, and set it beside EndorseRank, Adaptive Weighted PageRank (AWP) \parencite{do2023awp}, the ablation S-PR and the raw counts in a discovery-order test at two freezes and in the holdout windows W0 (April to June~2026) and W1 (July to September~2026). After the registered results were known, the revised analysis was defined: amounts in US dollars on five tokens; scores from the twelve months before each freeze; graphs whose nodes are contracts other than smart accounts, with edges read from the whole chain; each allowance counted up to its owner's balance at the freeze, with balances reconstructed from \texttt{Transfer} logs; constants set on the contract graph; and the discovery-order test. The verdicts below under rules A and B are a re-analysis, and the registered analysis gave the same readings (Appendix~\ref{sec:map-registered}).
+The thesis built a coupled PageRank (C-PR), one walk over the ERC-20 allowance and transfer edges between Arbitrum One contracts, and set it beside EndorseRank, Adaptive Weighted PageRank (AWP) \parencite{do2023awp}, the ablation S-PR and the raw counts in a discovery-order test at two freezes and in the holdout windows W0 (April to June~2026) and W1 (July to September~2026). After the registered results were known, the revised analysis was defined: amounts in US dollars on five tokens; scores from the twelve months before each freeze; graphs whose nodes are contracts other than smart accounts, with edges read from the whole chain; each allowance counted up to its owner's balance at the freeze, with balances reconstructed from \texttt{Transfer} logs; constants set on the contract graph; and the discovery-order test. The verdicts below under rules A and B are a re-analysis, and the registered analysis gave the same readings (Appendix~\ref{sec:map-registered}). Figure~\ref{fig:answers-glance} sets the five answers side by side.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/answers-glance.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/answers-glance.html`.
+\includegraphics[width=\textwidth]{Figures/answers-glance.pdf}
+\caption[{The answers to RQ1--RQ5 at a glance.}]{The answers to RQ1--RQ5, in the words of this section. The quotation is the verdict sentence of the discovery-order test, which was defined after the registered results were known and decides no rule of the plan or the registration. The thesis applies two of rule~B's registered criteria, F1 and F2; under the registration the rule holds only if each of its criteria holds. Rules A and B are applied to the scores of the contract graph as a re-analysis.}
+\label{fig:answers-glance}
+\end{figure}
 
 RQ1 asked whether EndorseRank and AWP order the same contracts differently, whether each agrees most with current checks of its own edge type, and what each walk costs. H1 is supported, largely by construction: most cohort contracts hold no capped allowance from another contract and score zero under EndorseRank, so both walks order only about a third of the contract pairs (Section~\ref{sec:rank-divergence}). Each walk agrees most with the proxies of its own edges (Table~\ref{tab:alignment-hybrid}), which supports H2 only narrowly, since the proxies come from the same events as the graphs. Cost follows the size of the layers walked and the iterations needed, so EndorseRank, on the far smaller allowance layer, is cheapest and C-PR takes slightly longer than AWP (Table~\ref{tab:benchmark-runtime}); H3 is supported, largely by construction.
 
@@ -20,7 +29,7 @@ RQ5 asked whether adding the allowance layer improves a transfer walk on new dat
 
 Claims~C1--C6 (Section~\ref{sec:empirical-claims}) state these findings formally.
 
-The main research question asked whether one walk over both edge types finds the contracts that users rely on sooner, and predicts their later use better, than single-layer walks and raw counts. On these data it does not. Its crawl is sooner than breadth-first but later than the backlink-count and AWP$'$ crawls, it meets neither rule~A nor rule~B, and out of window it beats neither single-layer count on that count's own label. What the allowance layer adds is small and resolved: a little in discovery order, and a gain on later approval pairs paid for on later inflow.
+The main research question asked whether one walk over both edge types finds the contracts that users rely on sooner, and predicts their later use better, than single-layer walks and raw counts. On these data it does not. Its crawl is sooner than breadth-first but later than the backlink-count and AWP$'$ crawls, it meets neither rule~A nor rule~B, and out of window it beats neither single-layer count on that count's own label. What the allowance layer adds is small and resolved: a little in discovery order, and a gain on later approval pairs that comes with a loss on later inflow.
 
 \dissertationSubheading[sec:contribution-knowledge]{Original contribution to knowledge}
 

@@ -1,0 +1,90 @@
+<!doctype html>
+<!--
+  Figure fig:balance-cap of the thesis (Chapter 3, EndorseRank allowance graph); the source of Figures/balance-cap.pdf.
+  LaTeX cannot read HTML: edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/balance-cap.html
+  See Figures/html/README.md.
+
+  What the figure shows: how one owner-spender pair on one token enters the allowance graph. The latest allowance a*
+  of the score window (orange bar) is compared with the owner's balance of the token at the freeze (teal bar), both in
+  US dollars at the price of the freeze day, and counts as the smaller of the two, a-hat = min(a*, bal) (solid part).
+  Four cases, top to bottom: an allowance below the balance counts the allowance; an unlimited allowance counts the
+  balance; an owner that holds none of the token at the freeze gives no edge; a latest approval of zero deletes the edge.
+  Bottom: in the allowance layer of C-PR each capped allowance is also bounded by U, so it enters as min(a-hat, U).
+  The bar lengths are illustrations, not data.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Balance cap</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+</head>
+<body>
+<div class="fig"><svg id="s" width="165mm" height="57mm" viewBox="0 0 165 57"></svg></div>
+<script>
+const svg = document.getElementById("s");
+const E = (tag, a, parent) => Fig.el(parent || svg, tag, a);
+const MATH = "font-family:'Times New Roman',serif";
+// text with $math$ parts (Times italic) and _{subscript}
+function rich(x, y, s, o = {}) {
+  const size = o.size || 2.45;
+  const t = E("text", { x, y, "font-size": size, fill: o.fill || "#1F2937", "text-anchor": o.anchor || "start", "font-weight": o.weight || 400 });
+  let shift = 0;
+  for (const part of s.split(/(\$[^$]+\$|_\{[^}]+\})/).filter(Boolean)) {
+    const ts = Fig.el(t, "tspan", {});
+    if (part.startsWith("_{")) { ts.textContent = part.slice(2, -1); ts.setAttribute("font-size", size * 0.72); ts.setAttribute("dy", 0.55); shift = 0.55; continue; }
+    if (shift) { ts.setAttribute("dy", -shift); shift = 0; }
+    if (part.startsWith("$")) { ts.textContent = part.slice(1, -1); ts.setAttribute("style", MATH); ts.setAttribute("font-style", "italic"); ts.setAttribute("font-size", size * 1.12); }
+    else ts.textContent = part;
+  }
+  return t;
+}
+const OR = "#D97706", ORL = "#FDE2B8", TE = "#0F766E", TEL = "#CDEDE8", VI = "#7C3AED", VIL = "#E9DDFF";
+const X0 = 47, W = 62, BH = 2.6;              // bar area starts at X0 (amount 0) and is W mm long
+
+// header
+rich(0, 3.2, "One owner–spender pair on one token; amounts in US dollars at the price of the freeze day", { size: 2.45, fill: "#4B5563" });
+E("rect", { x: X0, y: 5.6, width: 4.2, height: 2.2, rx: 0.4, fill: ORL, stroke: OR, "stroke-width": 0.3 });
+rich(X0 + 5.4, 7.5, "latest allowance $a$*", { size: 2.45 });
+E("rect", { x: X0 + 33, y: 5.6, width: 4.2, height: 2.2, rx: 0.4, fill: TEL, stroke: TE, "stroke-width": 0.3 });
+rich(X0 + 38.4, 7.5, "owner's balance at the freeze", { size: 2.45 });
+rich(127, 7.5, "counted", { size: 2.45, weight: 700 });
+
+// one case: a = allowance length (Infinity = unlimited), b = balance length (lengths in mm of the bar area)
+function row(y, label, a, b, result, edge) {
+  rich(0, y + 2.7, label, { size: 2.45, weight: 600, fill: "#111827" });
+  E("path", { d: `M${X0},${y - 0.6} V${y + 2 * BH + 1.8}`, stroke: "#9CA3AF", "stroke-width": 0.3 });
+  const aw = a === Infinity ? W : a;
+  if (aw > 0) E("rect", { x: X0, y, width: aw, height: BH, rx: 0.45, fill: ORL, stroke: OR, "stroke-width": 0.3 });
+  else rich(X0 + 1, y + 2.1, "0", { size: 2.3, fill: "#B45309" });
+  if (a === Infinity) { // fade out at the right: unlimited
+    rich(X0 + W + 1.0, y + 2.15, "unlimited", { size: 2.3, fill: "#B45309" });
+  }
+  if (b > 0) E("rect", { x: X0, y: y + BH + 0.9, width: b, height: BH, rx: 0.45, fill: TEL, stroke: TE, "stroke-width": 0.3 });
+  else rich(X0 + 1, y + BH + 3.0, "0", { size: 2.3, fill: TE });
+  const m = Math.min(aw, b);
+  if (m > 0) {
+    E("rect", { x: X0, y, width: m, height: BH, rx: 0.45, fill: OR });
+    E("path", { d: `M${X0 + m},${y - 0.9} V${y + 2 * BH + 1.8}`, stroke: "#374151", "stroke-width": 0.32, "stroke-dasharray": "0.8 0.5" });
+  }
+  rich(127, y + 2.0, result, { size: 2.5, weight: 700, fill: edge ? "#B45309" : "#6B7280" });
+  rich(127, y + 5.0, edge ? "an edge of this weight" : "no edge", { size: 2.35, fill: edge ? "#4B5563" : "#6B7280" });
+}
+row(11.0, "allowance below the balance", 30, 58, "$â$ = $a$*", true);
+row(20.6, "unlimited allowance", Infinity, 44, "$â$ = bal", true);
+row(30.2, "owner holds none of the token", 52, 0, "$â$ = 0", false);
+row(39.8, "latest approval is zero", 0, 40, "$â$ = 0", false);
+
+// C-PR's further bound U
+E("rect", { x: 1.3, y: 48.6, width: 162.4, height: 8.2, rx: 1.2, fill: "#FBF9FF", stroke: "#D9CCF6", "stroke-width": 0.3, "stroke-linejoin": "round" });
+rich(2.8, 54.0, "C-PR's allowance layer", { size: 2.45, weight: 700, fill: "#5B21B6" });
+E("rect", { x: X0, y: 52.0, width: 56, height: BH, rx: 0.45, fill: VIL, stroke: VI, "stroke-width": 0.3 });
+E("rect", { x: X0, y: 52.0, width: 36, height: BH, rx: 0.45, fill: VI });
+E("path", { d: `M${X0 + 36},${50.2} V${55.4}`, stroke: "#5B21B6", "stroke-width": 0.4 });
+rich(X0 + 36.9, 51.6, "$U$", { size: 2.4, fill: "#5B21B6" });
+rich(X0 + 57.4, 54.2, "$â$", { size: 2.4, fill: "#5B21B6" });
+rich(127, 54.2, "min($â$, $U$)", { size: 2.5, weight: 700, fill: "#5B21B6" });
+</script>
+</body>
+</html>

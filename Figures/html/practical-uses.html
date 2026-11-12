@@ -1,0 +1,79 @@
+<!doctype html>
+<!--
+  Figure fig:practical-uses of the thesis (Chapter 5, Section "Practical implications and deployment scenarios"); the
+  source of Figures/practical-uses.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/practical-uses.html
+
+  What the figure shows, as the section says it (no new claim): four kinds of user of a ranking of contracts, the signal
+  the section finds suited to each, and its stated limits.
+  1. Wallet interfaces and security tooling: a badge with how many contracts with a balance have authorized a spender
+     (the in-approve degree among contracts, which needs no solver) or its EndorseRank, with each allowance counted up
+     to the balance behind it. Limits: the position of a graph node, not a security audit nor a guarantee against
+     malicious contracts; empty for most spenders, which no contract with a balance authorizes.
+  2. Block explorers, auditors and integrators: an order of work. In the deciding discovery-order run the contract
+     backlink count, which needs no solver, reached the contracts with the most user-account demand sooner than C-PR'.
+     Limits: a first filter at best; most early visits of every ordering went to contracts without such demand; it says
+     nothing about the quality of a contract's code.
+  3. Flow monitoring: read current flow from the transfer in-degree and in-value directly; AWP has the best record of the
+     walks, but little is lost by counting.
+  4. Lending protocols: a ranking could later serve as one input to credit decisions about contracts; not tested, no
+     score was compared with a default, repayment or loss outcome.
+  Bottom: an operator free to choose keeps the signals apart (allowances where authorization matters, transfers where
+  flow matters); folding both edge types into one walk was not worth it against AWP on these data, and rule B is not met.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Practical uses</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+.row { display:grid; grid-template-columns:41mm minmax(0, 1.3fr) minmax(0, 1fr); column-gap:3mm; align-items:center;
+  border-radius:1.8mm; border-left:1.3mm solid; padding:1.3mm 2.2mm 1.3mm 2mm; margin-bottom:1.3mm; }
+.row.head { border:none; padding-top:0; padding-bottom:0.2mm; margin-bottom:0.8mm; font-size:6.6pt; font-weight:700;
+  letter-spacing:0.15mm; text-transform:uppercase; color:var(--muted); }
+.who { display:flex; align-items:center; gap:1.4mm; font-weight:700; font-size:7.9pt; line-height:1.15; }
+.sig { font-size:7.1pt; }
+.sig .chip { margin:0 0.6mm 0.6mm 0; }
+.lim { font-size:7.1pt; color:#374151; }
+.r-allow { border-left-color:var(--allow); background:#FFF8EC; }
+.r-count { border-left-color:var(--count); background:#F3F5F8; }
+.r-transfer { border-left-color:var(--transfer); background:#F1F5FF; }
+.r-lend { border-left-color:var(--user); background:var(--user-bg); outline:0.3mm dashed #B6BEC9; outline-offset:-0.3mm; }
+.band { margin-top:2mm; display:grid; grid-template-columns:auto 1fr; column-gap:2mm; align-items:center;
+  border-radius:2mm; background:var(--coupled-bg); border:0.3mm solid var(--coupled-line); padding:1.3mm 2.4mm; font-size:7.3pt; }
+.band b { color:var(--coupled-ink); }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row head"><span>Who faces the choice</span><span>Signal that suits it</span><span>Stated limits</span></div>
+  <div class="row r-allow">
+    <div class="who"><span data-icon="lock" data-color="#D97706" data-size="4.4"></span>Wallet interfaces and security tooling</div>
+    <div class="sig"><span class="chip allow"><span class="lay"><i class="a on"></i><i class="t"></i></span><b>In&#8209;approve degree</b></span><span class="chip er"><b>EndorseRank</b></span><br>
+      the contracts with a balance that authorize a spender, each allowance counted up to the balance behind it</div>
+    <div class="lim">The position of a graph node, not a security audit or a guarantee; empty for most spenders.</div>
+  </div>
+  <div class="row r-count">
+    <div class="who"><span data-icon="search" data-color="#475569" data-size="4.4"></span>Block explorers, auditors and integrators</div>
+    <div class="sig"><span class="chip cnt"><span class="lay"><i class="a on"></i><i class="t on"></i></span><b>Contract backlink count</b></span><br>
+      an order of work with no solver; in the deciding run sooner than C&#8209;PR&prime;</div>
+    <div class="lim">A first filter at best; says nothing about the quality of a contract's code.</div>
+  </div>
+  <div class="row r-transfer">
+    <div class="who"><span data-icon="bars" data-color="#2563EB" data-size="4.4"></span>Flow monitoring</div>
+    <div class="sig"><span class="chip transfer"><span class="lay"><i class="a"></i><i class="t on"></i></span><b>Transfer in&#8209;degree</b></span><span class="chip awp"><b>AWP</b></span><br>
+      current flow read from in&#8209;degree and in&#8209;value directly</div>
+    <div class="lim">AWP has the best record of the walks, but little is lost by counting.</div>
+  </div>
+  <div class="row r-lend">
+    <div class="who"><span data-icon="coin" data-color="#7A8594" data-size="4.4"></span>Lending protocols</div>
+    <div class="sig">A ranking of the contracts that users rely on, as one later input to credit decisions about contracts.</div>
+    <div class="lim"><b>Not tested:</b> no score was compared with a default, repayment or loss outcome.</div>
+  </div>
+  <div class="band"><span data-icon="scale" data-color="#7C3AED" data-size="4.6"></span>
+    <span><b>Keep the signals apart:</b> allowances where authorization matters, transfers where flow matters. Folding both edge types
+    into one walk was not worth it against AWP on these data, and rule B is not met.</span></div>
+</div>
+</body>
+</html>

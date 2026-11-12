@@ -81,9 +81,9 @@ Figure~\ref{fig:data-overview} places every kind of on-chain record used in the 
 
 \begin{figure}[htbp]
 \centering
-\begin{adjustbox}{max width=\linewidth}
-\input{Figures/data-overview.tex}
-\end{adjustbox}
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/data-overview.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/data-overview.html`.
+\includegraphics[width=\textwidth]{Figures/data-overview.pdf}
 \caption[{Blockchain data used in this thesis: sources, months covered, held-out labels and uses.}]{Blockchain data used in this thesis, all from Arbitrum One. Each lane is one analysis, and each bar is one kind of on-chain record placed on the months it covers; the 18 months before April 2025 are drawn at a compressed scale. Solid bars are inputs to scores, to cohorts or to same-window checks. Hatched bars are kept out of the scores: the labels counted after a freeze date and, in the discovery-order test, the events of user accounts that give the importance of a contract. The July--September logs were extracted only after the registration of W1 was committed. The approval logs of five tokens in the twelve months before each freeze select the cohort of that freeze; the graphs of the main analysis hold the events of those tokens between two contracts in those months, read from the whole chain; the registered analysis scores every event of scan~A.}
 \label{fig:data-overview}
 \end{figure}
@@ -130,50 +130,9 @@ Figure~\ref{fig:pipeline-architecture} traces the whole pipeline, from public lo
 
 \begin{figure}[htbp]
 \centering
-\begin{adjustbox}{max width=\linewidth}
-\begin{tikzpicture}[
-  font=\small,
-  node distance=1.0cm and 1.0cm,
-  box/.style={draw, rounded corners=2pt, align=center, minimum height=0.95cm, minimum width=2.2cm, inner sep=3pt},
-  wide/.style={draw, rounded corners=2pt, align=center, minimum height=0.95cm, minimum width=2.6cm, inner sep=3pt},
-  arrow/.style={-{Stealth[length=2.5mm]}, thick}
-]
-% Top row: remote acquisition (left to right)
-\node[wide] (bq) at (0,0) {BigQuery\\public logs};
-\node[wide] (extract) at (3.5,0) {Extract logs\\(scans A and B;\\topic filter)};
-\node[wide] (types) at (7.5,0) {Type end points\\(transaction senders;\\code over RPC)};
-\node[wide] (pairs) at (11.7,0) {Balances; pair tables\\between contracts;\\cohorts and labels};
-
-% Local evaluation. Row 1: tables -> edge lists -> scores -> evaluation -> export.
-% Row 2: proxy metrics. Row 3: temporal holdouts. Row 4: discovery-order test.
-\node[box] (decode) at (0,-2.7) {Load\\tables};
-\node[box] (prep) at (3.0,-2.7) {Build\\edge lists};
-\node[wide] (ranks) at (6.2,-2.7) {PageRank scores\\(EndorseRank, AWP,\\C-PR, S-PR)};
-\node[wide] (align) at (9.5,-2.7) {Alignment\\\& benchmarks};
-\node[wide] (tabexp) at (12.7,-2.7) {Tables \&\\figures export};
-\node[box] (proxy) at (3.0,-4.3) {Proxy\\metrics};
-\node[wide] (hold) at (6.2,-5.6) {Temporal holdouts\\(W0 and W1)};
-\node[wide] (disc) at (6.2,-7.2) {Discovery-order test\\(crawls at both freezes)};
-
-\draw[arrow] (bq) -- (extract);
-\draw[arrow] (extract) -- (types);
-\draw[arrow] (types) -- (pairs);
-\draw[arrow] (pairs.south) -- ++(0,-0.45) -| (decode.north);
-\draw[arrow] (decode) -- (prep);
-\draw[arrow] (prep) -- (ranks);
-\draw[arrow] (ranks) -- (align);
-\draw[arrow] (align) -- (tabexp);
-\draw[arrow] ([xshift=8pt]decode.south) |- (proxy.west);
-\draw[arrow] (decode.south) |- (hold.west);
-\draw[arrow] ([xshift=-8pt]decode.south) |- (disc.west);
-\draw[arrow] (proxy.east) -| (align.south);
-\draw[arrow] (hold.east) -| ([xshift=-6pt]tabexp.south);
-\draw[arrow] (disc.east) -| ([xshift=6pt]tabexp.south);
-
-\node[draw, dashed, rounded corners, fit=(bq)(extract)(types)(pairs), inner sep=8pt, label=above:{\footnotesize Remote / acquisition}] {};
-\node[draw, dashed, rounded corners, fit=(decode)(prep)(ranks)(align)(tabexp)(proxy)(hold)(disc), inner sep=8pt, label=below:{\footnotesize Local / reproducible}] {};
-\end{tikzpicture}
-\end{adjustbox}
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/pipeline-architecture.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/pipeline-architecture.html`.
+\includegraphics[width=\textwidth]{Figures/pipeline-architecture.pdf}
 \caption[{Pipeline overview: from public logs to scores, checks and tables.}]{Pipeline overview. Approval and transfer logs are copied remotely in two scans; the end points of the five-token events are typed, the owners' balances are computed, and the events between contracts are aggregated into pair tables. Locally the pair tables become edge lists, from which the scores are computed; the alignment and benchmark calculations, the temporal holdouts and the crawls of the discovery-order test follow, and the tables and figures are exported last.}
 \label{fig:pipeline-architecture}
 \end{figure}
@@ -306,7 +265,16 @@ w_A(u,v)
 \sigma\bigl(\Delta t^{\star}(u,v,\mathrm{token})\bigr)\,
 V\bigl(\hat a(u,v,\mathrm{token})\bigr),
 \end{equation}
-with $\sigma$, $V$, $k$ and $t_0$ as for AWP and $b=b_A=\ln 3/m_A$. A directed edge $u\to v$ means that owner contract $u$ endorses spender contract $v$. The spender can move at most the owner's balance, whatever the allowance says, so the capped amount is what the endorsement puts at stake; an owner that holds none of the token at the freeze gives no edge, however much passed through it in the window. The balance and not the allowance sets most capped amounts (Table~\ref{tab:allowance-cap}), so $m_A$ is small: a capped allowance of a dollar or more enters with its full time weight to four decimals, and $V$ separates only the smaller ones.
+with $\sigma$, $V$, $k$ and $t_0$ as for AWP and $b=b_A=\ln 3/m_A$. A directed edge $u\to v$ means that owner contract $u$ endorses spender contract $v$. The spender can move at most the owner's balance, whatever the allowance says, so the capped amount is what the endorsement puts at stake; an owner that holds none of the token at the freeze gives no edge, however much passed through it in the window. The balance and not the allowance sets most capped amounts (Table~\ref{tab:allowance-cap}), so $m_A$ is small: a capped allowance of a dollar or more enters with its full time weight to four decimals, and $V$ separates only the smaller ones. Figure~\ref{fig:balance-cap} shows the cap on four kinds of allowance.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/balance-cap.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/balance-cap.html`.
+\includegraphics[width=\textwidth]{Figures/balance-cap.pdf}
+\caption[{The balance cap on an allowance between two contracts.}]{The balance cap on one owner--spender pair and one token. The latest allowance $a^{\star}$ of the score window and the owner's balance at the freeze, both in US dollars at the price of the freeze day, give the capped allowance $\hat a=\min(a^{\star},\mathrm{bal})$ (solid): an allowance below the balance counts in full, an unlimited allowance counts the balance, and an owner that holds none of the token or a latest approval of zero gives no edge. The allowance layer of C-PR also bounds each capped allowance by $U$ (Equation~\eqref{eq:raw-layers}). Bar lengths are illustrations.}
+\label{fig:balance-cap}
+\end{figure}
 
 The walk restarts uniformly over the contracts of the graph. AWP's restart rule, carried over to allowances, restarts the walk at owner $u$ in proportion to $X^A_u=\sum_{v\neq u}\max_{\mathrm{token}}\sigma\bigl(\Delta t^{\star}(u,v,\mathrm{token})\bigr)$, summed over the spenders $v$ of $u$'s positive capped allowances. That rewards granting endorsements, while EndorseRank is meant to rank the contracts that receive them. The analysis plan fixed uniform restarts and named this variant, EndorseRank with activity restarts, as one to report next to EndorseRank (Table~\ref{tab:endorserank-restarts}).
 
@@ -367,23 +335,10 @@ where $D_{\lambda}(u)=\lambda\,\mathbf{1}[o_A(u)>0]+(1-\lambda)\,\mathbf{1}[o_T(
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-  font=\small,
-  vertex/.style={draw, circle, minimum size=0.9cm},
-  allow/.style={-{Stealth[length=2.5mm]}, thick},
-  xfer/.style={-{Stealth[length=2.5mm]}, thick, dashed}
-]
-\node[vertex] (x) at (0,1.5) {$x$};
-\node[vertex] (u) at (0,0) {$u$};
-\node[vertex] (y) at (0,-1.5) {$y$};
-\node[vertex] (v) at (5.2,0.85) {$v$};
-\node[vertex] (w) at (5.2,-0.85) {$w$};
-\draw[allow] (x) -- node[above, font=\footnotesize] {$1$} (v);
-\draw[allow] (u) -- node[above, font=\footnotesize, pos=0.42] {$\lambda$} (v);
-\draw[xfer] (u) -- node[below, font=\footnotesize, pos=0.42] {$1-\lambda$} (w);
-\draw[xfer] (y) -- node[below, font=\footnotesize] {$1$} (w);
-\end{tikzpicture}
-\caption[{One step of the coupled walk C-PR.}]{One step of the coupled walk C-PR (Equation~\eqref{eq:coupled-transition}); solid arrows are allowance edges and dashed arrows transfer edges, labeled with their transition probabilities before damping. The contract $u$ has out-edges in both layers and mixes them with weights $\lambda$ and $1-\lambda$; $x$ and $y$ have out-edges in one layer only and follow it whatever $\lambda$ is. With probability $1-d$ the walk restarts at a uniformly chosen contract.}
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/cpr-schematic.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/cpr-schematic.html`.
+\includegraphics[width=\textwidth]{Figures/cpr-schematic.pdf}
+\caption[{One step of the coupled walk C-PR.}]{One step of the coupled walk C-PR (Equation~\eqref{eq:coupled-transition}); solid orange arrows are allowance edges and dashed blue arrows transfer edges, labeled with their transition probabilities before damping. The contract $u$ has out-edges in both layers and mixes them with weights $\lambda$ and $1-\lambda$; $x$ and $y$ have out-edges in one layer only and follow it whatever $\lambda$ is. With probability $1-d$ the walk restarts at a uniformly chosen contract.}
 \label{fig:cpr-schematic}
 \end{figure}
 
@@ -419,11 +374,20 @@ Because C-PR walks on $E_A\cup E_T$, one of its iterations costs as much as an i
 
 \dissertationSubheading[sec:discovery-protocol]{Discovery-order test}
 
-The discovery-order test repeats on the contract graph the crawl-ordering experiment of \textcite{cho1998crawling} (Section~\ref{sec:crawl-ordering}). Its question is that of RQ2: ordered by C-PR computed on the contracts read so far, does a crawl from a random contract of the giant strongly connected component reach the contracts with the most user-account demand sooner than a breadth-first crawl and sooner than a crawl ordered by the number of contract backlinks? The test was defined after the registered results were known and decides no rule of the plan or the registration; its protocol is \texttt{experiments/docs/discovery\_protocol.md} in the repository.
+The discovery-order test repeats on the contract graph the crawl-ordering experiment of \textcite{cho1998crawling} (Section~\ref{sec:crawl-ordering}). Its question is that of RQ2: ordered by C-PR computed on the contracts read so far, does a crawl from a random contract of the giant strongly connected component reach the contracts with the most user-account demand sooner than a breadth-first crawl and sooner than a crawl ordered by the number of contract backlinks? The test was defined after the registered results were known and decides no rule of the plan or the registration; its protocol is \texttt{experiments/docs/discovery\_protocol.md} in the repository. Figure~\ref{fig:discovery-protocol} outlines a crawl, the orderings and the decision.
 
 A page is a contract and a link an edge of the graph $G$ of one freeze, in either layer; $T_{\mathrm{obs}}$ is the primary freeze and $t_1$ the secondary one. A crawl starts at a seed and visits one contract at a time, knows only the edges that its visits have revealed, and chooses the next visit from its frontier, the contracts discovered and not yet visited. The union graph holds the distinct ordered pairs of different contracts with an edge in either layer. In the \texttt{out} mode a visit reveals the out-edges of the contract, the approvals it granted and the transfers it sent, and the universe $\mathcal{U}$ is the giant strongly connected component of the union graph with every contract reachable from it, $\mathrm{SCC}\cup\mathrm{OUT}$ in the bow-tie decomposition of \textcite{broder2000graph}. In the \texttt{both} mode a visit reveals the in-edges as well, and $\mathcal{U}$ is the weakly connected component that holds the giant SCC (WCC). The protocol makes \texttt{both} the primary mode if $\mathrm{SCC}\cup\mathrm{OUT}$ holds fewer than half the contracts of the WCC in the structure pilot below, as it does, and \texttt{out} is then a sensitivity (Table~\ref{tab:discovery-sizes}).
 
 The seeds are the $20$ contracts of the giant SCC with the lowest SHA256 hash of a fixed string and the address. An ordering other than the random one scores every frontier contract: after $K$ visits the scores are recomputed, and the $\max(1,\lceil\rho K\rceil)$ highest-scored frontier contracts are visited before the next recompute, ties going to the earlier discovery and then to the lower address. A prime marks what is computed on the contracts read so far. The orderings are breadth-first (BFS), which follows the order of discovery; random; three counts of the visited contracts with an edge to the frontier contract, the raw degrees that the walks smooth ($\mathrm{IB}'_A$ on allowance edges, $\mathrm{IB}'_T$ on transfer edges and $\mathrm{IB}'_U$ on either, the contract backlinks); and the walks of Section~\ref{sec:graph-construction} on the graph seen so far (EndorseRank$'$, EndorseRank-activity$'$, AWP$'$, C-PR$'$ at $\lambda=0.5$, $0.25$ and $0.75$, its two layers and S-PR$'$), each recompute starting from the previous vector, a warm start that is part of the method. The ideal order and the orders by C-PR and by union in-degree of the full graph are references that are not crawls, and the normalized in-strength $\delta'$, the depth-one closed form of the walk, is a diagnostic outside every comparison.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/discovery-protocol.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/discovery-protocol.html`.
+\includegraphics[width=\textwidth]{Figures/discovery-protocol.pdf}
+\caption[{The discovery-order test: a crawl, the orderings and the decision.}]{The discovery-order test. A crawl starts at a seed of the giant strongly connected component and reveals edges as it visits contracts; after $K$ visits the frontier is scored on the part read so far and the $\max(1,\lceil\rho K\rceil)$ highest-scored contracts are visited next, so the orderings differ only in that score. The importance of a contract comes from user accounts, which no ordering reads, and marks the hot set; $\mathrm{AUC}_{10\%}$ is the normalized area under the share of the hot set visited during the first 10\% of the universe, and the decision reads $D_1$ and $D_2$. The curves are drawn for illustration. The test was defined after the registered results were known and decides no rule of the plan or the registration.}
+\label{fig:discovery-protocol}
+\end{figure}
 
 Importance is user-account demand, which no ordering reads. For a contract $c$ of $\mathcal{U}$ and the score window of the freeze, $I_T(c)=\sum_j\min(x_{j\to c},U_{\mathrm{user}})$ and $I_A(c)=\sum_j\min\bigl(\hat a(j,c),U_{\mathrm{user}}\bigr)$ with $\hat a(j,c)=\sum_{\mathrm{token}}\hat a(j,c,\mathrm{token})$, where $j$ runs over the user accounts, $x_{j\to c}$ is the US dollars that $j$ transferred to $c$, and $\hat a(j,c,\mathrm{token})$ is the latest allowance of $j$ to $c$ on a token capped at the balance of $j$, as in Equation~\eqref{eq:approve-weight}. The numbers of accounts with at least one dollar, $N_T$ and $N_A$, are secondary. Importance in the manner of Cho et al., here the union in-degree $\mathrm{IB}_U$ and C-PR ($\mathrm{IR}$) of the full graph, is measured on the edges that the orderings read, so agreement with it is an intended-construct check, reported second.
 
@@ -443,7 +407,16 @@ A structure pilot on the $t_1$ graph, which reads the pairs of each layer withou
 
 \dissertationSubheading[sec:holdout-protocol]{Temporal holdout protocol}
 
-In the holdout W0, scores use the events between contracts of the W0 score window, from 1~April~2025 up to $t_1=$ 31~March~2026, 23:59:59~UTC. Labels are counted on events from 1~April~2026, 00:00:00~UTC, up to $t_2=$ 30~June~2026, 23:59:59~UTC. The cohort consists of the $n=7{,}864$ contracts among the spenders that hold at least one positive latest allowance of one of the five tokens, set inside the window, at $t_1$, in the events around the addresses listed for W0 (Section~\ref{sec:data-sources}); these are listed from the approvals of the same window, so no event after $t_1$ chooses the spenders. A spender that ends no edge of the contract graph stays in the cohort and scores zero under every score and baseline. Every score in the holdout table (EndorseRank, AWP, C-PR at the three values of $\lambda$ and at its two end points, S-PR and four raw counts) is computed from the contract graph of this window alone, with the time decay anchored at $t_1$, and so is EndorseRank with activity restarts (Table~\ref{tab:endorserank-restarts}).
+In the holdout W0, scores use the events between contracts of the W0 score window, from 1~April~2025 up to $t_1=$ 31~March~2026, 23:59:59~UTC. Labels are counted on events from 1~April~2026, 00:00:00~UTC, up to $t_2=$ 30~June~2026, 23:59:59~UTC. The cohort consists of the $n=7{,}864$ contracts among the spenders that hold at least one positive latest allowance of one of the five tokens, set inside the window, at $t_1$, in the events around the addresses listed for W0 (Section~\ref{sec:data-sources}); these are listed from the approvals of the same window, so no event after $t_1$ chooses the spenders. A spender that ends no edge of the contract graph stays in the cohort and scores zero under every score and baseline. Every score in the holdout table (EndorseRank, AWP, C-PR at the three values of $\lambda$ and at its two end points, S-PR and four raw counts) is computed from the contract graph of this window alone, with the time decay anchored at $t_1$, and so is EndorseRank with activity restarts (Table~\ref{tab:endorserank-restarts}). Figure~\ref{fig:holdout-design} sets W0 beside W1.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/holdout-design.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/holdout-design.html`.
+\includegraphics[width=\textwidth]{Figures/holdout-design.pdf}
+\caption[{The two out-of-window evaluations, W0 and W1.}]{The two out-of-window evaluations. Scores are frozen at $t_1$ (W0) and at $T_{\mathrm{obs}}$ (W1) from the events between contracts of the twelve months before; for every spender the labels count the new approval pairs and new transfer senders of the next three months, from every account. The primary part of rule~A is read in W0 and two of rule~B's registered criteria, F1 and F2, in W1; both are applied to the scores of the contract graph as a re-analysis.}
+\label{fig:holdout-design}
+\end{figure}
 
 Two labels are counted per spender, one for each construct, so that each single-layer method is tested on its own construct and the hybrids on both:
 \begin{enumerate}

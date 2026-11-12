@@ -1,0 +1,104 @@
+<!doctype html>
+<!--
+  Figure fig:kendall-pairs of the thesis (Chapter 2, Section "Rank correlation theory"); the source of
+  Figures/kendall-pairs.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/kendall-pairs.html
+
+  What the figure shows: Kendall's tau-b on a toy example (made-up values, not data of the study).
+  Four contracts P, Q, R, S have a score (P 0.9, Q 0.6, R 0.3, S 0.3; R and S tie) and a check value
+  (P 12, Q 5, R 7, S 1).
+  1. The two rankings side by side, with a line per contract; the lines of Q and R cross.
+  2. The n0 = 6 pairs: (P,Q), (P,R), (P,S) and (Q,S) are concordant (both rankings order them the same way); (Q,R) is
+     discordant (the rankings order it oppositely); (R,S) is tied in the score and counts as neither.
+  3. The counts in Equation eq:kendall: n_c = 4, n_d = 1, n_1 = 1 (one tied pair in the score), n_2 = 0, so
+     tau_b = (4 - 1) / sqrt((6 - 1)(6 - 0)) = 3 / sqrt(30), about 0.55; without the tie corrections
+     tau_a = (4 - 1) / 6 = 0.50.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kendall pairs</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .row { display:grid; grid-template-columns:50mm 52mm 1fr; column-gap:2.6mm; align-items:stretch; }
+  .pairs { display:grid; grid-template-columns:1fr 1fr; gap:1mm 1.4mm; }
+  .p { display:flex; align-items:center; gap:1.2mm; border-radius:1.3mm; padding:0.8mm 1.3mm; font-size:7pt; }
+  .p b { font-size:7.4pt; min-width:8mm; }
+  .p.c { background:var(--good-bg); color:var(--good); }
+  .p.d { background:var(--bad-bg); color:var(--bad); }
+  .p.t { background:#EEF2F6; color:#475569; }
+  .eq { font-size:7.4pt; line-height:1.55; }
+  .eq .big { font-size:8.4pt; }
+  .eq .frac { display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 0.6mm; }
+  .eq .frac > span:first-child { border-bottom:0.25mm solid var(--ink); padding:0 0.6mm; line-height:1.25; }
+  .eq .frac > span:last-child { padding:0 0.6mm; line-height:1.35; }
+  .sqrt { border-top:0.25mm solid var(--ink); padding-left:0.3mm; }
+  .cnt { display:grid; grid-template-columns:auto auto; gap:0.2mm 2.4mm; font-size:7pt; margin-bottom:1.2mm; }
+  .cnt .k { color:var(--muted); }
+  .g { color:var(--good); font-weight:700; } .r { color:var(--bad); font-weight:700; } .n { color:#475569; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row">
+    <div class="panel">
+      <div class="h"><span class="badge" style="background:#334155">1</span>Two rankings<span class="sub">toy values</span></div>
+      <svg id="b" viewBox="0 0 45 32" width="45mm" height="32mm" style="display:block"></svg>
+    </div>
+    <div class="panel">
+      <div class="h"><span class="badge" style="background:#334155">2</span>The six pairs</div>
+      <div class="pairs">
+        <div class="p c"><b>P, Q</b>concordant</div>
+        <div class="p c"><b>P, R</b>concordant</div>
+        <div class="p c"><b>P, S</b>concordant</div>
+        <div class="p c"><b>Q, S</b>concordant</div>
+        <div class="p d"><b>Q, R</b>discordant</div>
+        <div class="p t"><b>R, S</b>tied in the score</div>
+      </div>
+      <div class="muted" style="font-size:7pt;margin-top:1.3mm;line-height:1.2">A pair tied in either ranking is neither concordant nor discordant.</div>
+    </div>
+    <div class="panel">
+      <div class="h"><span class="badge" style="background:#334155">3</span><span>Kendall's <i>τ</i><sub>b</sub></span></div>
+      <div class="cnt">
+        <span class="k">pairs</span><span><i>n</i><sub>0</sub> = 6</span>
+        <span class="k">concordant, discordant</span><span><i>n</i><sub>c</sub> = <span class="g">4</span>, <i>n</i><sub>d</sub> = <span class="r">1</span></span>
+        <span class="k">tied pairs per ranking</span><span><i>n</i><sub>1</sub> = <span class="n">1</span>, <i>n</i><sub>2</sub> = 0</span>
+      </div>
+      <div class="eq"><span class="big"><i>τ</i><sub>b</sub></span> =
+        <span class="frac"><span><span class="g">4</span> − <span class="r">1</span></span><span>√<span class="sqrt">(6 − <span class="n">1</span>)(6 − 0)</span></span></span>
+        ≈ <b>0.55</b></div>
+      <div class="muted" style="font-size:7pt;margin-top:0.4mm">without the tie corrections, <i>τ</i><sub>a</sub> = (4 − 1)/6 = 0.50</div>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  const s = document.getElementById("b");
+  const L = 9.5, R = 33.5, y = r => 6.2 + (r - 1) * 7.5;           // rank 1 at the top
+  Fig.text(s, L, 2.6, "score", { size: 2.5, weight: 700, fill: "#374151", anchor: "middle" });
+  Fig.text(s, R, 2.6, "check", { size: 2.5, weight: 700, fill: "#374151", anchor: "middle" });
+  // score ranks: P 1, Q 2, R and S tied at 3 and 4 (drawn at their own rows, joined by a tie bracket)
+  const left = { P: [1, "0.9"], Q: [2, "0.6"], R: [3, "0.3"], S: [4, "0.3"] };
+  const right = { P: [1, "12"], R: [2, "7"], Q: [3, "5"], S: [4, "1"] };
+  const color = { P: "#94A3B8", Q: "#B91C1C", R: "#B91C1C", S: "#94A3B8" };
+  for (const k of ["P", "Q", "R", "S"]) {
+    const y1 = y(left[k][0]), y2 = y(right[k][0]);
+    Fig.el(s, "path", { d: `M${L + 3.2},${y1} C${L + 12},${y1} ${R - 12},${y2} ${R - 3.2},${y2}`, fill: "none",
+      stroke: color[k], "stroke-width": k === "Q" || k === "R" ? 0.6 : 0.45, opacity: 0.9 });
+  }
+  const node = (x, yy, k, v, side) => {
+    Fig.el(s, "rect", { x: x - 2.6, y: yy - 2.6, width: 5.2, height: 5.2, rx: 1.1, fill: "#0F766E" });
+    Fig.text(s, x, yy + 0.95, k, { size: 2.7, weight: 700, fill: "#fff", anchor: "middle" });
+    Fig.text(s, side < 0 ? x - 3.6 : x + 3.6, yy + 0.9, v, { size: 2.5, fill: "#5B6472", anchor: side < 0 ? "end" : "start" });
+  };
+  for (const [k, [r, v]] of Object.entries(left)) node(L, y(r), k, v, -1);
+  for (const [k, [r, v]] of Object.entries(right)) node(R, y(r), k, v, +1);
+  // tie bracket for R and S in the score
+  Fig.el(s, "path", { d: `M${L - 6.7},${y(3) - 1.6} H${L - 7.6} V${y(4) + 1.6} H${L - 6.7}`, stroke: "#64748B", "stroke-width": 0.35, fill: "none" });
+  const tt = Fig.text(s, L - 8.6, (y(3) + y(4)) / 2 + 0.9, "tie", { size: 2.4, fill: "#475569", anchor: "middle" });
+  tt.setAttribute("transform", `rotate(-90 ${L - 8.6} ${(y(3) + y(4)) / 2})`);
+})();
+</script>
+</body>
+</html>

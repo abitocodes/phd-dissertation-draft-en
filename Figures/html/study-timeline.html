@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  Figure fig:study-timeline of the thesis (Chapter 1, Section "Temporal holdout"); the source of
+  Figures/study-timeline.pdf. LaTeX cannot read HTML: edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/study-timeline.html
+  See Figures/html/README.md.
+
+  What the figure shows: a month axis from April 2025 to September 2026 with the two freezes,
+  t1 = 31 March 2026 and T_obs = 30 June 2026 (dashed vertical lines).
+  Rows of the time line:
+  - Registered analysis (grey): scores from every event since 1 October 2023, which begins before the axis
+    (a break mark at the left end).
+  - Scores at t1 (teal): the twelve-month score window 1 April 2025 to 31 March 2026.
+  - Scores at T_obs (teal): the twelve-month score window 1 July 2025 to 30 June 2026.
+  - Labels (pink): W0, April to June 2026, after t1; W1, July to September 2026, after T_obs.
+  Below the time line, what each freeze is used for, with the research questions:
+  - at t1: the discovery-order test (RQ2); the W0 holdout (RQ3) and the primary part of rule A (RQ4).
+  - at T_obs: the same-window checks (RQ1) and the secondary part of rule A (RQ4); the deciding run of the
+    discovery-order test (RQ2); the W1 holdout (RQ3) with two criteria of rule B, F1 and F2 (RQ5).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Freezes, score windows and label windows</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+@page { size: 180mm 110mm; margin: 0; }
+.uses { display:grid; grid-template-columns:30mm 1fr; row-gap:1.3mm; column-gap:2mm; margin-top:1.2mm; align-items:center; }
+.uses .at { font-weight:700; font-size:7.6pt; color:#374151; display:flex; align-items:center; gap:1.4mm; white-space:nowrap; }
+.uses .at i { display:inline-block; width:0; height:4.2mm; border-left:0.45mm dashed #374151; }
+.uses .list { display:flex; flex-wrap:wrap; gap:1.2mm 1.6mm; }
+.use { display:inline-flex; align-items:center; gap:1mm; border:0.3mm solid #D5DCE4; background:#fff; border-radius:1.6mm;
+  padding:0.6mm 1.6mm 0.6mm 0.8mm; font-size:7.3pt; white-space:nowrap; }
+.rqb { color:#fff; font-weight:700; font-size:7pt; border-radius:0.9mm; padding:0.1mm 1mm; }
+.rqb.r1 { background:var(--rq1); } .rqb.r2 { background:var(--rq2); } .rqb.r3 { background:var(--rq3); } .rqb.r45 { background:var(--rq45); }
+</style>
+</head>
+<body>
+<div class="fig">
+  <svg id="tl" viewBox="0 0 165 37.5" width="165mm" height="37.5mm" style="display:block"></svg>
+  <div class="uses">
+    <div class="at"><i></i><span>At t<sub>1</sub></span></div>
+    <div class="list">
+      <span class="use"><span class="rqb r2">RQ2</span>discovery-order test</span>
+      <span class="use"><span class="rqb r3">RQ3</span><span class="rqb r45">RQ4</span>W0 holdout; rule A, primary part</span>
+    </div>
+    <div class="at"><i></i><span>At T<sub>obs</sub></span></div>
+    <div class="list">
+      <span class="use"><span class="rqb r1">RQ1</span><span class="rqb r45">RQ4</span>same-window checks; rule A, secondary part</span>
+      <span class="use"><span class="rqb r2">RQ2</span>discovery-order test, deciding run</span>
+      <span class="use"><span class="rqb r3">RQ3</span><span class="rqb r45">RQ5</span>W1 holdout; rule B, criteria F1 and F2</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const svg = document.getElementById("tl");
+  const X0 = 32, M = 7.15, mx = (k) => X0 + k * M;          // month k after 1 April 2025 (k = 0..18)
+  const el = (t, a) => Fig.el(svg, t, a), txt = (x, y, s, o) => Fig.text(svg, x, y, s, o);
+  const MONTHS = "AMJJASONDJFMAMJJAS";
+
+  // years and months
+  el("path", { d: `M${mx(9)},0.4 V7.8`, stroke: "#CBD5E1", "stroke-width": 0.3 });
+  txt((mx(0) + mx(9)) / 2, 2.6, "2025", { size: 2.6, weight: 700, anchor: "middle", fill: "#374151" });
+  txt((mx(9) + mx(18)) / 2, 2.6, "2026", { size: 2.6, weight: 700, anchor: "middle", fill: "#374151" });
+  for (let k = 0; k < 18; k++) {
+    txt(mx(k) + M / 2, 6.6, MONTHS[k], { size: 2.55, anchor: "middle", fill: "#5B6472" });
+    el("path", { d: `M${mx(k)},8 V32.4`, stroke: "#EEF2F6", "stroke-width": 0.25 });
+  }
+  el("path", { d: `M${mx(18)},8 V32.4`, stroke: "#EEF2F6", "stroke-width": 0.25 });
+  el("path", { d: `M${mx(0)},8 H${mx(18)}`, stroke: "#94A3B8", "stroke-width": 0.3 });
+
+  // freezes (drawn before the bars, which cover them)
+  for (const [k, name, sub, date, anchor] of [[12, "t", "1", " = 31 March 2026", "end"], [15, "T", "obs", " = 30 June 2026", "start"]]) {
+    el("path", { d: `M${mx(k)},8.6 V33.8`, stroke: "#374151", "stroke-width": 0.45, "stroke-dasharray": "1 0.7" });
+    const t = txt(mx(k) + (anchor === "end" ? -0.8 : 0.8), 36.6, name, { size: 2.6, weight: 700, anchor, fill: "#374151" });
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+    s.setAttribute("font-size", 2.1); s.setAttribute("dy", 0.6); s.textContent = sub; t.appendChild(s);
+    const d = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+    d.setAttribute("dy", -0.6); d.setAttribute("font-weight", 400); d.textContent = date; t.appendChild(d);
+  }
+  // rows: label, bar
+  const row = (y, label, sub) => {
+    const t = txt(0.4, y + 0.9, label, { size: 2.6, weight: 700, fill: "#374151" });
+    if (sub) { const s = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+      s.setAttribute("font-size", 2.1); s.setAttribute("dy", 0.6); s.textContent = sub; t.appendChild(s); }
+  };
+  const bar = (k0, k1, y, h, fill, stroke, label, ink, dash) => {
+    el("rect", { x: mx(k0), y: y - h / 2, width: (k1 - k0) * M, height: h, rx: 1, fill, stroke, "stroke-width": 0.3,
+      "stroke-dasharray": dash });
+    if (label) txt((mx(k0) + mx(k1)) / 2, y + 0.9, label, { size: 2.55, anchor: "middle", fill: ink, weight: 600 });
+  };
+
+  row(11.6, "Registered analysis");
+  bar(0, 15, 11.6, 3.2, "#EEF0F3", "#B6BEC9", "every event since 1 October 2023", "#4B5563", "0.9 0.6");
+  el("path", { d: `M${mx(0) - 1.2},10 l1.2,1.6 l-1.2,1.6`, fill: "none", stroke: "#8A94A3", "stroke-width": 0.35 });
+
+  row(17.4, "Scores at t", "1");
+  bar(0, 12, 17.4, 4, "#D5F0EB", "#0F766E", "12 months: 1 April 2025 to 31 March 2026", "#0B5B55");
+  row(23.4, "Scores at T", "obs");
+  bar(3, 15, 23.4, 4, "#D5F0EB", "#0F766E", "12 months: 1 July 2025 to 30 June 2026", "#0B5B55");
+  row(29.4, "Labels");
+  bar(12, 15, 29.4, 4, "#FCE7F1", "#DB2777", "W0", "#9D174D");
+  bar(15, 18, 29.4, 4, "#FCE7F1", "#DB2777", "W1", "#9D174D");
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<!--
+  Figure fig:defi-risk of the thesis (Chapter 2, Section "DeFi risk taxonomy and where reputation fits"); the source
+  of Figures/defi-risk.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/defi-risk.html
+
+  What the figure shows, left to right:
+  1. A rollup holds very many contracts.
+  2. The question that comes first, which this thesis asks: which of them users rely on, answered by ranking
+     contracts by the relations between them. The ranking says where the methods on the right should be applied
+     first; it is no substitute for them and predicts no exploit or governance attack.
+  3. The risk layers, each of which starts from a given protocol and asks what can go wrong with it: smart-contract
+     risk (bugs in the code), oracle risk (a stale price, or a feed under someone's control), market risk
+     (volatility and liquidation cascades) and governance risk (voting power held by a few addresses).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DeFi risk layers</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .row { display:grid; grid-template-columns:27mm 6mm 50mm 6mm minmax(0, 1fr); align-items:stretch; }
+  .many { display:grid; grid-template-columns:repeat(6, 2.9mm); gap:0.9mm; margin:1mm 0 1.2mm; }
+  .many i { display:block; width:2.9mm; height:2.9mm; border-radius:0.7mm; background:var(--contract); }
+  .many i.l { opacity:0.35; }
+  .arr { display:flex; align-items:center; justify-content:center; }
+  .risks { display:grid; grid-template-columns:1fr 1fr; gap:1.2mm; }
+  .rk { border-radius:1.6mm; background:#F8FAFC; border:0.3mm solid #CBD5E1; padding:0.9mm 1.4mm; line-height:1.18; }
+  .rk .t { display:flex; align-items:center; gap:1mm; font-weight:700; font-size:7.3pt; }
+  .rk span.d { display:block; font-size:7pt; color:var(--muted); }
+  .cap { font-size:7pt; color:var(--muted); margin-top:1mm; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row">
+    <div class="panel contract">
+      <div class="h" style="white-space:normal;line-height:1.1">Very many contracts</div>
+      <div class="many"><i></i><i class="l"></i><i></i><i class="l"></i><i class="l"></i><i></i><i class="l"></i><i></i><i class="l"></i><i></i><i class="l"></i><i class="l"></i><i></i><i class="l"></i><i class="l"></i><i></i><i class="l"></i><i></i></div>
+      <div class="cap" style="margin-top:0">an address says nothing about the code behind it</div>
+    </div>
+    <div class="arr"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+    <div class="panel coupled">
+      <div class="h" style="font-size:8.1pt"><span data-icon="search" data-color="#7C3AED" data-size="4"></span>&nbsp;The question that comes first</div>
+      <div style="font-size:7.2pt;line-height:1.25">Which contracts do users rely on? <b>This thesis</b> ranks contracts by the relations between them.</div>
+      <div class="cap">It says where to apply the methods on the right first; it replaces none of them and predicts no exploit.</div>
+    </div>
+    <div class="arr"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+    <div class="panel soft">
+      <div class="h">Risk layers<span class="sub">each starts from a given protocol</span></div>
+      <div class="risks">
+        <div class="rk"><span class="t"><span data-icon="doc" data-color="#475569" data-size="3.4"></span>Smart-contract risk</span><span class="d">bugs in the code</span></div>
+        <div class="rk"><span class="t"><span data-icon="coin" data-color="#475569" data-size="3.4"></span>Oracle risk</span><span class="d">a stale price or a feed under someone's control</span></div>
+        <div class="rk"><span class="t"><span data-icon="bars" data-color="#475569" data-size="3.4"></span>Market risk</span><span class="d">volatility, liquidation cascades</span></div>
+        <div class="rk"><span class="t"><span data-icon="people" data-color="#475569" data-size="3.4"></span>Governance risk</span><span class="d">voting power held by a few addresses</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

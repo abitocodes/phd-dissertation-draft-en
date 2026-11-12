@@ -1,0 +1,139 @@
+<!doctype html>
+<!--
+  Figure fig:web-to-ledger of the thesis (Chapter 1, Section "Background: contracts on a rollup and how trust in them
+  is formed"); the source of Figures/web-to-ledger.pdf. LaTeX cannot read HTML: edit this file, then run (from
+  overleaf-github/)
+      python Figures/html/render.py Figures/html/web-to-ledger.html
+  See Figures/html/README.md.
+
+  What the figure shows, three panels from left to right:
+  1. The web: the nodes are pages and the edges hyperlinks. PageRank ranks a page by the pages that link to it.
+     In the crawl-ordering experiment of Cho, Garcia-Molina and Page (1998) a crawl ordered by PageRank on the pages
+     read so far reached the hot pages sooner than a crawl ordered by the backlink count. One page that many pages link
+     to is drawn larger.
+  2. Ledger walks over transfers (PageRank and HodgeRank on Ethereum transactions; AWP): the nodes are all addresses,
+     user accounts (grey person icons) included, and the edges are transfers (blue). Allowances are not read.
+  3. This thesis: the nodes are contracts only (teal squares inside a dashed boundary, the contract graph), with two
+     kinds of edge, transfers (blue) and allowances (orange), each allowance counted up to its owner's balance. User
+     accounts stand outside every graph. C-PR walks both edge types; EndorseRank walks the allowances and AWP the
+     transfers.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>From web links to records between contracts</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+@page { size: 180mm 120mm; margin: 0; }
+.row { display:grid; grid-template-columns:49mm 6mm 49mm 6mm 55mm; align-items:stretch; }
+.pn { border-radius:2.4mm; padding:1.8mm 2.2mm 1.6mm; display:flex; flex-direction:column; }
+.pn.web { border:0.3mm solid #9ACFDD; background:linear-gradient(180deg,#EEF8FB,#fff 80%); }
+.pn.ledger { border:0.3mm solid var(--transfer-line); background:linear-gradient(180deg,#F1F5FF,#fff 80%); }
+.pn.thesis { border:0.3mm solid var(--contract-line); background:linear-gradient(180deg,#F1FAF8,#fff 80%); }
+.pn .h { margin-bottom:0.6mm; font-size:8.5pt; }
+.pn .h svg { margin-right:1.3mm; }
+.pn svg.draw { display:block; margin:0.4mm 0 0.8mm; }
+.facts { margin:0; padding:0; list-style:none; font-size:7.3pt; line-height:1.22; color:#374151; }
+.facts li { display:flex; gap:1.1mm; margin-top:0.55mm; }
+.facts li b { flex:none; width:11mm; color:var(--muted); font-weight:600; }
+.arrow { display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row">
+
+    <!-- 1. the web -->
+    <div class="pn web">
+      <div class="h"><span data-icon="web" data-color="#0E7490" data-size="4.2"></span>The web</div>
+      <svg id="web" class="draw" viewBox="0 0 44.6 25" width="44.6mm" height="25mm"></svg>
+      <ul class="facts">
+        <li><b>Nodes</b><span>pages</span></li>
+        <li><b>Edges</b><span>hyperlinks</span></li>
+        <li><b>Rank</b><span>PageRank: by the pages that link to a page</span></li>
+        <li><b>Crawl</b><span>ordered by PageRank, it reached the hot pages sooner than by backlink count (Cho et al., 1998)</span></li>
+      </ul>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 6 10" width="6mm" height="10mm"><path d="M1,1.5 L4.6,5 L1,8.5" fill="none" stroke="#94A3B8" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- 2. ledger walks over transfers -->
+    <div class="pn ledger">
+      <div class="h"><span data-icon="coin" data-color="#2563EB" data-size="4.2"></span>Ledger walks over transfers</div>
+      <svg id="ledger" class="draw" viewBox="0 0 44.6 25" width="44.6mm" height="25mm"></svg>
+      <ul class="facts">
+        <li><b>Nodes</b><span>all addresses, user accounts included</span></li>
+        <li><b>Edges</b><span>transfers</span></li>
+        <li><b>Rank</b><span>PageRank and HodgeRank on transactions; AWP weights a transfer by value and age</span></li>
+        <li><b>Unread</b><span>allowances</span></li>
+      </ul>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 6 10" width="6mm" height="10mm"><path d="M1,1.5 L4.6,5 L1,8.5" fill="none" stroke="#94A3B8" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- 3. this thesis -->
+    <div class="pn thesis">
+      <div class="h"><span data-icon="contract" data-color="#0F766E" data-size="4.2"></span>This thesis</div>
+      <svg id="thesis" class="draw" viewBox="0 0 50.6 25" width="50.6mm" height="25mm"></svg>
+      <ul class="facts">
+        <li><b>Nodes</b><span>contracts only; user accounts outside every graph</span></li>
+        <li><b>Edges</b><span><span style="color:var(--transfer);font-weight:600">transfers</span> and <span style="color:var(--allow);font-weight:600">allowances</span>, each allowance counted up to the owner's balance</span></li>
+        <li><b>Rank</b><span>C-PR walks both; EndorseRank the allowances, AWP the transfers</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const WEB = "#0E7490", T = "#2563EB", A = "#D97706", U = "#8A94A3";
+
+  // 1. pages and hyperlinks; page h is linked to by most pages
+  const web = document.getElementById("web");
+  const P = { a:[5,5], b:[17,4], c:[30,5.5], d:[41,5], e:[8,19.5], h:[23,16.5], f:[38,19.5] };
+  const L = [["a","h",0], ["b","h",0], ["c","h",0], ["e","h",0], ["f","h",0], ["d","c",-1.5], ["b","a",1.5], ["h","f",-2.5], ["c","d",-1.5]];
+  for (const [p, q, bend] of L) {
+    const big = q === "h" ? 3.6 : 2.6, from = p === "h" ? 3.6 : 2.6;
+    Fig.edge(web, P[p], P[q], { color: WEB, width: 0.38, bend, halfFrom: from, halfTo: big });
+  }
+  const page = (x, y, s, hot) => {
+    Fig.el(web, "rect", { x: x - s * 0.8, y: y - s, width: s * 1.6, height: s * 2, rx: 0.5, fill: hot ? "#CFEAF2" : "#fff",
+      stroke: WEB, "stroke-width": hot ? 0.55 : 0.35 });
+    for (let i = 0; i < 3; i++)
+      Fig.el(web, "path", { d: `M${x - s * 0.5},${y - s * 0.45 + i * s * 0.45} H${x + s * 0.5}`, stroke: WEB, "stroke-width": 0.25, opacity: 0.7 });
+  };
+  for (const [id, [x, y]] of Object.entries(P)) page(x, y, id === "h" ? 3.4 : 2.4, id === "h");
+
+  // 2. all addresses: user accounts (persons) and contracts, joined by transfers
+  const led = document.getElementById("ledger");
+  const C = { c1:[19,6], c2:[33,5], c3:[25,19], c4:[40,17.5] };
+  const Us = { u1:[5,6], u2:[6,19.5], u3:[41.5,5.5] };
+  const pos = Object.assign({}, C, Us);
+  const TR = [["u1","c1",1.5], ["u2","c3",-1], ["u2","c1",1.5], ["c1","c2",-1.5], ["c3","c4",-1], ["c2","c4",1.5], ["c4","u3",-1.5], ["c1","c3",1.2]];
+  for (const [p, q, bend] of TR)
+    Fig.edge(led, pos[p], pos[q], { color: T, width: 0.42, bend, halfFrom: p[0] === "u" ? 2.8 : 2.4, halfTo: q[0] === "u" ? 2.8 : 2.4,
+      shapeFrom: p[0] === "u" ? "circle" : "square", shapeTo: q[0] === "u" ? "circle" : "square" });
+  for (const [x, y] of Object.values(C)) Fig.contract(led, x, y, 2.4);
+  for (const [x, y] of Object.values(Us)) Fig.person(led, x, y, 5.6, U);
+
+  // 3. contracts only, transfers and allowances; user accounts outside the dashed boundary
+  const th = document.getElementById("thesis");
+  Fig.el(th, "rect", { x: 0.6, y: 0.6, width: 38.6, height: 23.6, rx: 2.2, fill: "#F3FBF9", stroke: "#0F766E",
+    "stroke-width": 0.32, "stroke-dasharray": "1.1 0.8" });
+  Fig.text(th, 2, 23, "contract graph", { size: 2.55, fill: "#0F766E", weight: 600 });
+  Fig.graph(th, {
+    nodes: { k1:[7,6.5], k2:[19,4.5], k3:[31.5,7], k4:[9,17], k5:[22.5,16.5], k6:[33.5,18] },
+    edges: [["k4","k5","allow",-1.5], ["k1","k3","allow",-2.5], ["k6","k3","allow",1.5],
+            ["k1","k2","transfer",-1.2], ["k5","k3","transfer",1.2], ["k4","k1","transfer",1.2], ["k2","k5","transfer",1.2], ["k5","k6","transfer",-1]],
+    kinds: { allow: { color: A, width: 0.58 }, transfer: { color: T, width: 0.42 } },
+    node: { half: 2.4 }
+  });
+  Fig.person(th, 45.2, 5.6, 5.6, U);
+  Fig.person(th, 45.2, 14.4, 5.6, U);
+  Fig.text(th, 45.2, 20.6, "user", { size: 2.55, fill: "#5B6472", anchor: "middle" });
+  Fig.text(th, 45.2, 23.4, "accounts", { size: 2.55, fill: "#5B6472", anchor: "middle" });
+})();
+</script>
+</body>
+</html>

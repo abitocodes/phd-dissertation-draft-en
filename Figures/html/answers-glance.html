@@ -1,0 +1,103 @@
+<!doctype html>
+<!--
+  Figure fig:answers-glance of the thesis (Chapter 6, Section "Answers to the research questions"); the source of
+  Figures/answers-glance.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/answers-glance.html
+
+  What the figure shows: the answers to RQ1-RQ5 in the words of Chapter 6, one row each, with no number.
+  RQ1 (do EndorseRank and AWP order contracts differently, does each fit its own edges, what does each walk cost):
+    H1 supported and H3 supported, largely by construction; H2 supported only narrowly, since the proxies come from the
+    same events as the graphs. Cost follows the size of the layers walked; EndorseRank is cheapest and C-PR takes
+    slightly longer than AWP.
+  RQ2 (discovery order): no; verdict V2 on both importances, quoted: "sooner than a breadth-first crawl, but not sooner
+    than a crawl ordered by the number of contract backlinks"; on user-authorized value the lead over breadth-first order is
+    small and does not hold in every sensitivity; AWP' was the one single-layer walk sooner than its count;
+    every crawl stayed far from the ideal order; the test decides no rule.
+  RQ3 (out of window): frozen scores anticipate later approval pairs and senders, and the edge type decides which label;
+    against the raw count each walk smooths the counts mostly win (EndorseRank below the in-approve degree; AWP slightly
+    above the transfer in-degree on the whole cohorts but below it among W0 spenders that had received a transfer from
+    another contract; C-PR above the union in-degree on approval pairs and below it on senders, and below the in-approve
+    degree and the transfer in-degree on their labels).
+  RQ4 (rule A): no, rule A is not met in either part.
+  RQ5 (two applied criteria of rule B): no; F1 holds, F2 fails, rule B is not met.
+  Footer: the main question; rules A and B applied to the scores of the contract graph as a re-analysis, the registered
+  analysis giving the same readings.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Answers at a glance</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+.row { display:grid; grid-template-columns:11mm 33mm 26mm minmax(0, 1fr); column-gap:2.2mm; align-items:center;
+  border-radius:1.8mm; border-left:1.3mm solid; padding:0.9mm 2.2mm 0.9mm 1.8mm; margin-bottom:1mm; }
+.row.head { border:none; padding-top:0; padding-bottom:0; margin-bottom:0.7mm; font-size:6.6pt; font-weight:700;
+  letter-spacing:0.15mm; text-transform:uppercase; color:var(--muted); }
+.rq { color:#fff; font-weight:700; font-size:7.2pt; border-radius:1.1mm; padding:0.4mm 0; text-align:center; }
+.q { font-size:7.1pt; font-weight:600; line-height:1.17; }
+.ans { display:flex; flex-direction:column; align-items:flex-start; gap:0.6mm; }
+.ev { font-size:6.9pt; color:#374151; line-height:1.19; }
+.r1 { border-left-color:var(--rq1); background:var(--rq1-bg); } .r1 .rq { background:var(--rq1); }
+.r2 { border-left-color:var(--rq2); background:var(--rq2-bg); } .r2 .rq { background:var(--rq2); }
+.r3 { border-left-color:var(--rq3); background:var(--rq3-bg); } .r3 .rq { background:var(--rq3); }
+.r4 { border-left-color:var(--rq45); background:var(--rq45-bg); } .r4 .rq { background:var(--rq45); }
+.main { margin-top:1.8mm; border-radius:2mm; border:0.3mm solid #CBD5E1; background:#F8FAFC; padding:1.3mm 2.4mm;
+  font-size:7.2pt; display:grid; grid-template-columns:auto 1fr; column-gap:2mm; align-items:center; }
+.main b { color:#111827; }
+.main .re { color:var(--muted); font-size:6.9pt; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row head"><span></span><span>Question</span><span>Answer</span><span>What the evidence shows</span></div>
+
+  <div class="row r1">
+    <span class="rq">RQ1</span>
+    <span class="q">Do EndorseRank and AWP differ, fit their own edges, and what do the walks cost?</span>
+    <span class="ans"><span class="pill good">H1, H3 supported</span><span class="pill mixed">H2 only narrowly</span></span>
+    <span class="ev">Largely by construction: most cohort contracts score zero under EndorseRank; the proxies come from the same events as the
+      graphs; cost follows the layers walked (EndorseRank cheapest, C&#8209;PR slightly slower than AWP).</span>
+  </div>
+
+  <div class="row r2">
+    <span class="rq">RQ2</span>
+    <span class="q">Does a crawl ordered by C&#8209;PR reach the contracts with the most user-account demand sooner?</span>
+    <span class="ans"><span class="pill bad">No · verdict V2</span><span class="pill no">decides no rule</span></span>
+    <span class="ev">“Sooner than a breadth-first crawl, but not sooner than a crawl ordered by the number of contract backlinks.”
+      On user-authorized value the lead over breadth-first order is small and does not hold in every sensitivity. AWP&prime; was the one
+      single-layer walk sooner than its count; every crawl stayed far from the ideal order.</span>
+  </div>
+
+  <div class="row r3">
+    <span class="rq">RQ3</span>
+    <span class="q">Do frozen scores predict later labels, and does a walk beat the count it smooths?</span>
+    <span class="ans"><span class="pill good">Predict: yes</span><span class="pill bad">Counts mostly win</span></span>
+    <span class="ev">The edge type decides which label a score anticipates. Against its count: EndorseRank below; AWP slightly above on the whole
+      cohorts, below among W0 spenders that had received a transfer from another contract; C&#8209;PR above the union in&#8209;degree on approval
+      pairs and below it on senders, and below the in&#8209;approve degree and the transfer in&#8209;degree on their labels.</span>
+  </div>
+
+  <div class="row r4">
+    <span class="rq">RQ4</span>
+    <span class="q">Does C&#8209;PR beat each of its layers walked alone?</span>
+    <span class="ans"><span class="pill bad">No · rule A is not met</span></span>
+    <span class="ev">In W0 below its allowance layer on new approval pairs and below its transfer layer on new senders; in the same window
+      outside the interval of the leading layer, and not above both layers on the stability family.</span>
+  </div>
+
+  <div class="row r4">
+    <span class="rq">RQ5</span>
+    <span class="q">Do allowances improve a transfer walk on new data?</span>
+    <span class="ans"><span class="pill bad">No · rule B is not met</span></span>
+    <span class="ev">The two applied criteria of rule B, in W1: <b>F1 holds</b>, C&#8209;PR ranks new approval pairs above its transfer layer;
+      <b>F2 fails</b>, its loss on new senders exceeds the margin.</span>
+  </div>
+
+  <div class="main"><span data-icon="scale" data-color="#475569" data-size="4.4"></span>
+    <span><b>Main question:</b> on these data one walk over both edge types does not find the contracts that users rely on sooner, nor
+      predict their later use better. <span class="re">Rules A and B are applied to the scores of the contract graph as a re-analysis;
+      the registered analysis gave the same readings.</span></span></div>
+</div>
+</body>
+</html>

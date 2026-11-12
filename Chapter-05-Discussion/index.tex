@@ -78,7 +78,7 @@ For C-PR that result does not carry over to contracts in the deciding run: on th
 
 \dissertationSubsubheading[sub:theory-closed-form]{Depth-one spenders: what a walk adds to a count}
 
-The allowance graph keeps the latest allowances between contracts that stay positive under the balance cap (Section~\ref{sec:graph-construction}). Most of its nodes are pure owners, with out-edges only, or pure spenders, with in-edges only, but a contract can be both, so the graph also has paths of more than one step. For a spender whose owners receive no allowances, a walk with uniform restarts has a closed form.
+The allowance graph keeps the latest allowances between contracts that stay positive under the balance cap (Section~\ref{sec:graph-construction}). Most of its nodes are pure owners, with out-edges only, or pure spenders, with in-edges only, but a contract can be both, so the graph also has paths of more than one step. For a spender whose owners receive no allowances, a walk with uniform restarts has a closed form; Figure~\ref{fig:depth-one} draws such a spender beside a deeper one.
 
 \emph{Proposition.} Let PageRank with transition matrix $P$ be computed by Equation~\eqref{eq:pagerank} with damping $d$ and uniform restarts, so that dangling mass is also spread uniformly. Then every node without in-edges has the same score $c$, and every node $v$ whose in-neighbors all lack in-edges has
 \begin{equation}
@@ -88,6 +88,15 @@ r_v = c\,\bigl(1 + d\,\delta(v)\bigr), \qquad \delta(v)=\sum_{u} P_{uv},
 the sum of the transition probabilities into $v$. In EndorseRank $P_{uv}=w(u,v)/o(u)$, so $\delta(v)$ is the owner-normalized in-strength of $v$: each owner's endorsement is divided over all the spenders it approves. In C-PR $P_{uv}$ is the coupled transition of Equation~\eqref{eq:coupled-transition}, and an in-neighbor without in-edges is one that has none in either layer.
 
 \emph{Derivation.} At the fixed point, $r_v = (1-d+d\,r_D)/|V| + d\sum_u r_u\,P_{uv}$, where $r_D$ is the mass held by the dangling nodes. A node without in-edges receives only the first term, so every such node has the score $c=(1-d+d\,r_D)/|V|$. If every in-neighbor $u$ of $v$ is such a node, substituting $r_u=c$ gives Equation~\eqref{eq:closed-form}.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/depth-one.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/depth-one.html`.
+\includegraphics[width=\textwidth]{Figures/depth-one.pdf}
+\caption[{A depth-one spender and a deeper one.}]{A depth-one spender and a deeper one, on allowance edges labeled with their transition probabilities in EndorseRank (example weights). The owners $u_1$ and $u_2$ of $v$ receive no allowances, so each has the score $c$ of a node without in-edges; $u_2$ divides its endorsement over its three spenders, and Equation~\eqref{eq:closed-form} gives $r_v=c\,(1+d\,\delta(v))$ with $\delta(v)=1+\tfrac{1}{3}$. The owner $u_3$ of $x$ itself receives an allowance, so its score is not $c$, and the score of $x$ departs from the closed form.}
+\label{fig:depth-one}
+\end{figure}
 
 On EndorseRank's graph at $T_{\mathrm{obs}}$, 651 of the 926 cohort contracts that are spenders have depth one, and EndorseRank lies within 1\% of Equation~\eqref{eq:closed-form} for each of them; of the deeper spenders, which have an owner that itself receives allowances, 33.8\% do. Over all 926 the share is 80.3\%, and over the 1{,}362 W0 spenders of the graph at $t_1$ it is 68.4\%. Over the cohort spenders EndorseRank's Kendall $\tau$ with $\delta$ is $0.923$, a point estimate. These shares were not computed for the union graph of C-PR.
 
@@ -103,7 +112,7 @@ A wallet interface, a block explorer, an auditor or an integrator faces very man
 
 \dissertationSubsubheading[sub:deploy-hybrid]{The coupled walk and combined use}
 
-Folding the two edge types into one walk did not pay against the published transfer walk on these data: C-PR costs slightly more than AWP (Table~\ref{tab:benchmark-runtime}), trails it on new senders in both windows and on both importances in the deciding discovery-order run, and leads it out of window only on new approval pairs (Sections~\ref{sub:finding-rq2} and~\ref{sub:finding-rq5}). An operator free to choose should keep the signals apart, using a count or a walk over allowances where authorization matters and AWP or the transfer count where flow matters. For an operator tied to a single transfer walk weighted by dollar amounts, adding allowance edges bought information about later approvals that held on new data, at a loss on inflow larger than the registered margin; rule B is not met.
+Folding the two edge types into one walk was not worth it against the published transfer walk on these data: C-PR costs slightly more than AWP (Table~\ref{tab:benchmark-runtime}), trails it on new senders in both windows and on both importances in the deciding discovery-order run, and leads it out of window only on new approval pairs (Sections~\ref{sub:finding-rq2} and~\ref{sub:finding-rq5}). An operator free to choose should keep the signals apart, using a count or a walk over allowances where authorization matters and AWP or the transfer count where flow matters. For an operator tied to a single transfer walk weighted by dollar amounts, adding allowance edges bought information about later approvals that held on new data, at a loss on inflow larger than the registered margin; rule B is not met.
 
 \dissertationSubsubheading[sub:deploy-transfer]{Transfer-hub and flow monitoring}
 
@@ -114,6 +123,17 @@ A protocol that describes current flow can read it from in-degree and in-value d
 Where explicit spending authorization matters most, there is reason to use allowance edges. The cheapest form is the spender's in-approve degree among contracts, which needs no solver and ranked new approval pairs above EndorseRank, with either restart rule, and above C-PR in both windows (Tables~\ref{tab:holdout-diff}, \ref{tab:fresh-posthoc} and~\ref{tab:cpr-contrasts}). EndorseRank, its propagated version, solves in a fraction of AWP's time (Table~\ref{tab:benchmark-runtime}), but for most spenders it reflects the authorizing contracts only through how many spenders each authorizes (Section~\ref{sub:theory-closed-form}). Any allowance score between contracts covers little: one cohort contract in five and one spender in four grant or receive one (Table~\ref{tab:cohort-coverage}). And the balance cap matters: when every positive allowance counts at its own value, the in-approve degree and EndorseRank have about half the coefficient on new approval pairs (Table~\ref{tab:uncapped-sensitivity}; point estimates), so a tool that reads allowances to anticipate authorization should count each one up to the balance behind it.
 
 \dissertationSubsubheading[sub:deploy-industry]{Industry adoption scenarios}
+
+Figure~\ref{fig:practical-uses} sets the parties below beside the signals that this section finds suited to them and the limits it states.
+
+\begin{figure}[htbp]
+\centering
+% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/practical-uses.html;
+% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/practical-uses.html`.
+\includegraphics[width=\textwidth]{Figures/practical-uses.pdf}
+\caption[{Who faces the choice among contracts, the signal that suits each and its limits.}]{Who faces the choice among contracts, the signal that Section~\ref{sec:practical-implications} finds suited to each and the limits it states. The bars beside a signal mark the layers it reads, allowance and transfer. The use in lending is not tested.}
+\label{fig:practical-uses}
+\end{figure}
 
 \begin{itemize}
 \item Wallet interfaces and security tooling. A user asked to approve a spender wants to know whether it is widely authorized. A badge that shows how many contracts with a balance have authorized a spender, or its EndorseRank, makes that delegation explicit \parencite{vogelsteller2015erc20,lundfall2020permit}; it conveys the position of a graph node and is neither a security audit nor a guarantee against malicious contracts, and it is empty for the spenders, at least three in four, that no contract with a balance authorizes.

@@ -1,0 +1,91 @@
+<!doctype html>
+<!--
+  Figure fig:random-surfer of the thesis (Chapter 2, Section "Random-surfer interpretation"); the source of
+  Figures/random-surfer.pdf. Edit this file, then run (from overleaf-github/)
+      python Figures/html/render.py Figures/html/random-surfer.html
+
+  What the figure shows: the four-node graph of the worked example (Section "Worked example: PageRank on a four-node
+  endorsement graph"): contracts A, B, C, D with the allowance edges A->B (weight 2), A->C (1), B->D (3), C->D (1).
+  Beside each weight is the share of the step that follows the edge: from A, 2/3 to B and 1/3 to C; from B and from C,
+  the single out-edge takes all of it. A surfer follows an out-edge with probability d, in proportion to its weight,
+  or teleports to a uniformly chosen node with probability 1 - d (each node then (1 - d)/|V|). The teleport fan
+  (grey, dashed) is drawn from D only, although every node has one. D has no out-edge (it is dangling), so a surfer
+  at D always jumps to a uniformly chosen node. The bars on the right are the stationary vector of the worked example
+  at d = 0.85, the long-run share of visits: A 0.1375, B 0.2154, C 0.1765, D 0.4706.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Random surfer</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+  .row { display:grid; grid-template-columns:96mm 1fr; column-gap:4mm; align-items:center; }
+  .side .item { display:flex; align-items:flex-start; gap:1.6mm; margin-bottom:1.5mm; font-size:7.1pt; line-height:1.22; }
+  .side .item svg { flex:none; margin-top:0.4mm; }
+  .bars { margin-top:2.2mm; border-top:0.3mm solid #E2E8F0; padding-top:1.6mm; }
+  .bars .ttl { font-weight:700; font-size:7.6pt; margin-bottom:1mm; }
+  .bars .ttl span { font-weight:400; color:var(--muted); font-size:7pt; }
+  .b { display:grid; grid-template-columns:4mm 1fr 11mm; align-items:center; column-gap:1.4mm; margin-bottom:0.9mm; }
+  .b .n { font-weight:700; color:var(--contract); font-size:7.6pt; }
+  .b .track { height:3.2mm; background:#EEF2F6; border-radius:0.8mm; overflow:hidden; }
+  .b .fill { height:100%; background:var(--contract); border-radius:0.8mm; }
+  .b .v { font-family:Consolas, monospace; font-size:7.2pt; text-align:right; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="row">
+    <svg id="s" viewBox="0 0 96 52" width="96mm" height="52mm"></svg>
+    <div class="side">
+      <div class="item"><svg width="7mm" height="3mm" viewBox="0 0 7 3"><path d="M0.3,1.5 H6.2" stroke="#D97706" stroke-width="0.6"/><path d="M5.2,0.5 L6.9,1.5 L5.2,2.5z" fill="#D97706"/></svg>
+        <span>With probability <i>d</i>, follow an out-edge, chosen in proportion to its weight (the share in brackets).</span></div>
+      <div class="item"><svg width="7mm" height="3mm" viewBox="0 0 7 3"><path d="M0.3,1.5 H6.2" stroke="#7A8594" stroke-width="0.5" stroke-dasharray="1 0.7"/><path d="M5.2,0.5 L6.9,1.5 L5.2,2.5z" fill="#7A8594"/></svg>
+        <span>With probability 1 − <i>d</i>, teleport: every node gets <span style="white-space:nowrap">(1 − <i>d</i>)/|<i>V</i>|</span>. Drawn from <b>D</b> only.</span></div>
+      <div class="item"><span style="display:inline-flex;width:7mm;justify-content:center"><span style="display:inline-block;width:3.2mm;height:3.2mm;border-radius:0.8mm;background:#7C3AED"></span></span>
+        <span><b>D</b> has no out-edge (dangling), so a surfer at <b>D</b> always jumps to a uniformly chosen node.</span></div>
+      <div class="bars">
+        <div class="ttl">Long-run share of visits <span>worked example, <i>d</i> = 0.85</span></div>
+        <div class="b"><span class="n">D</span><span class="track"><span class="fill" style="display:block;width:94.1%;background:#7C3AED"></span></span><span class="v">0.4706</span></div>
+        <div class="b"><span class="n">B</span><span class="track"><span class="fill" style="display:block;width:43.1%"></span></span><span class="v">0.2154</span></div>
+        <div class="b"><span class="n">C</span><span class="track"><span class="fill" style="display:block;width:35.3%"></span></span><span class="v">0.1765</span></div>
+        <div class="b"><span class="n">A</span><span class="track"><span class="fill" style="display:block;width:27.5%"></span></span><span class="v">0.1375</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  const s = document.getElementById("s"), h = 4.3;
+  const N = { A: [9, 26], B: [42, 9], C: [42, 43], D: [76, 26] };
+  const allow = { color: "#D97706", width: 0.6, half: h, gap: 0.6 };
+  const tele = { color: "#7A8594", width: 0.45, dash: "1 0.7", half: h, gap: 0.6 };
+  // teleport fan from D (drawn first, under the nodes)
+  Fig.edge(s, N.D, N.A, Object.assign({}, tele));
+  Fig.edge(s, N.D, N.B, Object.assign({ bend: 21 }, tele));
+  Fig.edge(s, N.D, N.C, Object.assign({ bend: -21 }, tele));
+  Fig.el(s, "path", { d: `M${N.D[0] + h + 0.3},${N.D[1] - 2.2} c 10,-7 10,11.4 0,4.4`, fill: "none", stroke: "#7A8594",
+    "stroke-width": 0.45, "stroke-dasharray": "1 0.7", "marker-end": Fig.marker(s, "#7A8594") });
+  Fig.text(s, 87.6, 34.8, "teleport", { size: 2.5, fill: "#5B6472", anchor: "middle" });
+  // allowance edges with weight and share of the step
+  Fig.edge(s, N.A, N.B, Object.assign({}, allow));
+  Fig.edge(s, N.A, N.C, Object.assign({}, allow));
+  Fig.edge(s, N.B, N.D, Object.assign({}, allow));
+  Fig.edge(s, N.C, N.D, Object.assign({}, allow));
+  const lab = (x, y, w, p) => {
+    const t = Fig.text(s, x, y, w, { size: 3.0, weight: 700, fill: "#B45309", anchor: "middle" });
+    const sp = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+    sp.setAttribute("font-size", 2.5); sp.setAttribute("font-weight", 400); sp.setAttribute("fill", "#7C3F00");
+    sp.textContent = ` (${p})`; t.appendChild(sp);
+  };
+  lab(21.5, 14.2, "2", "2/3"); lab(21.5, 40.6, "1", "1/3"); lab(63.2, 14.4, "3", "all"); lab(63.2, 40.4, "1", "all");
+  // nodes: contracts A to D; D (dangling) in violet
+  for (const [k, [x, y]] of Object.entries(N)) {
+    Fig.el(s, "rect", { x: x - h, y: y - h, width: 2 * h, height: 2 * h, rx: 1.8, fill: k === "D" ? "#7C3AED" : "#0F766E" });
+    Fig.text(s, x, y + 1.25, k, { size: 3.6, weight: 700, fill: "#fff", anchor: "middle" });
+  }
+  Fig.text(s, N.D[0], N.D[1] + h + 3.3, "dangling", { size: 2.5, fill: "#6D28D9", anchor: "middle" });
+})();
+</script>
+</body>
+</html>
