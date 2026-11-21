@@ -2,12 +2,12 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/benchmark/benchmark.json
 \begin{table}[htbp]
 \centering
-\caption[Computational benchmark on the contract graph.]{Computational benchmark on the contract graph at $T_{\mathrm{obs}}$, which holds every pair between contracts and not only the pairs of the matched cohort (AWP/EndorseRank runtime ratio 27.9$\times$ at an edge ratio of 22.4$\times$). Runtime = mean wall-clock seconds over 5 timed solver calls after one untimed warm-up, on which alone peak memory is traced; SD over the same 5 runs. A timed call turns an edge list into scores: node indexing, sparse-matrix assembly, row normalization, restart vector and power iteration. $|V|$ and $|E|$ are the nodes and distinct edges of each method's solver graph. C-PR walks on the union of the allowance layer and the transfer layer, so its $|E|$ counts the distinct pairs of both; S-PR runs on the transfer layer, and its runtime and iterations include the solve of the allowance layer that supplies its restart vector. Table~\ref{tab:benchmark-runs} lists every run.}
+\caption[Computational benchmark on the contract graph.]{Computational benchmark on the contract graph at $T_{\mathrm{obs}}$, which holds every pair between contracts and not only the pairs of the matched cohort (AWP/EndorseRank runtime ratio 27.9$\times$ at an edge ratio of 22.4$\times$). Runtime = mean wall-clock seconds over 5 timed solver calls after one untimed warm-up, on which alone peak memory is traced; standard deviation (SD) over the same five runs. A timed call turns an edge list into scores: node indexing, sparse-matrix assembly, row normalization, restart vector and power iteration. $|V|$ and $|E|$ are the nodes and distinct edges of each method's solver graph. \mbox{C-PR} walks on the union of the allowance layer and the transfer layer, so its $|E|$ counts the distinct pairs of both; \mbox{S-PR} runs on the transfer layer, and its runtime and iterations include the solve of the allowance layer that supplies its restart vector. Table~\ref{tab:benchmark-runs} lists every run.}
 \label{tab:benchmark-runtime}
 \fitwidth{%
 \begin{tabular}{lrrrrrr}
 \toprule
-Method & Runtime (s) & SD (s) & Peak mem.\ (MB) & Iters & $|V|$ & $|E|$ \\
+Method & Runtime (s) & SD (s) & Peak mem.\ (MB) & Iterations & $|V|$ & $|E|$ \\
 \midrule
 EndorseRank & 0.101 & 0.009 & 13.7 & 56 & 109{,}381 & 114{,}997 \\
 AWP & 2.821 & 0.189 & 228.2 & 98 & 1{,}298{,}649 & 2{,}580{,}381 \\

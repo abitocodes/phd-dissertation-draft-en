@@ -5,23 +5,31 @@
 \let\FrontMatterSavedThetable\thetable
 \renewcommand{\thetable}{\Roman{table}}
 
-% The two lists follow the title without a page of their own for the heading: each table is placed here ([H])
-% and scaled to the page.
-\begin{table}[H]
-\centering
-\caption{Abbreviations used in this research.}
-\label{tab:abbreviations}
-\begin{adjustbox}{max width=\linewidth, max totalheight=0.70\textheight, center}%
-\small\setlength{\tabcolsep}{3.5pt}%
-\begin{tabular}{lp{0.72\linewidth}}
+% The two lists are long tables in the size of the other tables, single-spaced; each may run over a page break.
+\begingroup
+\small\setstretch{1.0}\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.0}%
+\setlength{\LTpre}{2pt}\setlength{\LTpost}{6pt}%
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\linewidth}p{0.77\linewidth}@{}}
+\caption{Abbreviations used in this research.}\label{tab:abbreviations}\\
 \toprule
 Abbreviation & Meaning \\
 \midrule
+\endfirsthead
+\toprule
+Abbreviation & Meaning \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+ABI & Application binary interface (the encoding of contract calls and of event data) \\
+API & Application programming interface \\
 AUC & Area under the curve; $\mathrm{AUC}_{10\%}$ is the normalized area under a crawl's discovery curve over the first 10\% of its visits \\
 AWP & Adaptive Weighted PageRank \\
 BFS & Breadth-first search (the crawl ordering that visits contracts in the order of their discovery) \\
-C-PR & Coupled PageRank (per-node mixture of the allowance and transfer layers, weight $\lambda$) \\
-DeFi & Decentralized Finance \\
+CI & Confidence interval (in table headings) \\
+\mbox{C-PR} & Coupled PageRank (per-node mixture of the allowance and transfer layers, weight $\lambda$) \\
+CSET & College of Science, Engineering and Technology (University of South Africa) \\
+DeFi & Decentralized finance \\
 EIP & Ethereum Improvement Proposal (EIP-2612 defines \texttt{permit}; an EIP-7702 account is an externally owned account that delegates to contract code) \\
 EOA & Externally owned account (an address controlled by a private key) \\
 ER & EndorseRank (in table headings) \\
@@ -29,74 +37,77 @@ ERC-20 & Ethereum Request for Comments 20 (fungible token standard) \\
 ERC-4337 & Ethereum Request for Comments 4337 (account abstraction; an ERC-4337 account is a smart account that names a canonical EntryPoint contract) \\
 EVM & Ethereum Virtual Machine \\
 FC & Financial Cryptography and Data Security \\
-L1, L2 & Layer 1 (the Ethereum mainnet) and Layer 2 (a network, such as Arbitrum One, that posts its transaction data to Layer 1) \\
+HITS & Hyperlink-Induced Topic Search \\
+IP & Internet Protocol \\
+KYC & Know your customer (the identity checks of a service provider) \\
+L2 & Layer 2 (a network, such as Arbitrum One, that posts its transaction data to Layer 1, the Ethereum mainnet) \\
 PR & PageRank \\
 RPC & Remote procedure call (the interface of a node of Arbitrum One through which account code and contract state were read) \\
-RQ & Research Question \\
+RQ & Research question \\
 SCC & Strongly connected component (here the giant one of the union graph of a freeze) \\
+SD & Standard deviation (in table headings) \\
+SHA-256 & Secure Hash Algorithm with a 256-bit digest \\
 SoK & Systematization of Knowledge \\
-S-PR & Endorsement-Seeded PageRank (transfer layer walked with restarts drawn from the allowance walk) \\
+\mbox{S-PR} & Endorsement-seeded PageRank (transfer layer walked with restarts drawn from the allowance walk) \\
+SQL & Structured Query Language \\
+URL & Uniform resource locator \\
 USD & United States dollar, the unit of every amount in the main analysis \\
-USENIX & USENIX Security Symposium \\
 UTC & Coordinated Universal Time \\
 W0 & Holdout window: scores frozen on 31~March~2026, labels counted from April to June~2026 \\
 W1 & Registered window: scores frozen on 30~June~2026, labels counted from July to September~2026 \\
 WCC & Weakly connected component (here the one that holds the giant SCC) \\
 WETH, USDC, USDT0, ARB, WBTC & The five tokens of the main analysis: wrapped ether, USD Coin, Tether USD on Arbitrum One, the Arbitrum governance token, wrapped bitcoin \\
-\bottomrule
-\end{tabular}%
-\end{adjustbox}
-\end{table}
+\end{longtable}
 
-\begin{table}[H]
-\centering
-\caption[Mathematical notation used in this research.]{Mathematical notation used in this research. Each symbol is defined where it first appears, and Table~\ref{tab:notation-methods} adds the symbols that only the equations of Chapter~\ref{ch:methodology} use.}
-\label{tab:notation}
-\begin{adjustbox}{max width=\linewidth, max totalheight=0.86\textheight, center}%
-\small\setlength{\tabcolsep}{3.5pt}%
-\begin{tabular}{lp{0.72\linewidth}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.19\linewidth}p{0.77\linewidth}@{}}
+\caption[Mathematical notation used in this research.]{Mathematical notation used in this research. Each symbol is defined where it first appears, and Table~\ref{tab:notation-methods} adds the symbols that only the equations of Chapter~\ref{ch:methodology} use.}\label{tab:notation}\\
 \toprule
 Symbol & Meaning \\
 \midrule
+\endfirsthead
+\toprule
+Symbol & Meaning \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
 $G_{\mathrm{approve}}$ & Directed endorsement graph from latest ERC-20 allowances between contracts (owner $\to$ spender), each counted up to its owner's balance \\
-$G_{\mathrm{transfer}}$ & Directed transfer graph between contracts (sender $\to$ receiver; AWP input) \\
+$G_{\mathrm{transfer}}$ & Directed transfer graph between contracts (sender $\to$ recipient; AWP input) \\
 $|V|$ & Number of nodes in a reputation graph \\
 $|E|$ & Number of directed edges in a reputation graph \\
 $w_{ij}$ & Weight of the directed edge from node $i$ to node $j$ \\
 $o_i$ & Out-strength of node $i$, $o_i=\sum_j w_{ij}$ (written $o(u)$, or $o_A(u)$ and $o_T(u)$ per layer, in Chapter~\ref{ch:methodology}) \\
 $P$ & Transition matrix, $P_{ij}=w_{ij}/o_i$ for $o_i>0$; a dangling row is uniform in Equation~\eqref{eq:transition} and zero in Equation~\eqref{eq:transition-impl}, where its mass is redistributed separately \\
 $G_{\mathrm{PR}}$ & Google matrix $dP^{\top}+(1-d)\,\mathbf{1}\mathbf{1}^{\top}/|V|$ (Equation~\eqref{eq:google-matrix}) \\
+$\mathbf{1}$ & Vector of ones \\
 $\mathbf{r}$, $r_i$ & PageRank vector and its entry for node $i$; $\mathbf{r}^{(t)}$ is the iterate after $t$ power-iteration steps \\
-$\boldsymbol{\pi}$ & Teleportation (restart) distribution: uniform for EndorseRank and C-PR, proportional to activeness $X_u$ for AWP, and the normalized allowance-walk score for S-PR \\
+$\boldsymbol{\pi}$ & Teleportation (restart) distribution: uniform for EndorseRank and \mbox{C-PR}, proportional to activeness $X_u$ for AWP, and the normalized allowance-walk score for \mbox{S-PR} \\
 $d$ & PageRank damping factor (default $0.85$); the teleport probability is $1-d$ \\
 $\varepsilon$ & Convergence tolerance of power iteration ($10^{-8}$, on the $\|\cdot\|_1$ change between iterates) \\
 $I_{\max}$ & Iteration cap of power iteration ($300$) \\
-$\lambda$ & Allowance-layer weight of the coupled operator C-PR ($\lambda=0.5$ primary; $0.25$ and $0.75$ sensitivity; at $\lambda=1$ and $\lambda=0$ one layer is walked alone) \\
-$P^{(\lambda)}$ & Coupled transition matrix of C-PR with allowance-layer weight $\lambda$ (Equation~\eqref{eq:coupled-transition}) \\
+$\lambda$ & Allowance-layer weight of the coupled operator \mbox{C-PR} ($\lambda=0.5$ primary; $0.25$ and $0.75$ sensitivity; at $\lambda=1$ and $\lambda=0$ one layer is walked alone) \\
+$P^{(\lambda)}$ & Coupled transition matrix of \mbox{C-PR} with allowance-layer weight $\lambda$ (Equation~\eqref{eq:coupled-transition}) \\
 $\alpha_A(u)$, $\alpha_T(u)$ & Weights of the allowance row and the transfer row in the coupled transition row of node $u$ \\
 $k$ & Logistic time-decay steepness ($0.01$) \\
 $t_0$ & Logistic time-decay midpoint ($180$ days) \\
 $\Delta t$ & Age in days of a transfer or approval before the decay anchor ($T_{\mathrm{obs}}$; $t_1$ in W0) \\
 $\sigma(\Delta t)$ & Logistic time weight of a transfer (AWP) or latest approval (EndorseRank) \\
 $V(z)$ & Bounded value weight of AWP and EndorseRank on a US-dollar amount $z$, $2/(1+e^{-bz})-1$ with $b=\ln 3/m$, so that the median amount $m$ ($m_T=160$ dollars for transfers, $m_A=0.071$ dollars for capped allowances) gets $V=1/2$ \\
-$U$ & Cap on one allowance in the allowance layer of C-PR and in the in-approve value ($16{,}000$ dollars) \\
-$X_u$ & Activeness of address $u$, AWP's restart weight \\
+$U$ & Cap on one allowance in the allowance layer of \mbox{C-PR} and in the in-approve value ($16{,}000$ dollars) \\
+$X_u$ & Activeness of contract $u$, AWP's restart weight \\
 $n$ & Number of contracts in a correlation (matched cohort $n=6{,}443$; spender cohorts $n=7{,}864$ in W0 and $7{,}915$ in W1) \\
 $\rho$ & Spearman's rank correlation coefficient; in the discovery-order test, the share by which a crawl's visits grow before it recomputes its ordering ($1/50$) \\
 $\tau$ & Kendall's rank correlation coefficient; every reported value is $\tau_b$ \\
-$T_{\mathrm{obs}}$ & End of the score window of the same-window evaluation and score freeze of W1 (30~June~2026, 23:59:59 UTC) \\
-$t_1$, $t_2$ & Score freeze of W0 (31~March~2026, 23:59:59 UTC) and end of its label window (30~June~2026) \\
+$\delta$; $\delta(v)$, $\delta'$ & Margin of criterion F2 of rule~B ($0.01$); owner-normalized in-strength of a spender $v$ on the allowance graph (Equation~\eqref{eq:closed-form}) and, as $\delta'$, the crawl ordering by it on the contracts read so far \\
+$T_{\mathrm{obs}}$ & End of the score window of the same-window evaluation and score freeze of W1 (30~June~2026, 23:59:59~UTC) \\
+$t_1$, $t_2$ & Score freeze of W0 (31~March~2026, 23:59:59~UTC) and end of its label window (30~June~2026) \\
 $\mathcal{W}$ & Set of contracts in the evaluation cohort \\
-$s(w)$ & Reputation score of contract $w$ under a given method \\
-$p(w)$ & Proxy value for contract $w$ \\
 $\mathcal{U}$ & Universe of a run of the discovery-order test, the contracts that every crawl of the run visits \\
 $I_T$, $I_A$ & Importance of a contract in that test: the US dollars that user accounts transferred to it, and the balance-capped US dollars that they authorized it to spend (at most $U_{\mathrm{user}}=31{,}000$ dollars per account) \\
 $H_q(I)$, $\mathrm{AUC}_{x}$ & Hot set, the share $q$ of the universe with the largest importance $I$, and the normalized area under a crawl's discovery curve over its first $x|\mathcal{U}|$ visits \\
-C-PR$'$, $\mathrm{IB}'_U$; $D_1$, $D_2$ & A prime marks a walk or count computed on the contracts a crawl has read so far; decision contrasts of $\mathrm{AUC}_{10\%}$, C-PR$'$ minus the breadth-first crawl and C-PR$'$ minus the backlink count $\mathrm{IB}'_U$ \\
-\bottomrule
-\end{tabular}%
-\end{adjustbox}
-\end{table}
+\mbox{C-PR}$'$, $\mathrm{IB}'_U$; $D_1$, $D_2$ & A prime marks a walk or count computed on the contracts a crawl has read so far; decision contrasts of $\mathrm{AUC}_{10\%}$, \mbox{C-PR}$'$ minus the breadth-first crawl and \mbox{C-PR}$'$ minus the backlink count $\mathrm{IB}'_U$ \\
+\end{longtable}
+\endgroup
 
 % Restore chapter-based table numbering for the main text.
 \let\thetable\FrontMatterSavedThetable

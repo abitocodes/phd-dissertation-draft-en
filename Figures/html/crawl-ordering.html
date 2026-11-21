@@ -13,7 +13,9 @@
      count (the most links from read pages first) and PageRank computed on the read pages.
   3. An ordering is judged by its discovery curve: the share of the hot pages (pages above an importance threshold,
      importance being the backlink count over the whole collection or PageRank) visited after a given number of
-     pages; a curve that rises sooner is better. The ideal order and a random order bound the curves.
+     pages; a curve that rises sooner is better. The ideal order and a random order bound the curves. All three
+     curves end at the top right corner (every hot page is visited once every page is). The label "ideal" stands
+     above the dotted line, "an ordering" between its curve and the dashed random line, "random" below that line.
   4. The discovery-order test of this thesis repeats the experiment on the contract graph: a page becomes a contract,
      a link an allowance or transfer edge between two contracts, the hot pages the contracts with the most
      user-account demand (which no ordering reads), and the orderings breadth-first order, the number of contract
@@ -29,14 +31,14 @@
   .top { display:grid; grid-template-columns:56mm 47mm minmax(0, 1fr); column-gap:2.6mm; align-items:stretch; }
   .ord { display:flex; align-items:flex-start; gap:1.4mm; margin-bottom:1.3mm; font-size:7pt; line-height:1.2; }
   .ord b { display:block; font-size:7.4pt; }
-  .num { flex:none; width:4mm; height:4mm; border-radius:50%; background:var(--web); color:#fff; font-weight:700; font-size:6.9pt;
+  .num { flex:none; width:4mm; height:4mm; border-radius:50%; background:var(--web); color:#fff; font-weight:700; font-size:7pt;
     display:inline-flex; align-items:center; justify-content:center; margin-top:0.3mm; }
   .map { margin-top:2mm; display:grid; grid-template-columns:30mm repeat(4, 1fr); column-gap:1.6mm; align-items:stretch; }
   .map .lbl { font-weight:700; font-size:7.3pt; color:var(--coupled-ink); display:flex; align-items:center; line-height:1.15; }
   .map .m { border-radius:1.6mm; background:#FBF9FF; border:0.3mm solid var(--coupled-line); padding:0.9mm 1.4mm; font-size:6.9pt; line-height:1.18; }
   .map .m .w { color:var(--web); font-weight:600; }
   .map .m .c { color:var(--coupled-ink); font-weight:600; }
-  .legend { margin-top:0.6mm; }
+  .legend { margin-top:0.6mm; font-size:7pt; }
   .k { display:inline-block; width:2.8mm; height:2.8mm; border-radius:0.6mm; }
 </style>
 </head>
@@ -90,23 +92,27 @@
   }
   // the page read next: the frontier page the ordering puts first
   Fig.el(g, "rect", { x: 30 - h - 0.9, y: 14.5 - h - 0.9, width: 2 * h + 1.8, height: 2 * h + 1.8, rx: 1.4, fill: "none", stroke: "#7C3AED", "stroke-width": 0.5 });
-  Fig.text(g, 30, 9.1, "next", { size: 2.45, weight: 700, fill: "#6D28D9", anchor: "middle" });
-  Fig.text(g, 5, 9.4, "seed", { size: 2.45, fill: "#155E75", anchor: "middle" });
+  Fig.text(g, 30, 9.1, "next", { size: 2.5, weight: 700, fill: "#6D28D9", anchor: "middle" });
+  Fig.text(g, 5, 9.4, "seed", { size: 2.5, fill: "#155E75", anchor: "middle" });
 
-  // 3. the discovery curve (schematic)
+  // 3. the discovery curve (schematic). All three curves start at the origin and end at the top right corner
+  // (X1, TOP): the ideal order (dotted) rises steeply and stays at the top, the random order (dashed) is the diagonal,
+  // an ordering (violet) lies between them and below the ideal line everywhere.
   const c = document.getElementById("c");
-  const X0 = 7, Y0 = 26.5, X1 = 49, Y1 = 2.5;
+  const X0 = 7, Y0 = 26.5, X1 = 49, Y1 = 2.9, TOP = Y1 + 0.6, FS = 2.5;      // FS: 2.5 mm = 7.1 pt
   Fig.el(c, "path", { d: `M${X0},${Y1 - 0.5} V${Y0} H${X1}`, stroke: "#475569", "stroke-width": 0.35, fill: "none" });
-  Fig.el(c, "path", { d: `M${X0},${Y0} L${X0 + 9},${Y1 + 0.6} H${X1}`, stroke: "#1F2937", "stroke-width": 0.45, "stroke-dasharray": "0.5 0.6", fill: "none" });
-  Fig.el(c, "path", { d: `M${X0},${Y0} L${X1},${Y1 + 0.6}`, stroke: "#9AA4B2", "stroke-width": 0.4, "stroke-dasharray": "1.4 0.9", fill: "none" });
-  Fig.el(c, "path", { d: `M${X0},${Y0} C${X0 + 7},${Y0 - 16} ${X0 + 18},${Y1 + 3} ${X1},${Y1 + 1.8}`, stroke: "#7C3AED", "stroke-width": 0.6, fill: "none" });
-  Fig.text(c, X0 + 10, Y1 + 0.1, "ideal", { size: 2.45, fill: "#1F2937" });
-  Fig.text(c, X0 + 21, Y1 + 7.4, "an ordering", { size: 2.45, weight: 700, fill: "#6D28D9" });
-  Fig.text(c, X0 + 29, Y0 - 11.6, "random", { size: 2.45, fill: "#6B7280" });
-  Fig.text(c, (X0 + X1) / 2, Y0 + 3.6, "pages visited", { size: 2.45, fill: "#5B6472", anchor: "middle" });
-  const yl = Fig.text(c, 2.2, (Y0 + Y1) / 2, "hot pages visited", { size: 2.45, fill: "#5B6472", anchor: "middle" });
+  Fig.el(c, "path", { d: `M${X0},${Y0} L${X0 + 9},${TOP} H${X1}`, stroke: "#1F2937", "stroke-width": 0.45, "stroke-dasharray": "0.5 0.6", fill: "none" });
+  Fig.el(c, "path", { d: `M${X0},${Y0} L${X1},${TOP}`, stroke: "#9AA4B2", "stroke-width": 0.4, "stroke-dasharray": "1.4 0.9", fill: "none" });
+  Fig.el(c, "path", { d: `M${X0},${Y0} C${X0 + 7},${Y0 - 15} ${X0 + 9.5},${Y1 + 0.8} ${X1},${TOP}`, stroke: "#7C3AED", "stroke-width": 0.6, fill: "none" });
+  // labels, each clear of the lines: "ideal" above the dotted line, "an ordering" in the wedge between its curve
+  // and the random line, "random" below the random line
+  Fig.text(c, X0 + 10, Y1 - 0.95, "ideal", { size: FS, fill: "#1F2937" });
+  Fig.text(c, X0 + 14.2, Y1 + 7.4, "an ordering", { size: FS, weight: 700, fill: "#6D28D9" });
+  Fig.text(c, X0 + 29, Y0 - 11.6, "random", { size: FS, fill: "#6B7280" });
+  Fig.text(c, (X0 + X1) / 2, Y0 + 3.6, "pages visited", { size: FS, fill: "#5B6472", anchor: "middle" });
+  const yl = Fig.text(c, 2.2, (Y0 + Y1) / 2, "hot pages visited", { size: FS, fill: "#5B6472", anchor: "middle" });
   yl.setAttribute("transform", `rotate(-90 2.2 ${(Y0 + Y1) / 2})`);
-  Fig.text(c, X1, Y0 - 1.4, "sooner is better", { size: 2.45, fill: "#5B6472", anchor: "end", italic: true });
+  Fig.text(c, X1, Y0 - 1.4, "sooner is better", { size: FS, fill: "#5B6472", anchor: "end", italic: true });
 })();
 </script>
 </body>

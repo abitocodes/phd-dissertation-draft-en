@@ -12,6 +12,7 @@
   (grey, dashed) is drawn from D only, although every node has one. D has no out-edge (it is dangling), so a surfer
   at D always jumps to a uniformly chosen node. The bars on the right are the stationary vector of the worked example
   at d = 0.85, the long-run share of visits: A 0.1375, B 0.2154, C 0.1765, D 0.4706.
+  The words "dangling" (under D) and "teleport" (under the loop at D) stand clear of the dashed teleport curves.
 -->
 <html lang="en">
 <head>
@@ -66,7 +67,7 @@
   Fig.edge(s, N.D, N.C, Object.assign({ bend: -21 }, tele));
   Fig.el(s, "path", { d: `M${N.D[0] + h + 0.3},${N.D[1] - 2.2} c 10,-7 10,11.4 0,4.4`, fill: "none", stroke: "#7A8594",
     "stroke-width": 0.45, "stroke-dasharray": "1 0.7", "marker-end": Fig.marker(s, "#7A8594") });
-  Fig.text(s, 87.6, 34.8, "teleport", { size: 2.5, fill: "#5B6472", anchor: "middle" });
+  Fig.text(s, 89.2, 34.8, "teleport", { size: 2.5, fill: "#5B6472", anchor: "middle" });
   // allowance edges with weight and share of the step
   Fig.edge(s, N.A, N.B, Object.assign({}, allow));
   Fig.edge(s, N.A, N.C, Object.assign({}, allow));
@@ -84,7 +85,8 @@
     Fig.el(s, "rect", { x: x - h, y: y - h, width: 2 * h, height: 2 * h, rx: 1.8, fill: k === "D" ? "#7C3AED" : "#0F766E" });
     Fig.text(s, x, y + 1.25, k, { size: 3.6, weight: 700, fill: "#fff", anchor: "middle" });
   }
-  Fig.text(s, N.D[0], N.D[1] + h + 3.3, "dangling", { size: 2.5, fill: "#6D28D9", anchor: "middle" });
+  // under D, shifted to the right so that it stands clear of the dashed teleport curve from D to C on its left
+  Fig.text(s, N.D[0] + 2.0, N.D[1] + h + 3.3, "dangling", { size: 2.5, fill: "#6D28D9", anchor: "middle" });
 })();
 </script>
 </body>

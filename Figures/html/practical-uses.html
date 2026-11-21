@@ -29,12 +29,12 @@
 <script src="fig.js"></script>
 <style>
 .row { display:grid; grid-template-columns:41mm minmax(0, 1.3fr) minmax(0, 1fr); column-gap:3mm; align-items:center;
-  border-radius:1.8mm; border-left:1.3mm solid; padding:1.3mm 2.2mm 1.3mm 2mm; margin-bottom:1.3mm; }
-.row.head { border:none; padding-top:0; padding-bottom:0.2mm; margin-bottom:0.8mm; font-size:6.6pt; font-weight:700;
+  border-radius:1.8mm; border-left:1.3mm solid; padding:1.4mm 2.2mm 1.4mm 2mm; margin-bottom:1.3mm; }
+.row.head { border:none; padding-top:0; padding-bottom:0.2mm; margin-bottom:0.8mm; font-size:7pt; line-height:1.18; font-weight:700;
   letter-spacing:0.15mm; text-transform:uppercase; color:var(--muted); }
 .who { display:flex; align-items:center; gap:1.4mm; font-weight:700; font-size:7.9pt; line-height:1.15; }
 .sig { font-size:7.1pt; }
-.sig .chip { margin:0 0.6mm 0.6mm 0; }
+.sig .chip { margin:0 0.6mm 0.6mm 0; vertical-align:top; }   /* the chips of a row stand on one line, with or without layer bars */
 .lim { font-size:7.1pt; color:#374151; }
 .r-allow { border-left-color:var(--allow); background:#FFF8EC; }
 .r-count { border-left-color:var(--count); background:#F3F5F8; }
@@ -58,7 +58,7 @@
     <div class="who"><span data-icon="search" data-color="#475569" data-size="4.4"></span>Block explorers, auditors and integrators</div>
     <div class="sig"><span class="chip cnt"><span class="lay"><i class="a on"></i><i class="t on"></i></span><b>Contract backlink count</b></span><br>
       an order of work with no solver; in the deciding run sooner than C&#8209;PR&prime;</div>
-    <div class="lim">A first filter at best; says nothing about the quality of a contract's code.</div>
+    <div class="lim">A first filter at best; says nothing about the quality of a contract’s code.</div>
   </div>
   <div class="row r-transfer">
     <div class="who"><span data-icon="bars" data-color="#2563EB" data-size="4.4"></span>Flow monitoring</div>

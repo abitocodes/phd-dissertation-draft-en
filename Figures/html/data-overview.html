@@ -13,29 +13,31 @@
   analysis; each bar is one kind of record (orange = ERC-20 Approval logs, blue = ERC-20 Transfer logs, grey = all logs,
   transaction senders or code read over RPC) placed on the months it covers. Solid bars are inputs to scores, cohorts
   or same-window checks; hatched bars are kept out of the scores (labels counted after a freeze, or the importance from
-  user accounts). The LANES list in the script holds the same content as data. Lanes, top to bottom:
+  user accounts). The LANES list in the script holds the same content as data. Lanes, top to bottom (the bars, then
+  the note on the right, which is kept short: the caption and the text of the section say the rest):
   1. Extraction: approval and transfer logs of scan A (Oct 2023 to Jun 2026, input) and scan B (Jul to Sep 2026, held out).
-     Every ERC-20 approval and transfer log of the chain; the main analysis reads those of five tokens.
-  2. Matched cohort selection: approvals from Jul 2025 to Jun 2026, five tokens, three owners. Contracts that at least
-     three owners approved on the five tokens in the twelve months before T_obs.
+     Note: every approval and transfer log of the chain; the main analysis reads those of five tokens.
+  2. Matched cohort selection: approvals from Jul 2025 to Jun 2026, five tokens, three owners. Note: contracts approved
+     by at least three owners in the year before T_obs.
   3. Same-window analysis, matched cohort (n = 6,443): approvals (EndorseRank; allowance checks) and transfers (AWP;
-     transfer and stability checks), Jul 2025 to Jun 2026. Events between contracts; both edge types give C-PR and S-PR.
-     RQ1 and the same-window part of RQ4.
+     transfer and stability checks), Jul 2025 to Jun 2026. Note: events between contracts; both edge types give C-PR
+     and S-PR. RQ1 and the same-window part of RQ4.
   4. Discovery-order test at T_obs and at t1: allowance and transfer edges between contracts (input) and, held out,
      I_A (allowances from user accounts) and I_T (transfers from user accounts), Jul 2025 to Jun 2026; at t1 the
-     months Apr 2025 to Mar 2026. The crawls read the edges between contracts; the events of user accounts, which no
-     ordering reads, give the importance of a contract and mark the hot contracts. RQ2.
+     months Apr 2025 to Mar 2026. Note: the crawls read the edges between contracts; the events of user accounts, which
+     no ordering reads, give the importance of a contract and mark the hot contracts. RQ2.
   5. Holdout W0, spender contracts (n = 7,864): approvals and transfers from Apr 2025 to Mar 2026 as score input (and
-     the W0 cohort); held out from Apr to Jun 2026: new approval pairs and new senders. Contract spenders with a
+     the W0 cohort); held out from Apr to Jun 2026: new approval pairs and new senders. Note: contract spenders with a
      five-token allowance set in the year before t1; labels count every account. RQ3, RQ4.
   6. Registered window W1, spender contracts (n = 7,915): score input Jul 2025 to Jun 2026; held out Jul to Sep 2026:
-     pairs and senders. F1 and F2 of rule B on the contract graph's scores; W1 logs extracted after the registration.
-     RQ3, RQ5.
+     pairs and senders. Note: F1 and F2 of rule B on the contract graph's scores; W1 logs extracted after the
+     registration. RQ3, RQ5.
   7. Account types and balances: senders (an address that sent a transaction in any block before 1 Oct 2026 is a user
-     account), code (eth_getCode and smart-account calls at one pinned block, after the label windows), and transfers of
-     the five tokens up to each freeze (owner balances). Transaction senders, addresses without code or with an EIP-7702
-     delegation and smart accounts are user accounts; other code is a contract. Balances also take the transfers before
-     October 2023.
+     account), code (eth_getCode and smart-account calls at one pinned block, after the label windows), and the
+     five-token transfers up to each freeze (owner balances). Note: transaction senders, addresses without code,
+     EIP-7702 accounts and smart accounts are user accounts; other code is a contract. Balances also take the transfers
+     before October 2023.
+  Type: bar texts, notes and legend 7.5 pt, row and month labels 7.4 pt, subscripts 0.85em.
 -->
 <html lang="en">
 <head>
@@ -46,9 +48,10 @@
 <style>
 .wrap { position:relative; width:165mm; }
 #chart { display:block; }
-.note { position:absolute; left:99.4mm; width:65.6mm; font-size:6.8pt; line-height:1.19; color:#374151; }
+.note { position:absolute; left:95.7mm; width:69.3mm; font-size:7.5pt; line-height:1.17; color:#374151; }
 .note b { color:#111827; }
-.legend2 { display:grid; grid-template-columns:11mm 1fr; row-gap:0.6mm; margin-top:0.6mm; font-size:6.8pt; color:#4B5563; }
+sub { font-size:0.85em; line-height:0; }
+.legend2 { display:grid; grid-template-columns:12mm 1fr; row-gap:0.5mm; margin-top:0.6mm; font-size:7.5pt; line-height:1.2; color:#4B5563; }
 .legend2 .k { font-weight:700; color:#111827; }
 .legend2 .items { display:flex; flex-wrap:wrap; gap:0.5mm 2.8mm; align-items:center; }
 .legend2 .items span { display:inline-flex; align-items:center; gap:1.1mm; }
@@ -80,12 +83,12 @@
 // ---- content: one lane per analysis; bars are [from, to] in [year, month] (first day of the month), kind = allow | transfer | other
 const LANES = [
   { title: "Extraction.",
-    note: "Every ERC-20 approval and transfer log of the chain; the main analysis reads those of five tokens.",
+    note: "Every approval and transfer log of the chain; the main analysis reads those of five tokens.",
     rows: [{ label: "Logs", kind: "other", bars: [
       { from: [2023, 10], to: [2026, 7], text: "approval and transfer logs (scan A)" },
       { from: [2026, 7], to: [2026, 10], text: "scan B", held: true }] }] },
   { title: "Matched cohort selection.",
-    note: "Contracts that at least three owners approved on the five tokens in the twelve months before <i>T</i><sub>obs</sub>.",
+    note: "Contracts approved by at least three owners in the year before <i>T</i><sub>obs</sub>.",
     rows: [{ label: "Approval", kind: "allow", bars: [{ from: [2025, 7], to: [2026, 7], text: "five tokens, three owners" }] }] },
   { title: "Same-window analysis, matched cohort (<i>n</i>&nbsp;=&nbsp;6,443).",
     note: "Events between contracts; both edge types give C&#8209;PR and S&#8209;PR. RQ1 and the same-window part of RQ4.",
@@ -106,23 +109,25 @@ const LANES = [
       { label: "Approval", kind: "allow", bars: [{ from: [2025, 4], to: [2026, 4], text: "score input; W0 cohort" }, { from: [2026, 4], to: [2026, 7], text: "pairs", held: true }] },
       { label: "Transfer", kind: "transfer", bars: [{ from: [2025, 4], to: [2026, 4], text: "score input" }, { from: [2026, 4], to: [2026, 7], text: "senders", held: true }] }] },
   { title: "Registered window W1, spender contracts (<i>n</i>&nbsp;=&nbsp;7,915).",
-    note: "F1 and F2 of rule B on the contract graph's scores; W1 logs extracted after the registration. RQ3, RQ5.",
+    note: "F1 and F2 of rule B on the contract graph’s scores; W1 logs extracted after the registration. RQ3, RQ5.",
     rows: [
       { label: "Approval", kind: "allow", bars: [{ from: [2025, 7], to: [2026, 7], text: "score input" }, { from: [2026, 7], to: [2026, 10], text: "pairs", held: true }] },
       { label: "Transfer", kind: "transfer", bars: [{ from: [2025, 7], to: [2026, 7], text: "score input" }, { from: [2026, 7], to: [2026, 10], text: "senders", held: true }] }] },
   { title: "Account types and balances.",
-    note: "Transaction senders, addresses without code or with an EIP-7702 delegation and smart accounts are user accounts; other code is a contract. Balances also take the transfers before October 2023.",
+    note: "Transaction senders, addresses without code, EIP-7702 accounts and smart accounts are user accounts; other code is a contract. Balances also take the transfers before October 2023.",
     rows: [
       { label: "Senders", kind: "other", bars: [{ from: [2023, 10], to: [2026, 10], text: "sent a transaction in any block before 1 Oct 2026: user account" }] },
       { label: "Code", kind: "other", pinned: "eth_getCode and smart-account calls at one pinned block" },
-      { label: "Transfer", kind: "transfer", bars: [{ from: [2023, 10], to: [2026, 7], text: "transfers of the five tokens up to each freeze: owner balances" }] }] },
+      { label: "Transfer", kind: "transfer", bars: [{ from: [2023, 10], to: [2026, 7], text: "five-token transfers up to each freeze: owner balances" }] }] },
 ];
 
 // ---- geometry (mm)
-const X0 = 14.0, COMP = 0.72, FULL = 3.82;                 // timeline start; mm per compressed and per full month
+const X0 = 12.8, COMP = 0.58, FULL = 3.82;                 // timeline start; mm per compressed and per full month
 const mx = ([y, m]) => { const i = (y - 2023) * 12 + (m - 10); return i <= 18 ? X0 + i * COMP : X0 + 18 * COMP + (i - 18) * FULL; };
 const xa = mx([2023, 10]), xq = mx([2025, 4]), xj = mx([2026, 1]), xw = mx([2026, 4]), xt = mx([2026, 7]), xe = mx([2026, 10]);
-const HEAD = 11.2, PITCH = 3.9, BAR = 3.25, PAD = 0.85, SPAN = 3.6, FS = 2.4;   // FS: 2.4 mm = 6.8 pt
+const HEAD = 11.2, PITCH = 4.0, BAR = 3.4, PAD = 0.8, SPAN = 3.5;
+const FS = 2.65, FL = 2.6, SUB = 0.85;                     // text 2.65 mm = 7.5 pt; row and month labels 7.4 pt; subscripts 0.85em
+const CAP = 0.35;                                          // half the height of a capital, in em: centres a line of text on a bar
 const COL = { allow: { fill: "#FDE2B8", line: "#D97706", ink: "#7C3F00", label: "#B45309" },
               transfer: { fill: "#D3E2FF", line: "#2563EB", ink: "#1E3A8A", label: "#1D4ED8" },
               other: { fill: "#E5E7EB", line: "#6B7280", ink: "#374151", label: "#4B5563" } };
@@ -136,7 +141,7 @@ function rich(x, y, s, o, parent) {
   let shift = 0;
   for (const part of s.split(/(\$[^$]+\$|_\{[^}]+\})/).filter(Boolean)) {
     const ts = Fig.el(t, "tspan", {});
-    if (part.startsWith("_{")) { ts.textContent = part.slice(2, -1); ts.setAttribute("font-size", size * 0.72); ts.setAttribute("dy", 0.55); shift = 0.55; continue; }
+    if (part.startsWith("_{")) { ts.textContent = part.slice(2, -1); ts.setAttribute("font-size", size * SUB); ts.setAttribute("dy", 0.6); shift = 0.6; continue; }
     if (shift) { ts.setAttribute("dy", -shift); shift = 0; }
     if (part.startsWith("$")) { ts.textContent = part.slice(1, -1); ts.setAttribute("font-style", "italic"); }
     else ts.textContent = part;
@@ -144,7 +149,7 @@ function rich(x, y, s, o, parent) {
   return t;
 }
 // white box behind a text element (drawn just below it)
-function halo(t, padX = 0.6, h = 2.6, yc) {
+function halo(t, padX = 0.6, h = 2.9, yc) {
   const bb = t.getBBox();
   const r = E("rect", { x: bb.x - padX, y: (yc ?? bb.y + bb.height / 2) - h / 2, width: bb.width + 2 * padX, height: h, rx: 0.4, fill: "#fff" });
   t.parentNode.insertBefore(r, t);
@@ -190,15 +195,15 @@ for (const x of [xw, xt]) E("path", { d: `M${x},${HEAD - 0.5} V${BOTTOM + 0.7}`,
 function brace(x1, x2, yb, label) {
   const m = (x1 + x2) / 2;
   E("path", { d: `M${x1},${yb + 1} q0,-1 1,-1 H${m - 1} q1,0 1,-1 q0,1 1,1 H${x2 - 1} q1,0 1,1`, fill: "none", stroke: "#374151", "stroke-width": 0.3 });
-  rich(m, yb - 1.5, label, { size: FS, fill: "#374151" });
+  rich(m, yb - 1.6, label, { size: FS, fill: "#374151" });
 }
 brace(xa + 0.2, xt - 0.2, 3.1, "scan A (the registered analysis scores all of it)");
 brace(xt + 0.2, xe - 0.2, 3.1, "scan B: W1 labels");
-rich((xa + xq) / 2, 7.1, "Oct 2023 – Mar 2025", { size: 2.25, weight: 700 });
+rich((xa + xq) / 2, 7.1, "Oct 2023 – Mar 2025", { size: 2.5, weight: 700 });
 rich((xq + xj) / 2, 7.1, "2025", { size: FS, weight: 700 });
 rich((xj + xe) / 2, 7.1, "2026", { size: FS, weight: 700 });
-rich(xq - 1.5, 10.1, "compressed", { size: 2.2, fill: "#6B7280", anchor: "end" });
-"AMJJASONDJFMAMJJAS".split("").forEach((c, i) => rich(xq + (i + 0.5) * FULL, 10.1, c, { size: 2.3, fill: "#374151" }));
+rich(xq - 1.5, 10.1, "compressed", { size: 2.5, fill: "#6B7280", anchor: "end" });
+"AMJJASONDJFMAMJJAS".split("").forEach((c, i) => rich(xq + (i + 0.5) * FULL, 10.1, c, { size: FL, fill: "#374151" }));
 E("path", { d: `M${xq - 0.9},10.8 l0.55,-1.5 M${xq - 0.25},10.8 l0.55,-1.5`, stroke: "#6B7280", "stroke-width": 0.3 });
 
 // bars, row labels, the t1 span and the pinned block
@@ -206,38 +211,38 @@ function bar(x1, x2, yc, kind, text, held) {
   const c = COL[kind], x = x1 + 0.12, w = x2 - x1 - 0.24, yb = yc - BAR / 2;
   if (held) hatch(gBars, x, yb, w, BAR, c.line, 0.55);
   else E("rect", { x, y: yb, width: w, height: BAR, rx: 0.55, fill: c.fill, stroke: c.line, "stroke-width": 0.3 }, undefined, gBars);
-  const t = rich((x1 + x2) / 2, yc + 0.84, text, { size: FS, fill: c.ink }, gText);
-  if (held) halo(t, 0.5, 2.55, yc);
+  const t = rich((x1 + x2) / 2, yc + FS * CAP, text, { size: FS, fill: c.ink }, gText);
+  if (held) halo(t, 0.3, 2.8, yc);                       // narrow, so that the hatching of a three-month bar still shows
 }
 LANES.forEach((lane, i) => {
   const top = laneTop[i];
   lane.rows.forEach((row, r) => {
     const yc = top + PAD + r * PITCH + PITCH / 2;
-    rich(X0 - 0.8, yc + 0.84, row.label, { size: 2.3, anchor: "end", fill: COL[row.kind].label, weight: 600 }, gText);
+    rich(X0 - 0.8, yc + FL * CAP, row.label, { size: FL, anchor: "end", fill: COL[row.kind].label, weight: 600 }, gText);
     for (const b of row.bars || []) bar(mx(b.from), mx(b.to), yc, row.kind, b.text, b.held);
     if (row.pinned) {
       const xd = xe + 1.3;
       E("path", { d: `M${xd},${yc - 1.25} l1.25,1.25 l-1.25,1.25 l-1.25,-1.25 z`, fill: "#4B5563" }, undefined, gBars);
-      const t = rich(xd - 1.8, yc + 0.84, row.pinned, { size: FS, anchor: "end", fill: "#374151" }, gText);
-      halo(t, 0.5, 2.6, yc);
+      const t = rich(xd - 1.8, yc + FS * CAP, row.pinned, { size: FS, anchor: "end", fill: "#374151" }, gText);
+      halo(t, 0.5, 2.9, yc);
     }
   });
   if (lane.span) {
     const ys = top + PAD + lane.rows.length * PITCH + SPAN / 2, x1 = mx(lane.span.from), x2 = mx(lane.span.to);
     E("path", { d: `M${x1 + 0.4},${ys} H${x2 - 0.4}`, stroke: "#6B7280", "stroke-width": 0.3, "marker-end": Fig.marker(svg, "#6B7280") }, undefined, gBars);
     E("path", { d: `M${x2 - 0.4},${ys} H${x1 + 0.4}`, stroke: "#6B7280", "stroke-width": 0.3, "marker-end": Fig.marker(svg, "#6B7280") }, undefined, gBars);
-    const t = rich((x1 + x2) / 2, ys + 0.8, lane.span.text, { size: FS, fill: "#4B5563" }, gText);
-    halo(t, 0.8, 2.6, ys);
+    const t = rich((x1 + x2) / 2, ys + FS * CAP - 0.05, lane.span.text, { size: FS, fill: "#4B5563" }, gText);
+    halo(t, 0.8, 2.9, ys);
   }
 });
 
 // freeze labels
-rich(xw + 0.6, BOTTOM + 3.3, "31 Mar 2026", { size: FS, anchor: "end", weight: 600 });
-rich(xw + 0.6, BOTTOM + 6.0, "W0 freeze $t$_{1}", { size: FS, anchor: "end", fill: "#4B5563" });
-rich(xt - 0.6, BOTTOM + 3.3, "30 Jun 2026", { size: FS, anchor: "start", weight: 600 });
-rich(xt - 0.6, BOTTOM + 6.0, "$T$_{obs}, W1 freeze", { size: FS, anchor: "start", fill: "#4B5563" });
+rich(xw + 0.6, BOTTOM + 3.4, "31 Mar 2026", { size: FS, anchor: "end", weight: 600 });
+rich(xw + 0.6, BOTTOM + 6.3, "W0 freeze $t$_{1}", { size: FS, anchor: "end", fill: "#4B5563" });
+rich(xt - 0.6, BOTTOM + 3.4, "30 Jun 2026", { size: FS, anchor: "start", weight: 600 });
+rich(xt - 0.6, BOTTOM + 6.3, "$T$_{obs}, W1 freeze", { size: FS, anchor: "start", fill: "#4B5563" });
 
-const H = BOTTOM + 6.9;
+const H = BOTTOM + 7.45;
 svg.setAttribute("viewBox", `0 0 165 ${H}`);
 svg.setAttribute("height", H + "mm");
 wrap.style.height = H + "mm";

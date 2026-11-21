@@ -4,7 +4,7 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/window-w1/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Sensitivity to the balance cap.]{Sensitivity to the balance cap: Kendall $\tau$ on the two spender labels with the allowance layer capped at the owner's balance (the main analysis) and uncapped, where every positive latest allowance between contracts counts at its own value. Each cell reads capped / uncapped. Without the cap the allowance layer has 275{,}917 pairs at $t_1$ against 17{,}940 with it, and 302{,}559 against 115{,}006 at $T_{\mathrm{obs}}$. AWP reads no allowance, so its two values are equal. In the lower block the left cell is the contrast of the main analysis and the right cell the same contrast on the uncapped layer. The uncapped layer decides no rule. Intervals: 95\% paired bootstrap (400 resamples, seed 42).}
+\caption[Sensitivity to the balance cap.]{Sensitivity to the balance cap: Kendall $\tau$ on the two spender labels with the allowance layer capped at the owner's balance (the main analysis) and uncapped, where every positive latest allowance between contracts counts at its own value. Each cell of the upper block reads capped / uncapped. Without the cap the allowance layer has 275{,}917 pairs at $t_1$ against 17{,}940 with it, and 302{,}559 against 115{,}006 at $T_{\mathrm{obs}}$. AWP reads no allowance, so its two values are equal. The lower block has heads of its own: each row gives one contrast of the window it names, with the capped layer (the main analysis) and with the uncapped layer. The uncapped layer decides no rule. Intervals: 95\% paired bootstrap (400 resamples, seed 42).}
 \label{tab:uncapped-sensitivity}
 \fitwidth{%
 \begin{tabular}{lcccc}
@@ -21,11 +21,12 @@ AWP & 0.098 / 0.098 & 0.330 / 0.330 & 0.064 / 0.064 & 0.314 / 0.314 \\
 In-approve degree at the freeze & 0.204 / 0.105 & 0.091 / 0.196 & 0.181 / 0.102 & 0.072 / 0.189 \\
 Union in-degree at the freeze & 0.126 / 0.146 & 0.306 / 0.286 & 0.093 / 0.118 & 0.292 / 0.274 \\
 \midrule
-\multicolumn{5}{l}{\emph{Contrasts ($\Delta\tau$ [95\% CI]), capped / uncapped}} \\
-W0: C-PR minus C-PR ($\lambda=1$), new approval pairs & \multicolumn{2}{c}{$-0.025$ [-0.045, -0.004]} & \multicolumn{2}{c}{$+0.064$ [0.051, 0.076]} \\
-W0: C-PR minus C-PR ($\lambda=0$), new transfer senders & \multicolumn{2}{c}{$-0.014$ [-0.019, -0.008]} & \multicolumn{2}{c}{$-0.019$ [-0.027, -0.012]} \\
+\emph{Contrasts ($\Delta\tau$ [95\% CI])} & \multicolumn{2}{c}{Capped} & \multicolumn{2}{c}{Uncapped} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+W0: C-PR minus C-PR ($\lambda=1$), new approval pairs & \multicolumn{2}{c}{$-0.025$ [$-$0.045, $-$0.004]} & \multicolumn{2}{c}{$+0.064$ [0.051, 0.076]} \\
+W0: C-PR minus C-PR ($\lambda=0$), new transfer senders & \multicolumn{2}{c}{$-0.014$ [$-$0.019, $-$0.008]} & \multicolumn{2}{c}{$-0.019$ [$-$0.027, $-$0.012]} \\
 W1: C-PR minus C-PR ($\lambda=0$), new approval pairs & \multicolumn{2}{c}{$+0.074$ [0.060, 0.087]} & \multicolumn{2}{c}{$+0.088$ [0.074, 0.103]} \\
-W1: C-PR minus C-PR ($\lambda=0$), new transfer senders & \multicolumn{2}{c}{$-0.016$ [-0.022, -0.012]} & \multicolumn{2}{c}{$-0.018$ [-0.028, -0.011]} \\
+W1: C-PR minus C-PR ($\lambda=0$), new transfer senders & \multicolumn{2}{c}{$-0.016$ [$-$0.022, $-$0.012]} & \multicolumn{2}{c}{$-0.018$ [$-$0.028, $-$0.011]} \\
 \bottomrule
 \end{tabular}
 }

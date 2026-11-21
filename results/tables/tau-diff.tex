@@ -2,18 +2,18 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/same-window/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Same-window paired contrasts between EndorseRank and AWP.]{Paired bootstrap tests of differences between Kendall $\tau$ coefficients of EndorseRank and AWP in the same window (matched cohort, $n=6{,}443$ contracts). Family entries use the family-mean $\tau$; the same contract resamples are used for $a$ and $b$, so the interval is on the paired difference. An interval excluding 0 indicates a difference not attributable to sampling variation at the 5\% level. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
+\caption[Same-window paired contrasts between EndorseRank and AWP.]{Paired bootstrap tests of differences between Kendall $\tau$ coefficients of EndorseRank and AWP in the same window (matched cohort, $n=6{,}443$ contracts). Family entries use the family-mean $\tau$; the same contract resamples are used for $a$ and $b$, so the interval is on the paired difference. An interval excluding 0 indicates a difference not attributable to sampling variation at the 5\% level. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42). $P(\Delta\tau>0)$ is the share of the resamples in which $\Delta\tau>0$; it describes the bootstrap distribution and is not a test.}
 \label{tab:tau-diff}
 \fitwidth{%
-\begin{tabular}{lccccc}
+\begin{tabular}{llccccc}
 \toprule
-Contrast ($a$ minus $b$) & $\tau(a)$ & $\tau(b)$ & $\Delta\tau$ & 95\% CI of $\Delta\tau$ & $P(\Delta\tau>0)$ \\
+ & Contrast ($a$ minus $b$) & $\tau(a)$ & $\tau(b)$ & $\Delta\tau$ & 95\% CI of $\Delta\tau$ & $P(\Delta\tau>0)$ \\
 \midrule
-EndorseRank allowance minus EndorseRank transfer & 0.839 & 0.297 & +0.542 & [0.520, 0.563] & 1.000 \\
-AWP transfer minus EndorseRank transfer & 0.755 & 0.297 & +0.458 & [0.438, 0.476] & 1.000 \\
-EndorseRank allowance minus AWP allowance & 0.839 & 0.227 & +0.613 & [0.591, 0.632] & 1.000 \\
-AWP stability minus EndorseRank stability & 0.643 & 0.220 & +0.422 & [0.404, 0.438] & 1.000 \\
-EndorseRank in-approve degree minus EndorseRank in-degree & 0.847 & 0.305 & +0.542 & [0.521, 0.564] & 1.000 \\
+i & EndorseRank allowance minus EndorseRank transfer & 0.839 & 0.297 & +0.542 & [0.520, 0.563] & 1.000 \\
+ii & AWP transfer minus EndorseRank transfer & 0.755 & 0.297 & +0.458 & [0.438, 0.476] & 1.000 \\
+iii & EndorseRank allowance minus AWP allowance & 0.839 & 0.227 & +0.613 & [0.591, 0.632] & 1.000 \\
+iv & AWP stability minus EndorseRank stability & 0.643 & 0.220 & +0.422 & [0.404, 0.438] & 1.000 \\
+v & EndorseRank in-approve degree minus EndorseRank in-degree & 0.847 & 0.305 & +0.542 & [0.521, 0.564] & 1.000 \\
 \bottomrule
 \end{tabular}
 }

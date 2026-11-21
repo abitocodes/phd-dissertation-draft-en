@@ -1,10 +1,6 @@
 % !TEX root = ../main.tex
 
-\clearpage
-
-{\Large\bfseries Table of Contents\par}
-
-\vspace{0.75em}
+\chapter*{Table of Contents}
 
 % The entries are set closer than the body text, like the lists of figures and tables.
 \begingroup\setstretch{1.2}
@@ -12,6 +8,10 @@
 \TOCentry{}{{\textbf{Declaration}}}{ch:declaration}
 
 \TOCentry{}{{\textbf{Abstract}}}{ch:abstract}
+
+\TOCentry{}{{\textbf{List of Figures}}}{ch:list-of-figures}
+
+\TOCentry{}{{\textbf{List of Tables}}}{ch:list-of-tables}
 
 \TOCentry{}{{\textbf{Abbreviations and Notation}}}{ch:abbreviations}
 
@@ -77,7 +77,7 @@
 
 \hspace*{1.5em}\TOCentry{2.18}{{Approvals as security-relevant events}}{sec:approval-security}
 
-\hspace*{1.5em}\TOCentry{2.19}{{AWP in depth: what the transfer-graph baseline measures}}{sec:awp-in-depth}
+\hspace*{1.5em}\TOCentry{2.19}{{AWP in depth: what the transfer-graph reference measures}}{sec:awp-in-depth}
 
 \hspace*{1.5em}\TOCentry{2.20}{{Comparison of graph reputation methods}}{sec:method-comparison-table}
 
@@ -122,18 +122,6 @@
 \hspace*{1.5em}\TOCentry{3.16}{{Implementation notes}}{sec:implementation-notes}
 
 \hspace*{1.5em}\TOCentry{3.17}{{Ethics}}{sec:ethics}
-
-\hspace*{3.0em}\TOCentry{}{{\textbullet\ Privacy and anonymity}}{sub:privacy-anonymity}
-
-\hspace*{3.0em}\TOCentry{}{{\textbullet\ Data minimization}}{sub:data-minimization}
-
-\hspace*{3.0em}\TOCentry{}{{\textbullet\ Data usage and compliance}}{sub:data-usage-compliance}
-
-\hspace*{3.0em}\TOCentry{}{{\textbullet\ Fairness and transparency}}{sub:fairness-transparency}
-
-\hspace*{3.0em}\TOCentry{}{{\textbullet\ Responsible disclosure and impact}}{sub:responsible-disclosure}
-
-\hspace*{3.0em}\TOCentry{}{{\textbullet\ Summary of methodological commitments}}{sub:methodological-commitments}
 
 \TOCentry{4}{{\textbf{Implementation and Empirical Results}}}{ch:results}
 
@@ -235,15 +223,10 @@
 
 \hspace*{1.5em}\TOCentry{8.7}{{\textbf{Ethics Clearance Certificate}}}{ch:appendix-ethics}
 
-\hspace*{3.0em}\TOCentry{8.7.1}{{Certificate}}{sec:ethics-certificate}
-
 \endgroup
 
-\clearpage
-
-{\Large\bfseries List of Figures\par}
-
-\vspace{0.75em}
+\chapter*{List of Figures}
+\label{ch:list-of-figures}
 
 \begingroup\setstretch{1.2}
 \makeatletter
@@ -251,11 +234,8 @@
 \makeatother
 \par\endgroup
 
-\clearpage
-
-{\Large\bfseries List of Tables\par}
-
-\vspace{0.75em}
+\chapter*{List of Tables}
+\label{ch:list-of-tables}
 
 \begingroup\setstretch{1.2}
 \makeatletter

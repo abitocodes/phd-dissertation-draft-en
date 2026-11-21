@@ -2,7 +2,7 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/holdout-w0/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Paired bootstrap differences on the spender holdout W0.]{Paired bootstrap differences on the spender holdout W0 ($n=7{,}864$ contracts; 400 resamples shared by $a$ and $b$, seed 42). The first block holds the two contrasts of the primary part of rule A, fixed in the analysis plan before the study extracted any data and applied here to the scores of the contract graph (C-PR against C-PR ($\lambda=1$) on new approval pairs and against C-PR ($\lambda=0$) on new transfer senders). The second block was computed after the labels were known: the increment of C-PR ($\lambda=1$), the allowance layer walked alone, over its raw degree at $t_1$, the same comparisons for S-PR, and the increments of EndorseRank and AWP over their raw degrees; C-PR's other contrasts are in Table~\ref{tab:cpr-contrasts}. The third block sets C-PR beside the union in-degree. Primary part of rule A (C-PR no worse than C-PR ($\lambda=1$) on new approval pairs and better than C-PR ($\lambda=0$) on new transfer senders): no worse fails, better fails, so the rule is not met. The differences between EndorseRank and AWP are in Table~\ref{tab:endorserank-awp-holdout}.}
+\caption[Paired bootstrap differences on the spender holdout W0.]{Paired bootstrap differences on the spender holdout W0 ($n=7{,}864$ contracts; 400 resamples shared by $a$ and $b$, seed 42). The first block holds the two contrasts of the primary part of rule~A, fixed in the analysis plan before the study extracted any data and applied here to the scores of the contract graph (\mbox{C-PR} against \mbox{C-PR} ($\lambda=1$) on new approval pairs and against \mbox{C-PR} ($\lambda=0$) on new transfer senders). The second block was computed after the labels were known: the increment of \mbox{C-PR} ($\lambda=1$), the allowance layer walked alone, over its raw degree at $t_1$, the two comparisons of the first block for \mbox{S-PR}, and the increments of EndorseRank and AWP over their raw degrees; \mbox{C-PR}'s other contrasts are in Table~\ref{tab:cpr-contrasts}. The third block sets \mbox{C-PR} beside the union in-degree. Primary part of rule~A (\mbox{C-PR} no worse than \mbox{C-PR} ($\lambda=1$) on new approval pairs and better than \mbox{C-PR} ($\lambda=0$) on new transfer senders): no worse fails, better fails, so the rule is not met. The differences between EndorseRank and AWP are in Table~\ref{tab:endorserank-awp-holdout}. $P(\Delta\tau>0)$ is the share of the resamples in which $\Delta\tau>0$; it describes the bootstrap distribution and is not a test.}
 \label{tab:holdout-diff}
 \fitwidth{%
 \begin{tabular}{llccccc}
@@ -10,19 +10,19 @@
 Contrast ($a$ minus $b$) & Label & $\tau(a)$ & $\tau(b)$ & $\Delta\tau$ & 95\% CI of $\Delta\tau$ & $P(\Delta\tau>0)$ \\
 \midrule
 \multicolumn{7}{l}{\emph{Rule A, primary part, fixed in the plan}} \\
-C-PR minus C-PR ($\lambda=1$) & new approval pairs & 0.142 & 0.167 & -0.025 & [-0.045, -0.004] & 0.015 \\
-C-PR minus C-PR ($\lambda=0$) & new transfer senders & 0.254 & 0.268 & -0.014 & [-0.019, -0.008] & 0.003 \\
+C-PR minus C-PR ($\lambda=1$) & new approval pairs & 0.142 & 0.167 & $-$0.025 & [$-$0.045, $-$0.004] & 0.015 \\
+C-PR minus C-PR ($\lambda=0$) & new transfer senders & 0.254 & 0.268 & $-$0.014 & [$-$0.019, $-$0.008] & 0.003 \\
 \midrule
 \multicolumn{7}{l}{\emph{Computed after the labels were known}} \\
-C-PR ($\lambda=1$) minus $t_1$ in-approve degree & new approval pairs & 0.167 & 0.204 & -0.037 & [-0.046, -0.028] & 0.000 \\
-S-PR minus C-PR ($\lambda=1$) & new approval pairs & 0.091 & 0.167 & -0.077 & [-0.098, -0.055] & 0.000 \\
-S-PR minus C-PR ($\lambda=0$) & new transfer senders & 0.264 & 0.268 & -0.003 & [-0.013, 0.008] & 0.285 \\
-EndorseRank minus $t_1$ in-approve degree & new approval pairs & 0.168 & 0.204 & -0.036 & [-0.046, -0.027] & 0.000 \\
-AWP minus $t_1$ in-degree & new transfer senders & 0.330 & 0.318 & +0.012 & [0.003, 0.023] & 0.998 \\
+C-PR ($\lambda=1$) minus $t_1$ in-approve degree & new approval pairs & 0.167 & 0.204 & $-$0.037 & [$-$0.046, $-$0.028] & 0.000 \\
+S-PR minus C-PR ($\lambda=1$) & new approval pairs & 0.091 & 0.167 & $-$0.077 & [$-$0.098, $-$0.055] & 0.000 \\
+S-PR minus C-PR ($\lambda=0$) & new transfer senders & 0.264 & 0.268 & $-$0.003 & [$-$0.013, 0.008] & 0.285 \\
+EndorseRank minus $t_1$ in-approve degree & new approval pairs & 0.168 & 0.204 & $-$0.036 & [$-$0.046, $-$0.027] & 0.000 \\
+AWP minus $t_1$ transfer in-degree & new transfer senders & 0.330 & 0.318 & +0.012 & [0.003, 0.023] & 0.998 \\
 \midrule
 \multicolumn{7}{l}{\emph{C-PR against the union in-degree, the baseline of the contract graph}} \\
 C-PR minus $t_1$ union in-degree & new approval pairs & 0.142 & 0.126 & +0.016 & [0.007, 0.024] & 1.000 \\
-C-PR minus $t_1$ union in-degree & new transfer senders & 0.254 & 0.306 & -0.053 & [-0.061, -0.043] & 0.000 \\
+C-PR minus $t_1$ union in-degree & new transfer senders & 0.254 & 0.306 & $-$0.053 & [$-$0.061, $-$0.043] & 0.000 \\
 \bottomrule
 \end{tabular}
 }

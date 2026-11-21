@@ -8,6 +8,8 @@
 }{%
   \setmainfont{TeX Gyre Termes}%
 }
+% The PDF carries the typed characters as its text (Times New Roman maps the semicolon glyph to U+037E otherwise).
+\ifdefined\XeTeXgenerateactualtext\XeTeXgenerateactualtext=1\fi
 \usepackage{setspace}
 \usepackage{hyperref}
 \usepackage{xurl}
@@ -29,6 +31,22 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+% Digits, the decimal point and the comma of formulas are set in the text font, so that a number looks
+% the same in a sentence and in a formula.
+\DeclareSymbolFont{textdigits}{TU}{\rmdefault}{m}{n}
+\SetSymbolFont{textdigits}{bold}{TU}{\rmdefault}{b}{n}
+\DeclareMathSymbol{0}{\mathalpha}{textdigits}{`0}
+\DeclareMathSymbol{1}{\mathalpha}{textdigits}{`1}
+\DeclareMathSymbol{2}{\mathalpha}{textdigits}{`2}
+\DeclareMathSymbol{3}{\mathalpha}{textdigits}{`3}
+\DeclareMathSymbol{4}{\mathalpha}{textdigits}{`4}
+\DeclareMathSymbol{5}{\mathalpha}{textdigits}{`5}
+\DeclareMathSymbol{6}{\mathalpha}{textdigits}{`6}
+\DeclareMathSymbol{7}{\mathalpha}{textdigits}{`7}
+\DeclareMathSymbol{8}{\mathalpha}{textdigits}{`8}
+\DeclareMathSymbol{9}{\mathalpha}{textdigits}{`9}
+\DeclareMathSymbol{.}{\mathord}{textdigits}{`.}
+\DeclareMathSymbol{,}{\mathpunct}{textdigits}{`,}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{algorithm}
@@ -37,6 +55,8 @@
 \usepackage{tabularx}
 \usepackage{adjustbox}
 \usepackage{subcaption}
+\usepackage{pdfpages}
+\usepackage{placeins}
 \usepackage[bottom,hang,flushmargin]{footmisc}
 % Keep tables within the text block (no right-margin overflow).
 \newcommand{\fitwidth}[1]{%
@@ -49,12 +69,27 @@
   hidelinks,
   pdftitle={Integrating ERC-20 Allowance Edges into PageRank for Enhanced On-Chain Wallet Reputation Scoring},
   pdfauthor={Taehong Kwon},
-  pdfsubject={Doctor of Philosophy dissertation, Computer Science, University of South Africa},
-  pdfkeywords={coupled PageRank, smart contract, crawl ordering, on-chain reputation, ERC-20 allowance, EndorseRank, Adaptive Weighted PageRank, decentralized finance, temporal holdout, pre-registration, Arbitrum One, Kendall's tau}
+  pdfsubject={Doctor of Philosophy thesis, Computer Science, University of South Africa},
+  pdfkeywords={coupled PageRank, smart contract, crawl ordering, on-chain reputation, ERC-20 allowance, EndorseRank, Adaptive Weighted PageRank, temporal holdout, Arbitrum One, Kendall's tau}
 }
 \def\UrlFont{\ttfamily}
+% An address does not break directly after its colon.
+\renewcommand{\UrlNoBreaks}{\do\(\do\[\do\{\do\<\do\:}
 \emergencystretch=2em
-\DeclareRobustCommand{\texttt}[1]{{\ttfamily\seqsplit{#1}}}
+% Monospaced names break only after a slash, a full stop, a hyphen or an underscore, never inside a word.
+\ExplSyntaxOn
+\tl_new:N \l__thesis_tt_tl
+\NewDocumentCommand{\ThesisTT}{m}
+  {
+    \tl_set:Nn \l__thesis_tt_tl {#1}
+    \regex_replace_all:nnN { ([\/\.\-]) } { \1 \c{allowbreak} } \l__thesis_tt_tl
+    \regex_replace_all:nnN { \c{_} } { \c{_} \c{allowbreak} } \l__thesis_tt_tl
+    { \ttfamily \tl_use:N \l__thesis_tt_tl }
+  }
+\ExplSyntaxOff
+\DeclareRobustCommand{\texttt}[1]{\ThesisTT{#1}}
+% Names that must not be hyphenated inside the second word.
+\hyphenation{Endorse-Rank Page-Rank Hodge-Rank}
 \RecustomVerbatimEnvironment{verbatim}{Verbatim}{%
   breaklines=true,breakanywhere=true,fontsize=\small,formatcom=\ttfamily}
 \setstretch{1.58}
@@ -97,9 +132,17 @@
   \subsection{#2}%
   \if\relax\detokenize{#1}\relax\else\label{#1}\fi
 }
+% Entries of the hand-kept table of contents, with the leaders and the page-number box of the lists of
+% figures and tables.
+\makeatletter
+\renewcommand{\@pnumwidth}{2.2em}
+\renewcommand{\@tocrmarg}{3.2em}
 \newcommand{\TOCentry}[3]{%
-  \noindent\hyperref[#3]{\makebox[2.4em][l]{#1}#2}\nobreak\dotfill\ \hyperref[#3]{\pageref*{#3}}\par\vspace{0.15em}%
+  \noindent\hyperref[#3]{\makebox[2.4em][l]{#1}#2}\nobreak
+  \leaders\hbox{$\m@th\mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill\nobreak
+  \hb@xt@\@pnumwidth{\hfil\hyperref[#3]{\pageref*{#3}}}\par\vspace{0.15em}%
 }
+\makeatother
 \newcommand{\dissertationResultHeading}[1]{%
   \par\addvspace{0.45\baselineskip}%
   \noindent\textbf{#1}\par\nobreak\addvspace{0.06\baselineskip}%

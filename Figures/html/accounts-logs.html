@@ -13,7 +13,7 @@
   3. The logs are a permanent part of the chain's history that any full node or index provider can recompute; the
      study reads the Approval and Transfer logs.
   4. What the study keeps: an event whose two ends are contracts becomes an edge of the contract graph; an event
-     with a user account at one end is no edge and enters only as importance and in the labels.
+     with a user account at one end is no edge and counts only in the cohort rule, as importance and in the labels.
 -->
 <html lang="en">
 <head>
@@ -58,7 +58,7 @@
     <div class="col panel contract">
       <div class="h"><span data-icon="contract" data-color="#0F766E" data-size="4.4"></span>&nbsp;Contracts</div>
       <div class="note" style="color:var(--ink);font-size:7pt;margin-bottom:1.2mm">every other contract account; they run the code the transaction calls</div>
-      <div style="font-size:7pt;line-height:1.25">A token contract's <span style="font-family:Consolas,monospace">emit</span> runs its <span style="font-family:Consolas,monospace">LOG</span> instruction:
+      <div style="font-size:7pt;line-height:1.25">A token contract’s <span style="font-family:Consolas,monospace">emit</span> runs its <span style="font-family:Consolas,monospace">LOG</span> instruction:
         <b style="color:var(--allow-ink)">Approval</b> and <b style="color:var(--transfer-ink)">Transfer</b> events.</div>
       <div class="note" style="margin-top:auto">writing to storage leaves no log</div>
     </div>
@@ -79,7 +79,7 @@
       <div class="keep"><span data-icon="check" data-color="#0F766E" data-size="3.8"></span>
         <span><span class="pair"><i class="dot"></i><i class="tiny"></i><i class="dot"></i></span>both ends are contracts: an <b>edge of the contract graph</b></span></div>
       <div class="keep"><span data-icon="cross" data-color="#9AA4B2" data-size="3.8"></span>
-        <span><span class="pair"><i class="dot u"></i><i class="tiny"></i><i class="dot"></i></span>a user account at one end: <b>no edge</b>; it enters only as importance and in the labels</span></div>
+        <span><span class="pair"><i class="dot u"></i><i class="tiny"></i><i class="dot"></i></span>a user account at one end: <b>no edge</b>; it counts only in the cohort rule, as importance and in the labels</span></div>
     </div>
   </div>
 </div>

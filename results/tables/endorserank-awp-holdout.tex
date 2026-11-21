@@ -4,7 +4,7 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/window-w1/eval_summary.json
 \begin{table}[htbp]
 \centering
-\caption[Paired bootstrap differences between EndorseRank and AWP out of window.]{Paired bootstrap differences between EndorseRank and AWP out of window (W0 spenders $n=7{,}864$; W1 spenders $n=7{,}915$). None of them enters rule A or the two applied criteria of rule B: the rows were computed after the labels were known, the W1 rows from the saved W1 scores with the resamples of Table~\ref{tab:fresh-holdout}. Within each block $a$ and $b$ share the contract resamples (400; seed 42).}
+\caption[Paired bootstrap differences between EndorseRank and AWP out of window.]{Paired bootstrap differences between EndorseRank and AWP out of window (W0 spenders $n=7{,}864$; W1 spenders $n=7{,}915$). None of them enters rule~A or the two applied criteria of rule~B: the rows were computed after the labels were known, the W1 rows from the saved W1 scores with the resamples of Table~\ref{tab:fresh-holdout}. Within each block $a$ and $b$ share the contract resamples (400; seed 42). $P(\Delta\tau>0)$ is the share of the resamples in which $\Delta\tau>0$; it describes the bootstrap distribution and is not a test.}
 \label{tab:endorserank-awp-holdout}
 \fitwidth{%
 \begin{tabular}{llccccc}
@@ -13,11 +13,11 @@ Contrast ($a$ minus $b$) & Label & $\tau(a)$ & $\tau(b)$ & $\Delta\tau$ & 95\% C
 \midrule
 \multicolumn{7}{l}{\emph{W0, spenders ($n=7{,}864$)}} \\
 EndorseRank minus AWP & new approval pairs & 0.168 & 0.098 & +0.070 & [0.042, 0.096] & 1.000 \\
-EndorseRank minus AWP & new transfer senders & 0.084 & 0.330 & -0.246 & [-0.271, -0.220] & 0.000 \\
+EndorseRank minus AWP & new transfer senders & 0.084 & 0.330 & $-$0.246 & [$-$0.271, $-$0.220] & 0.000 \\
 \midrule
 \multicolumn{7}{l}{\emph{W1, spenders ($n=7{,}915$)}} \\
 EndorseRank minus AWP & new approval pairs & 0.147 & 0.064 & +0.083 & [0.059, 0.110] & 1.000 \\
-EndorseRank minus AWP & new transfer senders & 0.064 & 0.314 & -0.250 & [-0.273, -0.225] & 0.000 \\
+EndorseRank minus AWP & new transfer senders & 0.064 & 0.314 & $-$0.250 & [$-$0.273, $-$0.225] & 0.000 \\
 \bottomrule
 \end{tabular}
 }

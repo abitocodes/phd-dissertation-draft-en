@@ -6,7 +6,7 @@
   See Figures/html/README.md.
 
   What the figure shows: one step of the coupled walk C-PR (Equation eq:coupled-transition) on five contracts.
-  Allowance edges are orange and solid, transfer edges blue and dashed; each edge is labelled with its transition
+  Allowance edges are orange and solid, transfer edges blue and dashed; each edge is labeled with its transition
   probability before damping. Edges: x -> v (allowance, 1); u -> v (allowance, lambda); u -> w (transfer, 1 - lambda);
   y -> w (transfer, 1). Contract u has out-edges in both layers and mixes them with weights lambda and 1 - lambda;
   x and y have out-edges in one layer only and follow it whatever lambda is. With probability 1 - d the walk restarts at
@@ -25,6 +25,7 @@
 .m { font-family:"Times New Roman", serif; font-style:italic; font-size:8pt; }
 .mu { font-family:"Times New Roman", serif; font-size:8pt; }
 .tag { display:inline-block; border-radius:1mm; padding:0.2mm 1.2mm; font-weight:600; font-size:6.8pt; }
+sub { font-size:0.8em; line-height:0; }   /* the indices of P_A and P_T: 5.6 pt */
 </style>
 </head>
 <body>

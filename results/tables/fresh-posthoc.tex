@@ -3,7 +3,7 @@
 % Source: experiments/data/2-processed-tables-and-evaluations/revised-contract-12m/supplementary/supplementary.json
 \begin{table}[htbp]
 \centering
-\caption[EndorseRank and its variant with activity restarts in window W1.]{EndorseRank and its variant with activity restarts on the spender cohort and labels of window W1 ($n=7{,}915$ contracts). Neither these rows nor the contrasts below them belong to the two applied criteria of rule B, and the contrasts were not named in the registration. The contrasts of EndorseRank with activity restarts were computed afterwards from the saved W1 scores. The AWP, C-PR and degree rows repeat Table~\ref{tab:fresh-holdout}, and every contrast uses the same contract resamples; the differences between EndorseRank and AWP are in Table~\ref{tab:endorserank-awp-holdout}, and those of C-PR in Table~\ref{tab:cpr-contrasts}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
+\caption[EndorseRank and its variant with activity restarts in window W1.]{EndorseRank and its variant with activity restarts on the spender cohort and labels of window W1 ($n=7{,}915$ contracts). Neither these rows nor the contrasts below them belong to the two applied criteria of rule~B, and the contrasts were not named in the registration. The contrasts of EndorseRank with activity restarts were computed afterwards from the saved W1 scores. The AWP, \mbox{C-PR} and degree rows repeat Table~\ref{tab:fresh-holdout}, and every contrast uses the same contract resamples; the differences between EndorseRank and AWP are in Table~\ref{tab:endorserank-awp-holdout}, and those of \mbox{C-PR} in Table~\ref{tab:cpr-contrasts}. CI = 95\% percentile bootstrap over contracts (400 paired resamples, seed 42).}
 \label{tab:fresh-posthoc}
 \fitwidth{%
 \begin{tabular}{lcc}
@@ -14,16 +14,16 @@ In-approve degree at the freeze (baseline) & 0.181 [0.158, 0.208] & 0.072 [0.046
 Transfer in-degree at the freeze (baseline) & 0.031 [0.008, 0.052] & 0.302 [0.278, 0.323] \\
 \midrule
 EndorseRank & 0.147 [0.125, 0.170] & 0.064 [0.041, 0.085] \\
-EndorseRank, restarts by approving activity & 0.148 [0.126, 0.171] & 0.072 [0.049, 0.093] \\
+EndorseRank (activity restarts) & 0.148 [0.126, 0.171] & 0.072 [0.049, 0.093] \\
 AWP & 0.064 [0.042, 0.084] & 0.314 [0.295, 0.332] \\
 C-PR ($\lambda=0.5$) & 0.104 [0.083, 0.126] & 0.236 [0.217, 0.255] \\
 \midrule
-EndorseRank minus in-approve degree, new approval pairs & \multicolumn{2}{l}{$\Delta\tau=-0.034$ [-0.043, -0.025]} \\
-AWP minus transfer in-degree, new transfer senders & \multicolumn{2}{l}{$\Delta\tau=+0.011$ [0.001, 0.022]} \\
+EndorseRank minus in-approve degree, new approval pairs & \multicolumn{2}{c}{$\Delta\tau=-0.034$ [$-$0.043, $-$0.025]} \\
+AWP minus transfer in-degree, new transfer senders & \multicolumn{2}{c}{$\Delta\tau=+0.011$ [0.001, 0.022]} \\
 \midrule
-EndorseRank (activity restarts) minus in-approve degree, new approval pairs & \multicolumn{2}{l}{$\Delta\tau=-0.033$ [-0.044, -0.022]} \\
-EndorseRank (activity restarts) minus EndorseRank, new approval pairs & \multicolumn{2}{l}{$\Delta\tau=+0.001$ [-0.002, 0.005]} \\
-EndorseRank (activity restarts) minus EndorseRank, new transfer senders & \multicolumn{2}{l}{$\Delta\tau=+0.008$ [0.004, 0.012]} \\
+EndorseRank (activity restarts) minus in-approve degree, new approval pairs & \multicolumn{2}{c}{$\Delta\tau=-0.033$ [$-$0.044, $-$0.022]} \\
+EndorseRank (activity restarts) minus EndorseRank, new approval pairs & \multicolumn{2}{c}{$\Delta\tau=+0.001$ [$-$0.002, 0.005]} \\
+EndorseRank (activity restarts) minus EndorseRank, new transfer senders & \multicolumn{2}{c}{$\Delta\tau=+0.008$ [0.004, 0.012]} \\
 \bottomrule
 \end{tabular}
 }

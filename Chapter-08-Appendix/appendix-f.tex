@@ -2,16 +2,12 @@
 \section{Ethics Clearance Certificate}
 \label{ch:appendix-ethics}
 
-\dissertationSubheading[sec:ethics-certificate]{Certificate}
-
-This study uses public blockchain data only and involves no human participants (Section~\ref{sec:ethics}). The School of Computing Research Ethics Review Committee of the College of Science, Engineering and Technology (CSET), University of South Africa, reviewed it as a low-risk application and granted ethics approval on 9 November 2026 for five years (reference 18316). The certificate is reproduced below.
+This study uses public blockchain data only and involves no human participants (Section~\ref{sec:ethics}). The School of Computing Research Ethics Review Committee of the College of Science, Engineering and Technology (CSET), University of South Africa, reviewed it as a low-risk application and granted ethics approval on 9~November~2026 for five years (reference 18316). The certificate is reproduced on the two pages that close this appendix.
 
 % Source: Figures/ethics-clearance.pdf is the certificate as issued by the
 % committee (two pages, reference 18316).
-\begin{center}
-\fbox{\includegraphics[width=0.92\textwidth,height=0.82\textheight,keepaspectratio,page=1]{Figures/ethics-clearance.pdf}}
-\end{center}
-
-\begin{center}
-\fbox{\includegraphics[width=0.92\textwidth,height=0.82\textheight,keepaspectratio,page=2]{Figures/ethics-clearance.pdf}}
-\end{center}
+% The page is ended here by hand: pdfpages holds every float that is still waiting until
+% after the pages it inserts, which would put the last table of the appendix behind the certificate.
+% Each page is scaled and moved up so that its frame ends above the page number of the thesis.
+\clearpage
+\includepdf[pages=1-2,scale=0.80,offset=0 16mm,frame=true,pagecommand={\thispagestyle{plain}}]{Figures/ethics-clearance.pdf}
