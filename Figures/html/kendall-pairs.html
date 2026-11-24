@@ -7,13 +7,21 @@
   What the figure shows: Kendall's tau-b on a toy example (made-up values, not data of the study).
   Four contracts P, Q, R, S have a score (P 0.9, Q 0.6, R 0.3, S 0.3; R and S tie) and a check value
   (P 12, Q 5, R 7, S 1).
-  1. The two rankings side by side, with a line per contract; the lines of Q and R cross.
+  1. The two rankings side by side, with a line per contract; the lines of Q and R cross (drawn in red). A bracket
+     marked "tie" joins R and S in the score.
   2. The n0 = 6 pairs: (P,Q), (P,R), (P,S) and (Q,S) are concordant (both rankings order them the same way); (Q,R) is
      discordant (the rankings order it oppositely); (R,S) is tied in the score and counts as neither.
   3. The counts in Equation eq:kendall: n_c = 4, n_d = 1, n_1 = 1 (one tied pair in the score), n_2 = 0, so
      tau_b = (4 - 1) / sqrt((6 - 1)(6 - 0)) = 3 / sqrt(30), about 0.55; without the tie corrections
      tau_a = (4 - 1) / 6 = 0.50. In the fraction the root sign and its bar are drawn under the fraction line and
      clear of it.
+
+  Look: three cards of one width and one height, each a hairline frame around a Palatino heading over
+  a grey rule (its number in a ringed disc) and its content; the note at the foot of the second and of the third
+  card stands on the card's last line. The contracts are flat verdigris squares inside a thin frame with their
+  letters in white; the lines of P and S are grey, the two lines that cross (Q and R) red and heavier. The pairs are
+  flat tags in the tint of their kind (green: concordant; red: discordant; grey: tied). The counts and the equation
+  stand in Palatino, the counted numbers in the colour of their kind.
 -->
 <html lang="en">
 <head>
@@ -22,40 +30,54 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-  .row { display:grid; grid-template-columns:50mm 52mm 1fr; column-gap:2.6mm; align-items:stretch; }
-  /* the two columns of pills share the width of the panel and may not grow past it */
-  .pairs { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:1mm 1.2mm; }
-  .p { display:flex; align-items:center; gap:1.2mm; border-radius:1.3mm; padding:0.8mm 1.3mm; font-size:7pt; }
-  .p b { font-size:7.4pt; min-width:6mm; }
+  /* three cards of 200 px with 12 px between them: 624 px, 165.1 mm (whole pixels, so that the cards come out
+     equal: see style.css) */
+  .fig { width:624px; }
+  .row { display:grid; grid-template-columns:200px 200px 200px; column-gap:12px; align-items:stretch; }
+  .row > .part.panel { padding:5px 8px 6px; }          /* 8 px a side leaves 184 px inside */
+  .h .badge { margin-left:0.3mm; }
+  /* the drawing fills the 184 px inside its card (48.683 mm); its viewBox is that wide and centred on the 47 mm drawn */
+  .part > svg { display:block; }
+  .foot { margin-top:auto; }                        /* the note of a card stands at its foot */
+  /* two columns of tags, 90 px each with 4 px between them: the 184 px inside the card */
+  .pairs { display:grid; grid-template-columns:90px 90px; gap:1.1mm 4px; margin-top:0.4mm; }
+  /* a tag of a pair: 4 px above and 3 px below lines of 12 px, so 19 px high with one line, the baseline 13 px down
+     (the capitals of the 7.5 pt letters at the middle), and 31 px with two */
+  .p { display:flex; align-items:center; gap:5px; border-radius:0.5mm; padding:4px 5px 3px; font-size:7.1pt; line-height:12px; }
+  .p b { font-size:7.5pt; min-width:6.2mm; color:inherit; }
   .p.c { background:var(--good-bg); color:var(--good); }
   .p.d { background:var(--bad-bg); color:var(--bad); }
-  .p.t { background:#EEF2F6; color:#475569; }
-  sub { font-size:0.8em; line-height:0; }
-  .eq { font-size:7.4pt; line-height:1.55; }
-  .eq .big { font-size:8.4pt; }
+  .p.t { background:var(--count-bg); color:var(--count-ink); }
+  .nt { font-size:7.1pt; line-height:1.24; color:var(--muted); }
+  /* the counts and the equation: Palatino, variables in its italic */
+  .cnt { display:grid; grid-template-columns:auto auto; justify-content:start; gap:0.35mm 3mm; font-size:7.1pt; margin:0.4mm 0 1.5mm; align-items:baseline; }
+  .cnt .k { color:var(--muted); }
+  .cnt .val, .eq { font-family:var(--serif); font-stretch:normal; letter-spacing:0; color:var(--ink); white-space:nowrap; }
+  .cnt .val { font-size:7.6pt; }
+  .eq { font-size:8.4pt; line-height:1.5; }
+  .eq .big { font-size:9.4pt; }
+  .eq b { font-weight:700; }
+  .g, .eq b.g { color:var(--good); } .r, .eq b.r { color:var(--bad); } .n, .eq b.n { color:var(--count); }
   /* the fraction: its line belongs to the numerator; the root below keeps 1.3 mm clear of it, and its own bar is
      the top border of the radicand, joined to the root sign drawn beside it. The padding above the numerator keeps
      the fraction line at the height of the equals sign. */
-  .eq .frac { display:inline-flex; flex-direction:column; align-items:stretch; vertical-align:middle; margin:0 0.6mm; padding-top:1mm; }
-  .eq .frac > .num { border-bottom:0.25mm solid var(--ink); padding:0 1.4mm 0.15mm; line-height:1.25; text-align:center; }
+  .eq .frac { display:inline-flex; flex-direction:column; align-items:stretch; vertical-align:middle; margin:0 0.7mm; padding-top:1mm; }
+  .eq .frac > .num { border-bottom:0.25mm solid var(--ink); padding:0 1.5mm 0.15mm; line-height:1.25; text-align:center; }
   .eq .frac > .den { padding:1.3mm 0.8mm 0; display:flex; justify-content:center; }
   .root { display:inline-flex; align-items:flex-start; }
   .root svg { flex:none; display:block; }
-  .sqrt { display:block; height:3.4mm; border-top:0.22mm solid var(--ink); padding:0.3mm 0.4mm 0 0.3mm; line-height:1.1; white-space:nowrap; }
-  .cnt { display:grid; grid-template-columns:auto auto; gap:0.2mm 2.4mm; font-size:7pt; margin-bottom:1.2mm; }
-  .cnt .k { color:var(--muted); }
-  .g { color:var(--good); font-weight:700; } .r { color:var(--bad); font-weight:700; } .n { color:#475569; font-weight:700; }
+  .sqrt { display:block; height:3.5mm; border-top:0.22mm solid var(--ink); padding:0.3mm 0.4mm 0 0.3mm; line-height:1.1; white-space:nowrap; }
 </style>
 </head>
 <body>
 <div class="fig">
   <div class="row">
-    <div class="panel">
-      <div class="h"><span class="badge" style="background:#334155">1</span>Two rankings<span class="sub">toy values</span></div>
-      <svg id="b" viewBox="0 0 45 32" width="45mm" height="32mm" style="display:block"></svg>
+    <div class="part panel">
+      <div class="h s"><span class="badge" style="--c:var(--count)">1</span>Two rankings<span class="sub">toy values</span></div>
+      <svg id="b" viewBox="-0.84 0 48.683 32.3" style="width:184px; height:32.3mm"></svg>
     </div>
-    <div class="panel">
-      <div class="h"><span class="badge" style="background:#334155">2</span>The six pairs</div>
+    <div class="part panel">
+      <div class="h s"><span class="badge" style="--c:var(--count)">2</span>The six pairs</div>
       <div class="pairs">
         <div class="p c"><b>P, Q</b>concordant</div>
         <div class="p c"><b>P, R</b>concordant</div>
@@ -64,49 +86,51 @@
         <div class="p d"><b>Q, R</b>discordant</div>
         <div class="p t"><b>R, S</b>tied in the score</div>
       </div>
-      <div class="muted" style="font-size:7pt;margin-top:1.3mm;line-height:1.2">A pair tied in either ranking is neither concordant nor discordant.</div>
+      <div class="nt foot">A pair tied in either ranking is neither concordant nor discordant.</div>
     </div>
-    <div class="panel">
-      <div class="h"><span class="badge" style="background:#334155">3</span><span>Kendall’s <i>τ</i><sub>b</sub></span></div>
+    <div class="part panel">
+      <div class="h s"><span class="badge" style="--c:var(--count)">3</span><span>Kendall’s <i>τ</i><sub>b</sub></span></div>
       <div class="cnt">
-        <span class="k">pairs</span><span><i>n</i><sub>0</sub> = 6</span>
-        <span class="k">concordant, discordant</span><span><i>n</i><sub>c</sub> = <span class="g">4</span>, <i>n</i><sub>d</sub> = <span class="r">1</span></span>
-        <span class="k">tied pairs per ranking</span><span><i>n</i><sub>1</sub> = <span class="n">1</span>, <i>n</i><sub>2</sub> = 0</span>
+        <span class="k">pairs</span><span class="val"><i>n</i><sub>0</sub> = 6</span>
+        <span class="k">concordant, discordant</span><span class="val"><i>n</i><sub>c</sub> = <b class="g">4</b>, <i>n</i><sub>d</sub> = <b class="r">1</b></span>
+        <span class="k">tied pairs per ranking</span><span class="val"><i>n</i><sub>1</sub> = <b class="n">1</b>, <i>n</i><sub>2</sub> = 0</span>
       </div>
       <div class="eq"><span class="big"><i>τ</i><sub>b</sub></span> =
-        <span class="frac"><span class="num"><span class="g">4</span> − <span class="r">1</span></span><span class="den"><span class="root"><svg width="1.9mm" height="3.4mm" viewBox="0 0 1.9 3.4"><path d="M0.12,2.1 L0.5,1.9 L0.98,3.15 L1.79,0.11 H1.9" fill="none" stroke="#1F2937" stroke-width="0.22" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="sqrt">(6 − <span class="n">1</span>)(6 − 0)</span></span></span></span>
+        <span class="frac"><span class="num"><b class="g">4</b> − <b class="r">1</b></span><span class="den"><span class="root"><svg width="1.9mm" height="3.5mm" viewBox="0 0 1.9 3.5"><path d="M0.12,2.2 L0.5,2 L0.98,3.25 L1.79,0.11 H1.9" fill="none" style="stroke:var(--ink)" stroke-width="0.22" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="sqrt">(6 − <b class="n">1</b>)(6 − 0)</span></span></span></span>
         ≈ <b>0.55</b></div>
-      <div class="muted" style="font-size:7pt;margin-top:0.4mm">without the tie corrections, <i>τ</i><sub>a</sub> = (4 − 1)/6 = 0.50</div>
+      <div class="nt foot">without the tie corrections, <span class="m"><i>τ</i><sub>a</sub> = (4 − 1)/6 = 0.50</span></div>
     </div>
   </div>
 </div>
 <script>
 (function () {
-  const s = document.getElementById("b");
-  const L = 11, R = 33.5, y = r => 6.2 + (r - 1) * 7.5;            // rank 1 at the top
-  Fig.text(s, L, 2.6, "score", { size: 2.5, weight: 700, fill: "#374151", anchor: "middle" });
-  Fig.text(s, R, 2.6, "check", { size: 2.5, weight: 700, fill: "#374151", anchor: "middle" });
+  const s = document.getElementById("b"), C = Fig.C;
+  const h = 2.5, ring = 0.6, hr = h + ring;                        // half size of a contract and of its frame
+  const L = 13.2, R = 36, y = r => 6.5 + (r - 1) * 7.5;            // the two columns; rank 1 at the top
+  Fig.text(s, L, 2.3, "score", { size: 2.5, weight: 700, fill: C.ink, anchor: "middle" });
+  Fig.text(s, R, 2.3, "check", { size: 2.5, weight: 700, fill: C.ink, anchor: "middle" });
   // score ranks: P 1, Q 2, R and S tied at 3 and 4 (drawn at their own rows, joined by a tie bracket)
   const left = { P: [1, "0.9"], Q: [2, "0.6"], R: [3, "0.3"], S: [4, "0.3"] };
   const right = { P: [1, "12"], R: [2, "7"], Q: [3, "5"], S: [4, "1"] };
-  const color = { P: "#94A3B8", Q: "#B91C1C", R: "#B91C1C", S: "#94A3B8" };
-  for (const k of ["P", "Q", "R", "S"]) {
-    const y1 = y(left[k][0]), y2 = y(right[k][0]);
-    Fig.el(s, "path", { d: `M${L + 3.2},${y1} C${L + 12},${y1} ${R - 12},${y2} ${R - 3.2},${y2}`, fill: "none",
-      stroke: color[k], "stroke-width": k === "Q" || k === "R" ? 0.6 : 0.45, opacity: 0.9 });
+  // a line per contract; the lines of Q and R cross, and are drawn in red and heavier
+  for (const k of ["P", "S", "Q", "R"]) {
+    const y1 = y(left[k][0]), y2 = y(right[k][0]), x1 = L + hr + 0.5, x2 = R - hr - 0.5, cross = k === "Q" || k === "R";
+    Fig.el(s, "path", { d: `M${x1},${y1} C${x1 + 8.4},${y1} ${x2 - 8.4},${y2} ${x2},${y2}`, fill: "none",
+      stroke: cross ? C.bad : C.countFill, "stroke-width": cross ? 0.6 : 0.45 });
   }
   const node = (x, yy, k, v, side) => {
-    Fig.el(s, "rect", { x: x - 2.6, y: yy - 2.6, width: 5.2, height: 5.2, rx: 1.1, fill: "#0F766E" });
-    Fig.text(s, x, yy + 0.95, k, { size: 2.7, weight: 700, fill: "#fff", anchor: "middle" });
-    Fig.text(s, side < 0 ? x - 3.6 : x + 3.6, yy + 0.9, v, { size: 2.5, fill: "#5B6472", anchor: side < 0 ? "end" : "start" });
+    Fig.node(s, x, yy, { half: h, ring: true, ringGap: ring, label: k, labelSize: 2.7 });
+    Fig.text(s, x + side * (hr + 1), yy + 0.9, v, { size: 2.5, fill: C.muted, anchor: side < 0 ? "end" : "start" });
   };
   for (const [k, [r, v]] of Object.entries(left)) node(L, y(r), k, v, -1);
   for (const [k, [r, v]] of Object.entries(right)) node(R, y(r), k, v, +1);
-  // tie bracket for R and S in the score: clear of the two values (which end 3.6 mm left of the nodes and are 3.3 mm
-  // wide) on its right and of the word "tie" on its left
-  Fig.el(s, "path", { d: `M${L - 7.7},${y(3) - 1.6} H${L - 8.4} V${y(4) + 1.6} H${L - 7.7}`, stroke: "#64748B", "stroke-width": 0.35, fill: "none" });
-  const tt = Fig.text(s, L - 9.8, (y(3) + y(4)) / 2 + 0.9, "tie", { size: 2.5, fill: "#475569", anchor: "middle" });
-  tt.setAttribute("transform", `rotate(-90 ${L - 9.8} ${(y(3) + y(4)) / 2})`);
+  // tie bracket for R and S in the score: clear of the two values on its right (they end 1 mm left of the frames and
+  // are 3.6 mm wide) and of the word "tie" on its left
+  const bx = L - hr - 1 - 3.6 - 1.2;
+  Fig.el(s, "path", { d: `M${bx + 0.7},${y(3) - 1.6} H${bx} V${y(4) + 1.6} H${bx + 0.7}`, stroke: C.count, "stroke-width": 0.35, fill: "none", "stroke-linejoin": "round" });
+  const ym = (y(3) + y(4)) / 2;
+  const tt = Fig.text(s, bx - 1.6, ym + 0.9, "tie", { size: 2.5, fill: C.count, anchor: "middle" });
+  tt.setAttribute("transform", `rotate(-90 ${bx - 1.6} ${ym})`);
 })();
 </script>
 </body>

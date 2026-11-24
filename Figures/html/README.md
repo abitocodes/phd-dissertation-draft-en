@@ -28,7 +28,7 @@ LaTeX cannot read HTML. A diagram drawn in HTML therefore lives here as its sour
 | 5 | `practical-uses.html` | `practical-uses.pdf` | `fig:practical-uses` | `sub:deploy-industry` |
 | 6 | `answers-glance.html` | `answers-glance.pdf` | `fig:answers-glance` | `sec:summary-findings` |
 
-The data plots in `Figures/generated/` are not drawn here; `../../experiments/scripts/export_latex.py` writes them from the published summaries, in the same colours.
+The data plots in `Figures/generated/` are not drawn here; `../../experiments/scripts/export_latex.py` writes them from the published summaries. They take the colours and the faces of the diagrams (`STYLE.md`, "The data plots"): the `PAL` of that script, the semi-condensed Bahnschrift that it makes from the installed font in `experiments/data/_work/fonts/` (never committed), and Palatino for formulas and panel titles.
 
 ## Changing a figure
 
@@ -38,17 +38,22 @@ The data plots in `Figures/generated/` are not drawn here; `../../experiments/sc
        python Figures/html/render.py Figures/html/<name>.html
 
    (several files at once are fine). `render.py` prints the page with headless Chrome (set `CHROME` if Chrome is not found), crops the PDF to the drawing and clears its dates, so an unchanged figure renders to the same file. It needs PyMuPDF (`pip install pymupdf`); `--png` also writes a preview image beside the HTML file (not committed); `--out` takes an absolute path.
-3. Rebuild the thesis and look at the page. Commit the HTML and the PDF together; Overleaf sees only the PDF.
+3. Check the layout:
 
-Fonts: Segoe UI in the English figures (Consolas for code) and Noto Sans KR in the Korean ones. Another machine may substitute a font, so check the PDF after rendering there.
+       python -B -X utf8 Figures/html/check_layout.py <name>
 
-In the public repository the Korean edition keeps its own sources in `dissertation/overleaf-github-ko/Figures/html/` (the same layout with Korean text) and renders them with this `render.py`.
+   It reports anything that runs out of its box, cards of one group that are not equal, marks that do not share the centre of their ring or frame, and a crop wider than the figure; `0 finding(s)` is the aim.
+4. Rebuild the thesis and look at the page. Commit the HTML and the PDF together; Overleaf sees only the PDF.
+
+Fonts: in the English figures Palatino Linotype for headings, variables and formulas, Bahnschrift for all other text, Consolas for code and Cambria Math for the two ceiling brackets, all of which come with Windows (`STYLE.md`, "Type" and "Fonts, as they are in the PDF"). The Korean figures keep these faces for Latin letters, digits and formulas and take Hangul from Noto Sans KR (text) and Noto Serif KR (headings), without added letter spacing (`STYLE.md`, "Fonts, as they are in the PDF"). Another machine may substitute a font, so check the PDF after rendering there.
+
+In the public repository the Korean edition keeps its own sources in `dissertation/overleaf-github-ko/Figures/html/` (the same layout with Korean text) and renders them with this `render.py`. They link this folder's `style.css` and `fig.js` and add only the Hangul faces, Korean line breaking and the spacing of Hangul, so a change to the look here reaches them too: render them again and check them after such a change.
 
 ## Style
 
-- `style.css` holds the look (colours, type, panels, chips, RQ cards, pills, legend) and `fig.js` the drawing helpers (`Fig.graph`, `Fig.edge`, `Fig.contract`, `Fig.person`, `Fig.text`, `Fig.icon`); each figure links both.
-- Width 165 mm, the text width; text no smaller than about 7 pt at print size; most figures 35–75 mm tall.
-- One colour per meaning: allowance orange `#D97706`, transfer blue `#2563EB`, C-PR violet `#7C3AED`, contracts teal `#0F766E`, user accounts grey and dashed `#7A8594`; RQ1 `#0891B2`, RQ2 `#059669`, RQ3 `#DB2777`, RQ4–5 `#7C3AED`.
+- `style.css` holds the look (colours, type, cards, tags, chips, pills, discs, legends) and `fig.js` the drawing helpers (`Fig.edge`, `Fig.node`, `Fig.contract`, `Fig.person`, `Fig.text`, `Fig.rich`, `Fig.star`, `Fig.arrow`, `Fig.medal` and others); each figure links both. `STYLE.md` gives the rules of the look: the colours, the type, the marks and shapes, the patterns for each kind of figure and what must be exact in print.
+- Width 165 mm, the text width; text no smaller than 7.1 pt at print size, subscripts no smaller than 5.6 pt; most figures 35–75 mm tall.
+- One colour per meaning (`STYLE.md`, "Colour"): allowance gold `#B98A24` (`#CFA448` for a band), transfer ultramarine `#2340C8`, C-PR violet `#6A2C91`, contracts verdigris `#2A7A72`, user accounts grey and dashed `#8A8A8A`, a neutral step or raw count `#5A5A5A`; RQ1 and the web `#2C8FB3`, RQ2 `#2F7D45`, RQ3, labels and hot contracts `#C23B5E`, RQ4–5 the violet of C-PR.
 - Short labels in the figure; the caption carries the sentence. No result number outside the figures of Chapter 4 and the worked examples.
 
 ## Pitfalls met so far

@@ -4,16 +4,26 @@
   surface"); the source of Figures/accounts-logs.pdf. Edit this file, then run (from overleaf-github/)
       python Figures/html/render.py Figures/html/accounts-logs.html
 
-  What the figure shows, left to right:
-  1. User accounts (grey, dashed): EOAs, controlled by a private key; EIP-7702 accounts, EOAs that delegate to code;
-     and smart accounts, such as a Safe or an ERC-4337 account, contract accounts that act for a user.
-  2. A user account sends a transaction, which consumes gas. Contracts (every other contract account) run the code the
-     transaction calls. When that code emits an event, the contract's LOG instruction writes a log; a token contract
-     emits Approval and Transfer events. Writing to storage produces no log.
-  3. The logs are a permanent part of the chain's history that any full node or index provider can recompute; the
-     study reads the Approval and Transfer logs.
-  4. What the study keeps: an event whose two ends are contracts becomes an edge of the contract graph; an event
-     with a user account at one end is no edge and counts only in the cohort rule, as importance and in the labels.
+  What the figure shows, left to right, with an arrow from each part to the next:
+  1. User accounts (grey, in a dashed frame): EOAs, controlled by a private key; EIP-7702 accounts, EOAs that delegate
+     to code; and smart accounts, such as a Safe or an ERC-4337 account, contract accounts that act for a user. They
+     send transactions, which pay gas, and are a node of no graph.
+  2. Contracts (every other contract account) run the code the transaction calls. When that code emits an event, the
+     contract's LOG instruction writes a log; a token contract emits Approval and Transfer events. Writing to storage
+     leaves no log.
+  3. The logs, Approval(owner, spender, value) and Transfer(from, to, value), are a permanent part of the chain's
+     history that any full node or index provider can recompute.
+  4. What the study reads: an event whose two ends are contracts becomes an edge of the contract graph (a tick); an
+     event with a user account at one end is no edge (a cross) and counts only in the cohort rule, as importance and
+     in the labels.
+
+  Look: the four parts are cards of one width and one height, with thin grey arrows between them. The
+  user accounts stand in the dashed grey frame that marks them in every figure, their pictograms in white on ringed
+  grey discs (the EIP-7702 account, an EOA that delegates, as the open form of the EOA's disc); the contracts and the
+  logs stand in hairline frames, each under a Palatino heading over a grey rule with its pictogram on a ringed disc
+  (verdigris for contracts, grey for the logs); the two log lines are code in Consolas on the tint of their layer
+  behind a solid bar of sand gold (Approval) or ultramarine (Transfer); what the study reads, the part the figure
+  leads to, stands on the pale plate.
 -->
 <html lang="en">
 <head>
@@ -22,66 +32,89 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-  .flow { display:grid; grid-template-columns:37mm 6mm 39mm 6mm 31mm 6mm 1fr; align-items:stretch; }
-  .col { display:flex; flex-direction:column; }
-  .h { margin-bottom:1.3mm; }
-  .acct { display:flex; align-items:center; gap:1.4mm; margin-bottom:1.2mm; font-size:7pt; line-height:1.15; }
-  .acct b { display:block; font-size:7.3pt; }
-  .note { font-size:7pt; color:var(--muted); line-height:1.2; }
-  .arrow { display:flex; flex-direction:column; align-items:center; justify-content:center; }
-  .arrow span { font-size:7pt; color:var(--muted); text-align:center; line-height:1.1; margin-top:0.6mm; }
-  .log { border-radius:1.4mm; padding:1mm 1.5mm; margin-bottom:1.3mm; font-family:Consolas, monospace; font-size:7pt; line-height:1.2; }
-  .log.a { background:var(--allow-bg); border:0.3mm solid var(--allow-line); color:var(--allow-ink); }
-  .log.t { background:var(--transfer-bg); border:0.3mm solid var(--transfer-line); color:var(--transfer-ink); }
-  .keep { display:flex; align-items:flex-start; gap:1.4mm; margin-bottom:1.6mm; font-size:7pt; line-height:1.2; }
-  .keep svg { margin-top:0.3mm; }
-  .pair { display:inline-flex; align-items:center; gap:0.7mm; vertical-align:middle; margin-right:0.6mm; }
-  .dot { display:inline-block; width:2.5mm; height:2.5mm; border-radius:0.6mm; background:var(--contract); }
-  .dot.u { border-radius:50%; background:#9AA4B2; }
-  .tiny { display:inline-block; width:3.2mm; border-top:0.4mm solid #475569; position:relative; top:-0.2mm; }
+@page { size: 180mm 120mm; margin: 0; }
+/* four cards of 144 px with 16 px between them: 624 px, 165.1 mm (whole pixels, so that the cards come out equal:
+   see style.css) */
+.fig { width:624px; }
+.flow { display:grid; grid-template-columns:repeat(3, 144px 16px) 144px; align-items:stretch; }
+/* every card has the same space inside its frame (6 px, 8 px), so that the four headings stand on one line; the
+   dashed frame is a border, which takes 1 px of it */
+.flow > .part.panel { padding:6px 8px; }
+.flow > .part.panel.users { border-width:1px; padding:5px 7px; }
+.flow .h { height:5.55mm; margin-bottom:1.3mm; }   /* the height of a heading with a pictogram, for all four */
+.flow .h .ico { margin-right:1.5mm; }
+.arr { display:flex; align-items:center; justify-content:center; }
+.acct { display:flex; align-items:center; gap:1.5mm; margin-bottom:0.8mm; font-size:7.1pt; line-height:1.15; color:var(--muted); }
+.acct b { display:block; font-size:7.4pt; }
+.txt { font-size:7.1pt; line-height:1.25; text-wrap:pretty; }
+.txt .mono { line-height:0; }                      /* code inside a sentence may not widen the pitch of its line */
+.note { font-size:7.1pt; color:var(--muted); line-height:1.2; text-wrap:balance; }   /* no single word on a last line */
+.end { margin-top:auto; }
+/* a log line: code on the tint of its layer, behind a solid bar of the layer's colour */
+.log { padding:3px 5px 3px 6px; margin-bottom:5px; font-size:7.1pt; line-height:12px; border-left:4px solid; }
+.log.a { background:var(--allow-bg); border-color:var(--allow-band); color:var(--allow-ink); }
+.log.t { background:var(--transfer-bg); border-color:var(--transfer); color:var(--transfer-ink); }
+b.a { color:var(--allow-ink); } b.t { color:var(--transfer-ink); }
+.keep { display:flex; align-items:flex-start; gap:1.4mm; margin-bottom:1.6mm; font-size:7.1pt; line-height:1.22; }
+.keep > svg { margin-top:0.2mm; }
+.pair { display:inline-flex; align-items:center; gap:0.7mm; vertical-align:middle; margin-right:0.7mm; position:relative; top:-0.15mm; }
+.dot { display:inline-block; width:2.5mm; height:2.5mm; border-radius:0.4mm; background:var(--contract); }
+.dot.u { border-radius:50%; background:var(--user); }
+.tiny { display:inline-block; width:3.2mm; border-top:0.4mm solid var(--count); }
 </style>
 </head>
 <body>
 <div class="fig">
   <div class="flow">
-    <!-- 1. user accounts -->
-    <div class="col panel users">
-      <div class="h">User accounts</div>
-      <div class="acct"><span data-icon="key" data-color="#6B7584" data-size="4.6"></span><span><b>EOA</b>controlled by a private key</span></div>
-      <div class="acct"><span data-icon="key" data-color="#9AA4B2" data-size="4.6"></span><span><b>EIP-7702 account</b>an EOA that delegates to code</span></div>
-      <div class="acct"><span data-icon="people" data-color="#6B7584" data-size="4.6"></span><span><b>Smart account</b>a Safe or an ERC-4337 account</span></div>
-      <div class="note" style="margin-top:auto">send transactions, which pay gas; no node of any graph</div>
+    <!-- 1. user accounts: the dashed frame -->
+    <div class="part panel users">
+      <div class="h s">User accounts</div>
+      <div class="acct"><span data-medal="key" data-color="user" data-size="4.8"></span><span><b>EOA</b>controlled by a private key</span></div>
+      <div class="acct"><span id="open-key"></span><span><b><span class="nb">EIP-7702</span> account</b>an EOA that delegates to code</span></div>
+      <div class="acct"><span data-medal="people" data-color="user" data-size="4.8"></span><span><b>Smart account</b>a Safe or an <span class="nb">ERC-4337</span> account</span></div>
+      <div class="note end">send transactions, which pay gas; no node of any graph</div>
     </div>
-    <div class="arrow"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+    <div class="arr"><span data-arrow="right" data-len="3.175"></span></div>
 
     <!-- 2. contracts execute and emit events -->
-    <div class="col panel contract">
-      <div class="h"><span data-icon="contract" data-color="#0F766E" data-size="4.4"></span>&nbsp;Contracts</div>
-      <div class="note" style="color:var(--ink);font-size:7pt;margin-bottom:1.2mm">every other contract account; they run the code the transaction calls</div>
-      <div style="font-size:7pt;line-height:1.25">A token contract’s <span style="font-family:Consolas,monospace">emit</span> runs its <span style="font-family:Consolas,monospace">LOG</span> instruction:
-        <b style="color:var(--allow-ink)">Approval</b> and <b style="color:var(--transfer-ink)">Transfer</b> events.</div>
-      <div class="note" style="margin-top:auto">writing to storage leaves no log</div>
+    <div class="part panel">
+      <div class="h s"><span class="ico" data-medal="contract" data-color="contract" data-size="4.3"></span>Contracts</div>
+      <div class="txt">every other contract account; they run the code the transaction calls</div>
+      <div class="txt" style="margin-top:1.3mm">A token contract’s <span class="mono">emit</span> runs its <span class="mono">LOG</span> instruction:
+        <b class="a">Approval</b> and <b class="t">Transfer</b> events.</div>
+      <div class="note end">writing to storage leaves no log</div>
     </div>
-    <div class="arrow"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+    <div class="arr"><span data-arrow="right" data-len="3.175"></span></div>
 
     <!-- 3. the logs -->
-    <div class="col panel soft">
-      <div class="h"><span data-icon="database" data-color="#475569" data-size="4.4"></span>&nbsp;Logs</div>
-      <div class="log a">Approval(owner, spender, value)</div>
-      <div class="log t">Transfer(from, to, value)</div>
-      <div class="note" style="margin-top:auto">permanent; any full node or index provider can recompute them</div>
+    <div class="part panel">
+      <div class="h s"><span class="ico" data-medal="database" data-color="count" data-size="4.3"></span>Logs</div>
+      <div class="log a mono">Approval(owner, spender, value)</div>
+      <div class="log t mono">Transfer(from, to, value)</div>
+      <div class="note end">permanent; any full node or index provider can recompute them</div>
     </div>
-    <div class="arrow"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
+    <div class="arr"><span data-arrow="right" data-len="3.175"></span></div>
 
-    <!-- 4. what the study keeps -->
-    <div class="col panel">
-      <div class="h">What the study reads</div>
-      <div class="keep"><span data-icon="check" data-color="#0F766E" data-size="3.8"></span>
+    <!-- 4. what the study keeps: on the plate -->
+    <div class="part panel soft">
+      <div class="h s">What the study reads</div>
+      <div class="keep"><span data-icon="check" data-color="contract" data-size="4"></span>
         <span><span class="pair"><i class="dot"></i><i class="tiny"></i><i class="dot"></i></span>both ends are contracts: an <b>edge of the contract graph</b></span></div>
-      <div class="keep"><span data-icon="cross" data-color="#9AA4B2" data-size="3.8"></span>
+      <div class="keep"><span data-icon="cross" data-color="user" data-size="4"></span>
         <span><span class="pair"><i class="dot u"></i><i class="tiny"></i><i class="dot"></i></span>a user account at one end: <b>no edge</b>; it counts only in the cohort rule, as importance and in the labels</span></div>
     </div>
   </div>
 </div>
+<script>
+// the EIP-7702 account is an EOA that delegates to code: the key of the EOA in the open form of its disc
+// (a white disc inside two thin rings, the key in grey)
+(function () {
+  const c = Fig.C.user, s = document.getElementById("open-key");
+  s.outerHTML = `<svg width="4.8mm" height="4.8mm" viewBox="0 0 16 16" style="flex:none">` +
+    `<circle cx="8" cy="8" r="7.55" fill="none" stroke="${c}" stroke-width="0.5"/>` +
+    `<circle cx="8" cy="8" r="6.1" fill="#fff" stroke="${c}" stroke-width="0.5"/>` +
+    `<g transform="translate(3.74 3.74) scale(0.71)">${Fig.ICONS.key(c)}</g></svg>`;
+})();
+</script>
 </body>
 </html>

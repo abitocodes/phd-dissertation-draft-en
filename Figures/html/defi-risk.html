@@ -5,13 +5,21 @@
       python Figures/html/render.py Figures/html/defi-risk.html
 
   What the figure shows, left to right:
-  1. A rollup holds very many contracts.
+  1. A rollup holds very many contracts (a field of small squares, some solid and some pale); an address says nothing
+     about the code behind it.
   2. The question that comes first, which this thesis asks: which of them users rely on, answered by ranking
      contracts by the relations between them. The ranking says where the methods on the right should be applied
      first; it is no substitute for them and predicts no exploit or governance attack.
   3. The risk layers, each of which starts from a given protocol and asks what can go wrong with it: smart-contract
-     risk (bugs in the code), oracle risk (a stale price, or a feed under someone's control), market risk
-     (volatility and liquidation cascades) and governance risk (voting power held by a few addresses).
+     risk (bugs in the code), oracle risk (a manipulated price, or a feed someone controls), market risk
+     (volatility and liquidations) and governance risk (voting power held by a few addresses).
+  An arrow leads from each part to the next.
+
+  Look: the first and the third part are columns under a Palatino heading over a grey rule; the contracts
+  are flat verdigris squares, the pale ones in the tint of the same colour; the question of the thesis, the part the
+  figure sets apart, stands on the pale plate behind a solid violet bar, its pictogram in white on a ringed violet disc;
+  each risk layer is a white box with a hairline, its pictogram on a ringed grey disc; the arrows between the parts are
+  thin and grey with the notched head.
 -->
 <html lang="en">
 <head>
@@ -20,43 +28,73 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-  .row { display:grid; grid-template-columns:27mm 6mm 50mm 6mm minmax(0, 1fr); align-items:stretch; }
-  .many { display:grid; grid-template-columns:repeat(6, 2.9mm); gap:0.9mm; margin:1mm 0 1.2mm; }
-  .many i { display:block; width:2.9mm; height:2.9mm; border-radius:0.7mm; background:var(--contract); }
-  .many i.l { opacity:0.35; }
-  .arr { display:flex; align-items:center; justify-content:center; }
-  .risks { display:grid; grid-template-columns:1fr 1fr; gap:1.2mm; }
-  .rk { border-radius:1.6mm; background:#F8FAFC; border:0.3mm solid #CBD5E1; padding:0.9mm 1.4mm; line-height:1.18; }
-  .rk .t { display:flex; align-items:center; gap:1mm; font-weight:700; font-size:7.3pt; }
-  .rk span.d { display:block; font-size:7pt; color:var(--muted); }
-  .cap { font-size:7pt; color:var(--muted); margin-top:1mm; }
+@page { size: 180mm 120mm; margin: 0; }
+.row { display:grid; grid-template-columns:30.5mm 6mm 54mm 6mm minmax(0, 1fr); align-items:stretch; }
+.arr { display:flex; align-items:center; justify-content:center; }
+.cap { font-size:7.1pt; color:var(--muted); line-height:1.24; }
+
+/* 1. very many contracts: the squares are drawn in one SVG. As CSS boxes of 3.3 mm they printed 12 or 13 px wide
+   according to where they stood (whole pixels: see style.css). */
+.many { display:block; margin:0.7mm 0 2mm; }
+
+/* 2. the question of the thesis: the plate behind a solid bar */
+.q { background:var(--plate); border-left:4px solid var(--coupled); padding:1.6mm 2mm 1.7mm 2.2mm;
+  display:flex; flex-direction:column; justify-content:center; }
+.q .h { margin-bottom:1.1mm; }
+.q .h .ico { margin-right:1.6mm; }
+.q .txt { font-size:7.4pt; line-height:1.26; }
+.q .cap { margin-top:1.1mm; }
+
+/* 3. the risk layers: four like things, each a white box with a hairline, all of one width and one height. The
+   column is 68.5 mm, 259 px: two boxes of 127 px with 5 px between them, each 50 px high (whole pixels, so that they
+   come out equal). The hairline is an inset shadow, as that of .panel: a rounded border at the edge of the figure
+   would widen the crop. */
+.risks { display:grid; grid-template-columns:127px 127px; grid-auto-rows:50px; gap:5px; }
+.rk { border-radius:0.4mm; background:var(--paper); box-shadow:inset 0 0 0 0.25mm var(--hair); padding:1.15mm 1.55mm 1.25mm; line-height:1.2; }
+.rk .t { display:flex; align-items:center; gap:1.3mm; font-weight:700; font-size:7.6pt; color:var(--ink); white-space:nowrap; }
+.rk .d { display:block; font-size:7.1pt; color:var(--muted); margin-top:0.5mm; }
 </style>
 </head>
 <body>
 <div class="fig">
   <div class="row">
-    <div class="panel contract">
-      <div class="h" style="white-space:normal;line-height:1.1">Very many contracts</div>
-      <div class="many"><i></i><i class="l"></i><i></i><i class="l"></i><i class="l"></i><i></i><i class="l"></i><i></i><i class="l"></i><i></i><i class="l"></i><i class="l"></i><i></i><i class="l"></i><i class="l"></i><i></i><i class="l"></i><i></i></div>
-      <div class="cap" style="margin-top:0">an address says nothing about the code behind it</div>
+    <!-- 1. very many contracts -->
+    <div class="part">
+      <div class="h s">Very many contracts</div>
+      <svg id="many" class="many" viewBox="0 0 25.05 12" width="25.05mm" height="12mm"></svg>
+      <div class="cap">an address says nothing about the code behind it</div>
     </div>
-    <div class="arr"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
-    <div class="panel coupled">
-      <div class="h" style="font-size:8.1pt"><span data-icon="search" data-color="#7C3AED" data-size="4"></span>&nbsp;The question that comes first</div>
-      <div style="font-size:7.2pt;line-height:1.25">Which contracts do users rely on? <b>This thesis</b> ranks contracts by the relations between them.</div>
+    <div class="arr"><span data-arrow="right" data-len="5.2"></span></div>
+
+    <!-- 2. the question that comes first -->
+    <div class="q">
+      <div class="h s bare"><span class="ico" data-medal="search" data-color="coupled" data-size="4.6"></span>The question that comes first</div>
+      <div class="txt">Which contracts do users rely on? <b>This thesis</b> ranks contracts by the relations between them.</div>
       <div class="cap">It says where to apply the methods on the right first; it replaces none of them and predicts no exploit.</div>
     </div>
-    <div class="arr"><svg width="6mm" height="4mm" viewBox="0 0 6 4"><path d="M0.4,2 H4.6" stroke="#475569" stroke-width="0.55"/><path d="M3.6,0.8 L5.8,2 L3.6,3.2z" fill="#475569"/></svg></div>
-    <div class="panel soft">
-      <div class="h">Risk layers<span class="sub">each starts from a given protocol</span></div>
+    <div class="arr"><span data-arrow="right" data-len="5.2"></span></div>
+
+    <!-- 3. the risk layers -->
+    <div class="part">
+      <div class="h s">Risk layers<span class="sub">each starts from a given protocol</span></div>
       <div class="risks">
-        <div class="rk"><span class="t"><span data-icon="doc" data-color="#475569" data-size="3.4"></span>Smart-contract risk</span><span class="d">bugs in the code</span></div>
-        <div class="rk"><span class="t"><span data-icon="coin" data-color="#475569" data-size="3.4"></span>Oracle risk</span><span class="d">a stale price or a feed under someone's control</span></div>
-        <div class="rk"><span class="t"><span data-icon="bars" data-color="#475569" data-size="3.4"></span>Market risk</span><span class="d">volatility, liquidation cascades</span></div>
-        <div class="rk"><span class="t"><span data-icon="people" data-color="#475569" data-size="3.4"></span>Governance risk</span><span class="d">voting power held by a few addresses</span></div>
+        <div class="rk"><span class="t"><span data-medal="doc" data-color="count" data-size="4.3"></span>Smart-contract risk</span><span class="d">bugs in the code</span></div>
+        <div class="rk"><span class="t"><span data-medal="coin" data-color="count" data-size="4.3"></span>Oracle risk</span><span class="d">a manipulated price or a feed someone controls</span></div>
+        <div class="rk"><span class="t"><span data-medal="bars" data-color="count" data-size="4.3"></span>Market risk</span><span class="d">volatility, liquidations</span></div>
+        <div class="rk"><span class="t"><span data-medal="people" data-color="count" data-size="4.3"></span>Governance risk</span><span class="d">voting power held by a few addresses</span></div>
       </div>
     </div>
   </div>
 </div>
+<script>
+// very many contracts: three rows of six squares of 3.3 mm, 1.05 mm apart; d is a contract in the mark of contracts,
+// l one in its lighter fill
+(function () {
+  const svg = document.getElementById("many"), S = 3.3, G = 1.05;
+  ["dldlld", "ldldll", "dlldld"].forEach((row, r) => [...row].forEach((k, c) =>
+    Fig.el(svg, "rect", { x: c * (S + G), y: r * (S + G), width: S, height: S, rx: 0.45,
+      style: k === "d" ? "fill:var(--contract)" : "fill:var(--contract-fill)" })));
+})();
+</script>
 </body>
 </html>

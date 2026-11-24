@@ -4,8 +4,9 @@
   source of Figures/practical-uses.pdf. Edit this file, then run (from overleaf-github/)
       python Figures/html/render.py Figures/html/practical-uses.html
 
-  What the figure shows, as the section says it (no new claim): four kinds of user of a ranking of contracts, the signal
-  the section finds suited to each, and its stated limits.
+  What the figure shows, as the section says it (no new claim): four kinds of user of a ranking of contracts (one row
+  each), the signal the section finds suited to each, and its stated limits. The bars beside a signal mark the layers
+  it reads (gold = allowance, blue = transfer).
   1. Wallet interfaces and security tooling: a badge with how many contracts with a balance have authorized a spender
      (the in-approve degree among contracts, which needs no solver) or its EndorseRank, with each allowance counted up
      to the balance behind it. Limits: the position of a graph node, not a security audit nor a guarantee against
@@ -20,6 +21,12 @@
      score was compared with a default, repayment or loss outcome.
   Bottom: an operator free to choose keeps the signals apart (allowances where authorization matters, transfers where
   flow matters); folding both edge types into one walk was not worth it against AWP on these data, and rule B is not met.
+
+  Look: the head row is spaced capitals; each of the three tested uses is a pale plate behind a solid bar
+  of the colour of its signal (sand gold: allowances; grey: a raw count; ultramarine: transfers), with its pictogram
+  in white on a ringed disc of that colour and its signals as flat tags; the lending row, which is not tested, is
+  drawn open: a white row inside a hairline, an open bar and an open disc. The closing statement stands on a plate
+  behind a solid violet bar, the colour of the coupled walk.
 -->
 <html lang="en">
 <head>
@@ -28,52 +35,74 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-.row { display:grid; grid-template-columns:41mm minmax(0, 1.3fr) minmax(0, 1fr); column-gap:3mm; align-items:center;
-  border-radius:1.8mm; border-left:1.3mm solid; padding:1.4mm 2.2mm 1.4mm 2mm; margin-bottom:1.3mm; }
-.row.head { border:none; padding-top:0; padding-bottom:0.2mm; margin-bottom:0.8mm; font-size:7pt; line-height:1.18; font-weight:700;
-  letter-spacing:0.15mm; text-transform:uppercase; color:var(--muted); }
-.who { display:flex; align-items:center; gap:1.4mm; font-weight:700; font-size:7.9pt; line-height:1.15; }
-.sig { font-size:7.1pt; }
-.sig .chip { margin:0 0.6mm 0.6mm 0; vertical-align:top; }   /* the chips of a row stand on one line, with or without layer bars */
-.lim { font-size:7.1pt; color:#374151; }
-.r-allow { border-left-color:var(--allow); background:#FFF8EC; }
-.r-count { border-left-color:var(--count); background:#F3F5F8; }
-.r-transfer { border-left-color:var(--transfer); background:#F1F5FF; }
-.r-lend { border-left-color:var(--user); background:var(--user-bg); outline:0.3mm dashed #B6BEC9; outline-offset:-0.3mm; }
-.band { margin-top:2mm; display:grid; grid-template-columns:auto 1fr; column-gap:2mm; align-items:center;
-  border-radius:2mm; background:var(--coupled-bg); border:0.3mm solid var(--coupled-line); padding:1.3mm 2.4mm; font-size:7.3pt; }
+@page { size: 180mm 130mm; margin: 0; }
+.rowp { grid-template-columns:41mm minmax(0, 1.3fr) minmax(0, 1fr); column-gap:3mm; padding:1.2mm 2.2mm 1.2mm 2mm; margin-bottom:1.3mm; }
+.rowp.head { padding-top:0; padding-bottom:0.2mm; margin-bottom:0.8mm; line-height:1.18; }
+.rowp.head > * { letter-spacing:0.1em; }
+/* line pitches in whole pixels (12 px): baselines are printed on whole pixels, and a pitch of 11.83 px came out
+   as 12, 12, 11 */
+.who { display:flex; align-items:center; gap:1.6mm; font-weight:700; font-size:7.9pt; line-height:12px; color:var(--ink); }
+.sig { font-size:7.1pt; line-height:12px; }
+.sig .pr { line-height:0; }   /* the Palatino prime takes no line height of its own: its line keeps the pitch of the others */
+.sig .chip { margin:0 0.6mm 0.7mm 0; vertical-align:top; }   /* the chips of a row stand on one line, with or without layer bars */
+/* the chips are those of the stylesheet: 20 px high, the bars 4 by 10 px at the middle, the name 14 px below the
+   top, every length inside in whole px, so that the bars and the names stand alike in every row */
+/* the two rows of three lines are one height */
+.r-allow, .r-count { height:56px; }
+.lim { font-size:7.1pt; line-height:12px; color:var(--text); }
+.r-allow { --c:var(--allow-band); }
+.r-count { --c:var(--count); }
+.r-transfer { --c:var(--transfer); }
+/* not tested: the row is open (white inside a hairline) and so is its bar. The row and its bar have the edges of
+   the other rows and their bars: the hairline is an inset shadow at the edge of the row, and the open bar lies over
+   the first 4 px of the row, the width of the bar of a row. */
+.r-lend { background:var(--paper); border-left:0; padding-left:calc(2mm + 4px); box-shadow:inset 0 0 0 0.25mm var(--hair); position:relative; }
+.r-lend::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--paper);
+  box-shadow:inset 0 0 0 0.3mm var(--user); }
+.band { margin-top:2mm; display:grid; grid-template-columns:auto 1fr; column-gap:1.6mm; align-items:center;   /* the gap of .who: its text starts where the names of the rows start */
+  background:var(--plate); border-left:4px solid var(--coupled); padding:1.3mm 2.4mm 1.3mm 2mm; font-size:7.3pt; line-height:1.25; }
 .band b { color:var(--coupled-ink); }
 </style>
 </head>
 <body>
 <div class="fig">
-  <div class="row head"><span>Who faces the choice</span><span>Signal that suits it</span><span>Stated limits</span></div>
-  <div class="row r-allow">
-    <div class="who"><span data-icon="lock" data-color="#D97706" data-size="4.4"></span>Wallet interfaces and security tooling</div>
-    <div class="sig"><span class="chip allow"><span class="lay"><i class="a on"></i><i class="t"></i></span><b>In&#8209;approve degree</b></span><span class="chip er"><b>EndorseRank</b></span><br>
+  <div class="rowp head"><span>Who faces the choice</span><span>Signal that suits it</span><span>Stated limits</span></div>
+  <div class="rowp r-allow">
+    <div class="who"><span data-medal="lock" data-color="allow" data-size="4.8"></span>Wallet interfaces and security tooling</div>
+    <div class="sig"><span class="chip allow"><span class="lay"><i class="a on"></i><i class="t"></i></span><b>In-approve degree</b></span><span class="chip er"><b>EndorseRank</b></span><br>
       the contracts with a balance that authorize a spender, each allowance counted up to the balance behind it</div>
     <div class="lim">The position of a graph node, not a security audit or a guarantee; empty for most spenders.</div>
   </div>
-  <div class="row r-count">
-    <div class="who"><span data-icon="search" data-color="#475569" data-size="4.4"></span>Block explorers, auditors and integrators</div>
+  <div class="rowp r-count">
+    <div class="who"><span data-medal="search" data-color="count" data-size="4.8"></span>Block explorers, auditors and integrators</div>
     <div class="sig"><span class="chip cnt"><span class="lay"><i class="a on"></i><i class="t on"></i></span><b>Contract backlink count</b></span><br>
-      an order of work with no solver; in the deciding run sooner than C&#8209;PR&prime;</div>
+      an order of work with no solver; in the deciding run sooner than <span class="nb">C-PR<span class="pr">′</span></span></div>
     <div class="lim">A first filter at best; says nothing about the quality of a contract’s code.</div>
   </div>
-  <div class="row r-transfer">
-    <div class="who"><span data-icon="bars" data-color="#2563EB" data-size="4.4"></span>Flow monitoring</div>
-    <div class="sig"><span class="chip transfer"><span class="lay"><i class="a"></i><i class="t on"></i></span><b>Transfer in&#8209;degree</b></span><span class="chip awp"><b>AWP</b></span><br>
-      current flow read from in&#8209;degree and in&#8209;value directly</div>
+  <div class="rowp r-transfer">
+    <div class="who"><span data-medal="bars" data-color="transfer" data-size="4.8"></span>Flow monitoring</div>
+    <div class="sig"><span class="chip transfer"><span class="lay"><i class="a"></i><i class="t on"></i></span><b>Transfer in-degree</b></span><span class="chip awp"><b>AWP</b></span><br>
+      current flow read from <span class="nb">in-degree</span> and <span class="nb">in-value</span> directly</div>
     <div class="lim">AWP has the best record of the walks, but little is lost by counting.</div>
   </div>
-  <div class="row r-lend">
-    <div class="who"><span data-icon="coin" data-color="#7A8594" data-size="4.4"></span>Lending protocols</div>
+  <div class="rowp r-lend">
+    <div class="who"><span id="open-coin"></span>Lending protocols</div>
     <div class="sig">A ranking of the contracts that users rely on, as one later input to credit decisions about contracts.</div>
     <div class="lim"><b>Not tested:</b> no score was compared with a default, repayment or loss outcome.</div>
   </div>
-  <div class="band"><span data-icon="scale" data-color="#7C3AED" data-size="4.6"></span>
+  <div class="band"><span data-medal="scale" data-color="coupled" data-size="4.8"></span>
     <span><b>Keep the signals apart:</b> allowances where authorization matters, transfers where flow matters. Folding both edge types
     into one walk was not worth it against AWP on these data, and rule B is not met.</span></div>
 </div>
+<script>
+// the use that is not tested has its pictogram in the open form of the disc (a white disc inside two thin rings)
+(function () {
+  const c = Fig.C.user, s = document.getElementById("open-coin");
+  s.outerHTML = `<svg width="4.8mm" height="4.8mm" viewBox="0 0 16 16" style="flex:none">` +
+    `<circle cx="8" cy="8" r="7.55" fill="none" stroke="${c}" stroke-width="0.5"/>` +
+    `<circle cx="8" cy="8" r="6.1" fill="#fff" stroke="${c}" stroke-width="0.5"/>` +
+    `<g transform="translate(3.74 3.74) scale(0.71)">${Fig.ICONS.coin(c)}</g></svg>`;
+})();
+</script>
 </body>
 </html>

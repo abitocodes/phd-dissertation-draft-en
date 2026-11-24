@@ -10,13 +10,21 @@
   Rows of the time line:
   - Registered analysis (grey): scores from every event since 1 October 2023, which begins before the axis
     (a break mark at the left end).
-  - Scores at t1 (teal): the twelve-month score window 1 April 2025 to 31 March 2026.
-  - Scores at T_obs (teal): the twelve-month score window 1 July 2025 to 30 June 2026.
-  - Labels (pink): W0, April to June 2026, after t1; W1, July to September 2026, after T_obs.
+  - Scores at t1 (verdigris): the twelve-month score window 1 April 2025 to 31 March 2026.
+  - Scores at T_obs (verdigris): the twelve-month score window 1 July 2025 to 30 June 2026.
+  - Labels (rose): W0, April to June 2026, after t1; W1, July to September 2026, after T_obs.
   Below the time line, what each freeze is used for, with the research questions:
   - at t1: the discovery-order test (RQ2); the W0 holdout (RQ3) and the primary part of rule A (RQ4).
   - at T_obs: the same-window checks (RQ1) and the secondary part of rule A (RQ4); the deciding run of the
     discovery-order test (RQ2); the W1 holdout (RQ3) with two criteria of rule B, F1 and F2 (RQ5).
+
+  Look (STYLE.md, "Calendars and periods"): the month letters are grey over hairlines, the years bold;
+  a period is a flat bar with square ends and its name inside (the score windows of the contract graph in the pale
+  verdigris of contracts, the label windows in the tint of RQ3 with a line of its rose, the registered analysis in
+  neutral grey, open at its left end behind a break mark); a freeze is a dashed near-black line with its name in bold
+  at its foot, the variables t and T in Palatino italic. Each use of a freeze is a white box with a hairline, the
+  research question a solid label in its colour; the five boxes have one size and stand in two columns under the
+  calendar, from its first month line to its last.
 -->
 <html lang="en">
 <head>
@@ -26,85 +34,87 @@
 <script src="fig.js"></script>
 <style>
 @page { size: 180mm 110mm; margin: 0; }
-.uses { display:grid; grid-template-columns:30mm 1fr; row-gap:1.3mm; column-gap:2mm; margin-top:1.2mm; align-items:center; }
-.uses .at { font-weight:700; font-size:7.6pt; color:#374151; display:flex; align-items:center; gap:1.4mm; white-space:nowrap; }
-.uses .at i { display:inline-block; width:0; height:4.2mm; border-left:0.45mm dashed #374151; }
-.uses .list { display:flex; flex-wrap:wrap; gap:1.2mm 1.6mm; }
-.use { display:inline-flex; align-items:center; gap:1mm; border:0.3mm solid #D5DCE4; background:#fff; border-radius:1.6mm;
-  padding:0.6mm 1.6mm 0.6mm 0.8mm; font-size:7.3pt; white-space:nowrap; }
-.rqb { color:#fff; font-weight:700; font-size:7pt; border-radius:0.9mm; padding:0.1mm 1mm; }
-.rqb.r1 { background:var(--rq1); } .rqb.r2 { background:var(--rq2); } .rqb.r3 { background:var(--rq3); } .rqb.r45 { background:var(--rq45); }
+/* The uses of the freezes: five boxes of one size in two columns, which together are as wide as the calendar (from
+   its first month line at 32 mm to its last at 163.4 mm). The lengths are whole pixels (see style.css), so that the
+   boxes come out equal and their texts stand at one height: a box is 246 px wide and 20 px high, with 5 px between
+   boxes in both directions; a tag is 24 by 14 px; the line is 14 px, which puts the baseline of the tag and of the
+   text 13 px below the top of the box. The longest text fills its box with the padding of the left side to spare. */
+.uses { display:grid; grid-template-columns:30mm 497px; row-gap:5px; column-gap:2mm; margin-top:0.9mm; align-items:center; }
+.uses .at { font-weight:700; font-size:7.6pt; color:var(--ink); display:flex; align-items:center; gap:1.4mm; white-space:nowrap; }
+.uses .at svg { flex:none; display:block; }
+.uses .list { display:grid; grid-template-columns:246px 246px; gap:5px; }
+/* one use of a freeze: one of a list of like things, a white box with a hairline (an inset shadow, as .panel) */
+.use { display:flex; align-items:center; gap:4px; height:20px; line-height:14px; background:var(--paper); border-radius:0.4mm;
+  box-shadow:inset 0 0 0 0.25mm var(--hair); padding:0 0 0 3px; font-size:7.1pt; white-space:nowrap; }
+.use .tag { width:24px; height:14px; line-height:14px; padding:0; text-align:center; }
 </style>
 </head>
 <body>
 <div class="fig">
-  <svg id="tl" viewBox="0 0 165 37.5" width="165mm" height="37.5mm" style="display:block"></svg>
+  <svg id="tl" viewBox="0 0 165 37.3" width="165mm" height="37.3mm" style="display:block"></svg>
   <div class="uses">
-    <div class="at"><i></i><span>At t<sub>1</sub></span></div>
+    <div class="at"><svg width="0.6mm" height="4.2mm" viewBox="0 0 0.6 4.2"><path d="M0.3,0 V4.2" style="stroke:var(--ink)" stroke-width="0.4" stroke-dasharray="0.9 0.6"/></svg><span>At <i class="v">t</i><sub>1</sub></span></div>
     <div class="list">
-      <span class="use"><span class="rqb r2">RQ2</span>discovery-order test</span>
-      <span class="use"><span class="rqb r3">RQ3</span><span class="rqb r45">RQ4</span>W0 holdout; rule A, primary part</span>
+      <span class="use"><span class="tag r2">RQ2</span>discovery-order test</span>
+      <span class="use"><span class="tag r3">RQ3</span><span class="tag r45">RQ4</span>W0 holdout; rule A, primary part</span>
     </div>
-    <div class="at"><i></i><span>At T<sub>obs</sub></span></div>
+    <div class="at"><svg width="0.6mm" height="4.2mm" viewBox="0 0 0.6 4.2"><path d="M0.3,0 V4.2" style="stroke:var(--ink)" stroke-width="0.4" stroke-dasharray="0.9 0.6"/></svg><span>At <i class="v">T</i><sub>obs</sub></span></div>
     <div class="list">
-      <span class="use"><span class="rqb r1">RQ1</span><span class="rqb r45">RQ4</span>same-window checks; rule A, secondary part</span>
-      <span class="use"><span class="rqb r2">RQ2</span>discovery-order test, deciding run</span>
-      <span class="use"><span class="rqb r3">RQ3</span><span class="rqb r45">RQ5</span>W1 holdout; rule B, criteria F1 and F2</span>
+      <span class="use"><span class="tag r1">RQ1</span><span class="tag r45">RQ4</span>same-window checks; rule A, secondary part</span>
+      <span class="use"><span class="tag r2">RQ2</span>discovery-order test, deciding run</span>
+      <span class="use"><span class="tag r3">RQ3</span><span class="tag r45">RQ5</span>W1 holdout; rule B, criteria F1 and F2</span>
     </div>
   </div>
 </div>
 
 <script>
 (function () {
-  const svg = document.getElementById("tl");
-  const X0 = 32, M = 7.15, mx = (k) => X0 + k * M;          // month k after 1 April 2025 (k = 0..18)
+  const svg = document.getElementById("tl"), C = Fig.C;
+  const X0 = 32, M = 7.3, mx = (k) => X0 + k * M;           // month k after 1 April 2025 (k = 0..18)
   const el = (t, a) => Fig.el(svg, t, a), txt = (x, y, s, o) => Fig.text(svg, x, y, s, o);
   const MONTHS = "AMJJASONDJFMAMJJAS";
 
-  // years and months
-  el("path", { d: `M${mx(9)},0.4 V7.8`, stroke: "#CBD5E1", "stroke-width": 0.3 });
-  txt((mx(0) + mx(9)) / 2, 2.6, "2025", { size: 2.6, weight: 700, anchor: "middle", fill: "#374151" });
-  txt((mx(9) + mx(18)) / 2, 2.6, "2026", { size: 2.6, weight: 700, anchor: "middle", fill: "#374151" });
+  // years and months: the calendar of these figures (month letters grey over hairlines, years bold, the axis a grey rule)
+  el("path", { d: `M${mx(9)},0.4 V7.8`, stroke: C.rule, "stroke-width": 0.3 });
+  txt((mx(0) + mx(9)) / 2, 2.6, "2025", { size: 2.6, weight: 700, anchor: "middle", fill: C.ink });
+  txt((mx(9) + mx(18)) / 2, 2.6, "2026", { size: 2.6, weight: 700, anchor: "middle", fill: C.ink });
   for (let k = 0; k < 18; k++) {
-    txt(mx(k) + M / 2, 6.6, MONTHS[k], { size: 2.55, anchor: "middle", fill: "#5B6472" });
-    el("path", { d: `M${mx(k)},8 V32.4`, stroke: "#EEF2F6", "stroke-width": 0.25 });
+    txt(mx(k) + M / 2, 6.6, MONTHS[k], { size: 2.5, anchor: "middle", fill: C.muted });
+    el("path", { d: `M${mx(k)},8 V32.2`, stroke: C.plate2, "stroke-width": 0.2 });
   }
-  el("path", { d: `M${mx(18)},8 V32.4`, stroke: "#EEF2F6", "stroke-width": 0.25 });
-  el("path", { d: `M${mx(0)},8 H${mx(18)}`, stroke: "#94A3B8", "stroke-width": 0.3 });
+  el("path", { d: `M${mx(18)},8 V32.2`, stroke: C.plate2, "stroke-width": 0.2 });
+  el("path", { d: `M${mx(0)},8 H${mx(18)}`, stroke: C.rule, "stroke-width": 0.3 });
 
-  // freezes (drawn before the bars, which cover them)
-  for (const [k, name, sub, date, anchor] of [[12, "t", "1", " = 31 March 2026", "end"], [15, "T", "obs", " = 30 June 2026", "start"]]) {
-    el("path", { d: `M${mx(k)},8.6 V33.8`, stroke: "#374151", "stroke-width": 0.45, "stroke-dasharray": "1 0.7" });
-    const t = txt(mx(k) + (anchor === "end" ? -0.8 : 0.8), 36.6, name, { size: 2.6, weight: 700, anchor, fill: "#374151" });
-    const s = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-    s.setAttribute("font-size", 2.1); s.setAttribute("dy", 0.6); s.textContent = sub; t.appendChild(s);
-    const d = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-    d.setAttribute("dy", -0.6); d.setAttribute("font-weight", 400); d.textContent = date; t.appendChild(d);
+  // freezes (drawn before the bars, which cover them): a dashed near-black line, its name in bold at its foot
+  for (const [k, name, date, anchor] of [[12, "$t$_{1}", " = 31 March 2026", "end"], [15, "$T$_{obs}", " = 30 June 2026", "start"]]) {
+    el("path", { d: `M${mx(k)},8.6 V33.6`, stroke: C.ink, "stroke-width": 0.4, "stroke-dasharray": "0.9 0.6" });
+    const t = Fig.rich(svg, mx(k) + (anchor === "end" ? -0.8 : 0.8), 36.4, name + date, { size: 2.6, weight: 700, anchor, fill: C.ink });
+    t.lastChild.setAttribute("font-weight", 400);            // the date in regular weight
   }
   // rows: label, bar
-  const row = (y, label, sub) => {
-    const t = txt(0.4, y + 0.9, label, { size: 2.6, weight: 700, fill: "#374151" });
-    if (sub) { const s = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-      s.setAttribute("font-size", 2.1); s.setAttribute("dy", 0.6); s.textContent = sub; t.appendChild(s); }
-  };
-  const bar = (k0, k1, y, h, fill, stroke, label, ink, dash) => {
-    el("rect", { x: mx(k0), y: y - h / 2, width: (k1 - k0) * M, height: h, rx: 1, fill, stroke, "stroke-width": 0.3,
-      "stroke-dasharray": dash });
-    if (label) txt((mx(k0) + mx(k1)) / 2, y + 0.9, label, { size: 2.55, anchor: "middle", fill: ink, weight: 600 });
+  const row = (y, label) => Fig.rich(svg, 0.4, y + 0.9, label, { size: 2.6, weight: 700, fill: C.ink });
+  // a period: a flat bar with square ends, its name inside
+  const bar = (k0, k1, y, h, fill, label, ink, line) => {
+    el("rect", { x: mx(k0), y: y - h / 2, width: (k1 - k0) * M, height: h, style: `fill:${fill}` + (line ? `;stroke:${line}` : ""), "stroke-width": line ? 0.3 : null });
+    if (label) txt((mx(k0) + mx(k1)) / 2, y + 0.9, label, { size: 2.5, anchor: "middle", fill: ink, weight: 600 });
   };
 
+  // The four bars stand 2 mm apart, the first 2 mm below the axis: 10 to 13.2 (the registered analysis, 3.2 mm
+  // high), then 15.2, 21.2 and 27.2 (4 mm high each).
+  // the registered analysis: neutral grey, open at its left end, where it begins before the axis (break mark)
   row(11.6, "Registered analysis");
-  bar(0, 15, 11.6, 3.2, "#EEF0F3", "#B6BEC9", "every event since 1 October 2023", "#4B5563", "0.9 0.6");
-  el("path", { d: `M${mx(0) - 1.2},10 l1.2,1.6 l-1.2,1.6`, fill: "none", stroke: "#8A94A3", "stroke-width": 0.35 });
+  el("rect", { x: mx(0), y: 10, width: 15 * M, height: 3.2, fill: C.countBg });
+  el("path", { d: `M${mx(0)},10 H${mx(15)} V13.2 H${mx(0)}`, fill: "none", stroke: C.count, "stroke-width": 0.25 });
+  txt((mx(0) + mx(15)) / 2, 12.5, "every event since 1 October 2023", { size: 2.5, anchor: "middle", fill: C.countInk, weight: 600 });
+  el("path", { d: `M${mx(0) - 1.75},13.6 l1.05,-4 M${mx(0) - 0.85},13.6 l1.05,-4`, fill: "none", stroke: C.count, "stroke-width": 0.25 });
 
-  row(17.4, "Scores at t", "1");
-  bar(0, 12, 17.4, 4, "#D5F0EB", "#0F766E", "12 months: 1 April 2025 to 31 March 2026", "#0B5B55");
-  row(23.4, "Scores at T", "obs");
-  bar(3, 15, 23.4, 4, "#D5F0EB", "#0F766E", "12 months: 1 July 2025 to 30 June 2026", "#0B5B55");
-  row(29.4, "Labels");
-  bar(12, 15, 29.4, 4, "#FCE7F1", "#DB2777", "W0", "#9D174D");
-  bar(15, 18, 29.4, 4, "#FCE7F1", "#DB2777", "W1", "#9D174D");
-
+  row(17.2, "Scores at $t$_{1}");
+  bar(0, 12, 17.2, 4, C.contractFill, "12 months: 1 April 2025 to 31 March 2026", C.contractInk);
+  row(23.2, "Scores at $T$_{obs}");
+  bar(3, 15, 23.2, 4, C.contractFill, "12 months: 1 July 2025 to 30 June 2026", C.contractInk);
+  row(29.2, "Labels");
+  bar(12, 15, 29.2, 4, "var(--rq3-bg)", "W0", C.rq3, C.rq3);
+  bar(15, 18, 29.2, 4, "var(--rq3-bg)", "W1", C.rq3, C.rq3);
 })();
 </script>
 </body>

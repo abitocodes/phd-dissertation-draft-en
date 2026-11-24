@@ -1,92 +1,200 @@
-/* Shared style of the thesis diagrams drawn in HTML (see README.md in this folder).
-   Each figure links this file, sets its own @page height if it needs more than the default, and draws inside
-   <div class="fig"> (165 mm, the text width). Sizes are physical (mm, pt) so the PDF prints at true size. */
+/* Shared style of the thesis diagrams drawn in HTML (see README.md and STYLE.md in this folder): flat ultramarine
+   and sand gold with greys, Palatino headings over a grey rule, text in Bahnschrift (the DIN of Windows), discs and
+   rings, solid tags, dotted leaders. Each figure links this file, sets its own @page height if it needs more than
+   the default, and draws inside <div class="fig"> (165 mm, the text width). Sizes are physical (mm, pt) so the PDF
+   prints at true size. */
 
 @page { size: 180mm 260mm; margin: 0; }
 
 :root {
-  /* one colour per meaning */
-  --allow:#D97706;    --allow-bg:#FFF4DF;    --allow-line:#F2BF73;    --allow-ink:#7C3F00;
-  --transfer:#2563EB; --transfer-bg:#E7EEFF; --transfer-line:#93B2F5; --transfer-ink:#1E3A8A;
-  --coupled:#7C3AED;  --coupled-bg:#F1EAFF;  --coupled-line:#B79AF0;  --coupled-ink:#4C1D95;
-  --count:#475569;    --count-bg:#EEF2F6;    --count-line:#B7C2CF;
-  --contract:#0F766E; --contract-bg:#E4F5F2; --contract-line:#9FD7CF;
-  --user:#7A8594;     --user-bg:#F5F6F8;
-  --web:#0E7490;      --web-bg:#E0F2F7;
-  --ink:#1F2937; --muted:#5B6472; --line:#CBD5E1; --paper:#FFFFFF;
-  --rq1:#0891B2;  --rq1-bg:#E3F5FA;
-  --rq2:#059669;  --rq2-bg:#E2F6EE;
-  --rq3:#DB2777;  --rq3-bg:#FCE7F1;
-  --rq45:#7C3AED; --rq45-bg:#F1EAFF;
-  --good:#15803D; --good-bg:#DCFCE7; --bad:#B91C1C; --bad-bg:#FEE2E2; --mixed:#A16207; --mixed-bg:#FEF3C7;
+  /* paper and neutrals: black only in headings, text in dark grey, surfaces white or one pale grey */
+  --paper:#FFFFFF; --plate:#F3F3F2; --plate-2:#E6E6E4; --rule:#B4B4B4; --hair:#C4C4C2;
+  --ink:#161616; --text:#333333; --muted:#575757;
+
+  /* one colour per meaning. For each: the mark (lines, tags, discs), -ink (small text on paper),
+     -fill (broad surfaces), -bg (pale surface). The two layers are the two colours of the reference. */
+  --allow:#B98A24;    --allow-ink:#6B4C0C;    --allow-fill:#DDBB76;    --allow-bg:#F4E9CF;   /* allowance: sand gold */
+  --allow-band:#CFA448;                       /* gold of a band 0.8 mm or wider: nearer the gold of the reference, which a thin line cannot carry */
+  --allow-plane:#F5EACB; --transfer-plane:#D5DBF4;   /* a layer drawn as a plane; the transfer plane a shade darker, for greyscale */
+  --transfer:#2340C8; --transfer-ink:#162A8C; --transfer-fill:#97A6E3; --transfer-bg:#E2E6F8; /* transfer: ultramarine */
+  --coupled:#6A2C91;  --coupled-ink:#4A1D68;  --coupled-fill:#B79BCB;  --coupled-bg:#EFE7F4;  /* C-PR: violet, where blue and gold meet */
+  --contract:#2A7A72; --contract-ink:#1C544F; --contract-fill:#8FC1BA; --contract-bg:#E2F0EE; /* contracts: verdigris */
+  --user:#8A8A8A;     --user-ink:#4A4A4A;     --user-fill:#C9C9C7;     --user-bg:#F3F3F2;     /* user accounts: grey, dashed */
+  --count:#5A5A5A;    --count-ink:#333333;    --count-fill:#A9A9A7;    --count-bg:#ECECEA;    /* raw counts, neutral steps */
+  --web:#2C8FB3;      --web-bg:#E1F0F5;      --web-ink:#1C5F78;                              /* the web: pages and hyperlinks */
+  --leader:#9A9A98;                           /* a dotted leader */
+  --rq1:#2C8FB3;  --rq1-bg:#E1F0F5;      /* the four in order get darker, so they keep their order in greyscale */
+  --rq2:#2F7D45;  --rq2-bg:#E3F0E6;
+  --rq3:#C23B5E;  --rq3-bg:#F8E4EA;
+  --rq45:#6A2C91; --rq45-bg:#EFE7F4;
+  --good:#2F7D45; --good-bg:#E3F0E6; --bad:#B3372B; --bad-bg:#F7E3E0; --mixed:#8A6410; --mixed-bg:#F4E9CF;
+
+  /* type: the reference sets titles in Palatino and everything else in DIN; Bahnschrift is the DIN of Windows */
+  --serif:"Palatino Linotype", "Book Antiqua", Palatino, "TeX Gyre Pagella", "Cambria Math", serif;
+  --sans:Bahnschrift, "DIN Alternate", "D-DIN", Barlow, "Segoe UI", Arial, sans-serif;
+  --mono:Consolas, "Cascadia Mono", monospace;   /* identifiers of the chain: function names, events, RPC calls */
 }
 
 * { box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 html, body { margin:0; padding:0; background:transparent; }
-body { font-family:"Segoe UI", Arial, sans-serif; color:var(--ink); font-size:7.6pt; line-height:1.25; }
-.fig { width:165mm; margin:6mm; }
-.mono { font-family:Consolas, "Cascadia Mono", monospace; }
-.mono:not(text):not(tspan) { font-size:0.94em; }   /* HTML only: in SVG, em sizes are read in user units */
+/* The DIN of the reference is narrower than Bahnschrift and set with open spacing: its capital S is 0.67 as wide
+   as high (Bahnschrift 0.85), and a line of it is as long as the same line in Bahnschrift at its normal width.
+   Chrome reaches one narrower width of Bahnschrift, the semi-condensed one (87.5%; other values of font-stretch
+   and font-variation-settings change nothing). At that width 0.05em of spacing gives the line length of the
+   reference; 0.045em is used, which sets a line 2.5% shorter than Segoe UI does, so a figure keeps its line breaks. */
+body { font-family:var(--sans); font-stretch:87.5%; letter-spacing:0.045em; color:var(--text); font-size:7.4pt;
+  line-height:1.25; font-variant-numeric:lining-nums tabular-nums; }
+.fig { width:165mm; margin:23px; }      /* 23 px (6.1 mm), a whole number of pixels: see the note on whole pixels */
 .muted { color:var(--muted); }
-sub, sup { font-size:0.72em; }
+b, strong { font-weight:700; color:var(--ink); }
+sub, sup { font-size:0.8em; line-height:0; }        /* 7 pt text gives 5.6 pt, the floor for subscripts */
+.nb { white-space:nowrap; }                         /* Bahnschrift has no non-breaking hyphen: C-PR goes in a .nb */
 
-/* numbered heading of a panel */
-.h { display:flex; align-items:center; font-weight:700; font-size:8.6pt; white-space:nowrap; margin-bottom:1mm; }
-.h .sub { font-weight:400; font-size:7pt; color:var(--muted); margin-left:1.5mm; white-space:normal; }
-.badge { display:inline-flex; align-items:center; justify-content:center; width:4.4mm; height:4.4mm; border-radius:50%;
-  color:#fff; font-weight:700; font-size:7.3pt; margin-right:1.4mm; flex:none; background:var(--ink); }
+/* formulas and variables: Palatino, variables in its italic (Bahnschrift has no italic and no minus sign) */
+.m, i.v, var { font-family:var(--serif); font-stretch:normal; font-size:1.06em; letter-spacing:0; white-space:nowrap; }
+.m i, i.v, var { font-style:italic; }
+.m .abs i { margin:0 -0.1em 0 -0.16em; }            /* |V|: the italic V stands close between its bars */
 
-/* boxes */
-.panel { border:0.3mm solid var(--line); border-radius:2.4mm; padding:2mm 2.4mm; background:var(--paper); }
-.panel.contract { border-color:var(--contract-line); background:linear-gradient(180deg,#F3FBF9,#fff 75%); }
-.panel.allow { border-color:var(--allow-line); background:var(--allow-bg); }
-.panel.transfer { border-color:var(--transfer-line); background:var(--transfer-bg); }
-.panel.coupled { border-color:var(--coupled-line); background:#FBF9FF; }
-.panel.users { border:0.35mm dashed var(--user); background:var(--user-bg); }
-.panel.soft { border-color:#E2E8F0; background:#F8FAFC; }
+/* heading of a panel: Palatino over a grey rule, as the titles of the reference; the number sits in a ringed disc */
+.h { display:flex; align-items:center; font-family:var(--serif); font-stretch:normal; font-weight:400; font-size:10.4pt;
+  letter-spacing:0; color:var(--ink); white-space:nowrap; line-height:1.1; padding-bottom:0.9mm; margin-bottom:1.3mm;
+  border-bottom:0.45mm solid var(--rule); }
+.h .sub { font-family:var(--sans); font-stretch:87.5%; font-size:7.1pt; color:var(--muted); margin-left:1.8mm; letter-spacing:0.05em; }
+/* the numbered disc: <span class="badge">1</span>. fig.js draws it (disc, ring and number in one SVG of the same
+   box, 4.3 mm; the ring lies 0.52 mm outside it), because two CSS boxes do not keep one centre in print: see the
+   note on whole pixels below. --c is its colour. */
+.badge { --c:var(--ink); display:block; width:4.3mm; height:4.3mm; margin:0.5mm 2.1mm 0.5mm 0.6mm; flex:none; }
+span.badge { color:transparent; font-size:0; }       /* until fig.js has drawn it */
+.badge.contract { --c:var(--contract); } .badge.coupled { --c:var(--coupled); }
+.badge.allow { --c:var(--allow); } .badge.transfer { --c:var(--transfer); } .badge.user { --c:var(--user); }
 
-/* chips (scores, terms) with optional layer bars: <span class="lay"><i class="a on"></i><i class="t"></i></span> */
-.chip { display:inline-flex; align-items:center; gap:1.2mm; border-radius:1.6mm; padding:0.8mm 1.6mm; border:0.3mm solid;
-  font-size:7.1pt; white-space:nowrap; }
-.chip b { font-size:7.8pt; }
+/* small capital label of a group */
+.grp { font-size:7.1pt; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; }   /* at 0.12em a PDF reader splits a word (LIMI TS) */
+
+/* code: an identifier of the chain keeps a monospace face (in SVG: Fig.text with mono: true) */
+.mono { font-family:var(--mono); font-stretch:normal; letter-spacing:0; }   /* at the size of its line: never below 7 pt */
+/* the prime of a score computed on the part read so far (C-PR′) and other signs Bahnschrift lacks: Palatino */
+.pr { font-family:var(--serif); font-stretch:normal; letter-spacing:0; }
+
+/* a part of a figure: a column under its heading (.h), with no box around it. The reference stands its text on the
+   board; a box is drawn only for what the figure sets apart (.panel.soft, the pale plate), for one of a list of like
+   things (.panel, a hairline) and for user accounts or whatever leaves the graph (.panel.users, dashed). */
+.part { display:flex; flex-direction:column; min-width:0; }
+.part > .h { margin-bottom:1.5mm; }
+/* a heading in a narrow column or of a small part: the smaller Palatino */
+.h.s { font-size:9pt; padding-bottom:0.8mm; margin-bottom:1.2mm; }
+/* a heading that needs no rule (inside a plate) */
+.h.bare { border-bottom:0; padding-bottom:0; margin-bottom:0.8mm; }
+
+/* Small boxes with one line of text (a tag, a chip, a pill): every length inside them is a whole number of px.
+   Chrome prints the baseline of a line on a whole pixel, as it does the edges of a box, each rounded by itself.
+   With paddings in mm and line heights as numbers a tag came out 13 or 14 px high and its text 9 or 10 px below its
+   top, according to where it stood; in whole px the text lies the same distance below the top of every such box.
+   For Bahnschrift at 7.1 to 7.9 pt the baseline of a line lies floor((line-height - 10) / 2) + 8 px below the top
+   of the line, and the capitals are 6.7 to 7.5 px high. So:
+     .tag       15 px high: 1 px of padding above a line of 14 px; baseline 11 px down, the capitals at its middle
+     .chip      20 px high: a frame of 1 px, 2 px of padding above lines of 14 px; baseline 14 px down; the layer
+                bars 4 by 10 px, 2 px apart, at its middle
+     .pill      14 px high: a line of 14 px; baseline 10 px down
+   fig.js also rounds the line height of every other element to the pixel, so that the lines of a paragraph stand
+   one pitch apart (a pitch of 11.6 px prints as 11, 12, 12). */
+
+/* a solid label: a research question, a claim, a window, a step */
+.tag { --c:var(--count); display:inline-block; color:#fff; background:var(--c); font-weight:700; font-size:7.1pt; line-height:14px;
+  padding:1px 5px 0; white-space:nowrap; letter-spacing:0.03em; }
+.tag.r1 { --c:var(--rq1); } .tag.r2 { --c:var(--rq2); } .tag.r3 { --c:var(--rq3); } .tag.r45 { --c:var(--rq45); }
+.tag.allow { --c:var(--allow); } .tag.transfer { --c:var(--transfer); } .tag.contract { --c:var(--contract); }
+.tag.coupled { --c:var(--coupled); } .tag.web { --c:var(--web); } .tag.ink { --c:var(--ink); }
+
+/* a row of a table of rows (who, what, limits; question, answer, evidence): the pale plate behind a solid bar of
+   its colour; the head row is spaced capitals. Give the grid columns in the figure. */
+/* the bar is 4 px wide: what a border of 1.3 mm came to in print (a border width is rounded down to the pixel), and now
+   also what the layout counts, so that rows with and without a bar start their content at one edge */
+.rowp { --c:var(--count); display:grid; align-items:center; background:var(--plate); border-left:4px solid var(--c); }
+.rowp.head { background:none; border-left-color:transparent; }
+.rowp.head > * { font-size:7.1pt; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; }
+
+/* Whole pixels. Chrome prints the edges of a CSS box on whole CSS pixels (1 px = 0.2646 mm): a width of 51.7 mm
+   comes out as 195 or 196 px according to where the box stands, and a border of 0.2 to 0.39 mm as 1 px. So
+   - boxes that must be equal (the cards of a figure) get their widths and the gaps between them in whole px;
+   - a card's padding is whole px as well, and so is the width of a drawing that fills it: the rule under the
+     heading, the text and the drawing then start at one edge (a box is rounded to the pixel, the origin of an SVG
+     too, text is not, and each would round its own way);
+   - marks that must share a centre or meet exactly (a disc in its ring, a node in its frame) are drawn in one SVG,
+     where nothing is moved. */
+
+/* A card: a part of a figure inside a hairline frame, <div class="part panel">, with its heading (.h.s) inside.
+   The cards of one figure have one width and one height: their grid gives the columns in whole px and stretches
+   its row (align-items:stretch). .panel.users (dashed) and .panel.soft (the plate) are cards as well. */
+.part.panel { padding:6px 8px 6px; }              /* 1.6 mm, 2.1 mm */
+
+/* surfaces: neutral. Colour is carried by marks (bars, tags, discs, lines), not by tinted boxes.
+   The hairline frame is an inset shadow at the edge of the box, not a border. Chrome prints a rounded border as a
+   stroked path, and the crop (PyMuPDF) takes a stroked path with corners to be 1 mm wider on every side than it is:
+   a frame at the edge of a figure made the PDF wider than the figure, and the figure smaller on the page. A shadow
+   without blur prints as a filled shape of exactly its size. --frame is its colour. */
+.panel { --frame:var(--hair); border:0; border-radius:0.6mm; padding:2.25mm 2.65mm; background:var(--paper);
+  box-shadow:inset 0 0 0 0.25mm var(--frame); }
+.panel.soft { background:var(--plate); box-shadow:none; }
+.panel.users { border:0.35mm dashed var(--user); padding:2mm 2.4mm; background:var(--paper); box-shadow:none; }
+.panel.allow { --frame:var(--allow-fill); background:var(--allow-bg); }
+.panel.transfer { --frame:var(--transfer-fill); background:var(--transfer-bg); }
+
+/* tags (scores, terms): flat, square; the method is the solid one.
+   Layer bars: <span class="lay"><i class="a on"></i><i class="t"></i></span> */
+.chip { display:inline-flex; align-items:center; gap:5px; border-radius:0.5mm; height:20px; padding:2px 6px 0; border:1px solid;
+  font-size:7.1pt; white-space:nowrap; line-height:14px; }
+.chip b { font-size:7.9pt; color:inherit; }
 .chip.cpr { background:var(--coupled); border-color:var(--coupled); color:#fff; }
-.chip.spr { background:var(--coupled-bg); border-color:var(--coupled-line); color:var(--coupled-ink); }
-.chip.er, .chip.allow { background:var(--allow-bg); border-color:var(--allow-line); color:var(--allow-ink); }
-.chip.awp, .chip.transfer { background:var(--transfer-bg); border-color:var(--transfer-line); color:var(--transfer-ink); }
-.chip.cnt { background:var(--count-bg); border-color:var(--count-line); color:#334155; }
-.chip.user { background:var(--user-bg); border:0.3mm dashed var(--user); color:#374151; }
-.lay { display:inline-flex; gap:0.45mm; }
-.lay i { display:block; width:1.2mm; height:2.6mm; border-radius:0.35mm; border:0.25mm solid; }
+.chip.spr { background:var(--paper); border-color:var(--coupled); color:var(--coupled-ink); }
+.chip.er, .chip.allow { background:var(--allow-bg); border-color:var(--allow-fill); color:var(--allow-ink); }
+.chip.awp, .chip.transfer { background:var(--transfer-bg); border-color:var(--transfer-fill); color:var(--transfer-ink); }
+.chip.cnt { background:var(--count-bg); border-color:var(--count-fill); color:var(--count-ink); }
+.chip.user { background:var(--paper); border:1px dashed var(--user); color:var(--user-ink); }
+.lay { display:inline-flex; gap:2px; align-self:flex-start; margin-top:2px; }    /* 5 px below the top of its chip */
+.lay i { display:block; width:4px; height:10px; border:1px solid; }
 .lay .a { border-color:var(--allow); } .lay .a.on { background:var(--allow); }
 .lay .t { border-color:var(--transfer); } .lay .t.on { background:var(--transfer); }
-.chip.cpr .lay i { border-color:#fff; } .chip.cpr .lay .a.on { background:#FDD9A0; } .chip.cpr .lay .t.on { background:#BFD2FF; }
+.chip.cpr .lay i { border-color:#fff; } .chip.cpr .lay .a.on { background:var(--allow-fill); } .chip.cpr .lay .t.on { background:var(--transfer-fill); }
 
-/* research-question cards: <div class="card r2"><div class="head"><span class="rq">RQ2</span><span class="t">Title</span></div><p>…</p></div> */
-.card { border-radius:2mm; border-left:1.3mm solid; padding:1.3mm 2mm 1.3mm 2.1mm; }
-.card .head { display:flex; align-items:center; gap:1.2mm; margin-bottom:0.5mm; }
-.card .rq { color:#fff; font-weight:700; font-size:6.9pt; border-radius:1mm; padding:0.2mm 1.2mm; white-space:nowrap; }
-.card .t { font-weight:700; font-size:8pt; }
-.card p { margin:0; font-size:7pt; line-height:1.22; }
-.card.r1 { background:var(--rq1-bg); border-color:var(--rq1); } .card.r1 .rq { background:var(--rq1); }
-.card.r2 { background:var(--rq2-bg); border-color:var(--rq2); } .card.r2 .rq { background:var(--rq2); }
-.card.r3 { background:var(--rq3-bg); border-color:var(--rq3); } .card.r3 .rq { background:var(--rq3); }
-.card.r45 { background:var(--rq45-bg); border-color:var(--rq45); } .card.r45 .rq { background:var(--rq45); }
+/* research-question cards: a pale plate behind a solid bar of the question's colour; the tag is a solid label.
+   <div class="card r2"><div class="head"><span class="rq">RQ2</span><span class="t">Title</span></div><p>…</p></div> */
+.card { background:var(--plate); border-left:4px solid; padding:5px 8px 5px 8px; }
+/* the tag and the title share a baseline; the tag is the 15 px of .tag, set 1 px down so that it stands at the middle
+   of a head line 17 px high (the height of a pictogram of 4.498 mm) */
+.card .head { display:flex; align-items:baseline; gap:5px; margin-bottom:2px; }
+.card .rq { color:#fff; font-weight:700; font-size:7.1pt; line-height:14px; padding:1px 5px 0; margin-top:1px; white-space:nowrap; letter-spacing:0.03em; }
+.card .t { font-weight:700; font-size:8.1pt; line-height:15px; color:var(--ink); white-space:nowrap; }
+.card p { margin:0; font-size:7.1pt; line-height:12px; color:var(--muted); }
+.card.r1 { border-color:var(--rq1); } .card.r1 .rq { background:var(--rq1); }
+.card.r2 { border-color:var(--rq2); } .card.r2 .rq { background:var(--rq2); }
+.card.r3 { border-color:var(--rq3); } .card.r3 .rq { background:var(--rq3); }
+.card.r45 { border-color:var(--rq45); } .card.r45 .rq { background:var(--rq45); }
 
 /* pills for verdicts or tags */
-.pill { display:inline-flex; align-items:center; gap:1mm; border-radius:3mm; padding:0.3mm 1.8mm; font-size:6.9pt; font-weight:600; white-space:nowrap; }
+.pill { display:inline-flex; align-items:center; gap:1mm; border-radius:0.5mm; padding:0 6px; font-size:7.1pt; line-height:14px; font-weight:600; white-space:nowrap; }
 .pill.good { background:var(--good-bg); color:var(--good); }
 .pill.bad { background:var(--bad-bg); color:var(--bad); }
 .pill.mixed { background:var(--mixed-bg); color:var(--mixed); }
-.pill.no { background:#fff; border:0.3mm solid #B9C1CC; color:#4B5563; }
+.pill.no { background:var(--paper); box-shadow:inset 0 0 0 0.3mm var(--rule); color:var(--muted); }   /* a frame as a shadow: see .panel */
 
 /* small legend row */
-.legend { display:flex; flex-wrap:wrap; gap:0.6mm 3.4mm; font-size:6.9pt; color:var(--muted); }
-.legend span { display:inline-flex; align-items:center; gap:1mm; }
+.legend { display:flex; flex-wrap:wrap; gap:0.6mm 3.4mm; font-size:7.1pt; color:var(--muted); }
+.legend > span { display:inline-flex; align-items:center; gap:1mm; }
 .key { display:inline-block; width:5mm; border-top:0.55mm solid; }
 .key.allow { border-color:var(--allow); } .key.transfer { border-color:var(--transfer); }
 .key.dash { border-top-style:dashed; } .key.user { border-color:var(--user); border-top-style:dashed; }
-.sq { display:inline-block; width:2.6mm; height:2.6mm; border-radius:0.6mm; background:var(--contract); }
+.sq { display:inline-block; width:2.6mm; height:2.6mm; border-radius:0.4mm; background:var(--contract); }
 
 svg { overflow:visible; }
-/* a font given on the element (fig.js sets one) wins over this default */
-svg text:not([font-family]) { font-family:"Segoe UI", Arial, sans-serif; }
+/* Round joins on every stroke. A mitred join looks the same at these widths, but the crop (PyMuPDF) widens the box
+   of a mitred stroke by its miter limit, about 1 mm a side, so a line at the edge of a drawing made the PDF wider
+   than the drawing and the figure smaller on the page. */
+svg path, svg rect, svg polygon, svg polyline, svg line, svg circle, svg ellipse { stroke-linejoin:round; }
+/* a font given on the element (fig.js sets one) wins over this default; fig.js also sets the spacing of SVG text,
+   in the units of the drawing, because an em there is not the size of the text */
+svg text:not([font-family]) { font-family:Bahnschrift, "Segoe UI", Arial, sans-serif; }
+svg text { letter-spacing:0; }
+svg text.sans { font-stretch:87.5%; }
+svg text.serif, svg tspan.serif { font-stretch:normal; letter-spacing:0; }
+svg text.mono, svg tspan.mono { font-family:Consolas, "Cascadia Mono", monospace; font-stretch:normal; letter-spacing:0; }

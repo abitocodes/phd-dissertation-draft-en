@@ -1,0 +1,194 @@
+<!doctype html>
+<!--
+  Not a figure of the thesis: a sampler of how a picture is drawn in the diagrams, after the way the
+  reference boards draw their figures (the seated Buddha, the horses, the vase). Nothing here is copied or traced
+  from the reference: the objects are the thesis's own (a contract, a user account, an allowance, a transfer, C-PR,
+  logs, blocks, the discovery order), drawn in SVG. Open it in a browser, or print it with (from overleaf-github/)
+      python Figures/html/render.py Figures/html/illustration-sampler.html --out <file.pdf>
+
+  What the sheet shows, top to bottom:
+  1. "How the reference draws a figure", five steps on one object (a contract: a page with a folded corner and a
+     pair of braces): (1) one flat silhouette, no outline; (2) the silhouette filled with a blend from ultramarine
+     through a lilac to sand gold; (3) a white keyline around it, which parts it from whatever lies behind (shown on
+     a gold band); (4) every inner detail drawn as a white line of one weight, never a dark one; (5) a halo: a broad
+     ring blended from gold to grey, with a thin ring inside it.
+  2. "The thesis's pictures in that technique": eight objects at 13 mm, each blended inside the tone of its meaning
+     (contract verdigris, user account grey, allowance gold, transfer ultramarine, logs and blocks neutral grey,
+     discovery order the green of RQ2); only C-PR, which reads both layers, takes the blend of the reference from blue
+     to gold, drawn as two overlapping discs whose common part is violet.
+  3. "At the sizes of a figure": the same objects at 8 mm and as 5 mm medals (the pictogram in white on a solid disc
+     with a ring), the form the figures use, and a note on what survives at each size.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Illustration sampler</title>
+<link rel="stylesheet" href="style.css">
+<script src="fig.js"></script>
+<style>
+@page { size: 180mm 200mm; margin: 0; }
+/* whole pixels, so that the tiles of a row come out equal (see the stylesheet): five tiles of 119 px, 7 px apart, and
+   eight of 70 px, 9 px apart, are both 623 px, 164.8 mm */
+.fig { display:flex; flex-direction:column; gap:3.2mm; width:623px; }
+.sec > .h { margin-bottom:1.8mm; }
+.strip { display:grid; grid-template-columns:repeat(5, 119px); column-gap:7px; }
+.set { display:grid; grid-template-columns:repeat(8, 70px); column-gap:9px; }
+.tile { background:var(--plate); padding:2mm 1.6mm 1.6mm; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.tile svg { display:block; }
+.tile .n { font-weight:700; color:var(--ink); font-size:7.4pt; margin-top:1.4mm; line-height:1.15; }
+.tile .d { font-size:7.1pt; color:var(--muted); line-height:1.2; margin-top:0.4mm; }
+.strip .tile { padding-top:2.4mm; }
+.strip .tile .n { display:flex; align-items:center; gap:1.2mm; }
+.step { display:inline-flex; align-items:center; justify-content:center; width:3.5mm; height:3.5mm; border-radius:50%;
+  background:var(--ink); color:#fff; font-size:7.1pt; font-weight:700; line-height:1; flex:none; }
+.sizes { display:grid; grid-template-columns:1fr 60mm; column-gap:4mm; align-items:center; }
+.sizes .rowp { display:flex; align-items:center; gap:1.5mm; }
+.sizes .lab { font-size:7.1pt; color:var(--muted); width:19mm; flex:none; line-height:1.15; }
+.sizes .lab b { display:block; }
+.sizes .rows { display:flex; flex-direction:column; gap:1.6mm; background:var(--plate); padding:2mm 2.4mm; }
+.sizes ul { margin:0; padding:0; list-style:none; font-size:7.1pt; color:var(--muted); line-height:1.3; }
+.sizes li { padding-left:2.6mm; position:relative; margin-bottom:0.7mm; }
+.sizes li::before { content:""; position:absolute; left:0; top:1.05mm; width:1.1mm; height:1.1mm; border-radius:50%; background:var(--rule); }
+</style>
+</head>
+<body>
+<div class="fig">
+
+  <div class="sec">
+    <div class="h"><span class="badge">1</span>How the reference draws a figure<span class="sub">one object, five steps</span></div>
+    <div class="strip" id="strip"></div>
+  </div>
+
+  <div class="sec">
+    <div class="h"><span class="badge">2</span>The thesis’s pictures in that technique<span class="sub">each blended inside the tone of its meaning</span></div>
+    <div class="set" id="set"></div>
+  </div>
+
+  <div class="sec">
+    <div class="h"><span class="badge">3</span>At the sizes of a figure</div>
+    <div class="sizes">
+      <div class="rows">
+        <div class="rowp" id="s8"><span class="lab"><b>8 mm</b>blend, keyline, main lines</span></div>
+        <div class="rowp" id="s5"><span class="lab"><b>5 mm</b>medal: white on a disc</span></div>
+      </div>
+      <ul>
+        <li>From about 10 mm a picture carries the blend, the keyline and four or five white lines.</li>
+        <li>At 8 mm the white lines thin to 0.2 mm, the least that prints; keep the two or three that name the object.</li>
+        <li>At 5 mm and below the blend no longer reads: use the medal, a flat disc of the meaning’s colour with the pictogram in white.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const C = Fig.C;
+  let uid = 0;
+  // tones of a blend, dark to light, per meaning; "ref" is the blend of the reference
+  const TONE = {
+    ref: [[0, "#3A46D2"], [0.55, "#8E87C6"], [1, "#DDBB76"]],
+    contract: [[0, "#1D5C56"], [1, "#8FC6BE"]],
+    user: [[0, "#5A5A5A"], [1, "#BFBFBD"]],
+    allow: [[0, "#A47514"], [1, "#EBD39E"]],
+    transfer: [[0, "#1A30B0"], [1, "#A3B1EC"]],
+    count: [[0, "#474747"], [1, "#ADADAB"]],
+    rq2: [[0, "#1F5E33"], [1, "#8FC79E"]],
+    flat: null,
+  };
+  // the objects on a 24 x 24 box: sil = the silhouette (filled), lines = the white inner drawing
+  const PIC = {
+    contract: {
+      sil: `<path d="M5.6,2.2 H14.3 L19.6,7.5 V20.6 a1.2,1.2 0 0 1 -1.2,1.2 H5.6 a1.2,1.2 0 0 1 -1.2,-1.2 V3.4 a1.2,1.2 0 0 1 1.2,-1.2 z"/>`,
+      main: `<path d="M14.3,2.7 V7.5 H19.1"/><path d="M10.4,10.3 c-1.25,0 -1.65,0.6 -1.65,1.6 v1.2 c0,0.85 -0.45,1.25 -1.3,1.25 c0.85,0 1.3,0.4 1.3,1.25 v1.2 c0,1 0.4,1.6 1.65,1.6 M13.6,10.3 c1.25,0 1.65,0.6 1.65,1.6 v1.2 c0,0.85 0.45,1.25 1.3,1.25 c-0.85,0 -1.3,0.4 -1.3,1.25 v1.2 c0,1 -0.4,1.6 -1.65,1.6"/>`,
+      more: `<path d="M7.2,5.4 H11.6 M7.2,7.3 H10.2"/>`,
+    },
+    user: {
+      sil: `<path d="M3.2,22 a8.8,8.4 0 0 1 17.6,0 z"/><circle cx="12" cy="7.4" r="5.25" class="key"/><circle cx="12" cy="7.4" r="4.5"/>`,
+      main: `<path d="M8.5,15 q3.5,3 7,0"/>`,
+      more: `<path d="M12,17.2 V21.4"/>`,
+    },
+    key: {
+      sil: `<path fill-rule="evenodd" d="M7.4,6.6 a5.4,5.4 0 1 0 0.01,0 z M7.4,9.9 a2.1,2.1 0 1 1 -0.01,0 z"/><rect x="11.9" y="10.7" width="10.3" height="2.6" rx="0.6"/><rect x="16.5" y="12.9" width="2" height="3.5" rx="0.3"/><rect x="19.7" y="12.9" width="2" height="2.6" rx="0.3"/>`,
+      main: `<path d="M13.4,12 H21.2"/>`,
+      more: `<circle cx="7.4" cy="12" r="3.75"/>`,
+    },
+    coin: {
+      sil: `<circle cx="12" cy="12" r="9.7"/>`,
+      main: `<circle cx="12" cy="12" r="6.9"/><path d="M12,8.2 L15.3,10.1 V13.9 L12,15.8 L8.7,13.9 V10.1 z"/>`,
+      more: ``,
+    },
+    database: {
+      sil: `<path d="M3.8,6.4 a8.2,3.3 0 0 1 16.4,0 V17.6 a8.2,3.3 0 0 1 -16.4,0 z"/>`,
+      main: `<path d="M3.8,6.4 a8.2,3.3 0 0 0 16.4,0"/><path d="M3.8,12 a8.2,3.3 0 0 0 16.4,0"/>`,
+      more: ``,
+    },
+    blocks: {
+      sil: `<rect x="1.4" y="8.2" width="6.4" height="7.6" rx="0.8"/><rect x="8.8" y="8.2" width="6.4" height="7.6" rx="0.8"/><rect x="16.2" y="8.2" width="6.4" height="7.6" rx="0.8"/><rect x="7.4" y="11.2" width="1.8" height="1.6"/><rect x="14.8" y="11.2" width="1.8" height="1.6"/>`,
+      main: `<path d="M3,10.6 h3.2 M10.4,10.6 h3.2 M17.8,10.6 h3.2"/>`,
+      more: `<path d="M3,12.2 h3.2 M3,13.8 h1.9 M10.4,12.2 h3.2 M10.4,13.8 h1.9 M17.8,12.2 h3.2 M17.8,13.8 h1.9"/>`,
+    },
+    search: {
+      sil: `<path d="M15.2,15.2 L21.3,21.3" class="handle"/><circle cx="10.2" cy="10.2" r="7.5"/>`,
+      main: `<circle cx="10.2" cy="10.2" r="4.9"/>`,
+      more: `<path d="M7.3,9.2 a3.2,3.2 0 0 1 2.2,-2.3"/>`,
+    },
+  };
+  // a picture: opt.tone (name in TONE), size (mm), keyline, lines ("none" | "main" | "all"), halo, band, flat (colour)
+  function pic(name, o = {}) {
+    const p = PIC[name], id = "g" + (uid++), size = o.size || 13, stops = TONE[o.tone || "ref"];
+    const dark = stops ? stops[0][1] : o.flat;
+    const fill = stops ? `url(#${id})` : o.flat;
+    const grad = stops ? `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="4" y1="3" x2="20" y2="22">${stops.map(([f, c]) => `<stop offset="${f}" stop-color="${c}"/>`).join("")}</linearGradient>` : "";
+    const lw = Math.max(0.5, 0.2 * 24 / size);                 // white lines: 0.27 mm at 13 mm, never under 0.2 mm
+    const keyed = o.keyline === false ? "" : `<g fill="#fff" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" class="kl">${p.sil}</g>`;
+    const lines = o.lines === "none" ? "" : `<g fill="none" stroke="#fff" stroke-width="${lw.toFixed(2)}" stroke-linecap="round" stroke-linejoin="round">${p.main}${o.lines === "main" ? "" : p.more}</g>`;
+    const halo = o.halo ? `<linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="0.6"><stop offset="0" stop-color="#DDBB76"/><stop offset="1" stop-color="#A9A9A7"/></linearGradient>
+      <circle cx="12" cy="12" r="14.2" fill="none" stroke="url(#${id}h)" stroke-width="2.6"/><circle cx="12" cy="12" r="12.1" fill="none" stroke="#fff" stroke-width="0.5"/>` : "";
+    const band = o.band ? `<path d="M-9.5,18 C-2,11 5,20.5 14,14 S27,8.5 33.5,12" fill="none" stroke="${C.allowFill}" stroke-width="5.4" stroke-linejoin="round"/>` : "";
+    const pad = o.halo ? 5.4 : 0, px = o.band ? 9.5 : pad;                     // px: room left and right (for the band)
+    const vb = `${-px} ${-pad} ${24 + 2 * px} ${24 + 2 * pad}`, sw = size * (24 + 2 * px) / 24, sh = size * (24 + 2 * pad) / 24;
+    return `<svg width="${sw.toFixed(2)}mm" height="${sh.toFixed(2)}mm" viewBox="${vb}" style="overflow:${o.band ? "hidden" : "visible"}">
+      <defs>${grad}<style>#${id}s .key{fill:#fff} #${id}s .handle{fill:none;stroke:${dark};stroke-width:3.3;stroke-linecap:round;stroke-linejoin:round} #${id}k .handle{fill:none;stroke-width:4.8;stroke-linecap:round;stroke-linejoin:round} #${id}k .key{fill:#fff}</style></defs>
+      ${band}${halo}<g id="${id}k">${keyed}</g><g id="${id}s" fill="${fill}">${p.sil}</g>${lines}</svg>`;
+  }
+  // C-PR: the two layers as two discs; their common part is violet, the colour C-PR has everywhere else
+  function coupled(size = 13) {
+    const id = "c" + (uid++);
+    return `<svg width="${size}mm" height="${size}mm" viewBox="0 0 24 24" style="overflow:visible">
+      <defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C79A35"/><stop offset="1" stop-color="#EBD39E"/></linearGradient>
+      <linearGradient id="${id}t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FA0E8"/><stop offset="1" stop-color="#1A30B0"/></linearGradient></defs>
+      <g fill="#fff" stroke="#fff" stroke-width="1.5"><circle cx="8.6" cy="12" r="7.4"/><circle cx="15.4" cy="12" r="7.4"/></g>
+      <circle cx="8.6" cy="12" r="7.4" fill="url(#${id}a)"/><circle cx="15.4" cy="12" r="7.4" fill="url(#${id}t)"/>
+      <path d="M12,5.43 A7.4,7.4 0 0 1 12,18.57 A7.4,7.4 0 0 1 12,5.43 z" fill="${C.coupled}"/>
+      <g fill="none" stroke="#fff" stroke-width="0.5"><path d="M12,5.43 A7.4,7.4 0 0 1 12,18.57 A7.4,7.4 0 0 1 12,5.43 z"/><circle cx="8.6" cy="12" r="5.2" stroke-dasharray="0 1.25" stroke-linecap="round" stroke-width="0.6"/><circle cx="15.4" cy="12" r="5.2" stroke-dasharray="0 1.25" stroke-linecap="round" stroke-width="0.6"/></g></svg>`;
+  }
+  const tile = (svg, n, d, step) => `<div class="tile">${svg}<div class="n">${step ? `<span class="step">${step}</span>` : ""}${n}</div><div class="d">${d}</div></div>`;
+
+  document.getElementById("strip").innerHTML = [
+    tile(pic("contract", { tone: "flat", flat: "#3A46D2", keyline: false, lines: "none", size: 15 }), "Silhouette", "one flat shape; no outline, no black", 1),
+    tile(pic("contract", { keyline: false, lines: "none", size: 15 }), "Blend", "ultramarine through lilac to sand gold", 2),
+    tile(pic("contract", { lines: "none", size: 15, band: true }), "White keyline", "parts it from what lies behind", 3),
+    tile(pic("contract", { size: 15 }), "White lines", "all inner detail, one weight", 4),
+    tile(pic("contract", { size: 11, halo: true }), "Halo", "a ring from gold to grey, a thin ring inside", 5),
+  ].join("");
+
+  document.getElementById("set").innerHTML = [
+    tile(pic("contract", { tone: "contract" }), "Contract", "verdigris"),
+    tile(pic("user", { tone: "user" }), "User account", "grey"),
+    tile(pic("key", { tone: "allow" }), "Allowance", "sand gold"),
+    tile(pic("coin", { tone: "transfer" }), "Transfer", "ultramarine"),
+    tile(coupled(), "C-PR", "both layers"),
+    tile(pic("database", { tone: "count" }), "Logs, tables", "neutral"),
+    tile(pic("blocks", { tone: "count" }), "Blocks", "neutral"),
+    tile(pic("search", { tone: "rq2" }), "Discovery", "green of RQ2"),
+  ].join("");
+
+  const small = [["contract", "contract"], ["user", "user"], ["key", "allow"], ["coin", "transfer"], ["database", "count"], ["blocks", "count"], ["search", "rq2"]];
+  document.getElementById("s8").insertAdjacentHTML("beforeend",
+    small.map(([n, t]) => pic(n, { tone: t, size: 8, lines: "main" })).join("") + coupled(8));
+  const medals = [["contract", C.contract], ["person", C.user], ["key", C.allow], ["coin", C.transfer], ["database", C.count], ["doc", C.count], ["search", C.rq2], ["bars", C.rq1], ["calendar", C.rq3], ["scale", C.rq45]];
+  document.getElementById("s5").insertAdjacentHTML("beforeend", medals.map(([n, c]) => Fig.medal(n, c, 5.2)).join(""));
+})();
+</script>
+</body>
+</html>

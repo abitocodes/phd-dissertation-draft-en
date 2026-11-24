@@ -15,6 +15,12 @@
   accounts are user accounts too, which leaves 1,829,719 contracts.
   Both lanes lead to the contract graph: 1,403,959 contracts over both freezes, in two layers (allowance and transfer);
   no user account is a node. Bar lengths are proportional to the counts within each lane.
+
+  Look (STYLE.md, "Bars of an amount" and "Parts and boxes"): each lane is a part under a Palatino heading
+  over a grey rule, its pictogram in white on a ringed grey disc. A bar is flat with square ends on a pale grey track:
+  what the lane starts from in neutral grey, what stays (rows between contracts, contracts) in the verdigris of
+  contracts. What leaves the funnel stands in a dashed frame with a grey account figure. The contract graph is a pale
+  plate with its heading in Palatino after a ringed verdigris disc; the two arrows that lead to it are verdigris.
 -->
 <html lang="en">
 <head>
@@ -24,28 +30,34 @@
 <script src="fig.js"></script>
 <style>
 .fig { position:relative; }
-.grid { display:grid; grid-template-columns:minmax(0, 1fr) 39mm; column-gap:8mm; align-items:center; }
-.lane { margin-bottom:2.6mm; }
+.grid { display:grid; grid-template-columns:minmax(0, 1fr) 39mm; column-gap:7mm; align-items:center; }
+.lane { margin-bottom:2mm; }
 .lane:last-child { margin-bottom:0; }
-.lh { display:flex; flex-wrap:wrap; align-items:baseline; column-gap:1.4mm; font-weight:700; font-size:8.2pt; margin-bottom:1.1mm; }
-.lh > svg { align-self:center; }
-.lh .sub { font-weight:400; font-size:6.9pt; color:var(--muted); }
-.st { display:grid; grid-template-columns:38mm minmax(0, 1fr); column-gap:2.4mm; align-items:center; margin-bottom:1.1mm; }
-.track { height:4.4mm; border-radius:1.1mm; background:#F1F5F9; position:relative; }
-.bar { position:absolute; left:0; top:0; bottom:0; border-radius:1.1mm; }
-.bar.rows { background:#A9C0EC; }
-.bar.addr { background:#BCC5D1; }
+.lane .h { margin-bottom:1.2mm; }
+.lane .h svg { margin-right:1.5mm; }
+.lane .h .sub { margin-left:1.5mm; letter-spacing:0.045em; }   /* the long note of the first lane ends inside the rule */
+.st { display:grid; grid-template-columns:34mm minmax(0, 1fr); column-gap:2.4mm; align-items:center; margin-bottom:1mm; }
+.st:last-child { margin-bottom:0; }
+/* a bar of an amount: flat, square ends, on a pale track; its length is the count as a share of the lane's first count */
+.track { height:15px; background:var(--count-bg); position:relative; }   /* 4 mm, in whole pixels: every bar one height */
+.bar { position:absolute; left:0; top:0; bottom:0; }
+.bar.all { background:var(--count-fill); }
 .bar.keep { background:var(--contract); }
 .lab { font-size:7.2pt; line-height:1.18; }
 .lab b { font-size:8pt; }
-.exit { display:flex; align-items:center; gap:1.2mm; margin:0 0 1.1mm 40.4mm; font-size:6.9pt; color:#4B5563;
-  border:0.3mm dashed var(--user); background:var(--user-bg); border-radius:1.6mm; padding:0.5mm 1.6mm; width:fit-content; max-width:calc(100% - 40.4mm); }
-.exit b { color:#374151; }
-.graph { text-align:left; }
-.panel.contract { background:#F3FBF9; } /* solid: a CSS gradient defeats the crop of render.py */
-.graph .big { font-size:8pt; margin-top:0.8mm; }
+/* what leaves the funnel: the dashed frame of user accounts. Both frames are as wide as the column of the texts
+   (from the left edge of the texts to the right end of the lane's rule), whatever the length of their own text.
+   Inside a frame the lengths are whole pixels (see style.css): a line of 12 px, the pictogram 12 px, 2 px above
+   and 1 px below, which sets the capitals of the text at the middle of the frame. (With lengths in mm the baseline
+   stood 10 or 11 px below the top of a frame of 17 px according to where the frame stood: up to 0.5 mm high.) */
+.exit { display:flex; align-items:center; gap:1.2mm; margin:0 0 1mm 36.4mm; font-size:7.1pt; line-height:12px; color:var(--muted);
+  border:0.35mm dashed var(--user); background:var(--paper); border-radius:0.6mm; padding:2px 1.6mm 1px; }
+.graph { text-align:left; padding:1.8mm 2.4mm 2mm; }
+.graph .h { margin-bottom:1mm; }
+.graph .h svg { margin-right:1.5mm; }
+.graph .big { font-size:8pt; margin-top:0.8mm; line-height:1.2; }
 .graph .big b { font-size:9.4pt; color:var(--contract); }
-.graph .note { font-size:6.9pt; color:var(--muted); margin-top:0.6mm; }
+.graph .note { font-size:7.1pt; color:var(--muted); margin-top:0.6mm; }
 svg.links { position:absolute; left:0; top:0; pointer-events:none; }
 </style>
 </head>
@@ -54,27 +66,26 @@ svg.links { position:absolute; left:0; top:0; pointer-events:none; }
   <div class="grid">
     <div>
       <div class="lane">
-        <div class="lh"><span data-icon="doc" data-color="#2563EB" data-size="4"></span>Rows of the five tokens
-          <span class="sub">Approval and non-zero Transfer logs, 1 April 2025 to 30 September 2026</span></div>
-        <div class="st"><div class="track"><div class="bar rows" style="width:100%"></div></div>
+        <div class="h s"><span data-medal="doc" data-color="count" data-size="4.2"></span>Rows of the five tokens<span class="sub">Approval and non-zero Transfer logs, 1 April 2025 to 30 September 2026</span></div>
+        <div class="st"><div class="track"><div class="bar all" style="width:100%"></div></div>
           <div class="lab"><b>1,240,275,042</b> rows of WETH, USDC, USDT0, ARB and WBTC</div></div>
         <div class="st" id="rows-keep"><div class="track"><div class="bar keep" style="width:48.7%"></div></div>
           <div class="lab"><b>603,475,784</b> with a contract at both ends: only these can make an edge</div></div>
       </div>
       <div class="lane">
-        <div class="lh"><span data-icon="people" data-color="#5B6472" data-size="4"></span>Addresses named by the rows</div>
-        <div class="st"><div class="track"><div class="bar addr" style="width:100%"></div></div>
+        <div class="h s"><span data-medal="people" data-color="count" data-size="4.2"></span>Addresses named by the rows</div>
+        <div class="st"><div class="track"><div class="bar all" style="width:100%"></div></div>
           <div class="lab"><b>25,537,280</b> addresses other than the zero address</div></div>
-        <div class="exit"><span data-icon="person" data-color="#7A8594" data-size="3.2"></span><b>17,477,779</b> sent a transaction: user accounts</div>
-        <div class="st"><div class="track"><div class="bar addr" style="width:24.4%"></div></div>
+        <div class="exit"><span data-icon="person" data-color="user" data-size="3.175"></span><span><b>17,477,779</b> sent a transaction: user accounts</span></div>
+        <div class="st"><div class="track"><div class="bar all" style="width:24.4%"></div></div>
           <div class="lab"><b>6,230,270</b> could still end an edge between contracts; read with <span class="mono">eth_getCode</span> at one block</div></div>
-        <div class="exit"><span data-icon="person" data-color="#7A8594" data-size="3.2"></span>no code, EIP-7702 accounts, Safes, ERC-4337 accounts: user accounts too</div>
+        <div class="exit"><span data-icon="person" data-color="user" data-size="3.175"></span><span>no code, EIP-7702 accounts, Safes, ERC-4337 accounts: user accounts too</span></div>
         <div class="st" id="contracts"><div class="track"><div class="bar keep" style="width:7.2%"></div></div>
           <div class="lab"><b>1,829,719</b> contracts</div></div>
       </div>
     </div>
-    <div class="panel contract graph" id="graph">
-      <div class="h" style="margin-bottom:0.6mm"><span class="badge" style="background:var(--contract)">G</span>Contract graph</div>
+    <div class="panel soft graph" id="graph">
+      <div class="h s"><span id="gmark">G</span>Contract graph</div>
       <svg id="mini" viewBox="0 0 34 15" width="34mm" height="15mm" style="display:block"></svg>
       <div class="big"><b>1,403,959</b> contracts over both freezes</div>
       <div class="legend" style="margin-top:0.8mm"><span><i class="key allow"></i>allowance</span><span><i class="key transfer"></i>transfer</span></div>
@@ -83,26 +94,42 @@ svg.links { position:absolute; left:0; top:0; pointer-events:none; }
   </div>
 </div>
 <script>
+// The mark of the contract graph: its letter G in white on a verdigris disc inside a ring, drawn at the size of the
+// medals of the two lane headings (4.2 mm), so that the three headings carry marks of one size. (The numbered disc of
+// style.css, .badge, is 5.6 mm with its ring.) The letter is 7.1 pt.
+(function () {
+  const s = document.getElementById("gmark"), size = 4.2, u = 16 / size;          // u: units of the 16 x 16 box per mm
+  const m = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  m.setAttribute("viewBox", "0 0 16 16"); m.setAttribute("width", size + "mm"); m.setAttribute("height", size + "mm");
+  m.setAttribute("style", "flex:none");
+  Fig.el(m, "circle", { cx: 8, cy: 8, r: 7.55, fill: "none", stroke: Fig.C.contract, "stroke-width": 0.5 });
+  Fig.el(m, "circle", { cx: 8, cy: 8, r: 6.35, fill: Fig.C.contract });
+  const fs = 2.505 * u;                                                             // 7.1 pt
+  Fig.text(m, 8, 8 + fs * 0.356, s.textContent.trim(), { size: fs, weight: 700, fill: "#fff", anchor: "middle", spacing: 0 });
+  s.replaceWith(m);
+})();
 document.addEventListener("DOMContentLoaded", () => {
-  // the small two-layer graph inside the box
+  const C = Fig.C;
+  // the small two-layer graph inside the plate
   Fig.graph(document.getElementById("mini"), {
     nodes: { a:[3,4], b:[13,3], c:[23,6], d:[31,3], e:[8,12], f:[19,12], g:[29,12] },
-    edges: [["a","c","allow",-1.5], ["e","f","allow",1], ["g","d","allow",1],
+    // the long allowance edge from a to c bows below b, clear of that node and of the transfer edge from a to b
+    edges: [["a","c","allow",3.2], ["e","f","allow",1], ["g","d","allow",1],
             ["a","b","transfer",1], ["b","c","transfer",-1], ["e","a","transfer",1], ["f","c","transfer",-1], ["f","g","transfer",1], ["c","d","transfer",-1]],
-    kinds: { allow:{ color:"#D97706", width:0.5 }, transfer:{ color:"#2563EB", width:0.38 } },
+    kinds: { allow:{ color:C.allow, width:0.5 }, transfer:{ color:C.transfer, width:0.4 } },
     node: { half:1.7 }
   });
-  // arrows from the two kept stages to the graph box, measured after layout
+  // arrows from the two kept stages to the plate of the graph, measured after layout (px)
   const fig = document.getElementById("fig"), F = fig.getBoundingClientRect();
   const svg = Fig.el(fig, "svg", { class: "links", width: F.width, height: F.height, viewBox: `0 0 ${F.width} ${F.height}` });
   const g = document.getElementById("graph").getBoundingClientRect();
   for (const id of ["rows-keep", "contracts"]) {
     const lab = document.querySelector(`#${id} .lab`).getBoundingClientRect();
     const x1 = lab.right - F.left + 3, y1 = lab.top + lab.height / 2 - F.top;
-    const x2 = g.left - F.left - 2, y2 = g.top + g.height * (id === "rows-keep" ? 0.38 : 0.62) - F.top;
+    const x2 = g.left - F.left - 2.5, y2 = g.top + g.height * (id === "rows-keep" ? 0.38 : 0.62) - F.top;
     const mx = (x1 + x2) / 2;
-    const p = Fig.el(svg, "path", { d: `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`, fill: "none", stroke: "#0F766E",
-      "stroke-width": 1.5, "marker-end": Fig.marker(svg, "#0F766E") });
+    Fig.el(svg, "path", { d: `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`, fill: "none", stroke: C.contract,
+      "stroke-width": 1.6, "marker-end": Fig.marker(svg, C.contract) });
   }
 });
 </script>

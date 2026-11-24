@@ -5,8 +5,9 @@
       python Figures/html/render.py Figures/html/thesis-roadmap.html
   See Figures/html/README.md.
 
-  What the figure shows: the chapters of the thesis as a flow, left to right, under a banner for Chapter 1.
-  - Chapter 1, Introduction: the problem, objectives O1-O5 and research questions RQ1-RQ5.
+  What the figure shows: the chapters of the thesis as a flow, left to right, under a heading for Chapter 1.
+  - Chapter 1, Introduction: the problem, objectives O1-O5 and research questions RQ1-RQ5. An arrow leads down from
+    it to Chapter 2, and an arrow leads from each of Chapters 2 to 5 to the next.
   - Chapter 2, Literature review and theoretical framework: graph-based on-chain reputation, crawl ordering, ERC-20
     allowance semantics, reputation tooling deployed in DeFi, and the theoretical framework.
   - Chapter 3, Research methodology: account types, tokens and prices; the contract graph and its balance cap; the
@@ -20,8 +21,16 @@
   - Chapter 5, Discussion: findings by research question and objective, implications, threats to validity and
     limitations.
   - Chapter 6, Conclusion and future work: answers to RQ1-RQ5, the contribution to knowledge, future work.
-  - Appendices, below Chapter 4: account types and balances; further tables of the discovery-order test; EndorseRank
-    and AWP side by side; the registered analysis.
+  - Appendices, below Chapter 4 and joined to it by a dotted leader: account types and balances; further tables of the
+    discovery-order test; EndorseRank and AWP side by side; the registered analysis.
+  - Bottom right, the key of the claim tags: RQ1, RQ2, RQ3, RQ4-5.
+
+  Look: a chapter is a card, a hairline frame around its heading (the title in Palatino over a grey
+  rule, the number in a ringed dark grey disc) and its list. The five cards of Chapters 2 to 6 have one width and one
+  height; the card of Chapter 1 runs over the whole width above them. The arrows between the cards are short and
+  grey with the notched head; the arrow from Chapter 1 meets the card of Chapter 2 at the middle of its top edge.
+  A claim is a solid label in the colour of its research question (cyan, green, rose, violet). The appendices stand
+  on a pale plate, hung from the card of Chapter 4 by a dotted leader that ends in a dot.
 -->
 <html lang="en">
 <head>
@@ -30,52 +39,58 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-@page { size: 180mm 110mm; margin: 0; }
-:root { --nav:#1E3A5F; --nav-bg:#EEF3F9; --nav-line:#B9C8DA; }
-.banner { display:flex; align-items:center; gap:1.6mm; border:0.3mm solid var(--nav-line); background:var(--nav-bg);
-  border-radius:2.2mm; padding:1mm 2.2mm; font-size:7.3pt; }
-.banner b { font-size:7.9pt; }
-.num { display:inline-flex; align-items:center; justify-content:center; width:4.4mm; height:4.4mm; border-radius:50%;
-  background:var(--nav); color:#fff; font-weight:700; font-size:7.2pt; flex:none; }
-.down { display:block; margin:0 auto; }
-.row { display:grid; grid-template-columns:repeat(4, 31mm 2.5mm) 31mm; align-items:stretch; }
-.ch { border:0.3mm solid var(--nav-line); border-radius:2.2mm; background:#fff; overflow:hidden; }
-.ch .top { display:flex; align-items:center; gap:1.2mm; background:var(--nav-bg); padding:1mm 1.3mm; border-bottom:0.3mm solid var(--nav-line); }
-.ch .top .ttl { font-weight:700; font-size:7.6pt; color:#0F2238; white-space:nowrap; }
-.ch ul { list-style:none; margin:0; padding:0.6mm 1.3mm 1mm; font-size:7pt; line-height:1.17; color:#374151; }
-.ch li { margin-top:0.45mm; padding-left:1.7mm; position:relative; }
-.ch li::before { content:""; position:absolute; left:0.2mm; top:1.15mm; width:0.85mm; height:0.85mm; border-radius:50%; background:#94A3B8; }
-.cl { display:inline-block; color:#fff; font-weight:700; font-size:6.8pt; border-radius:0.8mm; padding:0 0.7mm; margin-left:0.5mm; white-space:nowrap; }
-/* the longest tag, RQ4–5: the size of the other tags, with a little less padding at its sides */
-.cl.small { font-size:6.8pt; padding:0 0.6mm; }
-.cl.r1 { background:var(--rq1); } .cl.r2 { background:var(--rq2); } .cl.r3 { background:var(--rq3); } .cl.r45 { background:var(--rq45); }
-.chev { display:flex; align-items:center; justify-content:center; }
-.foot { display:grid; grid-template-columns:67mm 31mm 67mm; align-items:start; }
-.app { grid-column:1 / span 3; display:flex; justify-content:space-between; align-items:center; gap:2mm; }
-.app .box { border:0.3mm dashed var(--nav-line); border-radius:2mm; background:#F8FAFC; padding:0.8mm 1.8mm; font-size:7pt; color:#374151; }
-.app .box b { color:#0F2238; margin-right:1mm; }
-.legend2 { display:flex; gap:1mm; align-items:center; font-size:7pt; color:var(--muted); white-space:nowrap; }
+@page { size: 180mm 120mm; margin: 0; }
+/* five cards of 117 px with 10 px between them: 625 px, 165.4 mm (whole pixels, so that the cards come out equal:
+   see style.css) */
+:root { --card:117px; --gap:10px; --all:calc(5 * var(--card) + 4 * var(--gap)); }
+.fig { width:var(--all); }
+.badge { --c:var(--count); }                              /* a chapter: neutral, the dark grey of a step */
+/* Chapter 1: a card over the whole width; its disc stands above the disc of Chapter 2 */
+.intro.panel { padding:3px 5px; }                       /* 0.8 mm, 1.3 mm, in whole pixels */
+.intro .h { margin:0; }
+.intro .badge, .ch > .h .badge { margin:0.5mm 1.3mm 0.5mm 0.3mm; }
+.down1 { margin:0.25mm 0 0.25mm calc(var(--card) / 2 - 1.5mm); }   /* to the middle of the top edge of Chapter 2 */
+.row { display:grid; grid-template-columns:repeat(4, var(--card) var(--gap)) var(--card); align-items:stretch; }
+.ch.panel { padding:4px 5px 5px; }
+.ch > .h { font-size:8pt; padding-bottom:0.6mm; margin-bottom:1mm; }
+/* the arrow to the next chapter: 8 px long in the gap of 10 px, at the height of the numbered discs */
+.nx { padding-top:2.15mm; display:flex; justify-content:center; }
+.ch ul { list-style:none; margin:0; padding:0; font-size:7.1pt; line-height:11px; color:var(--text); }
+.ch li { margin-top:2px; padding-left:7px; position:relative; }
+.ch li:first-child { margin-top:0; }
+.ch li::before { content:""; position:absolute; left:1px; top:4px; width:3px; height:3px; border-radius:50%; background:var(--count-fill); }
+/* a claim: a solid label in the colour of its research question, as high as its line (11 px): 1 px of padding above
+   a line of 10 px puts the baseline 9 px down and the capitals at the middle; it stands 1 px above the top of its
+   line, which the negative margin keeps from pushing the lines apart */
+.ch .tag, .legend2 .tag { line-height:10px; padding:1px 3px 0; margin:-1px 0 0 3px; }
+.lead { display:block; margin-left:calc(2 * (var(--card) + var(--gap)) + var(--card) / 2 - 1.5mm); }
+.foot { display:flex; justify-content:space-between; align-items:center; gap:3mm; }
+.app { flex:0 1 111mm; font-size:7.1pt; line-height:12px; color:var(--text); padding:3px 8px; }
+.app b { margin-right:1.2mm; }
+.legend2 { display:flex; gap:1px; align-items:baseline; font-size:7.1pt; line-height:11px; color:var(--muted); white-space:nowrap; }
 </style>
 </head>
 <body>
 <div class="fig">
-  <div class="banner"><span class="num">1</span><b>Introduction</b><span class="muted">the problem, objectives O1–O5 and research questions RQ1–RQ5</span></div>
-  <svg class="down" viewBox="0 0 6 3.6" width="6mm" height="3.6mm" style="margin:0 0 0 12.5mm"><path d="M3,0.2 V3" stroke="#1E3A5F" stroke-width="0.45"/><path d="M1.8,2 L3,3.3 L4.2,2" fill="none" stroke="#1E3A5F" stroke-width="0.45" stroke-linejoin="round"/></svg>
+  <div class="part panel intro">
+    <div class="h bare"><span class="badge">1</span>Introduction<span class="sub">the problem, objectives O1–O5 and research questions RQ1–RQ5</span></div>
+  </div>
+  <div class="down1"><span data-arrow="down" data-color="count" data-len="2.4"></span></div>
 
   <div class="row">
-    <div class="ch">
-      <div class="top"><span class="num">2</span><span class="ttl">Literature review</span></div>
+    <div class="ch part panel">
+      <div class="h s"><span class="badge">2</span>Literature review</div>
       <ul>
         <li>on-chain reputation</li>
         <li>crawl ordering</li>
-        <li>ERC-20 allowances</li>
+        <li><span class="nb">ERC-20</span> allowances</li>
         <li>reputation tooling in DeFi</li>
         <li>theoretical framework</li>
       </ul>
     </div>
-    <div class="chev"><svg viewBox="0 0 2.5 7" width="2.5mm" height="7mm"><path d="M0.6,1.4 L1.9,3.5 L0.6,5.6" fill="none" stroke="#94A3B8" stroke-width="0.55" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="ch">
-      <div class="top"><span class="num">3</span><span class="ttl">Methodology</span></div>
+    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
+    <div class="ch part panel">
+      <div class="h s"><span class="badge">3</span>Methodology</div>
       <ul>
         <li>account types, tokens, prices</li>
         <li>contract graph, balance cap</li>
@@ -85,22 +100,22 @@
         <li>reproducibility, ethics</li>
       </ul>
     </div>
-    <div class="chev"><svg viewBox="0 0 2.5 7" width="2.5mm" height="7mm"><path d="M0.6,1.4 L1.9,3.5 L0.6,5.6" fill="none" stroke="#94A3B8" stroke-width="0.55" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="ch">
-      <div class="top"><span class="num">4</span><span class="ttl">Results</span></div>
+    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
+    <div class="ch part panel">
+      <div class="h s"><span class="badge">4</span>Results</div>
       <ul>
         <li>data of the contract graph</li>
-        <li>benchmark<span class="cl r1">C6</span></li>
-        <li>same window, divergence<span class="cl r1">C5</span></li>
+        <li>benchmark<span class="tag r1">C6</span></li>
+        <li>same window, <span class="nb">divergence<span class="tag r1">C5</span></span></li>
         <li>robustness checks</li>
-        <li>discovery order<span class="cl r2">C1</span></li>
-        <li>temporal holdouts<span class="cl r3">C2</span></li>
-        <li>coupled walk<span class="cl r45">C3</span><span class="cl r3">C4</span></li>
+        <li>discovery order<span class="tag r2">C1</span></li>
+        <li>temporal holdouts<span class="tag r3">C2</span></li>
+        <li>coupled walk<span class="tag r45">C3</span><span class="tag r3">C4</span></li>
       </ul>
     </div>
-    <div class="chev"><svg viewBox="0 0 2.5 7" width="2.5mm" height="7mm"><path d="M0.6,1.4 L1.9,3.5 L0.6,5.6" fill="none" stroke="#94A3B8" stroke-width="0.55" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="ch">
-      <div class="top"><span class="num">5</span><span class="ttl">Discussion</span></div>
+    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
+    <div class="ch part panel">
+      <div class="h s"><span class="badge">5</span>Discussion</div>
       <ul>
         <li>findings by question and objective</li>
         <li>implications</li>
@@ -108,9 +123,9 @@
         <li>limitations</li>
       </ul>
     </div>
-    <div class="chev"><svg viewBox="0 0 2.5 7" width="2.5mm" height="7mm"><path d="M0.6,1.4 L1.9,3.5 L0.6,5.6" fill="none" stroke="#94A3B8" stroke-width="0.55" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="ch">
-      <div class="top"><span class="num">6</span><span class="ttl">Conclusion</span></div>
+    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
+    <div class="ch part panel">
+      <div class="h s"><span class="badge">6</span>Conclusion</div>
       <ul>
         <li>answers to RQ1–RQ5</li>
         <li>contribution to knowledge</li>
@@ -119,10 +134,14 @@
     </div>
   </div>
 
-  <svg class="down" viewBox="0 0 6 3" width="6mm" height="3mm"><path d="M3,0.2 V2.8" stroke="#94A3B8" stroke-width="0.4" stroke-dasharray="0.8 0.6"/></svg>
-  <div class="app">
-    <div class="box"><b>Appendices</b>account types and balances · discovery-order test, further tables · EndorseRank and AWP side by side · the registered analysis</div>
-    <div class="legend2">claims by question:<span class="cl r1">RQ1</span><span class="cl r2">RQ2</span><span class="cl r3">RQ3</span><span class="cl r45 small">RQ4–5</span></div>
+  <!-- the appendices hang from Chapter 4: a dotted leader that ends in a dot -->
+  <svg class="lead" viewBox="0 0 3 3.3" width="3mm" height="3.3mm">
+    <path d="M1.5,0.6 V2.4" fill="none" style="stroke:var(--user)" stroke-width="0.34" stroke-linecap="round" stroke-dasharray="0 0.9"/>
+    <circle cx="1.5" cy="2.75" r="0.55" style="fill:var(--user)"/>
+  </svg>
+  <div class="foot">
+    <div class="app panel soft"><b>Appendices</b>account types and balances · discovery-order test, further tables · EndorseRank and AWP side by side · the registered analysis</div>
+    <div class="legend2">claims by question:<span class="tag r1">RQ1</span><span class="tag r2">RQ2</span><span class="tag r3">RQ3</span><span class="tag r45">RQ4–5</span></div>
   </div>
 </div>
 </body>

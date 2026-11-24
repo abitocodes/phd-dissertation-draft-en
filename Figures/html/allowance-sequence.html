@@ -7,12 +7,23 @@
   What the figure shows: a sequence diagram with three lanes, the owner (a user account or a contract), the ERC-20
   token contract and the spender, and on the right the allowance in force after each step.
   1. The owner calls approve(spender, a) on the token: the token emits Approval and stores the allowance a.
-  2. Alternative to step 1 (dotted): the spender or a relayer submits permit(owner, spender, a, sig) with a signature
-     the owner made off chain (EIP-2612): the token emits Approval and stores the allowance a.
+  2. Alternative to step 1 (dotted; a bracket marked "either" joins the two): the spender or a relayer submits
+     permit(owner, spender, a, sig) with a signature the owner made off chain (EIP-2612): the token emits Approval and
+     stores the allowance a.
   3. The spender calls transferFrom(owner, to, v) with v <= a: the token moves v tokens (Transfer event) and the
      allowance becomes a - v (some tokens also emit Approval with the remainder; the section says so).
-  4. The owner revokes by calling approve(spender, 0): the token emits Approval and the allowance becomes 0.
-  Orange arrows set an allowance; the blue arrow moves tokens.
+  4. The owner revokes by calling approve(spender, 0) (long dashes): the token emits Approval and the allowance
+     becomes 0.
+  Gold arrows set an allowance; the blue arrow moves tokens. The bars on the right show the allowance in force
+  after each step: full after steps 1 and 2 (a), a part after step 3 (a - v), none after step 4 (0).
+
+  Look: each lane head is a solid flat rectangle (grey: the owner, who may be a user account or a
+  contract; dark bronze: the token contract; verdigris: the spender) with its name in white; the lifelines are
+  hairlines. A message is a thin arrow from a dot on the lifeline of its sender, gold where it sets an allowance and
+  ultramarine where it moves tokens: solid for approve and transferFrom, round dots for permit, long dashes for the
+  revoke. The call stands above its arrow in Consolas, in the ink of the arrow's colour, and the note below it in
+  grey, with the identifiers of the chain in Consolas too. A bar of the allowance is a flat gold band inside the
+  outline of the allowance that was set.
 -->
 <html lang="en">
 <head>
@@ -20,65 +31,70 @@
 <title>ERC-20 allowance lifecycle</title>
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
-<style>
-  .fig { position:relative; }
-  svg text.code { font-family:Consolas, "Cascadia Mono", monospace; }
-</style>
 </head>
 <body>
 <div class="fig">
-  <svg id="s" viewBox="0 0 165 63" width="165mm" height="63mm"></svg>
+  <svg id="s" viewBox="0 0 165 61.2" width="165mm" height="61.2mm"></svg>
 </div>
 <script>
 (function () {
-  const s = document.getElementById("s");
-  const X = { owner: 19, token: 67, spender: 115 };      // lane centres (mm)
-  const top = 1, head = 9.4, rows = [18.6, 30, 43.4, 56.8];
-  const C = { allow: "#D97706", transfer: "#2563EB", life: "#B8C0CC", muted: "#5B6472" };
+  const s = document.getElementById("s"), C = Fig.C;
+  // Lane centres (mm): the three lanes stand 50 mm apart (the note of the revoke needs that much between two lifelines).
+  // Rows: each message is its call, its arrow and one or two lines of note; a row follows the last note line of the
+  // row before it at one distance (3 mm from descender to capital), so the row after a one-line note comes 10.4 mm
+  // below it and the row after a two-line note 13.2 mm.
+  const X = { owner: 19, token: 69, spender: 119 };
+  const top = 0.6, head = 9.4, rows = [18.2, 28.6, 41.8, 55], END = 60.7;
+  const KIND = { allow: { color: C.allow, ink: C.allowInk }, transfer: { color: C.transfer, ink: C.transferInk } };
 
-  // lane heads
+  // lane heads: a solid flat rectangle, the name in white bold and a second line in white; the lifeline a hairline
   const lane = (x, w, fill, title, sub) => {
-    Fig.el(s, "rect", { x: x - w / 2, y: top, width: w, height: head, rx: 1.8, fill });
-    Fig.text(s, x, top + 4.3, title, { size: 2.9, weight: 700, fill: "#fff", anchor: "middle" });
+    Fig.el(s, "path", { d: `M${x},${top + head} V${END}`, stroke: C.hair, "stroke-width": 0.25 });
+    Fig.el(s, "rect", { x: x - w / 2, y: top, width: w, height: head, rx: 0.5, fill });
+    Fig.text(s, x, top + 4.2, title, { size: 2.9, weight: 700, fill: "#fff", anchor: "middle" });
     Fig.text(s, x, top + 7.7, sub, { size: 2.5, fill: "#fff", anchor: "middle" });
   };
-  lane(X.owner, 34, "#334155", "Owner", "user account or contract");
-  lane(X.token, 34, "#B45309", "ERC-20 token", "the token contract");
-  lane(X.spender, 34, "#0F766E", "Spender", "e.g. a router or a vault");
-  for (const x of Object.values(X))
-    Fig.el(s, "path", { d: `M${x},${top + head + 0.6} V62.6`, stroke: C.life, "stroke-width": 0.35, "stroke-dasharray": "1 0.8" });
+  lane(X.owner, 34, C.count, "Owner", "user account or contract");
+  lane(X.token, 34, C.allowInk, "ERC-20 token", "the token contract");
+  lane(X.spender, 34, C.contract, "Spender", "e.g. a router or a vault");
 
-  // one message: arrow, call above, note lines below
-  const msg = (from, to, y, color, dash, call, ...notes) => {
-    const x1 = X[from], x2 = X[to], dir = Math.sign(x2 - x1);
-    Fig.el(s, "path", { d: `M${x1 + dir * 1.2},${y} H${x2 - dir * 1.6}`, stroke: color, "stroke-width": 0.55,
-      "stroke-dasharray": dash, "marker-end": Fig.marker(s, color) });
+  // one message: an arrow from a dot on the lifeline of its sender, the call above it, the lines of its note below.
+  // line: "solid", "dotted" (round dots: the alternative, permit) or "dashed" (long dashes: the revoke).
+  // In a note `...` marks an identifier of the chain or an argument of the call, set in Consolas.
+  const msg = (from, to, y, kind, line, call, ...notes) => {
+    const x1 = X[from], x2 = X[to], dir = Math.sign(x2 - x1), k = KIND[kind];
+    const a = { d: `M${x1 + dir * 1.5},${y} H${x2 - dir * 1.6}`, fill: "none", stroke: k.color, "stroke-width": 0.55,
+      "marker-end": Fig.marker(s, k.color) };
+    if (line === "dotted") { a["stroke-dasharray"] = "0 1.1"; a["stroke-linecap"] = "round"; }
+    if (line === "dashed") a["stroke-dasharray"] = "2 1";
+    Fig.el(s, "path", a);
+    Fig.el(s, "circle", { cx: x1, cy: y, r: 0.62, fill: k.color });
     const mid = (x1 + x2) / 2;
-    Fig.text(s, mid, y - 1.4, call, { size: 2.6, weight: 600, fill: color === C.transfer ? "#1E3A8A" : "#7C3F00",
-      anchor: "middle" }).setAttribute("class", "code");
-    notes.forEach((n, i) => Fig.text(s, mid, y + 3.3 + i * 2.75, n, { size: 2.42, fill: C.muted, anchor: "middle" }));
+    Fig.text(s, mid, y - 1.5, call, { size: 2.6, weight: 700, fill: k.ink, anchor: "middle", mono: true });
+    notes.forEach((n, i) => Fig.rich(s, mid, y + 3.4 + i * 2.85, n, { size: 2.5, fill: C.muted, anchor: "middle" }));
   };
-  msg("owner", "token", rows[0], C.allow, null, "approve(spender, a)", "emits Approval; stores the allowance a");
-  msg("spender", "token", rows[1], C.allow, "0.9 0.7", "permit(owner, spender, a, sig)",
-      "signed by the owner off chain, sent by", "the spender or a relayer; emits Approval");
-  msg("spender", "token", rows[2], C.transfer, null, "transferFrom(owner, to, v ≤ a)",
-      "moves v tokens and emits Transfer;", "the allowance falls to a − v");
-  msg("owner", "token", rows[3], C.allow, "2 1", "approve(spender, 0)", "revoke: emits Approval; the allowance is 0");
+  msg("owner", "token", rows[0], "allow", "solid", "approve(spender, a)", "emits `Approval`; stores the allowance `a`");
+  msg("spender", "token", rows[1], "allow", "dotted", "permit(owner, spender, a, sig)",
+      "signed by the owner off chain, sent by", "the spender or a relayer; emits `Approval`");
+  msg("spender", "token", rows[2], "transfer", "solid", "transferFrom(owner, to, v ≤ a)",
+      "moves `v` tokens and emits `Transfer`;", "the allowance falls to `a − v`");
+  msg("owner", "token", rows[3], "allow", "dashed", "approve(spender, 0)", "revoke: emits `Approval`; the allowance is 0");
 
   // "either" bracket joining approve and permit
-  Fig.el(s, "path", { d: `M3.6,${rows[0] - 1} H2.4 V${rows[1] + 1} H3.6`, stroke: "#9AA4B2", "stroke-width": 0.35, fill: "none" });
+  Fig.el(s, "path", { d: `M3.6,${rows[0] - 1} H2.4 V${rows[1] + 1} H3.6`, stroke: C.count, "stroke-width": 0.35, fill: "none", "stroke-linejoin": "round" });
   const cy = (rows[0] + rows[1]) / 2;
-  const e = Fig.text(s, 1.1, cy + 0.9, "either", { size: 2.5, fill: "#5B6472", anchor: "middle" });
+  const e = Fig.text(s, 1.1, cy + 0.9, "either", { size: 2.5, fill: C.muted, anchor: "middle" });
   e.setAttribute("transform", `rotate(-90 1.1 ${cy})`);
 
-  // allowance in force after each step
-  const mx = 137, mw = 15.5;
-  Fig.text(s, mx, top + 4.3, "allowance", { size: 2.8, weight: 700, fill: "#B45309" });
+  // allowance in force after each step: a flat band of gold inside the outline of the allowance that was set
+  const mx = 139.5, mw = 15.5, bh = 3.8;
+  Fig.text(s, mx, top + 4.2, "allowance", { size: 2.9, weight: 700, fill: C.allowInk });
   Fig.text(s, mx, top + 7.7, "in force after the step", { size: 2.5, fill: C.muted });
   const bar = (y, frac, label) => {
-    Fig.el(s, "rect", { x: mx, y: y - 1.9, width: mw, height: 3.8, rx: 0.9, fill: "#FFF4DF", stroke: "#F2BF73", "stroke-width": 0.3 });
-    if (frac > 0) Fig.el(s, "rect", { x: mx, y: y - 1.9, width: mw * frac, height: 3.8, rx: 0.9, fill: "#D97706" });
-    Fig.text(s, mx + mw + 1.5, y + 0.95, label, { size: 2.7, weight: 700, fill: "#7C3F00" }).setAttribute("class", "code");
+    Fig.el(s, "rect", { x: mx, y: y - bh / 2, width: mw, height: bh, fill: C.allowBg });
+    if (frac > 0) Fig.el(s, "rect", { x: mx, y: y - bh / 2, width: mw * frac, height: bh, fill: C.allowBand });
+    Fig.el(s, "rect", { x: mx, y: y - bh / 2, width: mw, height: bh, fill: "none", stroke: C.allow, "stroke-width": 0.25, "stroke-linejoin": "round" });
+    Fig.text(s, mx + mw + 1.6, y + 0.95, label, { size: 2.7, weight: 700, fill: C.allowInk, mono: true });
   };
   bar(rows[0], 1, "a"); bar(rows[1], 1, "a"); bar(rows[2], 0.58, "a − v"); bar(rows[3], 0, "0");
 })();

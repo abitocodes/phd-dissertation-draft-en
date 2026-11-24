@@ -5,26 +5,34 @@
       python Figures/html/render.py Figures/html/discovery-protocol.html
   See Figures/html/README.md.
 
-  What the figure shows, in three panels (the drawing is schematic; no curve is data):
-  1. One crawl on the contract graph of a freeze. A seed (one of 20 contracts of the giant strongly connected
-     component) is visited first; a visit reveals the out-edges of a contract (out mode) or its out- and in-edges
-     (both mode, the primary one). Visited contracts are filled, the frontier (discovered, not yet visited) is open, the
-     rest is not yet discovered. After K visits the frontier is scored again on the part read so far (a prime marks
-     such scores) and the max(1, ceil(rho K)) highest-scored frontier contracts are visited next.
-  2. The orderings compared, each chip under the rule that orders the frontier: breadth-first (BFS) under "order of
-     discovery" and, beside it, random under "uniform pick" (a uniform pick from the frontier; the two stand side by
-     side, each with its own label); three counts of visited contracts with an edge to the
-     frontier contract (IB'_A on allowance edges, IB'_T on transfer edges, IB'_U on either: the contract backlinks);
-     the walks on the graph seen so far (EndorseRank', EndorseRank-activity', AWP', C-PR' at lambda = 0.5, 0.25 and 0.75,
-     its two layers, S-PR'). The ideal order and the orders by C-PR and by union in-degree of the full graph are
-     references, not crawls.
-  3. Importance comes from user accounts, which no ordering reads: I_T (US dollars they transferred to the contract)
-     and I_A (their allowances to it, capped at their balances), each account capped at U_user. The hot set H_q(I) holds
-     the contracts of the universe with positive importance among the top q = 1%. The discovery curve gives the share of
-     the hot set visited against the contracts visited; AUC_10% is the normalized area under it over the first 10% of
-     the universe (a random crawl gives 0.05). The decision is read at T_obs in the primary mode, on H_q(I_T) and
-     H_q(I_A), from D1 = AUC_10%(C-PR') - AUC_10%(BFS) and D2 = AUC_10%(C-PR') - AUC_10%(IB'_U): V1 both intervals above 0;
-     V2 the D1 interval above 0 and the D2 interval not; V3 the D1 interval not above 0.
+  What the figure shows: the question of RQ2 taken apart (the drawing is schematic; nothing is data). Above, on a pale
+  plate behind the green bar of RQ2, the question as Chapter 1 words it, its four parts underlined in the colours of
+  the four cards below and numbered: (1) a crawl, (2) ordered by C-PR on the contracts read so far, (3) the contracts
+  with the most user-account demand, (4) sooner than a breadth-first crawl and than a crawl ordered by the number of
+  contract backlinks. Below, one card for each part:
+  1. A crawl: a small contract graph in mid-crawl. The seed (green flag) is one of 20 contracts of the giant strongly
+     connected component; a visit reveals the in- and out-edges of a contract. Visited contracts are solid, the
+     frontier (found, not yet visited) is white with a verdigris line and lettered a, b, c, the contracts not yet found
+     are dashed; the edges read so far are allowances (gold) and transfers (blue), the edges not read yet grey and
+     dashed.
+  2. Ordered by C-PR': the frontier a, b, c of card 1, each with a violet bar for its C-PR computed on the part read
+     so far; the highest, b, stands in the violet frame of the next visit. After K visits the frontier is rescored and
+     the top max(1, ceil(rho K)) are visited next. The two crawls it is compared with: BFS, which orders by discovery,
+     and IB'_U, which orders by backlinks.
+  3. User-account demand: user accounts (grey, in a dashed frame) send transfers (blue, dashed) and allowances (gold,
+     dashed) to three contracts; the one most of them use is hot (rose star). Hot: the top 1% of the universe by I_T
+     (dollars sent) or I_A (capped allowances). No ordering reads user accounts.
+  4. Sooner?: AUC_10%, the area under the share of the hot set visited over the first 10% of the universe. The decision
+     is read at T_obs on each hot set from D1 = C-PR' - BFS and D2 = C-PR' - IB'_U (differences of AUC_10%): V1 both
+     95% intervals above 0; V2 the D1 interval above 0 and the D2 interval not; V3 the D1 interval not above 0.
+
+  Look: the question on the plate in near black at 8.2 pt, each part underlined in the colour of its card
+  and followed by a small numbered disc of that colour; four cards of one width and one height (147 px, 12 px apart),
+  each a hairline frame around a Palatino heading over a grey rule, the number in a ringed disc (verdigris for the
+  crawl, violet for C-PR, rose for the hot contracts, the green of RQ2 for the test's reading). A contract is a square,
+  in the states of the pages of crawl-ordering.html; the frontier letters of card 1 come back in card 2 at the same
+  size. The user accounts are grey pictograms in a dashed frame, their edges dashed. The prime of a score, the minus
+  sign and the variables are set in Palatino.
 -->
 <html lang="en">
 <head>
@@ -33,119 +41,141 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-/* Type: running text 7.5 pt, chips 7.2 pt with names at 7.5 pt, subscripts 0.85em (they tell IB′_A, IB′_T and IB′_U
-   apart). Subscripts and the Times letters take no line height of their own, so the lines keep an even pitch. */
-.cols { display:grid; grid-template-columns:55mm 46mm minmax(0, 1fr); column-gap:3mm; align-items:stretch; width:162.8mm; margin-left:1.1mm; }
-.panel { padding:1.6mm 2mm 1.8mm; }
-.ph { display:flex; align-items:center; gap:1.3mm; font-weight:700; font-size:7.9pt; margin-bottom:0.8mm; white-space:nowrap; }
-.ph .badge { width:4mm; height:4mm; font-size:7pt; margin-right:0; }
-.txt { font-size:7.5pt; line-height:1.2; color:#374151; }
-.txt p { margin:0.4mm 0 0; }
-.leg { display:flex; gap:1.7mm; font-size:7.5pt; color:#4B5563; margin-top:0.55mm; white-space:nowrap; }
-.leg span { display:inline-flex; align-items:center; gap:0.8mm; }
-.dot { display:inline-block; width:2.4mm; height:2.4mm; border-radius:0.6mm; }
-.grp { font-size:7.5pt; line-height:1.2; color:#5B6472; margin:1mm 0 0.45mm; font-weight:600; white-space:nowrap; }
-.duo { display:flex; gap:3.2mm; }     /* BFS and random side by side, each under its own label */
-.chips { display:flex; flex-wrap:wrap; gap:0.8mm; }
-.chips .chip { font-size:7.2pt; line-height:1.2; padding:0.45mm 1.3mm; }
-.chips .chip b { font-size:7.5pt; }
-sub { font-size:0.85em; line-height:0; }
-.m { font-family:"Times New Roman", serif; font-style:italic; font-size:1.12em; line-height:0; }
-.dec { margin-top:1mm; border-radius:1.6mm; background:#F0FAF5; border:0.3mm solid #9ED9BF; padding:1mm 1.6mm; font-size:7.5pt; line-height:1.22; }
-.dec b { color:#065F46; }
+@page { size: 180mm 110mm; margin: 0; }
+.fig { width:624px; }
+/* the question */
+.q { background:var(--plate); border-left:4px solid var(--rq2); padding:5px 9px 6px 8px; display:flex; gap:2.2mm; align-items:flex-start; }
+.q .tag { flex:none; margin-top:2px; }
+.q p { margin:0; font-size:8.2pt; line-height:17px; color:var(--ink); }
+.q u { text-decoration-line:underline; text-decoration-thickness:0.45mm; text-underline-offset:0.9mm; text-decoration-skip-ink:none; }
+.q u.c1 { text-decoration-color:var(--contract); } .q u.c2 { text-decoration-color:var(--coupled); }
+.q u.c3 { text-decoration-color:var(--rq3); } .q u.c4 { text-decoration-color:var(--rq2); }
+.q svg.qn { display:inline-block; vertical-align:0.75mm; margin:0 0.2mm 0 0.7mm; }
+/* four cards of 147 px with gaps of 12 px: 624 px, 165.1 mm (whole pixels, so that the cards come out equal) */
+.cols { margin-top:2.2mm; display:grid; grid-template-columns:repeat(4, 147px); column-gap:12px; align-items:stretch; }
+.cols > .part.panel { padding:6px 7px 6px; }             /* 133 px inside: 35.190 mm */
+.cols .h.s { font-size:8pt; }
+.h .badge { margin:0.5mm 1.3mm 0.5mm 0.3mm; }
+.part svg.draw { display:block; width:133px; }
+.txt { font-size:7.1pt; line-height:12px; color:var(--muted); }
+.txt i.v, .txt .m, .txt .pr, .txt sub, .fm i.v, .fm .pr, .vr i.v { line-height:0; }
+.leg { display:grid; grid-template-columns:max-content max-content; justify-content:space-between; row-gap:1px; font-size:7.1pt; line-height:12px; color:var(--muted); margin:0.6mm 0 1.2mm; }
+.leg span { display:inline-flex; align-items:center; gap:0.9mm; white-space:nowrap; }
+.leg svg { flex:none; }
+.bottom { margin-top:auto; }
+.fm { font-size:7.3pt; line-height:14px; color:var(--text); white-space:nowrap; }
+.vrows { display:flex; flex-direction:column; gap:2px; margin:1.4mm 0 0; }
+.vr { display:flex; align-items:center; gap:1.6mm; font-size:7.1pt; line-height:14px; color:var(--text); white-space:nowrap; }
+.vr .pill { width:22px; justify-content:center; padding:0; }
 </style>
 </head>
 <body>
 <div class="fig">
+  <div class="q">
+    <span class="tag r2">RQ2</span>
+    <p>Does <span class="nb"><u class="c1">a crawl</u><span class="qn" data-n="1" data-c="contract"></span></span> <u class="c2">ordered by <span class="nb">C-PR</span> on the contracts read so </u><span class="nb"><u class="c2">far</u><span class="qn" data-n="2" data-c="coupled"></span></span> reach <u class="c3">the contracts with the most user-account </u><span class="nb"><u class="c3">demand</u><span class="qn" data-n="3" data-c="rq3"></span></span> <u class="c4">sooner than a breadth-first crawl and than a crawl ordered by the number of contract </u><span class="nb"><u class="c4">backlinks</u><span class="qn" data-n="4" data-c="rq2"></span>?</span></p>
+  </div>
   <div class="cols">
-    <!-- 1. one crawl -->
-    <div class="panel contract">
-      <div class="ph"><span class="badge" style="background:var(--contract)">1</span>A crawl on the contract graph</div>
-      <svg id="crawl" width="51mm" height="27mm" viewBox="0 0 51 27"></svg>
-      <div class="leg"><span><i class="dot" style="background:#0F766E"></i>visited</span><span><i class="dot" style="background:#fff;border:0.35mm solid #0F766E"></i>frontier</span><span><i class="dot" style="background:#E5E7EB"></i>not yet discovered</span></div>
-      <div class="txt">
-        <p>Seed: one of 20 contracts of the giant strongly connected component.</p>
-        <p>A visit reveals out-edges (<span class="mono">out</span> mode) or out- and in-edges (<span class="mono">both</span> mode, primary).</p>
-        <p>After <span class="m">K</span> visits the frontier is scored on the part read so far (′), and the top max(1,&nbsp;⌈<span class="m">ρK</span>⌉) are visited next.</p>
+    <!-- 1. a crawl -->
+    <div class="part panel">
+      <div class="h s"><span class="badge contract">1</span>A crawl</div>
+      <svg id="crawl" class="draw" viewBox="0 0 35.19 17.4" style="height:17.4mm"></svg>
+      <div class="leg">
+        <span><svg width="2.6mm" height="2.6mm" viewBox="0 0 2.6 2.6"><rect x="0.2" y="0.2" width="2.2" height="2.2" rx="0.4" style="fill:var(--contract)"/></svg>visited</span>
+        <span><svg width="2.6mm" height="2.6mm" viewBox="0 0 2.6 2.6"><rect x="0.22" y="0.22" width="2.16" height="2.16" rx="0.4" fill="#fff" style="stroke:var(--contract)" stroke-width="0.4"/></svg>frontier</span>
+        <span><svg width="2.6mm" height="2.6mm" viewBox="0 0 2.6 2.6"><rect x="0.2" y="0.2" width="2.2" height="2.2" rx="0.4" fill="#fff" style="stroke:var(--user)" stroke-width="0.32" stroke-dasharray="0.75 0.5"/></svg>not yet found</span>
       </div>
+      <div class="txt bottom">From a seed, one of 20 contracts of the giant SCC. A visit reveals in- and out-edges.</div>
     </div>
-    <!-- 2. orderings -->
-    <div class="panel soft">
-      <div class="ph"><span class="badge" style="background:#475569">2</span>Orderings compared</div>
-      <div class="duo">
-        <div><div class="grp">order of discovery</div><div class="chips"><span class="chip cnt"><b>BFS</b></span></div></div>
-        <div><div class="grp">uniform pick</div><div class="chips"><span class="chip cnt"><b>random</b></span></div></div>
-      </div>
-      <div class="grp">visited contracts with an edge to it</div>
-      <div class="chips"><span class="chip er"><b>IB′<sub>A</sub></b></span><span class="chip awp"><b>IB′<sub>T</sub></b></span><span class="chip cnt"><b>IB′<sub>U</sub></b>backlinks</span></div>
-      <div class="grp">walks on the graph seen so far</div>
-      <div class="chips"><span class="chip cpr"><b>C&#8209;PR′</b><span><span class="m" style="font-size:1em">λ</span> = 0.5</span></span><span class="chip spr">0.25, 0.75, its two layers</span><span class="chip spr"><b>S&#8209;PR′</b></span>
-        <span class="chip er"><b>EndorseRank′</b></span><span class="chip er">EndorseRank-activity′</span><span class="chip awp"><b>AWP′</b></span></div>
-      <div class="grp">references, not crawls</div>
-      <div class="txt" style="margin-top:0">ideal order; C&#8209;PR and union in&#8209;degree of the full graph</div>
+    <!-- 2. ordered by C-PR' -->
+    <div class="part panel">
+      <div class="h s"><span class="badge coupled">2</span><span>Ordered by <span class="nb">C-PR</span><span class="pr">′</span></span></div>
+      <svg id="order" class="draw" viewBox="0 0 35.19 17.4" style="height:17.4mm"></svg>
+      <div class="txt bottom"><span class="nb">C-PR</span><span class="pr">′</span>: <span class="nb">C-PR</span> on the part read so far. After <i class="v">K</i> visits the frontier is rescored; the top <span class="m">max(1,&nbsp;⌈<i>ρK</i>⌉)</span> are visited next. BFS orders by discovery, IB<span class="pr">′</span><sub>U</sub> by backlinks.</div>
     </div>
-    <!-- 3. hot sets, curve, decision -->
-    <div class="panel" style="border-color:#9ED9BF">
-      <div class="ph"><span class="badge" style="background:var(--rq2)">3</span>How soon hot contracts are found</div>
-      <div class="txt" style="display:flex;gap:1.4mm;align-items:flex-start">
-        <span data-icon="people" data-color="#7A8594" data-size="4.6"></span>
-        <span>Importance from user accounts, which no ordering reads: <span class="m">I</span><sub>T</sub> (dollars sent) and <span class="m">I</span><sub>A</sub> (capped allowances). Hot set <span class="m">H<sub style="font-style:italic">q</sub></span>(<span class="m">I</span>): the top <span class="m">q</span>&nbsp;=&nbsp;1% of the universe.</span>
+    <!-- 3. user-account demand -->
+    <div class="part panel">
+      <div class="h s"><span class="badge" style="--c:var(--rq3)">3</span>User-account demand</div>
+      <svg id="demand" class="draw" viewBox="0 0 35.19 17.4" style="height:17.4mm"></svg>
+      <div class="txt bottom">Hot: the top 1% by dollars sent (<i class="v">I</i><sub>T</sub>) or capped allowances (<i class="v">I</i><sub>A</sub>). No ordering reads <span class="nb">user accounts.</span></div>
+    </div>
+    <!-- 4. sooner -->
+    <div class="part panel">
+      <div class="h s"><span class="badge" style="--c:var(--rq2)">4</span>Sooner?</div>
+      <div class="txt">AUC<sub>10%</sub>: the area under the share of the hot set visited, over the first 10% of the universe. At <i class="v">T</i><sub>obs</sub>, on <span class="nb">each hot set:</span></div>
+      <div class="fm" style="margin-top:1.2mm"><i class="v">D</i><sub>1</sub> = <span class="nb">C-PR</span><span class="pr">′</span><span class="pr"> − </span>BFS</div>
+      <div class="fm"><i class="v">D</i><sub>2</sub> = <span class="nb">C-PR</span><span class="pr">′</span><span class="pr"> − </span>IB<span class="pr">′</span><sub>U</sub></div>
+      <div class="vrows">
+        <div class="vr"><span class="pill good">V1</span><span>both above 0</span></div>
+        <div class="vr"><span class="pill mixed">V2</span><span><i class="v">D</i><sub>1</sub> above 0, <i class="v">D</i><sub>2</sub> not</span></div>
+        <div class="vr"><span class="pill bad">V3</span><span><i class="v">D</i><sub>1</sub> not above 0</span></div>
       </div>
-      <svg id="curve" width="51mm" height="22mm" viewBox="0 0 51 22" style="display:block;margin-top:0.6mm"></svg>
-      <div class="dec"><b>Decision</b> at <span class="m">T</span><sub>obs</sub>, primary mode, on <span class="m">H<sub style="font-style:italic">q</sub></span>(<span class="m">I</span><sub>T</sub>) and <span class="m">H<sub style="font-style:italic">q</sub></span>(<span class="m">I</span><sub>A</sub>):<br>
-        <span class="m">D</span><sub>1</sub> = AUC<sub>10%</sub>(C&#8209;PR′) − AUC<sub>10%</sub>(BFS)<br>
-        <span class="m">D</span><sub>2</sub> = AUC<sub>10%</sub>(C&#8209;PR′) − AUC<sub>10%</sub>(IB′<sub>U</sub>)</div>
     </div>
   </div>
 </div>
 <script>
-// panel 1: a small union graph in mid-crawl
+const C = Fig.C;
+// a contract in one of three states, as the pages of crawl-ordering.html: visited solid, frontier white with a
+// verdigris line, not yet found dashed
+function square(svg, x, y, h, st) {
+  if (st === "v") return Fig.node(svg, x, y, { half: h, fill: C.contract, keyline: 0 });
+  Fig.el(svg, "rect", Object.assign({ x: x - h, y: y - h, width: 2 * h, height: 2 * h, rx: h * 0.2, fill: C.paper },
+    st === "f" ? { stroke: C.contract, "stroke-width": 0.45 } : { stroke: C.user, "stroke-width": 0.35, "stroke-dasharray": "1.1 0.8" }));
+}
+// the letter of a frontier contract: the same in cards 1 and 2
+const H = 1.9;   // half the side of a contract (mm)
+const letter = (svg, x, y, l) => Fig.text(svg, x, y + 0.88, l, { size: 2.5, weight: 700, fill: C.contractInk, anchor: "middle" });
+// the numbered discs after the parts of the question
+for (const s of document.querySelectorAll("span.qn")) {
+  const R = 1.6, svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");   // the number at 2.5 mm, 7.1 pt
+  svg.setAttribute("class", "qn"); svg.setAttribute("viewBox", `0 0 ${2 * R} ${2 * R}`);
+  svg.setAttribute("width", `${2 * R}mm`); svg.setAttribute("height", `${2 * R}mm`);
+  Fig.el(svg, "circle", { cx: R, cy: R, r: R, fill: C[s.dataset.c] });
+  Fig.text(svg, R, R + 0.88, s.dataset.n, { size: 2.5, weight: 700, fill: "#fff", anchor: "middle", spacing: 0 });
+  s.replaceWith(svg);
+}
+// 1. a crawl: the seed and two contracts visited, the frontier a, b, c, two contracts not yet found
 (function () {
-  const svg = document.getElementById("crawl"), h = 2.3;
-  const N = { s: [5, 14], a: [15, 6], b: [16, 22], c: [27, 3.5], d: [28, 13.5], e: [27, 23.5], f: [39, 6], g: [40, 16], h: [38, 25], i: [48, 11] };
-  const state = { s: "v", a: "v", b: "v", c: "f", d: "f", e: "f", f: "u", g: "u", h: "u", i: "u" };
-  const A = "#D97706", T = "#2563EB", G = "#C7CDD6";
-  const seen = [["s", "a", A], ["s", "b", T], ["a", "c", T], ["a", "d", A], ["b", "d", T], ["b", "e", T]];
-  const hidden = [["c", "f"], ["d", "g"], ["e", "h"], ["g", "i"], ["f", "i"], ["h", "g"]];
-  for (const [p, q] of hidden) Fig.edge(svg, N[p], N[q], { color: G, width: 0.32, dash: "0.7 0.6", half: h, head: false });
-  for (const [p, q, c] of seen) Fig.edge(svg, N[p], N[q], { color: c, width: 0.45, half: h });
-  for (const [id, [x, y]] of Object.entries(N)) {
-    const st = state[id];
-    Fig.el(svg, "rect", { x: x - h, y: y - h, width: 2 * h, height: 2 * h, rx: 0.9,
-      fill: st === "v" ? "#0F766E" : st === "f" ? "#fff" : "#E5E7EB", stroke: st === "u" ? "#C7CDD6" : "#0F766E", "stroke-width": st === "f" ? 0.45 : 0.3 });
-  }
-  // seed flag
-  Fig.el(svg, "path", { d: `M${N.s[0] - 1.6},${N.s[1] - 2.3} V${N.s[1] - 7} l3.2,1.2 l-3.2,1.2`, fill: "#059669", stroke: "#059669", "stroke-width": 0.3 });
-  Fig.text(svg, N.s[0] - 2.2, N.s[1] + 6.6, "seed", { size: 2.65, fill: "#065F46", weight: 600 });   // 2.65 mm = 7.5 pt
-  // hot contracts (by user-account importance): stars
-  const star = (x, y) => { let d = ""; for (let k = 0; k < 10; k++) { const r = k % 2 ? 0.75 : 1.7, a = -Math.PI / 2 + k * Math.PI / 5; d += (k ? "L" : "M") + (x + r * Math.cos(a)).toFixed(2) + "," + (y + r * Math.sin(a)).toFixed(2); } Fig.el(svg, "path", { d: d + "Z", fill: "#DB2777" }); };
-  star(N.e[0] + 2.6, N.e[1] - 2.6); star(N.g[0] + 2.6, N.g[1] - 2.6);
-  Fig.text(svg, 51, 26.6, "★ hot", { size: 2.65, fill: "#BE185D", anchor: "end", weight: 600 });
+  const svg = document.getElementById("crawl");
+  const N = { s: [3.2, 10.2], v1: [11.8, 4.0], v2: [11.8, 15.0], a: [21.4, 2.4], b: [21.4, 9.2], c: [21.4, 15.2], u1: [31.0, 5.4], u2: [31.0, 12.8] };
+  const state = { s: "v", v1: "v", v2: "v", a: "f", b: "f", c: "f", u1: "u", u2: "u" };
+  // edges not read yet: grey, dashed, without a head
+  for (const [p, q] of [["a", "u1"], ["b", "u1"], ["b", "u2"], ["c", "u2"]])
+    Fig.edge(svg, N[p], N[q], { color: C.user, width: 0.32, dash: "1.1 0.8", halfFrom: H, halfTo: H, gap: 0.55, head: false });
+  // edges read so far: allowances gold, transfers blue
+  for (const [p, q, k] of [["s", "v1", "A"], ["s", "v2", "T"], ["v1", "a", "T"], ["v1", "b", "A"], ["v2", "b", "T"], ["v2", "c", "A"]])
+    Fig.edge(svg, N[p], N[q], Object.assign({ halfFrom: H, halfTo: H, gap: 0.55 }, k === "A" ? { color: C.allow, width: 0.55 } : { color: C.transfer, width: 0.45 }));
+  for (const [id, [x, y]] of Object.entries(N)) square(svg, x, y, H, state[id]);
+  for (const id of ["a", "b", "c"]) letter(svg, N[id][0], N[id][1], id);
+  // the seed: a green flag
+  const [x, y] = N.s;
+  Fig.el(svg, "path", { d: `M${x - H + 0.6},${y - H} V${y - H - 4.4} l3,1.1 l-3,1.1`, fill: C.rq2, stroke: C.rq2, "stroke-width": 0.3, "stroke-linejoin": "round" });
+  Fig.text(svg, x + 0.3, y + 5.1, "seed", { size: 2.5, fill: C.rq2, weight: 700, anchor: "middle" });
 })();
-// panel 3: a schematic discovery curve over the first 10% of the universe
+// 2. C-PR' on the part read: one bar for each frontier contract of card 1; the highest is visited next
 (function () {
-  const svg = document.getElementById("curve");
-  const X0 = 7.6, Y0 = 17.6, W = 40.4, H = 15, FS = 2.65;   // plot box: x 0..10% of the universe, y 0..1 share of the hot set; text 7.5 pt
-  const P = (x, y) => [X0 + x * W, Y0 - y * H];
-  const pts = []; for (let i = 0; i <= 40; i++) { const x = i / 40; pts.push(P(x, 1 - Math.pow(1 - x, 2.4) * 0.62 - 0.38 * (1 - x))); }
-  const crawl = pts.map(([x, y], i) => (i ? "L" : "M") + x.toFixed(2) + "," + y.toFixed(2)).join(" ");
-  Fig.el(svg, "path", { d: `${crawl} L${X0 + W},${Y0} L${X0},${Y0} Z`, fill: "#DDF4EA" });
-  Fig.el(svg, "path", { d: `M${X0},${Y0 - H} H${X0 + W} V${Y0}`, fill: "none", stroke: "#D1D5DB", "stroke-width": 0.25 });
-  // ideal: every hot contract first
-  Fig.el(svg, "path", { d: `M${P(0, 0)} L${P(0.08, 1)} L${P(1, 1)}`, fill: "none", stroke: "#374151", "stroke-width": 0.35, "stroke-dasharray": "0.8 0.5" });
-  // random reference: K/|U| after K visits, i.e. 0.1 at 10%
-  Fig.el(svg, "path", { d: `M${P(0, 0)} L${P(1, 0.1)}`, fill: "none", stroke: "#9CA3AF", "stroke-width": 0.3 });
-  Fig.el(svg, "path", { d: crawl, fill: "none", stroke: "#059669", "stroke-width": 0.55 });
-  Fig.el(svg, "path", { d: `M${X0},${Y0 - H - 0.5} V${Y0} H${X0 + W + 0.5}`, fill: "none", stroke: "#374151", "stroke-width": 0.3 });
-  Fig.text(svg, X0 + W, Y0 + 3.3, "10% of the universe visited", { size: FS, anchor: "end", fill: "#4B5563" });
-  Fig.text(svg, X0, Y0 + 3.3, "0", { size: FS, anchor: "middle", fill: "#4B5563" });
-  const ty = Fig.text(svg, 3.0, Y0 - H / 2, "hot set visited", { size: FS, anchor: "middle", fill: "#4B5563" });
-  ty.setAttribute("transform", `rotate(-90 3.0 ${Y0 - H / 2})`);
-  const auc = Fig.text(svg, X0 + 17.6, Y0 - 4.6, "AUC", { size: FS, weight: 700, fill: "#065F46" });
-  Fig.el(auc, "tspan", { "font-size": FS * 0.85, dy: 0.65 }, "10%");                      // subscript, 0.85em
-  Fig.text(svg, X0 + 10.6, Y0 - H + 3.3, "a crawl", { size: FS, fill: "#047857", weight: 600 });
-  Fig.text(svg, X0 + 4.6, Y0 - H - 0.75, "ideal", { size: FS, fill: "#374151" });
-  Fig.text(svg, X0 + W - 0.4, Y0 - 2.5, "random", { size: FS, fill: "#6B7280", anchor: "end" });
+  const svg = document.getElementById("order"), X = 3.4, B0 = 7.6;
+  for (const [l, y, len] of [["a", 2.9, 10.0], ["b", 8.7, 19.0], ["c", 14.5, 6.0]]) {
+    square(svg, X, y, H, "f");
+    letter(svg, X, y, l);
+    Fig.el(svg, "rect", { x: B0, y: y - 1.0, width: len, height: 2.0, fill: l === "b" ? C.coupled : C.coupledFill });
+  }
+  const g = H + 0.75;   // the violet frame of the next visit
+  Fig.el(svg, "rect", { x: X - g, y: 8.7 - g, width: 2 * g, height: 2 * g, rx: 0.5, fill: "none", stroke: C.coupled, "stroke-width": 0.45 });
+  Fig.text(svg, B0 + 19.0 + 1.2, 8.7 + 0.88, "next", { size: 2.5, weight: 700, fill: C.coupled });
+})();
+// 3. user accounts and the contracts they use; the one most of them use is hot
+(function () {
+  const svg = document.getElementById("demand");
+  const K = { l: [5.6, 3.2], m: [17.6, 3.2], r: [29.6, 3.2] };
+  Fig.el(svg, "rect", { x: 0.2, y: 9.6, width: 34.79, height: 7.6, rx: 0.5, fill: C.paper, stroke: C.user, "stroke-width": 0.35, "stroke-dasharray": "1.1 0.8" });
+  const P = [3.6, 9.0, 14.4, 20.8, 26.2, 31.6], PY = 13.6;
+  for (const [i, k, t] of [[0, "l", "T"], [1, "m", "A"], [2, "m", "T"], [3, "m", "A"], [4, "m", "T"], [5, "r", "A"]])
+    Fig.edge(svg, [P[i], 11.3], K[k], { color: t === "A" ? C.allow : C.transfer, width: 0.4, dash: "0.9 0.6", halfFrom: 0, halfTo: H, gap: 0.45 });
+  for (const x of P) Fig.person(svg, x, PY, 3.8, C.user);
+  for (const [x, y] of Object.values(K)) Fig.node(svg, x, y, { half: H, fill: C.contract, keyline: 0 });
+  Fig.star(svg, 17.6 + 2.5, 3.2 - 2.0, 1.4, C.rq3);
+  Fig.text(svg, 17.6 + 4.6, 3.2 - 0.5, "hot", { size: 2.5, weight: 700, fill: C.rq3 });
 })();
 </script>
 </body>

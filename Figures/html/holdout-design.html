@@ -21,6 +21,13 @@
   Layout: the calendar is on the left and the two rule boxes on the right, rule A beside the row of W0 and rule B
   beside the row of W1; the boxes share the height of the calendar and grow with their text. The two boxes below
   hold the labels and what is compared.
+
+  Look (STYLE.md, "Calendars and periods"): the calendar of study-timeline (grey month letters over
+  hairlines, bold years, a grey rule for the axis). A score window is two flat bands, the gold of the allowance layer
+  over the ultramarine of the transfer layer; a label window is the tint of RQ3 with a line of its rose; a freeze is a
+  dashed near-black line with its name in bold at its foot; W0 and W1 are solid violet labels, the colour of the rules
+  read in them. Each rule is a pale plate behind a solid violet bar; the two boxes below are pale plates behind a bar of
+  their colour (rose for the labels, grey for the comparison), each with its pictogram in white on a ringed disc.
 -->
 <html lang="en">
 <head>
@@ -29,24 +36,22 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-.top { display:grid; grid-template-columns:99mm minmax(0, 1fr); column-gap:2.6mm; width:162.8mm; margin-left:1.1mm; }
+.top { display:grid; grid-template-columns:99mm minmax(0, 1fr); column-gap:2.6mm; }
 /* the note takes the height of the calendar header; the two rule boxes share the rest of the calendar's height
    (rule A beside the row of W0, rule B beside the row of W1) and grow with their text, never smaller than it */
 .rules { display:grid; grid-template-rows:5.4mm repeat(2, minmax(min-content, 1fr)); row-gap:1.2mm; }
-.rules .lead { font-size:7pt; color:#5B6472; padding-top:1.3mm; }
-.rule { border-radius:1.6mm; padding:0.6mm 1.6mm; font-size:7pt; line-height:1.2; display:flex; align-items:center; }
-.rule b { display:block; font-size:7.3pt; }
-.rule.a { background:var(--rq45-bg); border-left:1.2mm solid var(--rq45); }
-.rule.b { background:var(--rq45-bg); border-left:1.2mm solid var(--rq45); }
-.m { font-family:"Times New Roman", serif; font-style:italic; font-size:1.12em; line-height:0; }
-.mu { font-family:"Times New Roman", serif; font-size:1.12em; line-height:0; }
-sub { font-size:0.8em; line-height:0; }
-.bottom { display:grid; grid-template-columns:1.25fr 1fr; column-gap:2.6mm; margin-top:1.3mm; width:162.8mm; margin-left:1.1mm; }
-.box { border-radius:1.8mm; padding:1mm 1.8mm; font-size:7pt; line-height:1.22; color:#374151; }
-.box .hd { display:flex; align-items:center; gap:1.2mm; font-weight:700; font-size:7.3pt; color:#111827; margin-bottom:0.5mm; }
-.box.labels { background:var(--rq3-bg); border:0.3mm solid #F3A8C8; }
-.box.compare { background:#F8FAFC; border:0.3mm solid #E2E8F0; }
+.rules .lead { font-size:7.1pt; color:var(--muted); padding-top:1.3mm; }
+.rule { background:var(--plate); border-left:4px solid var(--rq45); padding:0.6mm 1.4mm 0.6mm 2mm; font-size:7.1pt;
+  line-height:1.2; color:var(--muted); display:flex; align-items:center; }
+.rule b { display:block; font-size:7.4pt; }
+.bottom { display:grid; grid-template-columns:1.25fr 1fr; column-gap:2.6mm; margin-top:1.3mm; }
+.box { background:var(--plate); border-left:4px solid var(--count); padding:1mm 1.6mm 1.1mm 2mm; font-size:7.1pt;
+  line-height:1.22; color:var(--muted); }
+.box .hd { display:flex; align-items:center; gap:1.5mm; font-weight:700; font-size:7.6pt; color:var(--ink); margin-bottom:0.4mm; }
+.box.labels { border-left-color:var(--rq3); }
 .box p { margin:0.4mm 0 0; }
+/* a variable in Palatino takes no line height of its own, so the lines of a box keep an even pitch */
+.rule i.v, .rule .m, .box i.v { line-height:0; }
 </style>
 </head>
 <body>
@@ -55,68 +60,59 @@ sub { font-size:0.8em; line-height:0; }
     <svg id="t" width="99mm" height="34.8mm" viewBox="0 0 99 34.8"></svg>
     <div class="rules">
       <div class="lead">read on the contract graph’s scores, as a re-analysis</div>
-      <div class="rule a"><div><b>Rule A, primary part (RQ4)</b>C&#8209;PR (<span class="m">λ</span> = 0.5) no worse than C&#8209;PR (<span class="m">λ</span> = 1) on new approval pairs, better than C&#8209;PR (<span class="m">λ</span> = 0) on new transfer senders</div></div>
-      <div class="rule b"><div><b>Rule B, criteria F1 and F2 (RQ5)</b>against C&#8209;PR (<span class="m">λ</span> = 0): F1, new approval pairs, interval above 0; F2, new transfer senders, lower end above&nbsp;−<span class="m">δ</span></div></div>
+      <div class="rule"><div><b>Rule A, primary part (RQ4)</b><span class="nb">C-PR</span> (<i class="v">λ</i> = 0.5) no worse than <span class="nb">C-PR</span> (<i class="v">λ</i> = 1) on new approval pairs, better than <span class="nb">C-PR</span> (<i class="v">λ</i> = 0) on new transfer senders</div></div>
+      <div class="rule"><div><b>Rule B, criteria F1 and F2 (RQ5)</b>against <span class="nb">C-PR</span> (<i class="v">λ</i> = 0): F1, new approval pairs, interval above 0; F2, new transfer senders, lower end above&nbsp;<span class="m">−<i>δ</i></span></div></div>
     </div>
   </div>
   <div class="bottom">
     <div class="box labels">
-      <div class="hd"><span data-icon="people" data-color="#BE185D" data-size="4.2"></span>Two labels per spender, counting every account</div>
+      <div class="hd"><span data-medal="people" data-color="rq3" data-size="4.4"></span>Two labels per spender, counting every account</div>
       <p><b>New approval pairs:</b> owner–spender pairs with a positive approval in the label window that were absent at the freeze.</p>
       <p><b>New transfer senders:</b> addresses that send the spender a transfer in the label window and had not since the score window began.</p>
     </div>
     <div class="box compare">
-      <div class="hd"><span data-icon="scale" data-color="#475569" data-size="4.2"></span>What is compared (RQ3)</div>
-      <p>Every score at the freeze against each label, Kendall <span class="m">τ</span><sub>b</sub> with paired bootstrap intervals.</p>
-      <p>Each walk against the raw count of the edges it smooths: in&#8209;approve degree, transfer in&#8209;degree, union in&#8209;degree.</p>
+      <div class="hd"><span data-medal="scale" data-color="count" data-size="4.4"></span>What is compared (RQ3)</div>
+      <p>Every score at the freeze against each label, Kendall <i class="v">τ</i><sub>b</sub> with paired bootstrap intervals.</p>
+      <p>Each walk against the raw count of the edges it smooths: <span class="nb">in-approve</span> degree, transfer <span class="nb">in-degree</span>, union <span class="nb">in-degree</span>.</p>
     </div>
   </div>
 </div>
 <script>
-const svg = document.getElementById("t");
+const svg = document.getElementById("t"), C = Fig.C;
 const X0 = 11.5, M = 4.75;                                 // x of 1 April 2025 and mm per month
 const FS = 2.5, HT = 34.8;                                 // text size (2.5 mm = 7.1 pt) and height of the calendar
 const mx = (y, m) => X0 + ((y - 2025) * 12 + (m - 4)) * M;
-const MATH = "font-family:'Times New Roman',serif";
-function rich(x, y, s, o = {}) {
-  const size = o.size || FS;
-  const t = Fig.el(svg, "text", { x, y, "font-size": size, fill: o.fill || "#1F2937", "text-anchor": o.anchor || "start", "font-weight": o.weight || 400 });
-  let shift = 0;
-  for (const part of s.split(/(\$[^$]+\$|_\{[^}]+\})/).filter(Boolean)) {
-    const ts = Fig.el(t, "tspan", {});
-    if (part.startsWith("_{")) { ts.textContent = part.slice(2, -1); ts.setAttribute("font-size", size * 0.8); ts.setAttribute("dy", 0.6); shift = 0.6; continue; }
-    if (shift) { ts.setAttribute("dy", -shift); shift = 0; }
-    if (part.startsWith("$")) { ts.textContent = part.slice(1, -1); ts.setAttribute("style", MATH); ts.setAttribute("font-style", "italic"); ts.setAttribute("font-size", size * 1.12); }
-    else ts.textContent = part;
-  }
-  return t;
-}
-// calendar header
-for (let i = 0; i <= 18; i++) Fig.el(svg, "path", { d: `M${X0 + i * M},4.6 V${HT - 0.4}`, stroke: "#EEF0F3", "stroke-width": 0.2 });
-"AMJJASONDJFMAMJJAS".split("").forEach((c, i) => rich(X0 + (i + 0.5) * M, 4.0, c, { anchor: "middle", fill: "#4B5563" }));
-rich((mx(2025, 4) + mx(2026, 1)) / 2, 1.3, "2025", { anchor: "middle", weight: 700, fill: "#374151" });
-rich((mx(2026, 1) + mx(2026, 10)) / 2, 1.3, "2026", { anchor: "middle", weight: 700, fill: "#374151" });
+const el = (t, a) => Fig.el(svg, t, a);
+const rich = (x, y, s, o) => Fig.rich(svg, x, y, s, Object.assign({ size: FS }, o));
 
-// one window: score bar (both layers: orange over blue), freeze, label bar
+// calendar header: the calendar of these figures (month letters grey over hairlines, years bold, the axis a grey rule)
+for (let i = 0; i <= 18; i++) el("path", { d: `M${X0 + i * M},4.8 V${HT - 0.4}`, stroke: C.plate2, "stroke-width": 0.2 });
+"AMJJASONDJFMAMJJAS".split("").forEach((c, i) => rich(X0 + (i + 0.5) * M, 4.0, c, { anchor: "middle", fill: C.muted }));
+el("path", { d: `M${mx(2026, 1)},-0.5 V4.8`, stroke: C.rule, "stroke-width": 0.3 });
+el("path", { d: `M${X0},4.8 H${X0 + 18 * M}`, stroke: C.rule, "stroke-width": 0.3 });
+rich((mx(2025, 4) + mx(2026, 1)) / 2, 1.3, "2025", { anchor: "middle", weight: 700, fill: C.ink });
+rich((mx(2026, 1) + mx(2026, 10)) / 2, 1.3, "2026", { anchor: "middle", weight: 700, fill: C.ink });
+
+// one window: its name as a solid label, the score window (both layers: gold over ultramarine), the freeze, the label window
 function windowRow(y, name, n, s0, f, l1, freezeLabel) {
-  Fig.el(svg, "rect", { x: 0, y: y - 0.2, width: 9.6, height: 5.0, rx: 1, fill: "#7C3AED" });
-  rich(4.8, y + 3.4, name, { size: 2.6, anchor: "middle", weight: 700, fill: "#fff" });
-  rich(0, y + 9.3, n, { fill: "#5B6472" });
+  el("rect", { x: 0, y: y - 0.2, width: 9.6, height: 5.0, fill: C.rq45 });
+  rich(4.8, y + 3.25, name, { size: 2.6, anchor: "middle", weight: 700, fill: "#fff" });
+  rich(0, y + 9.3, n, { fill: C.muted });
   const xs = mx(...s0), xf = mx(...f), xl = mx(...l1);
-  // score window: events between contracts in both layers
-  Fig.el(svg, "rect", { x: xs, y, width: xf - xs, height: 2.3, rx: 0.4, fill: "#FDE2B8", stroke: "#D97706", "stroke-width": 0.25 });
-  Fig.el(svg, "rect", { x: xs, y: y + 2.3, width: xf - xs, height: 2.3, rx: 0.4, fill: "#D3E2FF", stroke: "#2563EB", "stroke-width": 0.25 });
-  rich((xs + xf) / 2, y + 7.6, "score window: events between contracts", { anchor: "middle", fill: "#374151" });
-  // label window
-  Fig.el(svg, "rect", { x: xf + 0.4, y, width: xl - xf - 0.4, height: 4.6, rx: 0.6, fill: "#FCE7F1", stroke: "#DB2777", "stroke-width": 0.3 });
-  rich((xf + xl) / 2 + 0.2, y + 3.15, "labels", { anchor: "middle", fill: "#9D174D", weight: 600 });
-  // freeze
-  Fig.el(svg, "path", { d: `M${xf},${y - 1.6} V${y + 9.6}`, stroke: "#111827", "stroke-width": 0.4, "stroke-dasharray": "0.9 0.6" });
-  const lab = rich(xf - 0.5, y + 10.75, freezeLabel, { anchor: "end", weight: 600, fill: "#111827" });
+  // freeze (drawn first: the bands and the label window end on it)
+  el("path", { d: `M${xf},${y - 1.6} V${y + 11.3}`, stroke: C.ink, "stroke-width": 0.4, "stroke-dasharray": "0.9 0.6" });   // down to the foot of its name
+  // score window: events between contracts in both layers, two flat bands
+  el("rect", { x: xs, y, width: xf - xs - 0.2, height: 2.3, fill: C.allowBand });
+  el("rect", { x: xs, y: y + 2.3, width: xf - xs - 0.2, height: 2.3, fill: C.transfer });
+  rich((xs + xf) / 2, y + 7.6, "score window: events between contracts", { anchor: "middle", fill: C.text });
+  // label window: the tint of RQ3 with a line of its rose
+  el("rect", { x: xf + 0.45, y: y + 0.15, width: xl - xf - 0.6, height: 4.3, style: "fill:var(--rq3-bg)", stroke: C.rq3, "stroke-width": 0.3 });
+  rich((xf + xl) / 2 + 0.2, y + 3.2, "labels", { anchor: "middle", fill: C.rq3, weight: 600 });
+  rich(xf - 0.6, y + 10.75, freezeLabel, { size: 2.6, anchor: "end", weight: 700, fill: C.ink });   // 2.6 mm: its index is 5.9 pt
 }
 // the rows stand beside the rule boxes on the right: W0 beside rule A, W1 beside rule B
-windowRow(8.0, "W0", "n = 7,864", [2025, 4], [2026, 4], [2026, 7], "freeze $t$_{1} = 31 Mar 2026");
-windowRow(22.7, "W1", "n = 7,915", [2025, 7], [2026, 7], [2026, 10], "freeze $T$_{obs} = 30 Jun 2026");
+windowRow(8.0, "W0", "$n$ = 7,864", [2025, 4], [2026, 4], [2026, 7], "freeze $t$_{1} = 31 Mar 2026");
+windowRow(22.7, "W1", "$n$ = 7,915", [2025, 7], [2026, 7], [2026, 10], "freeze $T$_{obs} = 30 Jun 2026");
 </script>
 </body>
 </html>

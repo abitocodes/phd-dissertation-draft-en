@@ -4,15 +4,24 @@
   of Figures/depth-one.pdf. Edit this file, then run (from overleaf-github/)
       python Figures/html/render.py Figures/html/depth-one.html
 
-  What the figure shows: the closed form of Equation eq:closed-form on a small allowance graph (orange arrows; the
+  What the figure shows: the closed form of Equation eq:closed-form on a small allowance graph (gold arrows; the
   weights are an example, not data).
   Left, a depth-one spender v: its owners u1 and u2 receive no allowances, so each has the score c of a node without
-  in-edges. u1 approves only v, so the whole of its walk goes to v (P = 1); u2 approves v and two other spenders with
-  equal weights, so a third goes to each (P = w(u,v)/o(u) = 1/3). Then delta(v) = sum over u of P_uv = 1 + 1/3, the
-  owner-normalized in-strength, and r_v = c (1 + d delta(v)): the walk only reweights the count of the contracts that
-  authorize v.
+  in-edges (the disc with c beside each). u1 approves only v, so the whole of its walk goes to v (P = 1); u2 approves v
+  and two other spenders, w1 and w2, with equal weights, so a third goes to each (P = w(u,v)/o(u) = 1/3). Then
+  delta(v) = sum over u of P_uv = 1 + 1/3, the owner-normalized in-strength, and r_v = c (1 + d delta(v)): the walk only
+  reweights the count of the contracts that authorize v.
   Right, a deeper spender x: its owner u3 itself receives an allowance from u4, so the score of u3 is not c and the
-  score of x departs from the closed form; propagation over more than one step is present.
+  score of x departs from the closed form; propagation over more than one step is present. u4, which receives no
+  allowance, has the disc with c.
+  Below: the key of the allowance edge (labeled with its transition probability P_uv) and of the disc with c.
+
+  Look: the two cases are parts under Palatino headings over a grey rule, their numbers in ringed discs
+  (gold: the case of the allowance graph; grey: the other case), with no box around them. The contracts are flat
+  verdigris squares inside a thin frame, their names inside in white Palatino italic with the index as a subscript
+  (before this look the names stood beside the squares). An allowance edge is a solid band of sand gold with
+  its probability beside it in Palatino, in bronze; the three edges of u2 leave it apart. The score c is a small
+  verdigris disc in a ring with a white italic c. The closed form stands in Palatino on the pale plate.
 -->
 <html lang="en">
 <head>
@@ -21,83 +30,96 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-.row { display:grid; grid-template-columns:minmax(0, 1fr) 52mm; column-gap:4mm; align-items:stretch; }
-.panel.allow { background:#FFFAF0; }
-.formula { margin-top:1.2mm; padding:1.95mm 2mm 2.15mm; border-radius:1.8mm; background:#fff; border:0.3mm solid var(--allow-line);
-  font-size:8pt; display:flex; flex-wrap:wrap; align-items:baseline; gap:1.2mm 4mm; }
-.formula .eq { font-size:9.2pt; font-family:"Times New Roman", serif; }
-.formula i, .note i, .legend i:not(.key) { font-family:"Times New Roman", serif; font-style:italic; font-size:1.08em; }
-sub { font-size:0.8em; line-height:0; }
-.note { font-size:7pt; color:var(--muted); margin-top:1mm; }
-.legend { margin-top:0.8mm; font-size:7pt; }
-.tagc { display:inline-flex; align-items:center; justify-content:center; width:3.6mm; height:3.6mm; border-radius:50%;
-  background:#fff; border:0.3mm solid var(--contract); color:var(--contract); font-weight:700; font-size:7pt; font-style:italic; }
+.row { display:grid; grid-template-columns:100mm minmax(0, 1fr); column-gap:5mm; align-items:start; }
+.part svg { display:block; }
+.formula { margin-top:1.8mm; padding:1.5mm 2.2mm 1.6mm; display:flex; flex-wrap:wrap; align-items:baseline; gap:0.9mm 5mm; }
+.formula .m.eq { font-size:9.2pt; color:var(--ink); }
+.formula .expl { flex-basis:100%; font-size:7.1pt; color:var(--muted); }
+.note { font-size:7.2pt; line-height:1.27; color:var(--muted); margin-top:0.6mm; }   /* 7.2 pt: its subscripts stay above 5.6 pt */
+.legend { margin-top:1.5mm; align-items:center; }
+.legend .tx, .legend .m { display:inline; }           /* the text of an item is one run of text, its formula a piece of it */
+/* the score c in the key: the mark of the drawings, drawn by the same function */
+.legend svg.cb { display:block; flex:none; }
 </style>
 </head>
 <body>
 <div class="fig">
   <div class="row">
-    <div class="panel allow">
-      <div class="h"><span class="badge" style="background:var(--allow)">1</span>Depth-one spender
-        <span class="sub">its owners receive no allowances</span></div>
-      <svg id="g1" viewBox="0 0 100 34" width="100mm" height="34mm" style="display:block;margin:0 auto"></svg>
-      <div class="formula">
-        <span class="eq"><i>δ</i>(<i>v</i>) = Σ<sub><i>u</i></sub> <i>P<sub>uv</sub></i> = 1 + ⅓</span>
-        <span class="eq"><i>r<sub>v</sub></i> = <i>c</i> (1 + <i>d</i> <i>δ</i>(<i>v</i>))</span>
-        <span class="muted" style="font-size:7pt">EndorseRank: <i>P<sub>uv</sub></i> = <i>w</i>(<i>u</i>,<i>v</i>) / <i>o</i>(<i>u</i>), an owner’s endorsement divided over its spenders</span>
+    <div class="part">
+      <div class="h"><span class="badge allow">1</span>Depth-one spender<span class="sub">its owners receive no allowances</span></div>
+      <svg id="g1" viewBox="0 0 100 33" width="100mm" height="33mm"></svg>
+      <div class="formula panel soft">
+        <span class="m eq"><i>δ</i>(<i>v</i>) = Σ<sub><i>u</i></sub> <i>P</i><sub><i>uv</i></sub> = 1 + ⅓</span>
+        <span class="m eq"><i>r</i><sub><i>v</i></sub> = <i>c</i> (1 + <i>d</i> <i>δ</i>(<i>v</i>))</span>
+        <span class="expl">EndorseRank: <span class="m"><i>P</i><sub><i>uv</i></sub> = <i>w</i>(<i>u</i>,<i>v</i>) / <i>o</i>(<i>u</i>)</span>, an owner’s endorsement divided over its spenders</span>
       </div>
     </div>
-    <div class="panel soft">
-      <div class="h"><span class="badge" style="background:var(--count)">2</span>Deeper spender</div>
-      <svg id="g2" viewBox="0 0 46 34" width="46mm" height="34mm" style="display:block;margin:0 auto"></svg>
-      <div class="note">Its owner <i>u</i><sub>3</sub> receives an allowance, so <i>u</i><sub>3</sub> does not score <i>c</i> and
-        the score of <i>x</i> departs from the closed form: propagation over more than one step.</div>
+    <div class="part">
+      <div class="h"><span class="badge" style="--c:var(--count)">2</span>Deeper spender</div>
+      <svg id="g2" viewBox="0 0 60 28" width="60mm" height="28mm"></svg>
+      <div class="note">Its owner <i class="v">u</i><sub>3</sub> receives an allowance, so <i class="v">u</i><sub>3</sub> does not score <i class="v">c</i> and
+        the score of <i class="v">x</i> departs from the closed form: propagation over more than one step.</div>
     </div>
   </div>
   <div class="legend">
-    <span><i class="key allow"></i>allowance edge, labeled with its transition probability <i>P<sub>uv</sub></i> (example weights)</span>
-    <span><span class="tagc">c</span> score of a node without in-edges</span>
+    <span><svg width="7mm" height="3mm" viewBox="0 0 7 3"><path d="M0.2,1.5 H5.2" style="stroke:var(--allow-band)" stroke-width="1.05"/><path d="M3.9,0.35 L6.95,1.5 L3.9,2.65 L4.65,1.5z" style="fill:var(--allow-band)"/></svg><span class="tx">allowance edge, labeled with its transition probability <span class="m"><i>P</i><sub><i>uv</i></sub></span> (example weights)</span></span>
+    <span><svg id="key-c" class="cb" width="4.8mm" height="4.8mm" viewBox="0 0 4.8 4.8"></svg><span class="tx">score of a node without in-edges</span></span>
   </div>
 </div>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const kinds = { allow:{ color:"#D97706", width:0.55, labelColor:"#9A4A00", labelSize:2.8, labelOffset:2 } };
-  const kindsFar = { allow:Object.assign({}, kinds.allow, { labelPos:0.72 }) };
+(function () {
+  const C = Fig.C, h = 3.2, ring = 0.7, hr = h + ring;        // half size of a contract and of its frame
+  const BAND = { color: C.allowBand, width: 1.05, headSize: 3.1, gap: 0.6 };   // an allowance edge: a solid band of gold
+
+  // a contract with its name inside: an italic letter and, for u1 to u4, w1 and w2, its index as a subscript
+  const named = (svg, [x, y], name, half = h) => {
+    Fig.node(svg, x, y, { half, ring: true, ringGap: ring });
+    Fig.rich(svg, x, y + 1.0, name, { size: 3.4, anchor: "middle", fill: "#fff" });
+  };
+  // the score c of a node without in-edges: a small disc in a ring with a white italic c
   const tag = (svg, x, y) => {
-    Fig.el(svg, "circle", { cx:x, cy:y, r:2.1, fill:"#fff", stroke:"#0F766E", "stroke-width":0.3 });
-    Fig.text(svg, x, y + 0.95, "c", { size:2.7, weight:700, fill:"#0F766E", anchor:"middle", italic:true, family:"Times New Roman, serif" });
+    Fig.el(svg, "circle", { cx: x, cy: y, r: 2.3, fill: C.paper, stroke: C.contract, "stroke-width": 0.2 });
+    Fig.el(svg, "circle", { cx: x, cy: y, r: 1.72, fill: C.contract });
+    Fig.text(svg, x, y + 0.8, "c", { size: 3.0, italic: true, fill: "#fff", anchor: "middle" });
   };
-  // the name of a node: an italic letter and, for u1 to u4, w1 and w2, its index as a smaller upright subscript
-  // (2.0 mm = 5.7 pt; the Unicode subscript digits of the font are only about 4 pt high)
-  const name = (svg, x, y, s, idx) => {
-    const t = Fig.text(svg, x, y, s, { size:2.7, weight:600, fill:"#374151", anchor:"middle", italic:true, family:"Times New Roman, serif" });
-    if (idx) Fig.el(t, "tspan", { "font-size":2.0, "font-style":"normal", dy:0.65 }, idx);
-    return t;
+  // An allowance edge from p to q, both given as [x, y, half of the frame]; from / to: where it leaves p and meets q,
+  // as offsets from their centres (the edges of one node stand apart). Its label stands at t along the band,
+  // off mm to the left of the direction of travel (negative: to the right), centred on that point.
+  const edge = (svg, p, q, o = {}) => {
+    const a = [p[0], p[1] + (o.from || 0)], b = [q[0], q[1] + (o.to || 0)];
+    const path = Fig.edge(svg, a, b, Object.assign({ halfFrom: p[2], halfTo: q[2], bend: o.bend || 0 }, BAND));
+    if (o.label) {
+      const L = path.getTotalLength(), t = o.t ?? 0.5, at = path.getPointAtLength(L * t), on = path.getPointAtLength(Math.min(L, L * t + 0.5));
+      const dx = on.x - at.x, dy = on.y - at.y, n = Math.hypot(dx, dy) || 1, off = o.off ?? 2.4;
+      // the glyph of a third has digits half the height of a figure, so it is set larger than the label "1"
+      const size = o.label === "⅓" ? 4.0 : 3.3;
+      Fig.text(svg, at.x + dy / n * off, at.y - dx / n * off + size / 3, o.label, { size, serif: true, anchor: "middle", fill: C.allowInk });
+    }
+    return path;
   };
 
-  const g1 = document.getElementById("g1");
-  const N1 = Fig.graph(g1, {
-    nodes: { u1:[12,9], u2:[12,26], v:{x:52,y:14,half:3.6}, w1:[88,22], w2:[88,31] },
-    edges: [["u1","v","allow",-1.5,"1"], ["u2","v","allow",1.5,"⅓"]],
-    kinds, node:{ half:3 }
-  });
-  Fig.graph(g1, { nodes: { u2:[12,26], w1:[88,22], w2:[88,31] },
-    edges: [["u2","w1","allow",-1,"⅓"], ["u2","w2","allow",1,"⅓"]], kinds: kindsFar, node:{ half:3 }
-  });
-  tag(g1, 5, 3.6); tag(g1, 5, 20.6);
-  name(g1, 12, 16.8, "u", "1"); name(g1, 12, 33.8, "u", "2"); name(g1, 58.6, 15.2, "v"); name(g1, 95.5, 23, "w", "1"); name(g1, 95.5, 32, "w", "2");
-  Fig.text(g1, 52, 7.4, "spender of depth one", { size:2.5, fill:"#5B6472", anchor:"middle" });
+  // 1. the depth-one spender v and its owners u1 and u2
+  const g1 = document.getElementById("g1"), hv = 3.6, hrv = hv + ring;
+  const N = { u1: [11, 8.5, hr], u2: [11, 24.5, hr], v: [53, 13.5, hrv], w1: [95.5, 19.5, hr], w2: [95.5, 29, hr] };
+  edge(g1, N.u1, N.v, { to: -1.5, bend: -1.5, label: "1" });
+  edge(g1, N.u2, N.v, { from: -1.7, to: 1.5, bend: 1.5, label: "⅓", t: 0.42 });
+  edge(g1, N.u2, N.w1, { bend: -1, label: "⅓", t: 0.72 });
+  edge(g1, N.u2, N.w2, { from: 1.7, bend: 1, label: "⅓", t: 0.72, off: -2.5 });
+  named(g1, N.u1, "$u$_{1}"); named(g1, N.u2, "$u$_{2}"); named(g1, N.v, "$v$", hv);
+  named(g1, N.w1, "$w$_{1}"); named(g1, N.w2, "$w$_{2}");
+  tag(g1, 3.6, 3.2); tag(g1, 3.6, 19.2);
+  Fig.text(g1, N.v[0], N.v[1] - hrv - 1.5, "spender of depth one", { size: 2.5, fill: C.muted, anchor: "middle" });
 
+  // 2. the deeper spender x: its owner u3 receives an allowance from u4
   const g2 = document.getElementById("g2");
-  Fig.graph(g2, {
-    nodes: { u4:[6,8], u3:[23,8], x:[40,24] },
-    edges: [["u4","u3","allow",0,""], ["u3","x","allow",1.5,""]],
-    kinds, node:{ half:3 }
-  });
-  tag(g2, 6, 1.4);
-  name(g2, 6, 15.8, "u", "4"); name(g2, 23, 15.8, "u", "3"); name(g2, 40, 31.8, "x");
-  Fig.text(g2, 23, 1.6, "score ≠ c", { size:2.5, fill:"#B91C1C", anchor:"middle", weight:600 });
-});
+  const M = { u4: [11, 8.5, hr], u3: [33, 8.5, hr], x: [53, 23.3, hr] };
+  edge(g2, M.u4, M.u3);
+  edge(g2, M.u3, M.x, { bend: 1.5 });
+  named(g2, M.u4, "$u$_{4}"); named(g2, M.u3, "$u$_{3}"); named(g2, M.x, "$x$");
+  tag(g2, 3.6, 3.2);
+  tag(document.getElementById("key-c"), 2.4, 2.4);          // the same mark in the key
+  Fig.rich(g2, M.u3[0], M.u3[1] - hr - 1.5, "score #≠ #$c$", { size: 2.5, fill: C.bad, anchor: "middle", weight: 600 });
+})();
 </script>
 </body>
 </html>

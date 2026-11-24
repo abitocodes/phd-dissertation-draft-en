@@ -6,17 +6,27 @@
       python Figures/html/render.py Figures/html/web-to-ledger.html
   See Figures/html/README.md.
 
-  What the figure shows, three panels from left to right:
+  What the figure shows, three parts from left to right, each leading to the next (arrows):
   1. The web: the nodes are pages and the edges hyperlinks. PageRank ranks a page by the pages that link to it.
      In the crawl-ordering experiment of Cho, Garcia-Molina and Page (1998) a crawl ordered by PageRank on the pages
      read so far reached the hot pages sooner than a crawl ordered by the backlink count. One page that many pages link
      to is drawn larger.
   2. Ledger walks over transfers (PageRank and HodgeRank on Ethereum transactions; AWP): the nodes are all addresses,
-     user accounts (grey person icons) included, and the edges are transfers (blue). Allowances are not read.
-  3. This thesis: the nodes are contracts only (teal squares inside a dashed boundary, the contract graph), with two
-     kinds of edge, transfers (blue) and allowances (orange), each allowance counted up to its owner's balance. User
+     user accounts (grey figures) included, and the edges are transfers (blue). Allowances are not read.
+  3. This thesis: the nodes are contracts only (verdigris squares inside a thin solid frame, the contract graph), with
+     two kinds of edge, transfers (blue) and allowances (gold), each allowance counted up to its owner's balance. User
      accounts stand outside every graph. C-PR walks both edge types; EndorseRank walks the allowances and AWP the
      transfers.
+
+  Look: the three parts are cards of one width and one height, each a hairline frame around a Palatino
+  heading over a grey rule (after its pictogram in white on a ringed disc: the web in its cyan, the ledger walks in
+  the blue of transfers, the thesis in the verdigris of contracts), a drawing and a list; the three drawings stand on
+  one line and so do the three lists. Thin grey arrows lead from one card to the next, at the middle of the drawings.
+  A page is a white upright rectangle with three hairlines, the page many link to larger and tinted; a contract is a
+  verdigris square on a white keyline; a user account is a grey figure. Transfers are thin blue arrows, allowances
+  thin gold ones, a little broader. The contract graph stands on the pale plate inside a thin solid verdigris line
+  (a dashed frame is kept for user accounts, which here stand outside it). In the lists the names of the rows are bold
+  and the words "transfers" and "allowances" take the dark tone of their layer.
 -->
 <html lang="en">
 <head>
@@ -26,18 +36,25 @@
 <script src="fig.js"></script>
 <style>
 @page { size: 180mm 120mm; margin: 0; }
-.row { display:grid; grid-template-columns:49mm 6mm 49mm 6mm 55mm; align-items:stretch; }
-.pn { border-radius:2.4mm; padding:1.8mm 2.2mm 1.6mm; display:flex; flex-direction:column; }
-.pn.web { border:0.3mm solid #9ACFDD; background:linear-gradient(180deg,#EEF8FB,#fff 80%); }
-.pn.ledger { border:0.3mm solid var(--transfer-line); background:linear-gradient(180deg,#F1F5FF,#fff 80%); }
-.pn.thesis { border:0.3mm solid var(--contract-line); background:linear-gradient(180deg,#F1FAF8,#fff 80%); }
-.pn .h { margin-bottom:0.6mm; font-size:8.5pt; }
-.pn .h svg { margin-right:1.3mm; }
-.pn svg.draw { display:block; margin:0.4mm 0 0.8mm; }
-.facts { margin:0; padding:0; list-style:none; font-size:7.3pt; line-height:1.22; color:#374151; }
-.facts li { display:flex; gap:1.1mm; margin-top:0.55mm; }
-.facts li b { flex:none; width:11mm; color:var(--muted); font-weight:600; }
-.arrow { display:flex; align-items:center; justify-content:center; }
+/* three cards of 196 px with 18 px between them: 624 px, 165.1 mm (whole pixels, so that the cards come out equal:
+   see style.css). The cards share the three rows of the grid (heading, drawing, list), so that the drawings and the
+   lists stand on one line and the arrows (14 px long in the gap of 18 px) at the middle of the drawings. */
+.fig { width:624px; }
+.row { display:grid; grid-template-columns:196px 18px 196px 18px 196px; grid-template-rows:auto auto auto; }
+.row > .part { grid-row:1 / span 3; display:grid; grid-template-rows:subgrid; padding:5px 7px 6px; }   /* 182 px inside */
+.c1 { grid-column:1; } .c2 { grid-column:2; } .c3 { grid-column:3; } .c4 { grid-column:4; } .c5 { grid-column:5; }
+.row > .arr { grid-row:2; align-self:center; justify-self:center; }
+.part > .h { margin-bottom:1.2mm; }
+.part > .h svg { margin:0.2mm 1.6mm 0.2mm 0.2mm; }
+/* a drawing fills the 182 px inside its card (48.154 mm, the width of its viewBox), so that it starts where the
+   rule and the list start */
+.part > svg.draw { display:block; width:182px; height:26.5mm; }
+.facts { margin:1.7mm 0 0; padding:0; list-style:none; font-size:7.1pt; line-height:1.22; color:var(--muted); }
+.facts li { display:flex; gap:1mm; margin-top:0.65mm; }
+.facts li:first-child { margin-top:0; }
+.facts li b { flex:none; width:9.4mm; }
+.tw { color:var(--transfer-ink); font-weight:700; }
+.aw { color:var(--allow-ink); font-weight:700; }
 </style>
 </head>
 <body>
@@ -45,9 +62,9 @@
   <div class="row">
 
     <!-- 1. the web -->
-    <div class="pn web">
-      <div class="h"><span data-icon="web" data-color="#0E7490" data-size="4.2"></span>The web</div>
-      <svg id="web" class="draw" viewBox="0 0 44.6 25" width="44.6mm" height="25mm"></svg>
+    <div class="part panel c1">
+      <div class="h s"><span data-medal="web" data-color="web" data-size="4.6"></span>The web</div>
+      <svg id="web" class="draw" viewBox="0 0 48.154 26.5"></svg>
       <ul class="facts">
         <li><b>Nodes</b><span>pages</span></li>
         <li><b>Edges</b><span>hyperlinks</span></li>
@@ -56,12 +73,12 @@
       </ul>
     </div>
 
-    <div class="arrow"><svg viewBox="0 0 6 10" width="6mm" height="10mm"><path d="M1,1.5 L4.6,5 L1,8.5" fill="none" stroke="#94A3B8" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="arr c2" data-arrow="right" data-color="count" data-len="3.704"></span>
 
     <!-- 2. ledger walks over transfers -->
-    <div class="pn ledger">
-      <div class="h"><span data-icon="coin" data-color="#2563EB" data-size="4.2"></span>Ledger walks over transfers</div>
-      <svg id="ledger" class="draw" viewBox="0 0 44.6 25" width="44.6mm" height="25mm"></svg>
+    <div class="part panel c3">
+      <div class="h s"><span data-medal="coin" data-color="transfer" data-size="4.6"></span>Ledger walks over transfers</div>
+      <svg id="ledger" class="draw" viewBox="0 0 48.154 26.5"></svg>
       <ul class="facts">
         <li><b>Nodes</b><span>all addresses, user accounts included</span></li>
         <li><b>Edges</b><span>transfers</span></li>
@@ -70,16 +87,16 @@
       </ul>
     </div>
 
-    <div class="arrow"><svg viewBox="0 0 6 10" width="6mm" height="10mm"><path d="M1,1.5 L4.6,5 L1,8.5" fill="none" stroke="#94A3B8" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="arr c4" data-arrow="right" data-color="count" data-len="3.704"></span>
 
     <!-- 3. this thesis -->
-    <div class="pn thesis">
-      <div class="h"><span data-icon="contract" data-color="#0F766E" data-size="4.2"></span>This thesis</div>
-      <svg id="thesis" class="draw" viewBox="0 0 50.6 25" width="50.6mm" height="25mm"></svg>
+    <div class="part panel c5">
+      <div class="h s"><span data-medal="contract" data-color="contract" data-size="4.6"></span>This thesis</div>
+      <svg id="thesis" class="draw" viewBox="0 0 48.154 26.5"></svg>
       <ul class="facts">
         <li><b>Nodes</b><span>contracts only; user accounts outside every graph</span></li>
-        <li><b>Edges</b><span><span style="color:var(--transfer);font-weight:600">transfers</span> and <span style="color:var(--allow);font-weight:600">allowances</span>, each allowance counted up to the owner's balance</span></li>
-        <li><b>Rank</b><span>C-PR walks both; EndorseRank the allowances, AWP the transfers</span></li>
+        <li><b>Edges</b><span><span class="tw">transfers</span> and <span class="aw">allowances</span>, each allowance counted up to the owner's balance</span></li>
+        <li><b>Rank</b><span><span class="nb">C-PR</span> walks both; EndorseRank the allowances, AWP the transfers</span></li>
       </ul>
     </div>
   </div>
@@ -87,52 +104,61 @@
 
 <script>
 (function () {
-  const WEB = "#0E7490", T = "#2563EB", A = "#D97706", U = "#8A94A3";
+  const C = Fig.C;
+  // The three drawings have one size, 48.15 x 26.5 mm, and their marks one scale: a contract is the same square in
+  // the second and the third, a user account the same figure.
 
   // 1. pages and hyperlinks; page h is linked to by most pages
   const web = document.getElementById("web");
-  const P = { a:[5,5], b:[17,4], c:[30,5.5], d:[41,5], e:[8,19.5], h:[23,16.5], f:[38,19.5] };
-  const L = [["a","h",0], ["b","h",0], ["c","h",0], ["e","h",0], ["f","h",0], ["d","c",-1.5], ["b","a",1.5], ["h","f",-2.5], ["c","d",-1.5]];
-  for (const [p, q, bend] of L) {
-    const big = q === "h" ? 3.6 : 2.6, from = p === "h" ? 3.6 : 2.6;
-    Fig.edge(web, P[p], P[q], { color: WEB, width: 0.38, bend, halfFrom: from, halfTo: big });
-  }
+  const P = { a: [5.4, 5.2], b: [18.4, 4], c: [32.5, 5.8], d: [44.3, 5.2], e: [8.7, 22.4], h: [24.9, 18.4], f: [41.1, 22.4] };
+  const L = [["a", "h", 0], ["b", "h", 0], ["c", "h", 0], ["e", "h", 0], ["f", "h", 0], ["d", "c", -1.5], ["b", "a", 1.5], ["h", "f", -2.5], ["c", "d", -1.5]];
+  for (const [p, q, bend] of L)
+    Fig.edge(web, P[p], P[q], { color: C.web, width: 0.4, bend, halfFrom: p === "h" ? 3.7 : 2.7, halfTo: q === "h" ? 3.7 : 2.7 });
+  // a page: a white upright rectangle with three hairlines; the page many link to is larger and tinted
   const page = (x, y, s, hot) => {
-    Fig.el(web, "rect", { x: x - s * 0.8, y: y - s, width: s * 1.6, height: s * 2, rx: 0.5, fill: hot ? "#CFEAF2" : "#fff",
-      stroke: WEB, "stroke-width": hot ? 0.55 : 0.35 });
+    Fig.el(web, "rect", { x: x - s * 0.8, y: y - s, width: s * 1.6, height: s * 2, rx: 0.35, style: hot ? "fill:var(--web-bg)" : "fill:#fff",
+      stroke: C.web, "stroke-width": hot ? 0.55 : 0.35 });
     for (let i = 0; i < 3; i++)
-      Fig.el(web, "path", { d: `M${x - s * 0.5},${y - s * 0.45 + i * s * 0.45} H${x + s * 0.5}`, stroke: WEB, "stroke-width": 0.25, opacity: 0.7 });
+      Fig.el(web, "path", { d: `M${x - s * 0.5},${y - s * 0.45 + i * s * 0.45} H${x + s * 0.5}`, stroke: C.web, "stroke-width": hot ? 0.3 : 0.22 });
   };
   for (const [id, [x, y]] of Object.entries(P)) page(x, y, id === "h" ? 3.4 : 2.4, id === "h");
 
-  // 2. all addresses: user accounts (persons) and contracts, joined by transfers
+  // 2. all addresses: user accounts (figures) and contracts, joined by transfers
   const led = document.getElementById("ledger");
-  const C = { c1:[19,6], c2:[33,5], c3:[25,19], c4:[40,17.5] };
-  const Us = { u1:[5,6], u2:[6,19.5], u3:[41.5,5.5] };
-  const pos = Object.assign({}, C, Us);
-  const TR = [["u1","c1",1.5], ["u2","c3",-1], ["u2","c1",1.5], ["c1","c2",-1.5], ["c3","c4",-1], ["c2","c4",1.5], ["c4","u3",-1.5], ["c1","c3",1.2]];
+  const K = { c1: [20.6, 5.9], c2: [35.7, 4.7], c3: [27.1, 20.7], c4: [43.3, 18.9] };
+  const Us = { u1: [5.4, 5.9], u2: [6.5, 21.4], u3: [44.9, 5.3] };
+  const pos = Object.assign({}, K, Us);
+  const TR = [["u1", "c1", 1.5], ["u2", "c3", -1], ["u2", "c1", 1.5], ["c1", "c2", -1.5], ["c3", "c4", -1], ["c2", "c4", 1.5], ["c4", "u3", -1.5], ["c1", "c3", 1.2]];
+  const HC = 2.4, KEY = 0.28;                        // half size of a contract, width of its white keyline
   for (const [p, q, bend] of TR)
-    Fig.edge(led, pos[p], pos[q], { color: T, width: 0.42, bend, halfFrom: p[0] === "u" ? 2.8 : 2.4, halfTo: q[0] === "u" ? 2.8 : 2.4,
+    Fig.edge(led, pos[p], pos[q], { color: C.transfer, width: 0.42, bend, halfFrom: p[0] === "u" ? 2.9 : HC + KEY, halfTo: q[0] === "u" ? 2.9 : HC + KEY,
       shapeFrom: p[0] === "u" ? "circle" : "square", shapeTo: q[0] === "u" ? "circle" : "square" });
-  for (const [x, y] of Object.values(C)) Fig.contract(led, x, y, 2.4);
-  for (const [x, y] of Object.values(Us)) Fig.person(led, x, y, 5.6, U);
+  for (const [x, y] of Object.values(K)) Fig.contract(led, x, y, HC);
+  for (const [x, y] of Object.values(Us)) Fig.person(led, x, y, 5.6, C.user);
 
-  // 3. contracts only, transfers and allowances; user accounts outside the dashed boundary
+  // 3. contracts only, transfers and allowances; user accounts outside the frame of the contract graph
   const th = document.getElementById("thesis");
-  Fig.el(th, "rect", { x: 0.6, y: 0.6, width: 38.6, height: 23.6, rx: 2.2, fill: "#F3FBF9", stroke: "#0F766E",
-    "stroke-width": 0.32, "stroke-dasharray": "1.1 0.8" });
-  Fig.text(th, 2, 23, "contract graph", { size: 2.55, fill: "#0F766E", weight: 600 });
-  Fig.graph(th, {
-    nodes: { k1:[7,6.5], k2:[19,4.5], k3:[31.5,7], k4:[9,17], k5:[22.5,16.5], k6:[33.5,18] },
-    edges: [["k4","k5","allow",-1.5], ["k1","k3","allow",-2.5], ["k6","k3","allow",1.5],
-            ["k1","k2","transfer",-1.2], ["k5","k3","transfer",1.2], ["k4","k1","transfer",1.2], ["k2","k5","transfer",1.2], ["k5","k6","transfer",-1]],
-    kinds: { allow: { color: A, width: 0.58 }, transfer: { color: T, width: 0.42 } },
-    node: { half: 2.4 }
-  });
-  Fig.person(th, 45.2, 5.6, 5.6, U);
-  Fig.person(th, 45.2, 14.4, 5.6, U);
-  Fig.text(th, 45.2, 20.6, "user", { size: 2.55, fill: "#5B6472", anchor: "middle" });
-  Fig.text(th, 45.2, 23.4, "accounts", { size: 2.55, fill: "#5B6472", anchor: "middle" });
+  // the frame is solid: in these figures a dashed frame holds user accounts, and here they stand outside it
+  Fig.el(th, "rect", { x: 0.15, y: 0.15, width: 36.25, height: 26.2, rx: 0.6, fill: C.plate, stroke: C.contract, "stroke-width": 0.3 });
+  Fig.text(th, 1.8, 25.1, "contract graph", { size: 2.55, fill: C.contractInk, weight: 700 });
+  const N = { k1: [6.2, 9], k2: [17.5, 8], k3: [29.3, 9.4], k4: [8.1, 19.2], k5: [20.8, 18.8], k6: [31.2, 20] };
+  // an edge leaves or meets a node dy off its centre where two edges would otherwise share a point of its side
+  const edge = (p, q, kind, bend, dyFrom = 0, dyTo = 0) =>
+    Fig.edge(th, [N[p][0], N[p][1] + dyFrom], [N[q][0], N[q][1] + dyTo], kind === "allow"
+      ? { color: C.allow, width: 0.58, bend, half: HC, gap: 0.75 } : { color: C.transfer, width: 0.42, bend, half: HC, gap: 0.75 });
+  edge("k1", "k3", "allow", -9, -0.8, -0.8);         // the long allowance arcs over the contract between its two ends
+  edge("k4", "k5", "allow", -1.5);
+  edge("k6", "k3", "allow", 1.5);
+  edge("k1", "k2", "transfer", 1.2, 0.8, 0.6);
+  edge("k5", "k3", "transfer", 1.2);
+  edge("k4", "k1", "transfer", 1.2);
+  edge("k2", "k5", "transfer", 1.2);
+  edge("k5", "k6", "transfer", -1);
+  for (const [x, y] of Object.values(N)) Fig.contract(th, x, y, HC);
+  Fig.person(th, 42.4, 6, 5.6, C.user);
+  Fig.person(th, 42.4, 14.8, 5.6, C.user);
+  Fig.text(th, 42.4, 21.9, "user", { size: 2.55, fill: C.muted, anchor: "middle" });
+  Fig.text(th, 42.4, 24.8, "accounts", { size: 2.55, fill: C.muted, anchor: "middle" });
 })();
 </script>
 </body>

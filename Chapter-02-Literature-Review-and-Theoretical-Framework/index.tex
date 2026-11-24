@@ -35,7 +35,7 @@ Figure~\ref{fig:allowance-sequence} traces an ERC-20 allowance through its lifec
 % Drawn in HTML. The source, which also describes the figure in words, is Figures/html/allowance-sequence.html;
 % edit it there and remake the PDF with `python Figures/html/render.py Figures/html/allowance-sequence.html`.
 \includegraphics[width=\textwidth]{Figures/allowance-sequence.pdf}
-\caption[{ERC-20 allowance lifecycle: \texttt{approve} (or \texttt{permit}), optional \texttt{transferFrom}, and revoke.}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. Orange arrows set the allowance and the blue arrow moves tokens; the bars on the right show the allowance in force after each step. EndorseRank keeps the most recent \texttt{Approval} event of each owner, spender and token in the score window and weights it by its age and by its US-dollar amount up to the owner's balance.}
+\caption[{ERC-20 allowance lifecycle: \texttt{approve} (or \texttt{permit}), optional \texttt{transferFrom}, and revoke.}]{ERC-20 allowance lifecycle: \texttt{approve}, or its signature-based alternative \texttt{permit} (dotted), an optional \texttt{transferFrom}, and revoke. Gold arrows set the allowance and the blue arrow moves tokens; the bars on the right show the allowance in force after each step. EndorseRank keeps the most recent \texttt{Approval} event of each owner, spender and token in the score window and weights it by its age and by its US-dollar amount up to the owner's balance.}
 \label{fig:allowance-sequence}
 \end{figure}
 
