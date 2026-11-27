@@ -5,32 +5,29 @@
       python Figures/html/render.py Figures/html/thesis-roadmap.html
   See Figures/html/README.md.
 
-  What the figure shows: the chapters of the thesis as a flow, left to right, under a heading for Chapter 1.
-  - Chapter 1, Introduction: the problem, objectives O1-O5 and research questions RQ1-RQ5. An arrow leads down from
-    it to Chapter 2, and an arrow leads from each of Chapters 2 to 5 to the next.
-  - Chapter 2, Literature review and theoretical framework: graph-based on-chain reputation, crawl ordering, ERC-20
-    allowance semantics, reputation tooling deployed in DeFi, and the theoretical framework.
-  - Chapter 3, Research methodology: account types, tokens and prices; the contract graph and its balance cap; the
-    scores; the discovery-order test; the temporal holdouts, the construct checks and the timing protocol;
-    reproducibility and ethics.
-  - Chapter 4, Implementation and empirical results: the data of the contract graph; the benchmark (claim C6); the
-    same-window alignment and the divergence of the two single-layer walks (C5); robustness checks; the discovery order
-    (C1); the temporal holdouts of the single-layer walks (C2); the coupled walk under its rules and beside every other
-    score (C3, C4). Each claim is colored by the research question it answers (Table tab:hrq-claim-map): C5 and C6
-    RQ1, C1 RQ2, C2 and C4 RQ3, C3 RQ4 and RQ5.
-  - Chapter 5, Discussion: findings by research question and objective, implications, threats to validity and
+  What the figure shows: the six chapters of the thesis as stations on a broad sand-gold ribbon that runs left to
+  right across the figure in an S-wave, up and down. Chapters 1, 3 and 5 stand on its crests with their text above
+  them; Chapters 2, 4 and 6 stand in its troughs with their text below them. Each station has its number on a solid
+  ultramarine label, its name in bold ultramarine and its list:
+    Chapter 1, Introduction (a magnifier): the problem, objectives O1-O5 and research questions RQ1-RQ5.
+    Chapter 2, Literature review (a document): on-chain reputation, crawl ordering, ERC-20 allowances, reputation
+    tooling in DeFi, theoretical framework.
+    Chapter 3, Methodology (a gear): account types, tokens, prices; contract graph, balance cap; the scores;
+    discovery-order test; holdouts, checks, timing; reproducibility, ethics.
+    Chapter 4, Results (bars): data of the contract graph; benchmark (claim C6); same window, divergence (C5);
+    robustness checks; discovery order (C1); temporal holdouts (C2); coupled walk (C3, C4).
+    Chapter 5, Discussion (a balance): findings by question and objective, implications, threats to validity,
     limitations.
-  - Chapter 6, Conclusion and future work: answers to RQ1-RQ5, the contribution to knowledge, future work.
-  - Appendices, below Chapter 4 and joined to it by a dotted leader: account types and balances; further tables of the
-    discovery-order test; EndorseRank and AWP side by side; the registered analysis.
-  - Bottom right, the key of the claim tags: RQ1, RQ2, RQ3, RQ4-5.
+    Chapter 6, Conclusion (a check mark): answers to RQ1-RQ5, contribution to knowledge, future work.
+  Each claim is a solid label in the colour of the research question it answers: C5 and C6 RQ1 (cyan), C1 RQ2
+  (green), C2 and C4 RQ3 (rose), C3 RQ4-5 (violet). Bottom left, the appendices on a pale plate, joined to the list
+  of Chapter 4 by a dotted leader that ends in a dot (account types and balances; discovery-order test, further
+  tables; EndorseRank and AWP side by side; the registered analysis). Bottom right, under Chapter 6, the key of the
+  claim tags.
 
-  Look: a chapter is a card, a hairline frame around its heading (the title in Palatino over a grey
-  rule, the number in a ringed dark grey disc) and its list. The five cards of Chapters 2 to 6 have one width and one
-  height; the card of Chapter 1 runs over the whole width above them. The arrows between the cards are short and
-  grey with the notched head; the arrow from Chapter 1 meets the card of Chapter 2 at the middle of its top edge.
-  A claim is a solid label in the colour of its research question (cyan, green, rose, violet). The appendices stand
-  on a pale plate, hung from the card of Chapter 4 by a dotted leader that ends in a dot.
+  Look: a station is a solid ultramarine disc with a white pictogram inside a thin gold ring, a thin ultramarine
+  ring and three open arcs (ultramarine, gold, ultramarine) turned differently at each station; the ribbon, the
+  band gold 13 px wide, passes under the rings. Text stands on the white ground with no frames.
 -->
 <html lang="en">
 <head>
@@ -38,111 +35,174 @@
 <title>Research roadmap</title>
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
+<script>
+/* Drawing helpers of fig:thesis-roadmap.
+   They use Fig of fig.js and its colours. The drawing layer is one SVG over the whole figure whose units are
+   CSS pixels (1 px = 0.264583 mm), so that its marks and the HTML text share one grid.
+
+   RM.layer(fig)                 the SVG layer behind the text of the figure, as large as the figure
+   RM.ribbon(svg, d, w)          the broad sand-gold ribbon (the band gold, w px wide) along the path d
+   RM.emblem(svg, x, y, o)       a station: a solid ultramarine disc with a white pictogram, inside thin rings of gold
+                                 and ultramarine and open arcs (o.icon, o.r core radius in px, o.turn the angle of
+                                 the arcs in degrees); returns its outer radius
+   RM.at(fig, e)                 the box of the element e in the coordinates of the figure
+   RM.tick(svg, x, y0, y1)       a dotted tick from (x, y0) to (x, y1), ending in a dot at y1
+   RM.CH                         the six chapters: number, name, pictogram, list
+   RM.head(ch), RM.place(fig, html, o)   the head of a station; a block of text placed in whole pixels
+*/
+(function () {
+  const C = Fig.C, el = Fig.el;
+  const RM = {};
+
+  RM.layer = (fig) => {
+    const r = fig.getBoundingClientRect(), W = Math.round(r.width), H = Math.round(r.height);
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "art");
+    svg.setAttribute("width", W + "px"); svg.setAttribute("height", H + "px");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    fig.insertBefore(svg, fig.firstChild);
+    return svg;
+  };
+
+  RM.at = (fig, e) => {
+    const f = fig.getBoundingClientRect(), r = e.getBoundingClientRect();
+    return { x: r.left - f.left, y: r.top - f.top, w: r.width, h: r.height, cx: r.left - f.left + r.width / 2,
+      cy: r.top - f.top + r.height / 2, r: r.right - f.left, b: r.bottom - f.top };
+  };
+
+  RM.ribbon = (svg, d, w = 13) =>
+    el(svg, "path", { d, fill: "none", stroke: C.allowBand, "stroke-width": w, "stroke-linecap": "butt" });
+
+  const pt = (x, y, r, a) => [x + r * Math.cos(a * Math.PI / 180), y + r * Math.sin(a * Math.PI / 180)];
+  function arc(svg, x, y, r, a0, a1, color, w) {
+    const [x0, y0] = pt(x, y, r, a0), [x1, y1] = pt(x, y, r, a1), large = (a1 - a0) % 360 > 180 ? 1 : 0;
+    return el(svg, "path", { d: `M${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)}`,
+      fill: "none", stroke: color, "stroke-width": w, "stroke-linecap": "round" });
+  }
+
+  // A station. Drawn anew from the idea of the reference (a medal in concentric rings, some of them open arcs);
+  // nothing is traced. The rings lie over the ribbon; only the core has a white keyline that parts it from the gold.
+  RM.emblem = (svg, x, y, o = {}) => {
+    const r = o.r ?? 12, t = o.turn ?? 0, s = o.scale ?? 1;
+    const g = el(svg, "g", {});
+    el(g, "circle", { cx: x, cy: y, r: r + 1.6, fill: C.paper });
+    el(g, "circle", { cx: x, cy: y, r: r + 3.4, fill: "none", stroke: C.allow, "stroke-width": 0.9 });
+    el(g, "circle", { cx: x, cy: y, r: r + 6.2 * s, fill: "none", stroke: C.transfer, "stroke-width": 0.85 });
+    arc(g, x, y, r + 9.6 * s, t - 60, t + 190, C.transfer, 1.7);
+    arc(g, x, y, r + 12.8 * s, t + 120, t + 285, C.allow, 1.3);
+    arc(g, x, y, r + 15.6 * s, t + 215, t + 330, C.transfer, 0.9);
+    el(g, "circle", { cx: x, cy: y, r, fill: C.transfer });
+    if (o.icon) {
+      const k = r * 1.25, sub = el(g, "g", { transform: `translate(${(x - k / 2).toFixed(2)} ${(y - k / 2).toFixed(2)}) scale(${(k / 12).toFixed(4)})` });
+      sub.innerHTML = Fig.ICONS[o.icon]("#fff", C.transfer);
+    }
+    return r + 15.6 * s + 0.45;
+  };
+
+  RM.tick = (svg, x, y0, y1, color = C.leader) => {
+    Fig.dots(svg, `M${x},${y0} V${y1}`, color, 0.85, 2.9);
+    el(svg, "circle", { cx: x, cy: y1, r: 1.25, fill: color });
+  };
+
+  // The chapters, as the figure in the thesis lists them. Claims: C5, C6 RQ1; C1 RQ2; C2, C4 RQ3; C3 RQ4-5.
+  RM.CH = [
+    { n: 1, name: "Introduction", icon: "search",
+      items: ["the problem", "objectives O1–O5", "research questions RQ1–RQ5"] },
+    { n: 2, name: "Literature review", icon: "doc",
+      items: ["on-chain reputation", "crawl ordering", '<span class="nb">ERC-20</span> allowances', "reputation tooling in DeFi", "theoretical framework"] },
+    { n: 3, name: "Methodology", icon: "gear",
+      items: ["account types, tokens, prices", "contract graph, balance cap", "the scores", "discovery-order test", "holdouts, checks, timing", "reproducibility, ethics"] },
+    { n: 4, name: "Results", icon: "bars",
+      items: ["data of the contract graph", 'benchmark<span class="tag r1">C6</span>', 'same window, <span class="nb">divergence<span class="tag r1">C5</span></span>',
+        "robustness checks", 'discovery order<span class="tag r2">C1</span>', 'temporal holdouts<span class="tag r3">C2</span>',
+        '<span class="nb">coupled walk<span class="tag r45">C3</span><span class="tag r3">C4</span></span>'] },
+    { n: 5, name: "Discussion", icon: "scale",
+      items: ["findings by question and objective", "implications", "threats to validity", "limitations"] },
+    { n: 6, name: "Conclusion", icon: "check",
+      items: ["answers to RQ1–RQ5", "contribution to knowledge", "future work"] },
+  ];
+
+  // the head of a station: its number on a solid ultramarine label, its name in bold ultramarine
+  RM.head = (ch) => `<div class="hd"><span class="lab">${ch.n}</span><span class="nm">${ch.name}</span></div>`;
+
+  // an element placed in whole pixels: x, y its left and top, or with anchor "bottom" y its bottom, or with
+  // centre: true x its centre; kept inside the figure
+  RM.place = (fig, html, o) => {
+    const e = document.createElement("div");
+    e.className = o.cls || "blk";
+    e.innerHTML = html;
+    if (o.w) e.style.width = o.w + "px";
+    if (o.max) e.style.maxWidth = o.max + "px";
+    fig.appendChild(e);
+    const W = fig.getBoundingClientRect().width, r = e.getBoundingClientRect();
+    let x = o.centre ? o.x - r.width / 2 : o.x;
+    x = Math.round(Math.max(o.minX ?? 0, Math.min(W - (o.edge ?? 0) - r.width, x)));
+    e.style.left = x + "px";
+    e.style.top = Math.round(o.bottom ? o.y - r.height : o.y) + "px";
+    return e;
+  };
+
+  window.RM = RM;
+})();
+</script>
 <style>
-@page { size: 180mm 120mm; margin: 0; }
-/* five cards of 117 px with 10 px between them: 625 px, 165.4 mm (whole pixels, so that the cards come out equal:
-   see style.css) */
-:root { --card:117px; --gap:10px; --all:calc(5 * var(--card) + 4 * var(--gap)); }
-.fig { width:var(--all); }
-.badge { --c:var(--count); }                              /* a chapter: neutral, the dark grey of a step */
-/* Chapter 1: a card over the whole width; its disc stands above the disc of Chapter 2 */
-.intro.panel { padding:3px 5px; }                       /* 0.8 mm, 1.3 mm, in whole pixels */
-.intro .h { margin:0; }
-.intro .badge, .ch > .h .badge { margin:0.5mm 1.3mm 0.5mm 0.3mm; }
-.down1 { margin:0.25mm 0 0.25mm calc(var(--card) / 2 - 1.5mm); }   /* to the middle of the top edge of Chapter 2 */
-.row { display:grid; grid-template-columns:repeat(4, var(--card) var(--gap)) var(--card); align-items:stretch; }
-.ch.panel { padding:4px 5px 5px; }
-.ch > .h { font-size:8pt; padding-bottom:0.6mm; margin-bottom:1mm; }
-/* the arrow to the next chapter: 8 px long in the gap of 10 px, at the height of the numbered discs */
-.nx { padding-top:2.15mm; display:flex; justify-content:center; }
-.ch ul { list-style:none; margin:0; padding:0; font-size:7.1pt; line-height:11px; color:var(--text); }
-.ch li { margin-top:2px; padding-left:7px; position:relative; }
-.ch li:first-child { margin-top:0; }
-.ch li::before { content:""; position:absolute; left:1px; top:4px; width:3px; height:3px; border-radius:50%; background:var(--count-fill); }
-/* a claim: a solid label in the colour of its research question, as high as its line (11 px): 1 px of padding above
-   a line of 10 px puts the baseline 9 px down and the capitals at the middle; it stands 1 px above the top of its
-   line, which the negative margin keeps from pushing the lines apart */
-.ch .tag, .legend2 .tag { line-height:10px; padding:1px 3px 0; margin:-1px 0 0 3px; }
-.lead { display:block; margin-left:calc(2 * (var(--card) + var(--gap)) + var(--card) / 2 - 1.5mm); }
-.foot { display:flex; justify-content:space-between; align-items:center; gap:3mm; }
-.app { flex:0 1 111mm; font-size:7.1pt; line-height:12px; color:var(--text); padding:3px 8px; }
+@page { size: 180mm 110mm; margin: 0; }
+.fig { width:624px; position:relative; }
+.art { position:absolute; left:0; top:0; }
+.blk, .app, .qkey, .ld { position:absolute; }
+.lab { display:inline-block; background:var(--transfer); color:#fff; font-weight:700; font-size:7.1pt; line-height:14px;
+  padding:1px 5px 0; white-space:nowrap; letter-spacing:0.03em; }
+.hd { display:flex; align-items:baseline; gap:5px; height:16px; margin-bottom:4px; white-space:nowrap; }
+.nm { font-weight:700; font-size:8.6pt; line-height:15px; color:var(--transfer); letter-spacing:0.03em; }
+.blk p { margin:0; font-size:7.1pt; line-height:12px; color:var(--text); }
+.blk ul { list-style:none; margin:0; padding:0; font-size:7.1pt; line-height:11px; color:var(--text); }
+.blk li { margin-top:2px; padding-left:7px; position:relative; }
+.blk li:first-child { margin-top:0; }
+.blk li::before { content:""; position:absolute; left:1px; top:4px; width:3px; height:3px; border-radius:50%; background:var(--transfer-fill); }
+.blk .tag, .qkey .tag { line-height:10px; padding:1px 3px 0; margin:-1px 0 0 3px; }
+.app { width:270px; text-wrap:balance;font-size:7.1pt; line-height:12px; color:var(--text); padding:3px 8px; }
 .app b { margin-right:1.2mm; }
-.legend2 { display:flex; gap:1px; align-items:baseline; font-size:7.1pt; line-height:11px; color:var(--muted); white-space:nowrap; }
+/* the key: as wide as the list of Chapter 6 above it (128 px), its tags spread over that width */
+.qkey { width:128px; font-size:7.1pt; line-height:11px; color:var(--muted); white-space:nowrap; }
+.qkey div { display:flex; justify-content:space-between; margin-top:3px; }
+.qkey div .tag { margin:-1px 0 0; }
 </style>
 </head>
 <body>
-<div class="fig">
-  <div class="part panel intro">
-    <div class="h bare"><span class="badge">1</span>Introduction<span class="sub">the problem, objectives O1–O5 and research questions RQ1–RQ5</span></div>
-  </div>
-  <div class="down1"><span data-arrow="down" data-color="count" data-len="2.4"></span></div>
-
-  <div class="row">
-    <div class="ch part panel">
-      <div class="h s"><span class="badge">2</span>Literature review</div>
-      <ul>
-        <li>on-chain reputation</li>
-        <li>crawl ordering</li>
-        <li><span class="nb">ERC-20</span> allowances</li>
-        <li>reputation tooling in DeFi</li>
-        <li>theoretical framework</li>
-      </ul>
-    </div>
-    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
-    <div class="ch part panel">
-      <div class="h s"><span class="badge">3</span>Methodology</div>
-      <ul>
-        <li>account types, tokens, prices</li>
-        <li>contract graph, balance cap</li>
-        <li>the scores</li>
-        <li>discovery-order test</li>
-        <li>holdouts, checks, timing</li>
-        <li>reproducibility, ethics</li>
-      </ul>
-    </div>
-    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
-    <div class="ch part panel">
-      <div class="h s"><span class="badge">4</span>Results</div>
-      <ul>
-        <li>data of the contract graph</li>
-        <li>benchmark<span class="tag r1">C6</span></li>
-        <li>same window, <span class="nb">divergence<span class="tag r1">C5</span></span></li>
-        <li>robustness checks</li>
-        <li>discovery order<span class="tag r2">C1</span></li>
-        <li>temporal holdouts<span class="tag r3">C2</span></li>
-        <li>coupled walk<span class="tag r45">C3</span><span class="tag r3">C4</span></li>
-      </ul>
-    </div>
-    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
-    <div class="ch part panel">
-      <div class="h s"><span class="badge">5</span>Discussion</div>
-      <ul>
-        <li>findings by question and objective</li>
-        <li>implications</li>
-        <li>threats to validity</li>
-        <li>limitations</li>
-      </ul>
-    </div>
-    <div class="nx"><span data-arrow="right" data-len="2.117"></span></div>
-    <div class="ch part panel">
-      <div class="h s"><span class="badge">6</span>Conclusion</div>
-      <ul>
-        <li>answers to RQ1–RQ5</li>
-        <li>contribution to knowledge</li>
-        <li>future work</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- the appendices hang from Chapter 4: a dotted leader that ends in a dot -->
-  <svg class="lead" viewBox="0 0 3 3.3" width="3mm" height="3.3mm">
-    <path d="M1.5,0.6 V2.4" fill="none" style="stroke:var(--user)" stroke-width="0.34" stroke-linecap="round" stroke-dasharray="0 0.9"/>
-    <circle cx="1.5" cy="2.75" r="0.55" style="fill:var(--user)"/>
-  </svg>
-  <div class="foot">
-    <div class="app panel soft"><b>Appendices</b>account types and balances · discovery-order test, further tables · EndorseRank and AWP side by side · the registered analysis</div>
-    <div class="legend2">claims by question:<span class="tag r1">RQ1</span><span class="tag r2">RQ2</span><span class="tag r3">RQ3</span><span class="tag r45">RQ4–5</span></div>
-  </div>
-</div>
+<div class="fig"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const fig = document.querySelector(".fig"), CH = RM.CH;
+  // stations: x, and up (a crest, text above) or down (a trough, text below)
+  const X = [34, 140, 252, 364, 476, 582], CREST = 128, TROUGH = 170, ABOVE = 98, BELOW = 200;
+  const list = ch => `<ul>${ch.items.map(i => `<li>${i}</li>`).join("")}</ul>`;
+  const blocks = {};
+  blocks[1] = RM.place(fig, RM.head(CH[0]) + `<p>the problem, objectives O1–O5 and research questions RQ1–RQ5</p>`, { x: 0, y: ABOVE, bottom: true, w: 168 });
+  blocks[3] = RM.place(fig, RM.head(CH[2]) + list(CH[2]), { x: 192, y: ABOVE, bottom: true, w: 160 });
+  blocks[5] = RM.place(fig, RM.head(CH[4]) + list(CH[4]), { x: 412, y: ABOVE, bottom: true, w: 172 });
+  blocks[2] = RM.place(fig, RM.head(CH[1]) + list(CH[1]), { x: 82, y: BELOW, w: 160 });
+  blocks[4] = RM.place(fig, RM.head(CH[3]) + list(CH[3]), { x: 304, y: BELOW, w: 168 });
+  blocks[6] = RM.place(fig, RM.head(CH[5]) + list(CH[5]), { x: 496, y: BELOW, w: 128 });
+  // the appendices under Chapter 2, joined to the list of Chapter 4; the key under Chapter 6
+  const b2 = RM.at(fig, blocks[2]), b4 = RM.at(fig, blocks[4]), b6 = RM.at(fig, blocks[6]);
+  const app = RM.place(fig, `<b>Appendices</b>account types and balances · discovery-order test, further tables · EndorseRank and AWP side by side · the registered analysis`,
+    { cls: "app panel soft", x: 0, y: b2.b + 10 });
+  const key = RM.place(fig, `claims by question:<div><span class="tag r1">RQ1</span><span class="tag r2">RQ2</span><span class="tag r3">RQ3</span><span class="tag r45">RQ4–5</span></div>`,
+    { cls: "qkey", x: 496, y: b6.b + 12 });     // under the list of Chapter 6, to the right edge
+  const a = RM.at(fig, app), k = RM.at(fig, key);
+  fig.style.height = Math.ceil(Math.max(a.b, b4.b, k.b)) + "px";
+  const svg = RM.layer(fig);
+  // the ribbon: a wave through the six stations, level at each of them
+  const Y = X.map((x, i) => i % 2 ? TROUGH : CREST);
+  let d = `M${X[0]},${Y[0]}`;
+  for (let i = 1; i < 6; i++) { const h = (X[i] - X[i - 1]) * 0.5; d += ` C${X[i - 1] + h},${Y[i - 1]} ${X[i] - h},${Y[i]} ${X[i]},${Y[i]}`; }
+  RM.ribbon(svg, d);
+  X.forEach((x, i) => RM.emblem(svg, x, Y[i], { icon: CH[i].icon, turn: [200, 10, 130, 250, 40, 300][i] }));
+  // the leader from the plate to the list of Chapter 4, ending in a dot
+  const ly = Math.round(a.cy) + 0.5, x0 = a.r + 3, x1 = b4.x - 4;
+  Fig.dots(svg, `M${x0},${ly} H${x1 - 3}`, Fig.C.user, 1.3, 3.4);
+  Fig.el(svg, "circle", { cx: x1, cy: ly, r: 2.1, fill: Fig.C.user });
+});
+</script>
 </body>
 </html>

@@ -75,6 +75,8 @@ One colour per meaning; the hues are those of the reference where the meaning al
 - An allowance edge is solid gold, a transfer edge blue. Where the two stand in one drawing and the caption calls the transfer edge dashed, it is a thin dashed line (`1.2 0.75`) beside the gold band.
 - Dashed (`1.1 0.8`): user accounts, teleportation, and what is not yet seen. Dotted with round dots (`Fig.dots`, or `stroke-linecap: round` with a dash of `0 1.1`): a leader, the same thing shown twice, or an arrow the caption calls dotted.
 - Connector between boxes and arrow between parts: 0.42 mm in `--count`, a dot 1.2 mm across where a connector branches or joins.
+- Between two cards of a row: an open chevron (>), not an arrow (`data-chevron`, `Fig.chevron`): 5.6 mm tall, a 0.55 mm stroke in `--count`, at the middle of the height of the cards (`accounts-logs`); where the cards only stand side by side (`web-to-ledger`) there is nothing between them. The answers to RQ1-RQ5 in Chapter 6 are a LaTeX table (`tab:answers-glance`), no longer a figure.
+- One exception, the author's choice of 2026-11-24: `thesis-roadmap` follows the reference board itself. The chapters are stations on a gold ribbon (`--allow-band`) in an S-wave, each a ringed ultramarine disc with a white pictogram, its number on a solid ultramarine label and its name in bold ultramarine Bahnschrift; ultramarine there marks the stations, not transfers, and the chapter names are not in Palatino. The drawing helpers are inline in that file.
 - Nothing thinner than 0.15 mm, and nothing thinner than 0.2 mm that carries meaning.
 
 ### Shapes

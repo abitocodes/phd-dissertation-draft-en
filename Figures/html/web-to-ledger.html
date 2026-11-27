@@ -6,27 +6,26 @@
       python Figures/html/render.py Figures/html/web-to-ledger.html
   See Figures/html/README.md.
 
-  What the figure shows, three parts from left to right, each leading to the next (arrows):
-  1. The web: the nodes are pages and the edges hyperlinks. PageRank ranks a page by the pages that link to it.
-     In the crawl-ordering experiment of Cho, Garcia-Molina and Page (1998) a crawl ordered by PageRank on the pages
-     read so far reached the hot pages sooner than a crawl ordered by the backlink count. One page that many pages link
-     to is drawn larger.
-  2. Ledger walks over transfers (PageRank and HodgeRank on Ethereum transactions; AWP): the nodes are all addresses,
-     user accounts (grey figures) included, and the edges are transfers (blue). Allowances are not read.
-  3. This thesis: the nodes are contracts only (verdigris squares inside a thin solid frame, the contract graph), with
-     two kinds of edge, transfers (blue) and allowances (gold), each allowance counted up to its owner's balance. User
-     accounts stand outside every graph. C-PR walks both edge types; EndorseRank walks the allowances and AWP the
-     transfers.
+  What the figure shows: a table of three columns, the web, ledger walks over transfers and this thesis, under one
+  column of row names. The head of each column is its pictogram and title, then its drawing; below, one row for each
+  name:
+    Nodes  pages | all addresses, user accounts included | contracts only; user accounts outside every graph
+    Edges  hyperlinks | transfers; allowances are not read | transfers and allowances, each allowance counted up to
+           the owner's balance
+    Rank   PageRank: by the pages that link to a page | PageRank and HodgeRank on transactions; AWP weights a transfer
+           by value and age | C-PR walks both; EndorseRank the allowances, AWP the transfers
+    Crawl  ordered by PageRank, it reached the hot pages sooner than by backlink count (Cho et al., 1998) | (none) |
+           ordered by C-PR' on the contracts read so far: the discovery-order test (RQ2)
+  The drawings: pages joined by hyperlinks, one page that many link to drawn larger; user accounts (grey figures) and
+  contracts joined by transfers (blue); contracts only, inside the frame of the contract graph, joined by transfers
+  (blue) and allowances (gold), with user accounts outside the frame.
 
-  Look: the three parts are cards of one width and one height, each a hairline frame around a Palatino
-  heading over a grey rule (after its pictogram in white on a ringed disc: the web in its cyan, the ledger walks in
-  the blue of transfers, the thesis in the verdigris of contracts), a drawing and a list; the three drawings stand on
-  one line and so do the three lists. Thin grey arrows lead from one card to the next, at the middle of the drawings.
-  A page is a white upright rectangle with three hairlines, the page many link to larger and tinted; a contract is a
-  verdigris square on a white keyline; a user account is a grey figure. Transfers are thin blue arrows, allowances
-  thin gold ones, a little broader. The contract graph stands on the pale plate inside a thin solid verdigris line
-  (a dashed frame is kept for user accounts, which here stand outside it). In the lists the names of the rows are bold
-  and the words "transfers" and "allowances" take the dark tone of their layer.
+  Look: a table in the manner of the thesis tables: a dark rule above and below, hairlines between the rows and
+  between the columns, no frames; the column of this thesis on the pale plate. Titles in Palatino after a pictogram in
+  white on a ringed disc (the web in its cyan, the ledger walks in the blue of transfers, the thesis in the verdigris
+  of contracts); names bold in near black, entries in grey, an empty entry a grey dash. A page is a white upright
+  rectangle with three hairlines; a contract a verdigris square on a white keyline; a user account a grey figure.
+  The drawings are 178 px wide (182 px in a card), so the words inside them are set at 2.56 mm to print at 7.1 pt.
 -->
 <html lang="en">
 <head>
@@ -35,78 +34,67 @@
 <link rel="stylesheet" href="style.css">
 <script src="fig.js"></script>
 <style>
-@page { size: 180mm 120mm; margin: 0; }
-/* three cards of 196 px with 18 px between them: 624 px, 165.1 mm (whole pixels, so that the cards come out equal:
-   see style.css). The cards share the three rows of the grid (heading, drawing, list), so that the drawings and the
-   lists stand on one line and the arrows (14 px long in the gap of 18 px) at the middle of the drawings. */
+@page { size: 180mm 140mm; margin: 0; }
+/* the column of names (54 px), then three columns of 190 px: 624 px, 165.1 mm; 6 px of padding a side */
 .fig { width:624px; }
-.row { display:grid; grid-template-columns:196px 18px 196px 18px 196px; grid-template-rows:auto auto auto; }
-.row > .part { grid-row:1 / span 3; display:grid; grid-template-rows:subgrid; padding:5px 7px 6px; }   /* 182 px inside */
-.c1 { grid-column:1; } .c2 { grid-column:2; } .c3 { grid-column:3; } .c4 { grid-column:4; } .c5 { grid-column:5; }
-.row > .arr { grid-row:2; align-self:center; justify-self:center; }
-.part > .h { margin-bottom:1.2mm; }
-.part > .h svg { margin:0.2mm 1.6mm 0.2mm 0.2mm; }
-/* a drawing fills the 182 px inside its card (48.154 mm, the width of its viewBox), so that it starts where the
-   rule and the list start */
-.part > svg.draw { display:block; width:182px; height:26.5mm; }
-.facts { margin:1.7mm 0 0; padding:0; list-style:none; font-size:7.1pt; line-height:1.22; color:var(--muted); }
-.facts li { display:flex; gap:1mm; margin-top:0.65mm; }
-.facts li:first-child { margin-top:0; }
-.facts li b { flex:none; width:9.4mm; }
+.t { display:grid; grid-template-columns:54px repeat(3, 190px); border-top:0.45mm solid var(--count); border-bottom:0.45mm solid var(--count); }
+.t > * { padding:0 6px; }
+.t > .c2, .t > .c3, .t > .c4 { box-shadow:inset 1px 0 0 var(--hair); }      /* the rule between columns, a whole pixel */
+.t > .c4 { background:var(--plate); }
+.c1 { grid-column:1; } .c2 { grid-column:2; } .c3 { grid-column:3; } .c4 { grid-column:4; }
+.head { padding-top:5px; display:flex; align-items:center; }
+.head.h { border:0; margin:0; padding-bottom:0; }
+.head svg { margin:0.2mm 1.6mm 0.2mm 0.2mm; }
+.pic { padding-top:4px; padding-bottom:6px; }
+.pic svg.draw { display:block; width:178px; height:25.918mm; }       /* 26.5 mm at 182 px */
+.row { font-size:7.1pt; line-height:1.22; padding-top:1.1mm; padding-bottom:1.1mm; border-top:1px solid var(--hair); color:var(--muted); }
+.row.lab { font-weight:700; color:var(--ink); }
+.none { color:var(--hair); }
 .tw { color:var(--transfer-ink); font-weight:700; }
 .aw { color:var(--allow-ink); font-weight:700; }
 </style>
 </head>
 <body>
 <div class="fig">
-  <div class="row">
+  <div class="t">
+    <span class="c1"></span>
+    <div class="h s head c2"><span data-medal="web" data-color="web" data-size="4.6"></span>The web</div>
+    <div class="h s head c3"><span data-medal="coin" data-color="transfer" data-size="4.6"></span>Ledger walks over transfers</div>
+    <div class="h s head c4"><span data-medal="contract" data-color="contract" data-size="4.6"></span>This thesis</div>
 
-    <!-- 1. the web -->
-    <div class="part panel c1">
-      <div class="h s"><span data-medal="web" data-color="web" data-size="4.6"></span>The web</div>
-      <svg id="web" class="draw" viewBox="0 0 48.154 26.5"></svg>
-      <ul class="facts">
-        <li><b>Nodes</b><span>pages</span></li>
-        <li><b>Edges</b><span>hyperlinks</span></li>
-        <li><b>Rank</b><span>PageRank: by the pages that link to a page</span></li>
-        <li><b>Crawl</b><span>ordered by PageRank, it reached the hot pages sooner than by backlink count (Cho et al., 1998)</span></li>
-      </ul>
-    </div>
+    <span class="c1"></span>
+    <div class="pic c2"><svg id="web" class="draw" viewBox="0 0 48.154 26.5"></svg></div>
+    <div class="pic c3"><svg id="ledger" class="draw" viewBox="0 0 48.154 26.5"></svg></div>
+    <div class="pic c4"><svg id="thesis" class="draw" viewBox="0 0 48.154 26.5"></svg></div>
 
-    <span class="arr c2" data-arrow="right" data-color="count" data-len="3.704"></span>
+    <span class="row lab c1">Nodes</span>
+    <span class="row c2">pages</span>
+    <span class="row c3">all addresses, user accounts included</span>
+    <span class="row c4">contracts only; user accounts outside every graph</span>
 
-    <!-- 2. ledger walks over transfers -->
-    <div class="part panel c3">
-      <div class="h s"><span data-medal="coin" data-color="transfer" data-size="4.6"></span>Ledger walks over transfers</div>
-      <svg id="ledger" class="draw" viewBox="0 0 48.154 26.5"></svg>
-      <ul class="facts">
-        <li><b>Nodes</b><span>all addresses, user accounts included</span></li>
-        <li><b>Edges</b><span>transfers</span></li>
-        <li><b>Rank</b><span>PageRank and HodgeRank on transactions; AWP weights a transfer by value and age</span></li>
-        <li><b>Unread</b><span>allowances</span></li>
-      </ul>
-    </div>
+    <span class="row lab c1">Edges</span>
+    <span class="row c2">hyperlinks</span>
+    <span class="row c3">transfers; allowances are not read</span>
+    <span class="row c4"><span class="tw">transfers</span> and <span class="aw">allowances</span>, each allowance counted up to the owner's balance</span>
 
-    <span class="arr c4" data-arrow="right" data-color="count" data-len="3.704"></span>
+    <span class="row lab c1">Rank</span>
+    <span class="row c2">PageRank: by the pages that link to a page</span>
+    <span class="row c3">PageRank and HodgeRank on transactions; AWP weights a transfer by value and age</span>
+    <span class="row c4"><span class="nb">C-PR</span> walks both; EndorseRank the allowances, AWP the transfers</span>
 
-    <!-- 3. this thesis -->
-    <div class="part panel c5">
-      <div class="h s"><span data-medal="contract" data-color="contract" data-size="4.6"></span>This thesis</div>
-      <svg id="thesis" class="draw" viewBox="0 0 48.154 26.5"></svg>
-      <ul class="facts">
-        <li><b>Nodes</b><span>contracts only; user accounts outside every graph</span></li>
-        <li><b>Edges</b><span><span class="tw">transfers</span> and <span class="aw">allowances</span>, each allowance counted up to the owner's balance</span></li>
-        <li><b>Rank</b><span><span class="nb">C-PR</span> walks both; EndorseRank the allowances, AWP the transfers</span></li>
-      </ul>
-    </div>
+    <span class="row lab c1">Crawl</span>
+    <span class="row c2">ordered by PageRank, it reached the hot pages sooner than by backlink count (Cho et al., 1998)</span>
+    <span class="row c3 none">–</span>
+    <span class="row c4">ordered by <span class="nb">C-PR</span><span class="pr">′</span> on the contracts read so far: the discovery-order test (RQ2)</span>
   </div>
 </div>
-
 <script>
-(function () {
+/* The three drawings of fig:web-to-ledger (the web, ledger walks over transfers, this thesis), as in
+   Figures/html/web-to-ledger.html: each 48.154 x 26.5 mm in its viewBox, the marks at one scale.
+   drawW2L(ts): ts is the size in mm of the words inside the drawings. A draft that sets a drawing narrower than
+   182 px gives a larger ts, so that the words still print at 7.1 pt or more (ts = 2.505 * 182 / width in px). */
+function drawW2L(ts = 2.55) {
   const C = Fig.C;
-  // The three drawings have one size, 48.15 x 26.5 mm, and their marks one scale: a contract is the same square in
-  // the second and the third, a user account the same figure.
 
   // 1. pages and hyperlinks; page h is linked to by most pages
   const web = document.getElementById("web");
@@ -114,7 +102,6 @@
   const L = [["a", "h", 0], ["b", "h", 0], ["c", "h", 0], ["e", "h", 0], ["f", "h", 0], ["d", "c", -1.5], ["b", "a", 1.5], ["h", "f", -2.5], ["c", "d", -1.5]];
   for (const [p, q, bend] of L)
     Fig.edge(web, P[p], P[q], { color: C.web, width: 0.4, bend, halfFrom: p === "h" ? 3.7 : 2.7, halfTo: q === "h" ? 3.7 : 2.7 });
-  // a page: a white upright rectangle with three hairlines; the page many link to is larger and tinted
   const page = (x, y, s, hot) => {
     Fig.el(web, "rect", { x: x - s * 0.8, y: y - s, width: s * 1.6, height: s * 2, rx: 0.35, style: hot ? "fill:var(--web-bg)" : "fill:#fff",
       stroke: C.web, "stroke-width": hot ? 0.55 : 0.35 });
@@ -129,7 +116,7 @@
   const Us = { u1: [5.4, 5.9], u2: [6.5, 21.4], u3: [44.9, 5.3] };
   const pos = Object.assign({}, K, Us);
   const TR = [["u1", "c1", 1.5], ["u2", "c3", -1], ["u2", "c1", 1.5], ["c1", "c2", -1.5], ["c3", "c4", -1], ["c2", "c4", 1.5], ["c4", "u3", -1.5], ["c1", "c3", 1.2]];
-  const HC = 2.4, KEY = 0.28;                        // half size of a contract, width of its white keyline
+  const HC = 2.4, KEY = 0.28;
   for (const [p, q, bend] of TR)
     Fig.edge(led, pos[p], pos[q], { color: C.transfer, width: 0.42, bend, halfFrom: p[0] === "u" ? 2.9 : HC + KEY, halfTo: q[0] === "u" ? 2.9 : HC + KEY,
       shapeFrom: p[0] === "u" ? "circle" : "square", shapeTo: q[0] === "u" ? "circle" : "square" });
@@ -138,15 +125,13 @@
 
   // 3. contracts only, transfers and allowances; user accounts outside the frame of the contract graph
   const th = document.getElementById("thesis");
-  // the frame is solid: in these figures a dashed frame holds user accounts, and here they stand outside it
   Fig.el(th, "rect", { x: 0.15, y: 0.15, width: 36.25, height: 26.2, rx: 0.6, fill: C.plate, stroke: C.contract, "stroke-width": 0.3 });
-  Fig.text(th, 1.8, 25.1, "contract graph", { size: 2.55, fill: C.contractInk, weight: 700 });
+  Fig.text(th, 1.8, 25.1, "contract graph", { size: ts, fill: C.contractInk, weight: 700 });
   const N = { k1: [6.2, 9], k2: [17.5, 8], k3: [29.3, 9.4], k4: [8.1, 19.2], k5: [20.8, 18.8], k6: [31.2, 20] };
-  // an edge leaves or meets a node dy off its centre where two edges would otherwise share a point of its side
   const edge = (p, q, kind, bend, dyFrom = 0, dyTo = 0) =>
     Fig.edge(th, [N[p][0], N[p][1] + dyFrom], [N[q][0], N[q][1] + dyTo], kind === "allow"
       ? { color: C.allow, width: 0.58, bend, half: HC, gap: 0.75 } : { color: C.transfer, width: 0.42, bend, half: HC, gap: 0.75 });
-  edge("k1", "k3", "allow", -9, -0.8, -0.8);         // the long allowance arcs over the contract between its two ends
+  edge("k1", "k3", "allow", -9, -0.8, -0.8);
   edge("k4", "k5", "allow", -1.5);
   edge("k6", "k3", "allow", 1.5);
   edge("k1", "k2", "transfer", 1.2, 0.8, 0.6);
@@ -155,11 +140,14 @@
   edge("k2", "k5", "transfer", 1.2);
   edge("k5", "k6", "transfer", -1);
   for (const [x, y] of Object.values(N)) Fig.contract(th, x, y, HC);
-  Fig.person(th, 42.4, 6, 5.6, C.user);
-  Fig.person(th, 42.4, 14.8, 5.6, C.user);
-  Fig.text(th, 42.4, 21.9, "user", { size: 2.55, fill: C.muted, anchor: "middle" });
-  Fig.text(th, 42.4, 24.8, "accounts", { size: 2.55, fill: C.muted, anchor: "middle" });
-})();
+  // the two words under the figures sit in the 11.75 mm right of the frame, centred in it
+  const ux = 42.28, ub = 24.9;
+  Fig.person(th, ux, 6, 5.6, C.user);
+  Fig.person(th, ux, 14.8, 5.6, C.user);
+  Fig.text(th, ux, ub - 1.14 * ts, "user", { size: ts, fill: C.muted, anchor: "middle" });
+  Fig.text(th, ux, ub, "accounts", { size: ts, fill: C.muted, anchor: "middle" });
+}
+drawW2L(2.56);
 </script>
 </body>
 </html>

@@ -6,16 +6,33 @@ Chapter~\ref{ch:discussion} interpreted the findings and judged whether the stud
 
 \dissertationSubheading[sec:summary-findings]{Answers to the research questions}
 
-The thesis built a coupled PageRank (\mbox{C-PR}), one walk over the ERC-20 allowance and transfer edges between Arbitrum One contracts, and set it beside EndorseRank, Adaptive Weighted PageRank (AWP) \parencite{do2023awp}, the ablation \mbox{S-PR} and the raw counts in a discovery-order test at two freezes and in the holdout windows W0 (April to June~2026) and W1 (July to September~2026). After the registered results were known, the revised analysis was defined: amounts in US dollars on five tokens; scores from the twelve months before each freeze; graphs whose nodes are contracts other than smart accounts, with edges read from the whole chain; each allowance counted up to its owner's balance at the freeze, with balances reconstructed from \texttt{Transfer} logs; constants set on the contract graph; and the discovery-order test. The verdicts below under rules A and B are a re-analysis, and the registered analysis gave the same readings (Appendix~\ref{sec:map-registered}). Figure~\ref{fig:answers-glance} sets the five answers side by side.
+The thesis built a coupled PageRank (\mbox{C-PR}), one walk over the ERC-20 allowance and transfer edges between Arbitrum One contracts, and set it beside EndorseRank, Adaptive Weighted PageRank (AWP) \parencite{do2023awp}, the ablation \mbox{S-PR} and the raw counts in a discovery-order test at two freezes and in the holdout windows W0 (April to June~2026) and W1 (July to September~2026). After the registered results were known, the revised analysis was defined: amounts in US dollars on five tokens; scores from the twelve months before each freeze; graphs whose nodes are contracts other than smart accounts, with edges read from the whole chain; each allowance counted up to its owner's balance at the freeze, with balances reconstructed from \texttt{Transfer} logs; constants set on the contract graph; and the discovery-order test. The verdicts below under rules A and B are a re-analysis, and the registered analysis gave the same readings (Appendix~\ref{sec:map-registered}). Table~\ref{tab:answers-glance} sets the five answers side by side.
 
-\begin{figure}[htbp]
+\begin{table}[htbp]
 \centering
-% Drawn in HTML. The source, which also describes the figure in words, is Figures/html/answers-glance.html;
-% edit it there and remake the PDF with `python Figures/html/render.py Figures/html/answers-glance.html`.
-\includegraphics[width=\textwidth]{Figures/answers-glance.pdf}
 \caption[{The answers to RQ1--RQ5 at a glance.}]{The answers to RQ1--RQ5, in the words of this section. The quotation is the verdict sentence of the discovery-order test, which was defined after the registered results were known and decides no rule of the plan or the registration. The thesis applies two of rule~B's registered criteria, F1 and F2; under the registration the rule holds only if each of its criteria holds. Rules A and B are applied to the scores of the contract graph as a re-analysis.}
-\label{fig:answers-glance}
-\end{figure}
+\label{tab:answers-glance}
+\fitwidth{%
+\footnotesize%
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.06\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.16\linewidth}>{\raggedright\arraybackslash}p{0.46\linewidth}}
+\toprule
+ & Question & Answer & What the evidence shows \\
+\midrule
+RQ1 & Do EndorseRank and AWP differ, fit their own edges, and what do the walks cost? & H1 and H3 supported; H2 only narrowly & Largely by construction: most cohort contracts score zero under EndorseRank; the proxies come from the same events as the graphs; cost follows the layers walked (EndorseRank cheapest, \mbox{C-PR} slightly slower than AWP). \\
+\addlinespace
+RQ2 & Does a crawl ordered by \mbox{C-PR} reach the contracts with the most user-account demand sooner? & No; verdict V2; decides no rule & ``\ldots{} sooner than a breadth-first crawl, but not sooner than a crawl ordered by the number of contract backlinks.'' On user-authorized value the lead over breadth-first order is small and does not hold in every sensitivity. AWP$'$ was the one single-layer walk sooner than its count on both importances; every crawl stayed far from the ideal order. \\
+\addlinespace
+RQ3 & Do frozen scores predict later labels, and does a walk beat the count it smooths? & Predict: yes; counts mostly win & The edge type decides which label a score anticipates. Against its count: EndorseRank below; AWP slightly above on the whole cohorts, below among W0 spenders that had received a transfer from another contract; \mbox{C-PR} above the union in-degree on approval pairs and below it on senders, and below the in-approve degree and the transfer in-degree on their labels. \\
+\addlinespace
+RQ4 & Does \mbox{C-PR} beat each of its layers walked alone? & No; rule~A is not met & In W0 below its allowance layer on new approval pairs and below its transfer layer on new senders; in the same window outside the interval of the leading layer, and not above both layers on the stability family. \\
+\addlinespace
+RQ5 & Do allowances improve a transfer walk on new data? & No; rule~B is not met & The two applied criteria of rule~B, in W1: F1 holds, \mbox{C-PR} ranks new approval pairs above its transfer layer; F2 fails, its loss on new senders exceeds the margin. \\
+\midrule
+\multicolumn{4}{p{\dimexpr 0.92\linewidth+6\tabcolsep\relax}}{\textbf{Main question:} on these data one walk over both edge types does not find the contracts that users rely on sooner, nor predict their later use better. Rules A and B are applied to the scores of the contract graph as a re-analysis; the registered analysis gave the same readings.} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
 
 RQ1 asked whether EndorseRank and AWP order the same contracts differently, whether each agrees most with current checks of its own edge type, and what each walk costs. H1 is supported, largely by construction: most cohort contracts hold no capped allowance from another contract and score zero under EndorseRank, so both walks order only about a third of the contract pairs (Section~\ref{sec:rank-divergence}). Each walk agrees most with the proxies of its own edges (Table~\ref{tab:alignment-hybrid}), which supports H2 only narrowly, since the proxies come from the same events as the graphs. Cost follows the size of the layers walked and the iterations needed, so EndorseRank, on the far smaller allowance layer, is cheapest and \mbox{C-PR} takes slightly longer than AWP (Table~\ref{tab:benchmark-runtime}); H3 is supported, largely by construction.
 

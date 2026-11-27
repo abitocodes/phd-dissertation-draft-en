@@ -26,7 +26,6 @@ LaTeX cannot read HTML. A diagram drawn in HTML therefore lives here as its sour
 | 4 | `data-funnel.html` | `data-funnel.pdf` | `fig:data-funnel` | `sec:dataset` |
 | 5 | `depth-one.html` | `depth-one.pdf` | `fig:depth-one` | `sub:theory-closed-form` |
 | 5 | `practical-uses.html` | `practical-uses.pdf` | `fig:practical-uses` | `sub:deploy-industry` |
-| 6 | `answers-glance.html` | `answers-glance.pdf` | `fig:answers-glance` | `sec:summary-findings` |
 
 The data plots in `Figures/generated/` are not drawn here; `../../experiments/scripts/export_latex.py` writes them from the published summaries. They take the colours and the faces of the diagrams (`STYLE.md`, "The data plots"): the `PAL` of that script, the semi-condensed Bahnschrift that it makes from the installed font in `experiments/data/_work/fonts/` (never committed), and Palatino for formulas and panel titles.
 

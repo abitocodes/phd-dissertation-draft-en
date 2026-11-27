@@ -16,13 +16,14 @@
                                           _{$q$} italic subscript, `code` monospace
    Fig.star(svg, x, y, r, color)          a five-pointed star (a hot contract)
    Fig.arrow(color, len, dir, dash)       an arrow between two parts of a figure, as HTML markup (dir: right, left, down, up)
+   Fig.chevron(color, h, dir)             an open chevron ">" between two cards of a row, as HTML markup (dir: right, left)
    Fig.dots(svg, d, color, width)         a dotted leader (round dots) along the path d
    Fig.icon(name, color, size)            pictogram in a colour, inline SVG markup for HTML (size in mm)
    Fig.medal(name, color, size)           the pictogram in white on a solid disc with a ring, as HTML markup
    Fig.medalAt(svg, name, color, x, y, size)   the same inside an SVG, centred at (x, y)
    Fig.ramp(svg, id, stops, angle)        a linear gradient for an illustration (stops: [[offset, colour], ...])
 
-   When the page has loaded, every <span data-icon>, <span data-medal> and <span data-arrow> is replaced by its
+   When the page has loaded, every <span data-icon>, <span data-medal>, <span data-arrow> and <span data-chevron> is replaced by its
    drawing, and every <span class="badge">1</span> by the numbered disc in its ring.
 */
 (function () {
@@ -196,6 +197,17 @@
     return `<svg width="${W}mm" height="${H}mm" viewBox="0 0 ${W} ${H}" style="flex:none;display:block"><g${tf}>${body}</g></svg>`;
   }
 
+  // An open chevron ">" between two cards of a row, as HTML markup: two strokes meeting at a point, for a gap too
+  // short for an arrow with a line. h is the height of the ink in mm; the box adds half a stroke on every side, so a
+  // chevron centred in a gap stands as far from one card as from the other.
+  function chevron(color = C.count, h = 5.6, dir = "right", w = 0.55) {
+    const d = h * 0.42, W = d + w, H = h + w, a = w / 2, b = w / 2 + d;
+    const [x0, x1] = dir === "left" ? [b, a] : [a, b];
+    const path = `M${x0.toFixed(3)},${a.toFixed(3)} L${x1.toFixed(3)},${(a + h / 2).toFixed(3)} L${x0.toFixed(3)},${(a + h).toFixed(3)}`;
+    return `<svg width="${W.toFixed(3)}mm" height="${H.toFixed(3)}mm" viewBox="0 0 ${W.toFixed(3)} ${H.toFixed(3)}" style="flex:none;display:block">` +
+      `<path d="${path}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
   // dotted leader: round dots, as the leader lines of the reference
   const dots = (svg, d, color = C.leader, width = 0.32, pitch = 0.95) =>
     el(svg, "path", { d, fill: "none", stroke: color, "stroke-width": width, "stroke-linecap": "round", "stroke-dasharray": `0 ${pitch}` });
@@ -261,7 +273,7 @@
     return g;
   }
 
-  window.Fig = { C, el, defs, marker, edge, graph, node, contract, person, text, rich, star, arrow, dots, ramp, icon, medal, medalAt, ICONS, SANS, SERIF, MONO };
+  window.Fig = { C, el, defs, marker, edge, graph, node, contract, person, text, rich, star, arrow, chevron, dots, ramp, icon, medal, medalAt, ICONS, SANS, SERIF, MONO };
   // Fill every <span data-icon="name" data-color="rq1" data-size="4.4"></span> with its icon,
   // every <span data-medal="name" data-color="rq1" data-size="5.4"></span> with its medal
   // and every <span data-arrow="right" data-color="count" data-len="6"></span> with an arrow between two parts
@@ -281,6 +293,8 @@
       swap(s, medal(s.dataset.medal, colour(s.dataset.color, C.count), parseFloat(s.dataset.size || "5.4")));
     for (const s of document.querySelectorAll("[data-arrow]"))
       swap(s, arrow(colour(s.dataset.color, C.count), parseFloat(s.dataset.len || "6"), s.dataset.arrow || "right", s.dataset.dash));
+    for (const s of document.querySelectorAll("[data-chevron]"))
+      swap(s, chevron(colour(s.dataset.color, C.count), parseFloat(s.dataset.h || "5.6"), s.dataset.chevron || "right"));
     // The pitch of the lines, in whole pixels. Chrome prints every baseline on a whole pixel, so lines 11.6 px apart
     // come out 11, 12 and 12 px apart. The line height of every element is rounded to the pixel here, unless its
     // figure gives it in whole px already (or as 0, for a sign set into a line of another face).

@@ -18,7 +18,7 @@ For fixed $d$ the scores also depend continuously on the entries of $P$: a secon
 
 \dissertationSubheading[sec:pr-sparsity]{Sparsity and per-iteration cost}
 
-On a graph with $|E|$ non-zero edges and $|V|$ nodes, the sparse product $P^{\top}\mathbf{x}$ costs $O(|E|)$ arithmetic operations, each iteration also updates vectors of length $|V|$, and building the sparse operator from the edge list is $O(|E|)$, so power iteration over $N_{\mathrm{it}}$ iterations is $O(|E|+(|E|+|V|)N_{\mathrm{it}})$. Both scores run the same solver. In the measured calls an iteration of AWP takes about $15.9$ times as long as one of EndorseRank, less than the edge ratio of $22.4$, and AWP needs more iterations (Section~\ref{sec:benchmark-results}), so neither $m$ nor $I$ alone sets the time ratio.
+On a graph with $|E|$ non-zero edges and $|V|$ nodes, the sparse product $P^{\top}\mathbf{x}$ costs $O(|E|)$ arithmetic operations, each iteration also updates vectors of length $|V|$, and building the sparse operator from the edge list is $O(|E|)$, so power iteration over $N_{\mathrm{it}}$ iterations is $O(|E|+(|E|+|V|)N_{\mathrm{it}})$. Both scores run the same solver. In the measured calls an iteration of AWP takes about $15.8$ times as long as one of EndorseRank, less than the edge ratio of $22.4$, and AWP needs more iterations (Section~\ref{sec:benchmark-results}), so neither $m$ nor $I$ alone sets the time ratio.
 
 \dissertationSubheading[sec:kendall-properties]{Properties of Spearman's \texorpdfstring{$\rho$}{rho} and Kendall's \texorpdfstring{$\tau$}{tau}}
 \label{sec:spearman-properties}

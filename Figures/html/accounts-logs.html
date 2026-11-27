@@ -4,7 +4,7 @@
   surface"); the source of Figures/accounts-logs.pdf. Edit this file, then run (from overleaf-github/)
       python Figures/html/render.py Figures/html/accounts-logs.html
 
-  What the figure shows, left to right, with an arrow from each part to the next:
+  What the figure shows, left to right, with a chevron from each part to the next:
   1. User accounts (grey, in a dashed frame): EOAs, controlled by a private key; EIP-7702 accounts, EOAs that delegate
      to code; and smart accounts, such as a Safe or an ERC-4337 account, contract accounts that act for a user. They
      send transactions, which pay gas, and are a node of no graph.
@@ -17,7 +17,7 @@
      event with a user account at one end is no edge (a cross) and counts only in the cohort rule, as importance and
      in the labels.
 
-  Look: the four parts are cards of one width and one height, with thin grey arrows between them. The
+  Look: the four parts are cards of one width and one height, with a grey chevron (>) between each two, at the middle of their height. The
   user accounts stand in the dashed grey frame that marks them in every figure, their pictograms in white on ringed
   grey discs (the EIP-7702 account, an EOA that delegates, as the open form of the EOA's disc); the contracts and the
   logs stand in hairline frames, each under a Palatino heading over a grey rule with its pictogram on a ringed disc
@@ -74,7 +74,7 @@ b.a { color:var(--allow-ink); } b.t { color:var(--transfer-ink); }
       <div class="acct"><span data-medal="people" data-color="user" data-size="4.8"></span><span><b>Smart account</b>a Safe or an <span class="nb">ERC-4337</span> account</span></div>
       <div class="note end">send transactions, which pay gas; no node of any graph</div>
     </div>
-    <div class="arr"><span data-arrow="right" data-len="3.175"></span></div>
+    <div class="arr"><span data-chevron="right" data-color="count"></span></div>
 
     <!-- 2. contracts execute and emit events -->
     <div class="part panel">
@@ -84,7 +84,7 @@ b.a { color:var(--allow-ink); } b.t { color:var(--transfer-ink); }
         <b class="a">Approval</b> and <b class="t">Transfer</b> events.</div>
       <div class="note end">writing to storage leaves no log</div>
     </div>
-    <div class="arr"><span data-arrow="right" data-len="3.175"></span></div>
+    <div class="arr"><span data-chevron="right" data-color="count"></span></div>
 
     <!-- 3. the logs -->
     <div class="part panel">
@@ -93,7 +93,7 @@ b.a { color:var(--allow-ink); } b.t { color:var(--transfer-ink); }
       <div class="log t mono">Transfer(from, to, value)</div>
       <div class="note end">permanent; any full node or index provider can recompute them</div>
     </div>
-    <div class="arr"><span data-arrow="right" data-len="3.175"></span></div>
+    <div class="arr"><span data-chevron="right" data-color="count"></span></div>
 
     <!-- 4. what the study keeps: on the plate -->
     <div class="part panel soft">
