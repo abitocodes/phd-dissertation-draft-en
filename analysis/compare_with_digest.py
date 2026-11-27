@@ -23,10 +23,11 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+# The experiment folder of the data extracted again (the layout of an experiment folder), as in
+# closed-form/export_closed_form.py.
 EXPERIMENT_DIRS = (
-    "experiments",
-    "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
-    "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
+    "experiments/data/4-post-clearance-reextraction/replica/experiments",
+    "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/data/4-post-clearance-reextraction/replica/experiments",
 )
 PUB = "data/3-published-results-for-thesis"
 PREFIX = {"revised": f"{PUB}/revised-contract-12m/", "registered": f"{PUB}/"}

@@ -4,11 +4,12 @@
 Every result of both analyses (the contract-graph analysis, which is the main analysis of the
 paper, and the registered analysis) was known when this script was run, so nothing here enters
 a decision rule. The script reads only the per-contract score files and the published
-evaluation summaries of the experiment pipeline, folder ``experiments/`` of the public
-repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation (the score
-files are in the Google Drive folder listed in ``experiments/drive-manifest.json``; the script
-``experiments/scripts/drive_sync.py`` downloads them into place); it builds no graph and
-computes no new score. It does four things.
+evaluation summaries of the experiment pipeline in the public repository
+https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation, those of the data
+extracted again in ``experiments/data/4-post-clearance-reextraction/replica/experiments/``,
+which has the layout of an experiment folder (the score files are in the Google Drive folder
+listed in ``experiments/drive-manifest.json``; the script ``experiments/scripts/drive_sync.py``
+downloads them into place); it builds no graph and computes no new score. It does four things.
 
 1. ``recompute``: recomputes from the score files, with the pipeline's resampling (400 paired
    resamples drawn by ``numpy.random.default_rng(42)`` over the cohort sorted by contract id)
@@ -61,6 +62,7 @@ SEND = "future_new_transfer_senders"
 LAMBDA_COLS = {0.0: "cpr_l0", 0.25: "cpr_l25", 0.5: "cpr_l50", 0.75: "cpr_l75", 1.0: "cpr_l100"}
 PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
 MAIN = "revised-contract-12m"  # folder of the contract-graph analysis, the main analysis of the paper
+SUMMARIES = Path("data") / "4-post-clearance-reextraction" / "replica" / "experiments"  # under experiments/
 
 # Score files (data/2-processed-tables-and-evaluations/...) and published summaries
 # (data/3-published-results-for-thesis/...) of each analysis.
@@ -140,8 +142,10 @@ def specs_of(name: str) -> list:
 
 
 def experiments_dir(repo: Path) -> Path:
-    """experiments/ of a checkout of the public repository, or of the authors' repository that holds it."""
-    for d in [repo / "experiments"] + [repo / "1-Dissertation-Works" / p / "experiments" for p in PROJECTS]:
+    """The experiment folder of the data extracted again (SUMMARIES under experiments/) in a checkout of the public
+    repository, or in the authors' repository that holds it."""
+    for e in [repo / "experiments"] + [repo / "1-Dissertation-Works" / p / "experiments" for p in PROJECTS]:
+        d = e / SUMMARIES
         if (d / "data" / "3-published-results-for-thesis" / MAIN / "results_digest.md").exists():
             return d
     raise SystemExit(f"no experiments folder with the published results of {MAIN} under {repo}")

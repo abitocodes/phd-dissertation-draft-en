@@ -4,13 +4,17 @@
 Every number in the tables, Fig 1 and S1 Table comes from one of two places:
 
 * the machine-readable summaries published in the public repository
-  https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation
-  (``experiments/data/3-published-results-for-thesis/`` for the registered analysis and
-  its subfolder ``revised-contract-12m/`` for the contract-graph analysis, the main
-  analysis of the paper), each checked here against the ``SHA256SUMS.txt`` published
-  next to it;
+  https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation, folder
+  ``experiments/data/4-post-clearance-reextraction/replica/experiments/data/3-published-results-for-thesis/``
+  (the registered analysis in the folder itself, the contract-graph analysis, the main
+  analysis of the paper, in its subfolder ``revised-contract-12m/``), each checked here
+  against the ``SHA256SUMS.txt`` published next to it;
 * ``analysis/closed-form/closed_form_check.json`` of this repository, which copies the
   closed-form check from the same summaries and checks it against the per-contract scores.
+
+check_numbers.py also reads three files of ``experiments/data/3-published-results-for-thesis/``
+(``RECORD_FILES``): the extraction manifest of W1 and the two data descriptions, which hold
+the cost of the study's BigQuery jobs that the text quotes. They are checked the same way.
 
 The path to a checkout of that repository must be given with ``--repo PATH`` or the
 environment variable ``CONTRACT_REP_REPO``; nothing is guessed. A checkout of the authors'
@@ -42,6 +46,9 @@ EXPERIMENT_DIRS = (
 )
 PUB = "data/3-published-results-for-thesis"
 REV = "revised-contract-12m"     # main analysis: the contract-graph analysis
+# The summaries the paper reports, under the experiment folder: those of the data extracted
+# again, in the layout of an experiment folder (PUB and REV below it).
+SUMMARIES = "data/4-post-clearance-reextraction/replica/experiments"
 
 # The four runs of the discovery-order test: (freeze, reveal mode). The first one decides.
 RUNS = (("tobs", "both"), ("tobs", "out"), ("t1", "both"), ("t1", "out"))
@@ -70,7 +77,12 @@ FILES = {
     "reg_desc": ("", "describe/describe.json"),
     "reg_cohort": ("", "cohort/matched_cohort.json"),
     "reg_bench": ("", "benchmark/benchmark.json"),
+}
+# Files of experiments/PUB that only check_numbers.py reads (see the module docstring).
+RECORD_FILES = {
     "reg_manifest": ("", "registered-w1/extraction_manifest.json"),
+    "record_reg_desc": ("", "describe/describe.json"),
+    "record_rev_desc": (REV, "describe/describe.json"),
 }
 # Text files of the published folder that the scripts read (checked like the summaries).
 TEXT_FILES = {
@@ -107,6 +119,14 @@ def experiments_dir() -> Path:
     sys.exit(f"no experiment folder with {PUB}/{REV} under {base}")
 
 
+@lru_cache(maxsize=None)
+def summaries_dir() -> Path:
+    d = experiments_dir() / SUMMARIES
+    if not (d / PUB / REV).is_dir():
+        sys.exit(f"no summaries at {d / PUB / REV}")
+    return d
+
+
 def sha256_published(path: Path) -> str:
     """SHA-256 of the file with CRLF line ends (SHA256SUMS.txt was written on a CRLF checkout)."""
     b = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
@@ -123,8 +143,8 @@ def _sums(pub_dir: Path) -> dict[str, str]:
     return out
 
 
-def _checked_path(folder: str, rel: str) -> Path:
-    pub_dir = experiments_dir() / PUB / folder
+def _checked_path(folder: str, rel: str, base: Path | None = None) -> Path:
+    pub_dir = (base or summaries_dir()) / PUB / folder
     path = pub_dir / rel
     want = _sums(pub_dir).get(rel)
     if want is None:
@@ -136,13 +156,18 @@ def _checked_path(folder: str, rel: str) -> Path:
 
 
 def source_path(name: str) -> Path:
+    if name in RECORD_FILES:
+        folder, rel = RECORD_FILES[name]
+        return experiments_dir() / PUB / folder / rel
     folder, rel = {**FILES, **TEXT_FILES}[name]
-    return experiments_dir() / PUB / folder / rel
+    return summaries_dir() / PUB / folder / rel
 
 
 @lru_cache(maxsize=None)
 def load(name: str) -> dict:
     """Load a published summary after checking it against SHA256SUMS.txt."""
+    if name in RECORD_FILES:
+        return json.loads(_checked_path(*RECORD_FILES[name], base=experiments_dir()).read_text(encoding="utf-8"))
     return json.loads(_checked_path(*FILES[name]).read_text(encoding="utf-8"))
 
 

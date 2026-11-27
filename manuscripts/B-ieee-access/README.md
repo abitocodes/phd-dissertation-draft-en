@@ -28,7 +28,7 @@ No result of the main analysis is a registered result, and the paper keeps that 
 - **Contrasts computed after the labels** (no rule; every loss of C-PR is reported, Table 8). C-PR ranks new approval pairs below the in-approve degree (−0.062 in W0, −0.077 in W1) and below EndorseRank (−0.026, −0.043), and new transfer senders below the transfer in-degree (−0.064, −0.066) and below AWP (−0.077, −0.077). Against the union in-degree, which counts, apart from self-pairs, the edges it walks, it lies slightly above on new approval pairs (+0.016, +0.011) and below on new transfer senders (−0.053, −0.056). It ranks new approval pairs above AWP (+0.044, +0.040); among the spenders with a transfer in-edge the lead is +0.026 [0.013, 0.041] in W0 and +0.007 [−0.008, 0.021] in W1. In the main analysis no walk ranks new approval pairs as well as the in-approve degree; the registered analysis has one exception, EndorseRank with activity restarts (+0.043 [0.036, 0.049] in W0, +0.018 [0.012, 0.023] in W1), which Section VI-H states.
 - **The companion's test.** Section VI-H quotes the companion's verdict on the coupled walk in the discovery-order test, with the citation; no other result of that test appears here.
 - **Who can use the result.** Wallets, explorers and integrations (Section VIII), at the size the results support: every score is a weak hint (the best coefficients are about 0.2 on later approvals and about 0.3 on later senders); the two counts, or AWP and an approval count, can be shown side by side; and contracts without an edge to another contract, about 27% of each spender cohort, should be shown as unranked.
-- **Where the data are.** The plan and the registration were committed to the authors' Git repository, which is private. The paper cites the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation), which holds the study's folder with its history; its `HISTORY.md` maps the identifiers that the extraction manifest and the registered digest record. The paper names one commit, in Data Availability: `6b389df`, at which the summaries of both analyses are published (its digest names the code revision `bb78da3`). The per-contract score files and the tables of the contract graph are in the public Google Drive folder listed in `experiments/drive-manifest.json`.
+- **Where the data are.** The plan and the registration were committed to the authors' Git repository, which is private. The paper cites the public repository [ERC20-Allowance-PageRank-Wallet-Reputation](https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation), which holds the study's folder with its history; its `HISTORY.md` maps the identifiers that the extraction manifest and the registered digest record. The paper names one commit, in Data Availability: `5248472`, at which the summaries of both analyses, those of the data extracted again, are in `experiments/data/4-post-clearance-reextraction/replica/experiments/data/3-published-results-for-thesis/` (their digests name the code revision `a9e2bd7`, a commit of the replica that `HISTORY.md` describes). The per-contract score files and the tables of the contract graph are in the public Google Drive folder listed in `experiments/drive-manifest.json`.
 - **What the paper says about the record.** The registration is a commit in the authors' own repository, not an entry in an independent registry (Section VII-B), and the code of the cohort, the pair tables, the W0 labels, the scores and the bootstrap was committed with the registration, after it had run on the observation window (Section IV-D).
 
 ## Files
@@ -36,7 +36,7 @@ No result of the main analysis is a registered result, and the paper keeps that 
 | File | Content |
 |---|---|
 | `main.tex` | Manuscript source (`ieeeaccess.cls`, two columns); 19 pages when built |
-| `references.bib` | 52 entries: 51 copied from the thesis bibliography (`Config/references.bib`, same keys) and converted from biblatex to BibTeX for IEEEtran.bst, plus the companion manuscript (`kwon2026companion`); 44 are cited and printed. The other eight (`douceur2002sybil`, `gyongyi2005alliances`, `cheng2005sybilproof`, `luo2025airdrop`, `liu2025sybil`, `siddarth2020watchmen`, `bordeianu2026sybil`, `wood2025yellowpaper`) stay in the file uncited, so IEEEtran.bst does not print them |
+| `references.bib` | 53 entries: 52 copied from the thesis bibliography (`Config/references.bib`, same keys) and converted from biblatex to BibTeX for IEEEtran.bst, plus the companion manuscript (`kwon2026companion`); 46 are cited and printed. The other seven (`douceur2002sybil`, `cheng2005sybilproof`, `luo2025airdrop`, `liu2025sybil`, `siddarth2020watchmen`, `bordeianu2026sybil`, `wood2025yellowpaper`) stay in the file uncited, so IEEEtran.bst does not print them |
 | `fig_layers.tex` | Fig. 1 wrapper (caption) |
 | `figures/fig_layers_standalone.tex`, `figures/fig_layers.pdf` | Fig. 1, schematic of the two layers on one set of contracts, with a user account that is no node (TikZ, compiled separately because the class clashes with TikZ) |
 | `figures/make_figures_b.py` | Writes Figs. 2 and 3 from the published summaries of the public repository (`revised-contract-12m/` for the main analysis); stops if an interval leaves the plotted range or a published verdict does not follow from its interval |
@@ -50,7 +50,7 @@ No result of the main analysis is a registered result, and the paper keeps that 
 | `tab_holdout.tex` | Table 5, out-of-window tau_b with intervals for every score and count, both analyses, W0 and W1 |
 | `tab_contrasts.tex` | Table 6, paired contrasts and verdicts: Rule A, the two applied criteria of Rule B, F6, S1, S2 and contrasts computed after the labels, both analyses |
 | `tab_union.tex` | Table 7, the rule contrasts and C-PR minus the union in-degree in three settings of the main analysis: whole cohort, spenders inside the union graph, no balance cap |
-| `tab_cpr.tex` | Table 8, C-PR minus every other score and count of the main analysis, both windows and both labels, with the subset of spenders that have a transfer in-edge |
+| `tab_cpr.tex` | Table 8, C-PR minus its two layers, EndorseRank with either restart rule, AWP, S-PR and the four counts of the main analysis, both windows and both labels, with the subset of spenders that have a transfer in-edge |
 | `tab_explore.tex` | Table 9, exploratory checks (Appendix A): seed spread, steps of the weight, rank agreement between values of lambda, both analyses |
 | `supplement/` | Five queries of the registered analysis, a list that locates the queries of the main analysis in the public repository, the exploratory-check script and its output (see `supplement/README.md`) |
 | `cover-letter.tex` / `.pdf` | One-page cover letter, dated 29 October 2026 (the date is for the author to set at submission) |
@@ -61,7 +61,7 @@ All nine `tab_*.tex` files are written by `make_tables.py` and read by `main.tex
 
 ## Where each table and figure gets its numbers
 
-Paths are relative to `experiments/data/` of the public repository; `pub` is `3-published-results-for-thesis/` (registered analysis) and `pub/revised-contract-12m/` is the main analysis. Its `results_digest.md` names the file and key of every value and records the code revision `bb78da3`; the folder was committed in `6b389df`.
+Paths are relative to `experiments/data/4-post-clearance-reextraction/replica/experiments/data/` of the public repository, where the summaries of the data extracted again are; `pub` is `3-published-results-for-thesis/` there (registered analysis) and `pub/revised-contract-12m/` is the main analysis. Its `results_digest.md` names the file and key of every value and records the code revision `a9e2bd7` (a commit of the replica, `HISTORY.md`); the folder was committed in `19bc0cd`, and the paper names `5248472`, which also holds the closed-group check computed again. Table 2 (order) reads the extraction manifest of W1 and the job times of the first extraction, in `experiments/data/3-published-results-for-thesis/`.
 
 | Item | Source |
 |---|---|
@@ -84,18 +84,21 @@ Paths are relative to `experiments/data/` of the public repository; `pub` is `3-
 
 ## Numbers of the prose that the check does not find
 
-The check runs `../A-plos-one/check_numbers.py` read-only on this folder's files, with the values of `supplement/exploratory_checks.json` added: it reads both results digests, the JSON summaries of both analyses, the definitions of the main analysis, `analysis/closed-form/closed_form_check.json` and the exploratory checks, and looks up every number of the prose (824 in `main.tex`, 3 in `cover-letter.tex`). Every number of Appendix A is in `supplement/exploratory_checks.json`. The cover letter has none that the check does not find; `main.tex` has 10:
+The check runs `../A-plos-one/check_numbers.py` read-only on this folder's files, with the values of `supplement/exploratory_checks.json` added: it reads both results digests, the JSON summaries of both analyses, the definitions of the main analysis, `analysis/closed-form/closed_form_check.json` and the exploratory checks, and looks up every number of the prose (852 in `main.tex`, 4 in `cover-letter.tex`, as of 27 November 2026; `fig_layers.tex` is checked too and has none that the check does not find). Every number of Appendix A is in `supplement/exploratory_checks.json`. The cover letter has one that the check does not find, the ethics reference 18316; `main.tex` has 18:
 
 | Number | Where | Source |
 |---|---|---|
-| 1.004 | Section III-H | `benchmark.json` : `main.cpr_l50.edges / main.awp.edges` = 2,591,253 / 2,580,381 |
-| 1.51, 1.19 | Section III-H | registered `benchmark.json` : `main.cpr_l50.mean_s / main.awp.mean_s` = 105.51 / 69.82 and the edge ratio 71,375,442 / 59,737,617 |
-| 27.9 | Section III-H | `main.awp.mean_s / main.endorserank.mean_s`; the digest prints 27.90 |
+| 1.12, 1.004 | Section III-H | `benchmark.json` : `main.cpr_l50.mean_s / main.awp.mean_s` = 2.652 / 2.366 and `main.cpr_l50.edges / main.awp.edges` = 2,591,253 / 2,580,381 |
+| 1.32, 1.19 | Section III-H | registered `benchmark.json` : `main.cpr_l50.mean_s / main.awp.mean_s` = 95.19 / 72.05 and the edge ratio 71,375,442 / 59,737,617 |
+| 27.6, 22.4 | Section III-H | `main.awp.mean_s / main.endorserank.mean_s` (the digest prints 27.65) and `main.awp.edges / main.endorserank.edges` = 2,580,381 / 114,997 |
 | 389,866,882 | Section V-A | sum of the `monthly_counts` rows of stream `approval_ego` (October 2023 to June 2026) in the registered `describe/describe.json`; the transfer count beside it, 1,538,404,067, is the same sum for `transfer_ego` |
+| 6,860, 31,563, 492, 2,846 | Section V-F | the closed-group check computed again, `experiments/data/4-post-clearance-reextraction/replica/experiments/exploratory/2026-11-11-closed-groups/results.json` : `freezes.tobs.awp.closed_groups_two_or_more` and `freezes.t1.awp.closed_groups_two_or_more` (`groups`, `contracts`); the check does not read this file |
 | 2612, 42161, 721 | Sections I and V | not data: EIP-2612, the chain ID of Arbitrum One, ERC-721 |
+| 18316 | Data Availability (and the cover letter) | not data: the reference number of the ethics approval |
+| 5248472 | Data Availability | not data: the one commit identifier of the paper |
 | 0000, 10.1109 | header | placeholders of the template (`\history`, `\doi`) |
 
-Derived values that the check finds only because another source value prints the same way were recomputed from the same files: 1.09 (3.080 / 2.821), 4.5% and 37.4% (edges of the allowance graph over those of the transfer graph, main and registered), 2.36, 22.4 and 2.68 (time and edge ratios of AWP to EndorseRank), "about 109,000" nodes of the allowance layer at 30 June 2026 (109,381 in `benchmark.json` : `main.endorserank.nodes`; 109,389 with the nine pairs of zero weight, `closed_form_check.json`; the check matches an unrelated count of `discovery_protocol.md`), "about 27%" (100% less 72.5% and 72.8%), "about two thirds" (67.4% and 66.0% of the positive latest allowances between contracts are unlimited), and the 82 BigQuery jobs (entries of `data/bq_ledger.json`; the total, USD 54.88, is `describe.json` : `timing.bigquery_usd_total`). 115,084 (Section VII-A) is in `docs/revision_contract_graph.md`, section 13 ("What stays a contract").
+Derived values that the check finds only because another source value prints the same way were recomputed from the same files: 4.5% and 37.4% (edges of the allowance graph over those of the transfer graph, main and registered), 2.81 and 2.68 (time and edge ratios of AWP to EndorseRank in the registered analysis), "about 109,000" nodes of the allowance layer at 30 June 2026 (109,381 in `benchmark.json` : `main.endorserank.nodes`; 109,389 with the nine pairs of zero weight, `closed_form_check.json`; the check matches an unrelated count of `discovery_protocol.md`), "about 27%" (100% less 72.5% and 72.8%), "about two thirds" (67.4% and 66.0% of the positive latest allowances between contracts are unlimited), and the 82 BigQuery jobs (entries of `data/bq_ledger.json`; the total, 54.88 dollars, is `describe.json` : `timing.bigquery_usd_total`). 115,084 (Section VII-A) is in `docs/revision_contract_graph.md`, section 13 ("What stays a contract").
 
 ## Distinctness from Manuscript A (PLOS ONE)
 
@@ -104,9 +107,58 @@ Manuscript A reports the discovery-order test, a crawl-ordering experiment on th
 ## Layout rules kept
 
 - Class `ieeeaccess`, two columns; the template files, the author line, the affiliations and the biographies are as they were.
-- Abstract: 222 words in one paragraph (limit 150 to 250), no references or equations, in the structure co-supervisor D. K. Moulla asked for on 4 November 2026: the first sentences name the problems of the existing scores and the gap, and the last sentence gives the conclusion and the intended use, here by wallets, explorers and integrations.
+- Abstract: 229 words in one paragraph (limit 150 to 250), no references or equations, in the structure co-supervisor D. K. Moulla asked for on 4 November 2026: the first sentences name the problems of the existing scores and the gap, and the last sentence gives the conclusion and the intended use, here by wallets, explorers and integrations.
 - Index terms: seven, in alphabetical order (Blockchain, decentralized finance, Ethereum rollups, PageRank, reputation systems, smart contracts, token allowances); "Ethereum rollups" takes the place of "Sybil attacks" in the list of 4 November 2026 (author's decision of 11 November 2026).
 - Author line as Moulla edited it on Overleaf: Ernest Mnkandla under affiliation 2 (CAIDS) and "David Attipoe". The biographies, the author contributions and the companion entry read "David Sena Attipoe", and Mnkandla's biography places him in the School of Computing.
+
+## Changes of 27 November 2026: the corrections of the thesis's pre-submission review
+
+The English thesis was corrected after its pre-submission review of 21 November 2026, whose items are numbered A-01 to A-13, B-01 to B-59, C-01 to C-18 and D (a group of minor ones). Wherever this paper made the same statement, the same claim in other words or the same kind of error, it was corrected here in the paper's own wording, with the thesis's corrected wording as the model. Every number stays that of the data extracted again (26 November); no number was changed, and two intervals were added (below). Item numbers are those of the review.
+
+Text (`main.tex`).
+
+- Abstract (A-11, C-11): "Ledger PageRank reputation scores rank addresses by transfers" (the reviewed work includes PageRank centralities of a call network among contracts, Kitzler et al., which are not reputation scores); the conclusion adds that AWP, too, did better than C-PR on later senders. 229 words; structure and index terms as before.
+- Introduction: the result of Cho, Garcia-Molina and Page is stated with its condition, importance as a page's backlink count or PageRank (B-30); the first contribution says that the score the allowance walk gives a spender approved by owners that nobody approves is, up to a constant, a linear function of its owner-normalized in-strength (B-50); the second adds that C-PR ranked later approvals below EndorseRank and later senders below AWP in both windows and stood above each of them on the other label (C-11).
+- Related Work: EigenTrust normalizes each peer's local trust values so that malicious peers cannot give their accomplices arbitrarily high trust (B-33); Kitzler et al. report in-degree, Katz and PageRank centralities of a network of calls among DeFi contracts as a description, and outside the companion the reviewed work builds no ranking of contracts from allowance and transfer edges and tests none against what users rely on (A-11; the sentence said "not as a ranking"); Human Passport scores the holder of an address, not a contract, and relations between contracts play no part in it (B-32; Passport has vouching stamps, which are relations between addresses); degree-based predictors are "among the standard predictors in link prediction", a task also studied on Ethereum transaction networks (B-24; Liben-Nowell and Kleinberg's baselines are random, graph-distance and common-neighbour predictors, and the citation of Lin et al. now carries only that link prediction has been applied to such networks); "on-chain" (D).
+- Model: an owner who approves an allowance-manager contract, with no product named without a source (D, R1-045); the AWP paper gives no values for the parameters of its weight functions and reports damping factors of 0.85 and 0.5 (A-12; it said "fixes no parameter values").
+- Section IV-B: the sentence on the gate says only that the script that extracts the W1 logs runs once the registration is committed (C-07, as `_manuscripts-context.md` allows; the configuration, the status of the window and "without local changes" are gone).
+- Section V-A: the five tokens are those with the most rows among the events of the registered analysis, of the tokens with a daily DefiLlama price and a Chainlink market-price feed of low or medium market risk that prices the token, an asset it wraps one-to-one or the Ethereum token it copies through the canonical bridge (B-14; the sentence said "in the twelve months before 30 June 2026", which is not how the tokens were chosen, `docs/revision_price_weighting.md`, section 3); the DefiLlama daily price is the price point nearest the end of the UTC day (B-14).
+- Section V-B: "EIP-7702 delegation indicator", the term of the standard, here and in Section V-F (D, C1-027); an address outside the typing set that sent no transaction has only transaction senders and the zero address as counterparties (B-18); "Every call succeeded on at least one attempt" (D, L2-038).
+- Section V-F: the closed groups hold at most one of the hundredth that any of the five walks checked (EndorseRank, AWP and C-PR at λ = 1, 0 and 0.5) ranks highest (D, N1-004; `results.json` of the check holds those five walks only).
+- Section V-G: the tie-corrected τ_b is cited to Kendall (1945) (D, C1-031).
+- Results: "Rule~B is not met." with a tie (D); the two coefficients that had no interval anywhere in the paper carry it, the isolated-node allowance walk in W1, 0.173 [0.150, 0.199], and the uncapped allowance walk in W0, 0.086 [0.066, 0.106] (B-07; digest rows `window-w1/eval_summary.json` : `sensitivity_isolated.spender_taus.cpr_l100.future_new_approvers` and `robustness/robustness.json` : `uncapped_allowances.w0.taus.cpr_l100.future_new_approvers`); "the spenders that the transfer in-degree can order" (B-12: the subset is the spenders with a transfer in-edge); the count results agree with preferential attachment, and degree-based predictors are among the standard predictors in link prediction, with no claim of "the strength of degree baselines", which Liben-Nowell and Kleinberg's results do not support (B-24); Section VI-I names the scores that Table 8 holds instead of "every other score" (B-16, N5-007: C-PR at λ = 0.25 and 0.75 is not in it).
+- Section VIII: "among the contracts that the count can order" (B-12).
+- Acknowledgment: "54.88 dollars", the unit of the rest of the paper and of the thesis (D).
+- Preamble: `\cpr` and `\spr` are set in `\mbox`, so that the names do not break at their hyphen (the build of 26 November broke "C-/PR" at seven line ends; B-53).
+
+Fig. 1 (`fig_layers.tex`): the caption says that the cohort rule counts the approvals of user accounts and the labels count their approvals and transfers (B-23).
+
+Tables (`make_tables.py`; before the change it reproduced all nine `tab_*.tex` files byte for byte; after it, four files changed in their words only, and every number of every table is as it was).
+
+- Table 4: the column head reads "In the allowance layer" (it read "authorization layer"; the thesis's words for the layers, thesis commit `400a7a3`, `_writing-brief.md` rule 18).
+- Tables 6 and 7: Δτ = τ(a) − τ(b), and the two small coefficients under A1 and F6a are τ(a) and τ(b), so that τ_b keeps its one meaning, Kendall's tie-corrected coefficient (B-12, M1-015).
+- Table 8: the caption names the scores of the table and writes Δτ = τ(C-PR) − τ(b) for the score b of each row (B-12, N5-007); the footnote says "the spenders that the transfer in-degree can order" (B-12) and that a dash marks a contrast that was not computed (N5-009).
+- B-55 does not apply: the generator prints every negative number as `$-$`, and the PDF of 26 November has no hyphen before a digit. Figs. 2 and 3 print U+2212 and needed no change.
+
+Supplement (`supplement/README.md`): the published summaries and the score files are named in the folder of the data extracted again, as in Data Availability; "neighboring" (D).
+
+Bibliography: `kendall1945ties` copied from the thesis bibliography (same key, in this file's BibTeX form); 53 entries, 46 cited.
+
+Data Availability (C-04, B-23; its commit and folder unchanged): the public Google Drive folder holds the extracted tables of both analyses and the per-contract score files, and the event logs that the two scans copied stay in the authors' BigQuery project (it said that the folder held the score files and the tables of the contract graph, and that the extracted event tables were kept in BigQuery); in the main analysis user accounts are nodes of no graph and enter only the cohort rule and the labels, the graphs of the registered analysis hold every account of the cohort's events, and every address in the published files is a public pseudonym of the chain, as in the logs themselves (it said that user accounts were nodes of no graph, without naming the analysis). Manuscript A's Ethics statement says the same.
+
+Section V-F: the closed groups "do not shape the rankings of the contracts studied here", the words of the thesis and of Manuscript A (it said "the rankings reported here"). Cover letter (A-11, B-28): "Graph rankings have been proposed as reputation scores for the addresses of a ledger" (it said "Graph-based ranking is often proposed for ordering the contracts of a chain"; the reviewed work ranks addresses, and none builds a ranking of contracts from allowance and transfer edges).
+
+Build (MiKTeX pdflatex, bibtex, pdflatex twice): `main.pdf` 20 pages (19 before; the last page holds the end of the author biographies), no errors, no undefined citations or references, no BibTeX warnings; overfull boxes only the template's title box (9.3 pt, twice) and its header boxes. `cover-letter.pdf` 1 page.
+
+Not changed: the cover-letter date (29 October 2026, for the authors to set), the companion paragraph (no thesis change requires a change), the abstract's structure and the seven index terms (C-17 concerns the thesis's key terms), "later approvals" and "later senders" (the paper's words beside the label names, `_writing-brief.md` rule 18), and 389,866,882 in Section V-A (the thesis no longer prints it, C-09; here its source is a summary of the registered analysis, as the table of the section above says).
+
+Checks (no LaTeX build in this step). Number check before and after: `main.tex` 18 numbers not found, the same 18 (the table above, now complete), the cover letter 1 (18316), `fig_layers.tex` 0; numbers looked up in `main.tex` 845 before and 852 after. Abstract 222 words before, 229 after. Search checks of `_writing-brief.md` rules 17 and 18 and of `_revision-context.md` on `main.tex`, `fig_layers.tex`, `cover-letter.tex` and the `tab_*.tex` files: the same hits before and after (the commit of Data Availability, the template's DOI placeholder, the link-farm citation of the data check, `\title`, `\titlepgskip`, `\maketitle`, "social credit" and "credit decisions about contracts"). `../tools/overlap_check.py main.tex`: 3.1% before and 3.3% after (the closed-group sentence, shared with the thesis on purpose, is longer by the list of the five walks).
+
+## Changes of 26 November 2026: the summaries of the data extracted again
+
+- The numbers are those of the data extracted again after the ethics approval: the summaries in `experiments/data/4-post-clearance-reextraction/replica/experiments/data/3-published-results-for-thesis/` of the public repository, committed in `19bc0cd` and named in Data Availability by `5248472` (branch `review-fixes-2026-11-21`, not pushed). Their digests name the code revision `a9e2bd7`, a commit of the replica described in `HISTORY.md`.
+- `make_tables.py` reads them there (constant `SUMMARIES`), checks the checksum list of the main analysis against `5248472` and the code revision its digest names against `a9e2bd7` as written, and reads the extraction manifest of W1 and the job times of the first extraction for Table 2 (constant `RECORD`). `figures/make_figures_b.py` and `supplement/exploratory_checks.py` read the same folder.
+- Run on that folder, the nine `tab_*.tex` files come out byte for byte as they are and Figs. 2 and 3 are the same to the pixel. `supplement/exploratory_checks.json` was computed again from the score files there: every value is the same, and only its record of the folder, the repository head and the run time changed.
 
 ## Changes of 11 November 2026
 
@@ -170,11 +222,11 @@ Author's decisions of the same evening: the paper uses the thesis's words for th
 ## Still for the authors
 
 1. All co-authors approve the submission (the cover letter states that they have).
-2. Length: the build has 19 pages, under the 20 the checklist below recommends.
+2. Length: the build of 27 November 2026 has 20 pages, and the last one holds only the end of the author biographies; a few lines less would bring it under the 20 pages the checklist below recommends.
 3. The date of the cover letter (29 October 2026) is to be set at submission.
 4. The companion entry (`kwon2026companion`) carries Manuscript A's working title and the note "Unpublished manuscript"; keep it in step with A and change the note to the journal name once A is submitted.
 5. The owner contract that holds 98,073 of the 115,006 capped allowance pairs at 30 June 2026 is not identified in the published results, and no analysis without it exists; Section VII states both. Decide whether to name it or to add that analysis.
-6. The supplement holds the five queries of the registered analysis and says where the queries of the main analysis are in the public repository (commit `6b389df`). Decide whether copies of those queries should be added to the supplement.
+6. The supplement holds the five queries of the registered analysis and says where the queries of the main analysis are in the public repository (at the commit Data Availability names, `5248472`). Decide whether copies of those queries should be added to the supplement.
 7. ORCID iDs in ScholarOne; optional author photographs and longer biographies (IEEE asks for them at the final-files stage).
 8. Optional: read the allowance state at the freeze block.
 9. Check the current IEEE Access APC and arrange payment or a waiver before acceptance.
@@ -184,7 +236,7 @@ Author's decisions of the same evening: the paper uses the thesis's words for th
 
 - [x] Repositories public; URLs in Data Availability (a Zenodo DOI is optional).
 - [x] Official IEEE Access template.
-- [x] Under 20 pages (recommended): the build has 19.
+- [ ] Under 20 pages (recommended): the build of 27 November 2026 has 20, the last with only the end of the author biographies.
 - [x] Abstract 150 to 250 words, single paragraph; index terms in alphabetical order.
 - [x] Figures as vector PDF; Figs. 2 and 3 span both columns, set in Times New Roman (embedded; Liberation Serif where Times is absent) with text of 8 pt or more after scaling; colors are paired with marker shapes and fills, so the figures read in grayscale.
 - [x] Tables: captions above, booktabs rules.

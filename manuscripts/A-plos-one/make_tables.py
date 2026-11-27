@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import re
 import sys
+from fractions import Fraction
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -70,6 +71,14 @@ def contrast(lst: list[dict], label: str, outcome: str | None = None) -> dict:
 def sci(x: float) -> str:
     m, e = f"{x:.2e}".split("e")
     return f"${m}\\times10^{{{int(e)}}}$"
+
+
+def share_pct(s: str) -> str:
+    """'1\\%' from a share that the protocol block writes as a fraction ('1/100'), as the text writes it."""
+    v = Fraction(s) * 100
+    if v.denominator != 1:
+        sys.exit(f"share {s} is not a whole percentage")
+    return f"{v.numerator}\\%"
 
 
 def n_pct(d: dict) -> str:
@@ -173,7 +182,9 @@ def table1() -> str:
     note = (
         "Every node is a contract other than a smart account, and every edge joins two contracts; the edges are read "
         "from the events of WETH, USDC, USDT0, ARB and WBTC on the whole chain inside the score window, the twelve "
-        f"months before the freeze. The graph numbers {intc(de['nodes']['contracts'])} contracts over both freezes. The "
+        f"months before the freeze. The node table of the graph numbers {intc(de['nodes']['contracts'])} contracts over "
+        "both freezes: every contract that ends a pair of either layer at either freeze, with or without the balance "
+        "cap, and every contract of the cohort and spender lists. The "
         "union graph holds the distinct ordered pairs of different contracts with an edge in either layer; the pair "
         "counts of the two layers also include the pairs of a contract with itself ("
         + "; ".join(f"{intc(pr[t]['transfer']['self_pairs'])} transfer pairs and {intc(pr[t]['allowance_capped']['self_pairs'])} "
@@ -250,7 +261,7 @@ def table2() -> str:
         f"hot contract $h$, averaged over {len(d['seeds'])} seeds from the giant strongly connected component; a crawl "
         f"recomputes its ordering each time its visits have grown by the share $\\rho={p['rho']}$. $H_q(I_T)$ and "
         f"$H_q(I_A)$ hold the contracts of the universe with the largest positive user-account inflow and "
-        f"user-authorized value, $q={p['q']}$ of the universe with ties. A primed name is the count or walk computed on "
+        f"user-authorized value, $q={share_pct(p['q'])}$ of the universe with ties. A primed name is the count or walk computed on "
         "the contracts read so far. Brackets: 95\\% percentile intervals of a paired bootstrap over the hot contracts, "
         f"{boot(d)}. V1: both intervals of $D_1$ and $D_2$ above 0; V2: the interval of $D_1$ above 0 and that of "
         "$D_2$ not; V3: the interval of $D_1$ not above 0; an interval of $D_2$ below 0 adds that the crawl ordered by "
@@ -286,7 +297,7 @@ def table3() -> str:
             lines.append(f"{label} & {d4(hs['i_t@q'][key])} & {d4(hs['i_a@q'][key])} \\\\")
     cho = fo["4_cho"]
     assert cho["replication_contrast"]["point"] == cho["hot_sets"]["ib_u@q"]["D2"]["point"]
-    lines += ["\\midrule", hdr("4. Hot sets in the manner of Cho et al.\\ (an intended-construct check)", 3)]
+    lines += ["\\midrule", hdr("4. Hot sets in the manner of Cho et al.~\\cite{cho1998crawling} (an intended-construct check)", 3)]
     names = {"ib_u@q": "$H_q(\\mathrm{IB}_U)$", "ir@q": "$H_q(\\mathrm{IR})$"}
     for h in ("ib_u@q", "ir@q"):
         v = cho["hot_sets"][h]
@@ -433,7 +444,7 @@ def table5() -> str:
         "\\texttt{per\\_proxy}, \\texttt{contrasts}, \\texttt{inter\\_method}, \\texttt{isolated\\_rule}, \\texttt{ties}, "
         "\\texttt{graph}."
     )
-    head = "Check (Kendall $\\tau_b$ [95\\% CI]) & EndorseRank & EndorseRank, activity restarts & AWP \\\\"
+    head = "Check (Kendall $\\tau_b$ [95\\% CI]) & EndorseRank & EndorseRank (activity restarts) & AWP \\\\"
     return frame("Same-window agreement of each score with the checks of each edge type (intended-construct check).",
                  "\\footnotesize", "lccc", head, body, note, "tab5")
 
@@ -457,7 +468,7 @@ def spender_blocks() -> dict:
             ("In-approve degree (count)", t0["t1_in_approve_degree"], t1["in_approve_degree"]),
             ("Transfer in-degree (count)", t0["t1_in_degree"], t1["in_degree"]),
             ("EndorseRank", t0["endorserank"], t1["endorserank"]),
-            ("EndorseRank, activity restarts", t0["endorserank_activity"], t1["endorserank_activity"]),
+            ("EndorseRank (activity restarts)", t0["endorserank_activity"], t1["endorserank_activity"]),
             ("AWP", t0["awp"], t1["awp"]),
         ],
         "er_deg": (contrast(ca, "EndorseRank minus t1 in-approve degree", A), er_res["endorserank_minus_degree_appr"]),
@@ -485,7 +496,7 @@ def table6() -> str:
         "\\midrule",
         hdr("Each walk against the count it smooths, on the label of its own edge type: $\\dt$ [95\\% CI]", 5),
         f"EndorseRank $-$ in-approve degree & {delta_ci(b['er_deg'][0])} & {e} & {delta_ci(b['er_deg'][1])} & {e} \\\\",
-        f"EndorseRank, activity restarts $-$ in-approve degree & {delta_ci(b['act_deg'][0])} & {e} & {delta_ci(b['act_deg'][1])} & {e} \\\\",
+        f"EndorseRank (activity restarts) $-$ in-approve degree & {delta_ci(b['act_deg'][0])} & {e} & {delta_ci(b['act_deg'][1])} & {e} \\\\",
         f"AWP $-$ transfer in-degree & {e} & {delta_ci(b['awp_deg'][0])} & {e} & {delta_ci(b['awp_deg'][1])} \\\\",
         hdr(f"The same in W0 among the {intc(b['uni_n'])} spenders inside the union graph$^{{a}}$", 5),
         f"EndorseRank $-$ in-approve degree & {delta_ci(b['uni_er_deg'])} & {e} & -- & {e} \\\\",
@@ -527,7 +538,7 @@ def table6() -> str:
             f"\\multicolumn{{2}}{{c}}{{W1: freeze {S.day(S.windows()['score_tobs'][1])} ($n={intc(w1['spenders'])}$)}} \\\\\n"
             "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\n"
             "Score at the freeze & New approval pairs & New senders & New approval pairs & New senders \\\\")
-    return frame("Spender holdouts: scores frozen at each date against labels counted over the next three months.",
+    return frame("Spender holdouts: scores frozen on each date against labels counted over the next three months.",
                  "\\footnotesize", ">{\\raggedright\\arraybackslash}p{1.95in}cccc", head, "\n".join(lines), note, "tab6",
                  extra="\\setlength{\\tabcolsep}{3pt}\n")
 
@@ -580,13 +591,13 @@ def table7() -> str:
         f"Spender cohorts, W0 / W1 & {both(lambda k: intc(pick[k]['w0']['spenders']) + ' / ' + intc(pick[k]['w1']['spenders']))} \\\\",
         "W0: EndorseRank $-$ in-approve degree, new pairs & "
         + both(lambda k: delta_ci(contrast(pick[k]['w0']['contrasts_after'], 'EndorseRank minus t1 in-approve degree', A))) + " \\\\",
-        "W0: EndorseRank (activity) $-$ in-approve degree & "
+        "W0: EndorseRank (activity restarts) $-$ in-approve degree & "
         + both(lambda k: delta_ci(pick[k]['sup']['w0']['er_activity_minus_degree_appr'])) + " \\\\",
         "W0: AWP $-$ transfer in-degree, new senders & "
         + both(lambda k: delta_ci(contrast(pick[k]['w0']['contrasts_after'], 'AWP minus t1 in-degree', T))) + " \\\\",
         "W1: EndorseRank $-$ in-approve degree, new pairs & "
         + both(lambda k: delta_ci(pick[k]['w1']['endorserank_results']['endorserank_minus_degree_appr'])) + " \\\\",
-        "W1: EndorseRank (activity) $-$ in-approve degree & "
+        "W1: EndorseRank (activity restarts) $-$ in-approve degree & "
         + both(lambda k: delta_ci(pick[k]['sup']['w1']['er_activity_minus_degree_appr'])) + " \\\\",
         "W1: AWP $-$ transfer in-degree, new senders & "
         + both(lambda k: delta_ci(pick[k]['w1']['endorserank_results']['awp_minus_degree_send'])) + " \\\\",
@@ -651,7 +662,7 @@ def s1_rows_a() -> str:
     one("Addresses that sent a transaction (user accounts)", intc(ev["transaction_senders"]))
     one("Addresses read with \\texttt{eth\\_getCode}$^{a}$", intc(at["addresses"]))
     one("\\quad no code (user account)", intc(at["after_extension"]["eoa"]))
-    one("\\quad EIP-7702 delegation designator (user account)", intc(at["after_extension"]["eoa_7702"]))
+    one("\\quad EIP-7702 delegation indicator (user account)", intc(at["after_extension"]["eoa_7702"]))
     one("\\quad Safe (smart account, user account)", intc(at["wallet_kind_typed"]["safe"]))
     one("\\quad ERC-4337 account by the rule of the reads (smart account, user account)", intc(at["wallet_kind_typed"]["erc4337"]))
     one("\\quad ERC-4337 account by the listed code families (smart account, user account)",

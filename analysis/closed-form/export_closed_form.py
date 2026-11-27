@@ -46,13 +46,13 @@ import yaml
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "closed_form_check.json"
 
-# Location of the experiment folder: experiments/ in a checkout of the public repository;
-# in a checkout of the authors' repository, the submodule that holds it, or the folder's
-# name there before the study moved.
+# Location of the experiment folder whose summaries and score files the check reads: that of the
+# data extracted again, which has the layout of an experiment folder, under experiments/ of a
+# checkout of the public repository, or under the submodule that holds it in a checkout of the
+# authors' repository.
 EXPERIMENT_DIRS = (
-    "experiments",
-    "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments",
-    "1-Dissertation-Works/ERC20-Allowance-PageRank-Contract-Reputation/experiments",
+    "experiments/data/4-post-clearance-reextraction/replica/experiments",
+    "1-Dissertation-Works/ERC20-Allowance-PageRank-Wallet-Reputation/experiments/data/4-post-clearance-reextraction/replica/experiments",
 )
 PUB = "data/3-published-results-for-thesis"
 PROC = "data/2-processed-tables-and-evaluations"
@@ -131,7 +131,8 @@ def experiments_dir(phd_works: Path, subdir: str | None) -> tuple[Path, str]:
 
 def repository_url(exp_rel: str) -> str:
     """The repository the run read: the public one, or the authors' private one that holds it."""
-    return "https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation" if exp_rel == "experiments" else "https://github.com/abitocodes/phd_works"
+    public = exp_rel.split("/", 1)[0] == "experiments"
+    return "https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation" if public else "https://github.com/abitocodes/phd_works"
 
 
 def git_head(repo: Path) -> str | None:

@@ -36,7 +36,7 @@ NUMBER = r"-?\d[\d,]*\.?\d*(?:e-?\d+)?"
 
 def source_values() -> set[str]:
     vals: set[str] = set()
-    exp = S.experiments_dir() / S.PUB
+    exp = S.summaries_dir() / S.PUB
     texts = [S.digest_text(""), S.digest_text(S.REV),
              (exp / S.REV / "docs" / "revision_contract_graph.md").read_text(encoding="utf-8"),
              (exp / S.REV / "docs" / "discovery_protocol.md").read_text(encoding="utf-8")]
@@ -64,7 +64,7 @@ def source_values() -> set[str]:
         elif isinstance(x, str):
             vals.update(re.findall(r"-?\d[\d,]*\.?\d*", x))
 
-    for name in S.FILES:
+    for name in [*S.FILES, *S.RECORD_FILES]:
         walk(S.load(name))
     walk(json.loads((S.ANALYSIS / "closed-form/closed_form_check.json").read_text(encoding="utf-8")))
     # the points of the curves that the text and S1 Table quote

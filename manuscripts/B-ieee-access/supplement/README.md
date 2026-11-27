@@ -27,7 +27,7 @@ The folder `experiments/sql/` of the public repository holds every query of the 
   - 27, 28, 35, 40 and 41: cross-checks, the export and the discovery-order test of the companion manuscript;
   - the cohort lists and the labels are computed on the five-token events that name a cohort address, by the queries numbered 12, 14, 16 and 21.
 
-  The definitions that these queries implement are in `experiments/docs/revision_contract_graph.md` of the public repository, and the published summaries with their checksums in `experiments/data/3-published-results-for-thesis/revised-contract-12m/`.
+  The definitions that these queries implement are in `experiments/docs/revision_contract_graph.md` of the public repository, and the published summaries with their checksums, those of the data extracted again, in `experiments/data/4-post-clearance-reextraction/replica/experiments/data/3-published-results-for-thesis/revised-contract-12m/`.
 
 ## Running the exploratory checks
 
@@ -36,11 +36,11 @@ export CONTRACT_REP_REPO=/path/to/ERC20-Allowance-PageRank-Wallet-Reputation   #
 python -I -X utf8 exploratory_checks.py --workers 4
 ```
 
-The per-contract score files are not in the Git history; `experiments/scripts/drive_sync.py` downloads them from the public Google Drive folder listed in `experiments/drive-manifest.json`. The field `repository_head` of the published `exploratory_checks.json` gives the head commit of the public repository at the run. Needs Python 3.10 or later with NumPy, SciPy, pandas and PyArrow (run with Python 3.11.9, NumPy 2.3.2, SciPy 1.16.1, pandas 3.0.3; 277 s with six workers). The script reads only the per-contract score files (`data/2-processed-tables-and-evaluations/revised-contract-12m/{holdout-w0,window-w1,same-window}/*_scores.part*.parquet` for the main analysis and `data/2-processed-tables-and-evaluations/{holdout-w0,registered-w1,same-window}/` for the registered one; of the registered folders only the spender and cohort score files) and the published summaries, records their SHA-256 hashes in the output, and builds no graph. It does four things:
+The per-contract score files are not in the Git history; `experiments/scripts/drive_sync.py` downloads them from the public Google Drive folder listed in `experiments/drive-manifest.json`. The field `repository_head` of the published `exploratory_checks.json` gives the head commit of the public repository at the run. Needs Python 3.10 or later with NumPy, SciPy, pandas and PyArrow (run with Python 3.11.9, NumPy 2.3.2, SciPy 1.16.1, pandas 3.0.3; 277 s with six workers). The script reads only the per-contract score files of the experiment folder of the data extracted again, `experiments/data/4-post-clearance-reextraction/replica/experiments/` (`data/2-processed-tables-and-evaluations/revised-contract-12m/{holdout-w0,window-w1,same-window}/*_scores.part*.parquet` for the main analysis and `data/2-processed-tables-and-evaluations/{holdout-w0,registered-w1,same-window}/` for the registered one; of the registered folders only the spender and cohort score files) and the published summaries, records their SHA-256 hashes in the output, and builds no graph. It does four things:
 
 1. recomputes A1, A2, F1, F2, F6 and the two contrasts of the first sensitivity analysis from the score files with the pipeline's resampling (`numpy.random.default_rng(42).integers(0, n, size=(400, n))` over the cohort sorted by contract id) and SciPy's tau_b, and, for the main analysis, the contrasts of C-PR with the union in-degree and the contrasts on the spenders inside the union graph; it stops if any value differs from the published summary (largest difference: 0);
 2. repeats the four rule contrasts (A1, A2, F1, F2) with 50 further seeds (43 to 92) of 400 resamples, in both analyses, and A1 and F6a on the spenders inside the union graph in the main analysis;
-3. computes paired contrasts between neighbouring values of lambda (0, 0.25, 0.5, 0.75, 1) and between 0.25 and 0.75 on both spender labels (seed 42);
+3. computes paired contrasts between neighboring values of lambda (0, 0.25, 0.5, 0.75, 1) and between 0.25 and 0.75 on both spender labels (seed 42);
 4. computes Kendall tau_b between the C-PR score vectors at two values of lambda over each cohort, with paired-bootstrap intervals (seed 42).
 
 ## Not computed, and why

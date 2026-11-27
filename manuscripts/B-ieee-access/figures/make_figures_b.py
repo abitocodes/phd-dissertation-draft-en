@@ -14,10 +14,10 @@ face first, falling back to Liberation Serif (metric-compatible with Times New R
 font, so it embeds cleanly with pdf.fonttype 42) and then to TeX Gyre Termes.
 
 Every value is read from the published evaluation summaries of the experiment pipeline in the
-public repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation
-(experiments/data/3-published-results-for-thesis/ for the registered analysis, its subfolder
-revised-contract-12m/ for the contract-graph analysis, the main analysis of the paper); nothing
-is typed in by hand.
+public repository https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation,
+folder experiments/data/4-post-clearance-reextraction/replica/experiments/data/3-published-results-for-thesis/
+(the registered analysis in the folder itself, its subfolder revised-contract-12m/ for the
+contract-graph analysis, the main analysis of the paper); nothing is typed in by hand.
 
     python make_figures_b.py --repo /path/to/ERC20-Allowance-PageRank-Wallet-Reputation   # or set CONTRACT_REP_REPO
 
@@ -40,6 +40,8 @@ from matplotlib.lines import Line2D  # noqa: E402
 HERE = Path(__file__).resolve().parent
 PROJECTS = ("ERC20-Allowance-PageRank-Wallet-Reputation", "ERC20-Allowance-PageRank-Contract-Reputation")
 MAIN = "revised-contract-12m"  # folder of the contract-graph analysis, the main analysis of the paper
+# The summaries under the experiment folder: those of the data extracted again, in the layout of an experiment folder.
+SUMMARIES = Path("data") / "4-post-clearance-reextraction" / "replica" / "experiments"
 DELTA = 0.01  # registered margin of rule B (docs/registration_w1.md)
 
 FS = 8.2  # smallest text size in the figure (pt); prints at about 8 pt after scaling to the text width
@@ -63,7 +65,7 @@ UNION = {"w0": "t1_in_degree_union", "w1": "in_degree_union"}  # counts, apart f
 def published_dirs(repo: Path) -> dict[str, Path]:
     """Published results in a checkout of the public repository, or in the authors' repository that holds it."""
     for exp in [repo / "experiments"] + [repo / "1-Dissertation-Works" / p / "experiments" for p in PROJECTS]:
-        pub = exp / "data" / "3-published-results-for-thesis"
+        pub = exp / SUMMARIES / "data" / "3-published-results-for-thesis"
         if (pub / MAIN / "results_digest.md").exists():
             return {"main": pub / MAIN, "registered": pub}
     raise SystemExit(f"no published results of {MAIN} under {repo}")

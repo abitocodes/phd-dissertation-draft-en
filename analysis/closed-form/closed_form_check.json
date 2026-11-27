@@ -3,8 +3,8 @@
   "generated_by": "analysis/closed-form/export_closed_form.py",
   "phd_works": {
     "repository": "https://github.com/abitocodes/ERC20-Allowance-PageRank-Wallet-Reputation",
-    "head": "58b072fa19abef9d18647ec14b8e7ece00a38cb2",
-    "experiments_dir": "experiments",
+    "head": "19bc0cd7dfd50238ae72543d8082bc851db472d5",
+    "experiments_dir": "experiments/data/4-post-clearance-reextraction/replica/experiments",
     "computed_by": "scripts/run_same_window.py (function closed_form; graph at T_obs) and scripts/run_holdout.py (same function; graph at t1); revised analysis with CONTRACT_REP_VARIANT=contract12m, registered analysis with the variable unset"
   },
   "definitions": {
@@ -25,7 +25,7 @@
       "scored_set": "matched cohort: contracts approved on WETH, USDC, USDT0, ARB or WBTC by >= 3 distinct owners in the twelve months before T_obs, without the members typed as user accounts; the allowance graph holds contracts only",
       "scored_set_size": 6443,
       "damping": 0.85,
-      "c": 8.451306341872924e-06,
+      "c": 8.451306341814916e-06,
       "spread_of_c": 1.0,
       "spenders": 926,
       "depth_one_spenders": 651,
@@ -33,13 +33,13 @@
       "within_1pct_all": 0.8034557235421166,
       "within_1pct_depth_one": 1.0,
       "within_1pct_deeper": 0.3381818181818182,
-      "tau_score_vs_delta": 0.9226809715434414,
+      "tau_score_vs_delta": 0.9226549851662206,
       "allowance_graph_nodes": 109389,
       "allowance_graph_edges": 114997,
       "source": {
         "file": "data/3-published-results-for-thesis/revised-contract-12m/same-window/eval_summary.json",
         "key": "closed_form",
-        "sha256_published": "e1b8859f64fe43b90fe67b464f5bef97e0f89ae7fa6fcdbaf1a2d236b83a9277",
+        "sha256_published": "108233e513dbc05f0ada6091db19c9f7856c658d92ca5820059cdfc5459df621",
         "checksum_matches_SHA256SUMS": true
       },
       "score_file_check": {
@@ -71,7 +71,7 @@
         "files": [
           {
             "file": "data\\2-processed-tables-and-evaluations\\revised-contract-12m\\same-window\\cohort_scores.part000.parquet",
-            "sha256": "d4cb29cf3801dc14d741c59a68e22d7a56feb56747f6fe4b2accc859c2da0185"
+            "sha256": "71e6ba25f4247b2c5670121fc3e1a4ece6e80249efe74495ea08dbf1752a6a7c"
           }
         ]
       }
@@ -84,7 +84,7 @@
       "scored_set": "W0 spender cohort: contract spenders with a positive latest allowance of one of the five tokens, set in the twelve months before t1, at t1, without the members typed as user accounts; the allowance graph holds contracts only",
       "scored_set_size": 7864,
       "damping": 0.85,
-      "c": 4.589127123551765e-05,
+      "c": 4.5891271234330025e-05,
       "spread_of_c": 1.0,
       "spenders": 1362,
       "depth_one_spenders": 810,
@@ -92,13 +92,13 @@
       "within_1pct_all": 0.684287812041116,
       "within_1pct_depth_one": 1.0,
       "within_1pct_deeper": 0.2210144927536232,
-      "tau_score_vs_delta": 0.8610982607920888,
+      "tau_score_vs_delta": 0.8614729159839405,
       "allowance_graph_nodes": null,
       "allowance_graph_edges": 17940,
       "source": {
         "file": "data/3-published-results-for-thesis/revised-contract-12m/holdout-w0/eval_summary.json",
         "key": "closed_form",
-        "sha256_published": "5c36e6ab25834b61f4f44b695ac92d29bfaae46f9e9e286bbcf3169f4eb7d1e8",
+        "sha256_published": "d7207ec8c6132b0bc0fe235b1b8b19ce011503be04171b8a35e5cb5b6e445722",
         "checksum_matches_SHA256SUMS": true
       },
       "score_file_check": {
@@ -128,7 +128,7 @@
         "files": [
           {
             "file": "data\\2-processed-tables-and-evaluations\\revised-contract-12m\\holdout-w0\\spender_scores.part000.parquet",
-            "sha256": "f0c8499a59af991cf274b62a19165aba3d54d0934a3f44f773c0bb384e9664d3"
+            "sha256": "832ce4dda836e61b02b4a502173ddb0a6def95209515d65c97e1172cdaf2f905"
           }
         ]
       }
@@ -149,13 +149,13 @@
       "within_1pct_all": 0.8635712130356065,
       "within_1pct_depth_one": 1.0,
       "within_1pct_deeper": 0.35062836624775584,
-      "tau_score_vs_delta": 0.9080128628161801,
+      "tau_score_vs_delta": 0.9080128641084779,
       "allowance_graph_nodes": 13055150,
       "allowance_graph_edges": 22321470,
       "source": {
         "file": "data/3-published-results-for-thesis/same-window/eval_summary.json",
         "key": "closed_form",
-        "sha256_published": "a10f9071b3eed61d8f8f6e53ade7ea55ec4497fbceed56e763d0a856c0e32d96",
+        "sha256_published": "19358d91e848b383e5596a2abeef96e4c5f6fa8d630cfb7cf9aeda7bc7f6bc11",
         "checksum_matches_SHA256SUMS": true
       },
       "score_file_check": {
@@ -187,7 +187,7 @@
         "files": [
           {
             "file": "data\\2-processed-tables-and-evaluations\\same-window\\cohort_scores.part000.parquet",
-            "sha256": "722ea806c3a49b3c3b598ed3d995431c31eb165fc8e7138ae3f5afe06da8fae6"
+            "sha256": "567d270525f068ab698f8b3e66940909a1795c8e7282e1142266270bfa990e69"
           }
         ]
       }
@@ -208,13 +208,13 @@
       "within_1pct_all": 0.7355366907344189,
       "within_1pct_depth_one": 1.0,
       "within_1pct_deeper": 0.3340940209949795,
-      "tau_score_vs_delta": 0.7877494501956301,
+      "tau_score_vs_delta": 0.7877493469948805,
       "allowance_graph_nodes": null,
       "allowance_graph_edges": 21550791,
       "source": {
         "file": "data/3-published-results-for-thesis/holdout-w0/eval_summary.json",
         "key": "closed_form",
-        "sha256_published": "ae567ac958bd458e7db7a8b1739502beeeec5c7ef9eaad8e4edbe0f71c98d2f7",
+        "sha256_published": "b8cf9c7ffba58eba9a8ee784b5bd510fe2d8a079b3bf6cf75639f78d47de6afd",
         "checksum_matches_SHA256SUMS": true
       },
       "score_file_check": {
@@ -244,7 +244,7 @@
         "files": [
           {
             "file": "data\\2-processed-tables-and-evaluations\\holdout-w0\\spender_scores.part000.parquet",
-            "sha256": "ae5bb61b8f8e48a2a2e757541db782781ff9940fa8387affe4894b3e5bfc70cd"
+            "sha256": "9ee0e5d72c028377ae1540e130cef9ad51474bcec355b361df53674f74de58e9"
           }
         ]
       }

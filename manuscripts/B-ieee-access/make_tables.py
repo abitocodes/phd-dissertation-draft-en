@@ -16,7 +16,8 @@ tab_contrasts.tex, tab_cpr.tex, tab_union.tex and tab_explore.tex next to this
 file. Every number comes from one of these sources, named again in a comment at the top of
 each table:
 
-- the published summaries of both analyses: experiments/data/3-published-results-for-thesis/
+- the published summaries of both analyses, those of the data extracted again:
+  experiments/data/4-post-clearance-reextraction/replica/experiments/data/3-published-results-for-thesis/
   for the registered analysis and its subfolder revised-contract-12m/ for the contract-graph
   analysis, the main analysis of the paper; each file is checked against SHA256SUMS.txt, and
   the checksum list of the main analysis against the commit that published it;
@@ -25,7 +26,8 @@ each table:
 The order table (tab_timeline.tex) prints the order of the commitments only: no date, time,
 commit identifier or hash. The script checks that order against the commit history of the
 public repository (git log), the extraction manifest of W1 and the job times in
-describe/describe.json, and stops if they disagree.
+describe/describe.json of the first extraction (experiments/data/3-published-results-for-thesis/),
+and stops if they disagree.
 
 Nothing is typed in by hand except the wording of the rows.
 """
@@ -55,11 +57,17 @@ COMMITS = {
     "registered_results": "344017e",
     "registered_benchmark": "7054746",
 }
-# The main analysis, defined after the registered results were known: the commit that published
-# its summaries and the code revision its digest names (checked, not printed).
+# The summaries of both analyses, those of the data extracted again, in the public repository.
+SUMMARIES = ("experiments", "data", "4-post-clearance-reextraction", "replica", "experiments", "data",
+             "3-published-results-for-thesis")
+# The record of the first extraction, which the order table reads (extraction manifest of W1, job times).
+RECORD = ("experiments", "data", "3-published-results-for-thesis")
+# The commit of the public repository that published the summaries, and the code revision their digests
+# name, a commit of the replica that computed them (HISTORY.md of the public repository), compared as
+# written. Both are checked, not printed.
 MAIN_COMMITS = {
-    "main_results": "6b389df",
-    "main_code": "bb78da3",
+    "main_results": "5248472",
+    "main_code": "a9e2bd737b043f57774f6ba61a5f712a62e2dbf1",
 }
 # The registration commit in the authors' Git repository (HISTORY.md of the public repository),
 # which the extraction manifest of W1, written there, records.
@@ -75,7 +83,7 @@ W0_DAY, W1_DAY = "31 March 2026", "30 June 2026"
 def locate(path: Path) -> Path:
     """The checkout of the public repository: the path itself, or its submodule in the authors' repository."""
     for repo in (path, path / SUBMODULE):
-        if (repo / "experiments" / "data" / "3-published-results-for-thesis" / REVISED / "results_digest.md").exists():
+        if repo.joinpath(*SUMMARIES, REVISED, "results_digest.md").exists():
             return repo
     raise SystemExit(f"no checkout of the public repository with {REVISED} at {path}")
 
@@ -118,17 +126,17 @@ def commit_info(repo: Path, short: str) -> tuple[str, datetime]:
 
 def check_main_commit(repo: Path, pub: Path) -> None:
     """The summaries read here are those of the commit that published them, at the code revision the digest names."""
-    rel = f"experiments/data/3-published-results-for-thesis/{REVISED}/SHA256SUMS.txt"
+    rel = "/".join((*SUMMARIES, REVISED, "SHA256SUMS.txt"))
     committed = git_bytes(repo, f"{MAIN_COMMITS['main_results']}:{rel}")
     if crlf(committed) != crlf((pub / "SHA256SUMS.txt").read_bytes()):
         raise SystemExit(f"SHA256SUMS.txt of {REVISED} differs from commit {MAIN_COMMITS['main_results']}")
     m = re.search(r"Code revision: `([0-9a-f]{40})`", (pub / "results_digest.md").read_text(encoding="utf-8"))
-    if not m or m.group(1) != commit_info(repo, MAIN_COMMITS["main_code"])[0]:
+    if not m or m.group(1) != MAIN_COMMITS["main_code"]:
         raise SystemExit(f"the digest of {REVISED} does not name code revision {MAIN_COMMITS['main_code']}")
 
 
 def load(repo: Path) -> dict:
-    base = repo / "experiments" / "data" / "3-published-results-for-thesis"
+    base = repo.joinpath(*SUMMARIES)
     spec = {
         "main": (base / REVISED, {
             "same": "same-window/eval_summary.json", "w0": "holdout-w0/eval_summary.json",
@@ -138,8 +146,9 @@ def load(repo: Path) -> dict:
         "registered": (base, {
             "same": "same-window/eval_summary.json", "w0": "holdout-w0/eval_summary.json",
             "w1": "registered-w1/eval_summary.json",
-            "bench": "benchmark/benchmark.json", "describe": "describe/describe.json",
-            "manifest": "registered-w1/extraction_manifest.json"}),
+            "bench": "benchmark/benchmark.json", "describe": "describe/describe.json"}),
+        "record": (repo.joinpath(*RECORD), {
+            "describe": "describe/describe.json", "manifest": "registered-w1/extraction_manifest.json"}),
     }
     D: dict = {}
     for name, (pub, files) in spec.items():
@@ -276,9 +285,9 @@ def tab_bench(D: dict) -> str:
 
 def tab_timeline(repo: Path, D: dict) -> str:
     """The order of the commitments and what was known at each step. Only the order is printed. The commit times, the
-    BigQuery job times and the extraction manifest of W1 are read to check that order, and the script stops if they
-    disagree with it."""
-    desc, man = D["registered"]["describe"]["timing"], D["registered"]["manifest"]
+    BigQuery job times and the extraction manifest of W1 of the first extraction are read to check that order, and the
+    script stops if they disagree with it."""
+    desc, man = D["record"]["describe"]["timing"], D["record"]["manifest"]
     t = {k: commit_info(repo, v)[1] for k, v in COMMITS.items()}
     if datetime.fromisoformat(desc["plan_commit_43d8045_utc"]) != t["plan"]:
         raise SystemExit("plan commit time differs between git and describe.json")
@@ -466,8 +475,8 @@ def tab_cohorts(D: dict) -> str:
            "\\setlength{\\tabcolsep}{4pt}",
            "\\begin{tabular}{@{}lrrrrr@{}}",
            "\\toprule",
-           " & & \\multicolumn{2}{c}{In the} & In the author- & In no \\\\",
-           "(a) Cohort & Contracts & \\multicolumn{2}{c}{union graph} & ization layer & pair \\\\",
+           " & & \\multicolumn{2}{c}{In the} & In the & In no \\\\",
+           "(a) Cohort & Contracts & \\multicolumn{2}{c}{union graph} & allowance layer & pair \\\\",
            "\\midrule",
            *a,
            "\\bottomrule",
@@ -669,7 +678,7 @@ def tab_contrasts(D: dict) -> str:
     out.append(plain("W1: C-PR $-$ EndorseRank, new approval pairs",
                      er_r["cpr_minus_endorserank_appr"], er_v["cpr_minus_endorserank_appr"]))
     out += ["\\bottomrule", "\\end{tabular}", "", "\\vspace{2pt}",
-            "\\parbox{\\textwidth}{\\footnotesize $\\Delta\\tau=\\tau_a-\\tau_b$ on the same resamples. C-PR without a $\\lambda$ is the "
+            "\\parbox{\\textwidth}{\\footnotesize $\\Delta\\tau=\\tau(a)-\\tau(b)$ on the same resamples. C-PR without a $\\lambda$ is the "
             "primary setting $\\lambda=0.5$. Superiority holds "
             "when the interval lies above zero, non-inferiority when its lower end lies above $-\\delta=-0.01$, and ``no worse'' when "
             "the interval contains zero or lies above it. This paper applies two of the registered criteria of rule~B, F1 and F2; "
@@ -686,7 +695,8 @@ def tab_contrasts(D: dict) -> str:
 
 
 def tab_cpr(D: dict) -> str:
-    """C-PR (lambda = 0.5) against every other score and the four counts, main analysis, both windows."""
+    """C-PR (lambda = 0.5) against its two layers, EndorseRank with either restart rule, AWP, S-PR and the four
+    counts, main analysis, both windows."""
     V = D["main"]
     w0, w1, supp = V["w0"], V["w1"], V["supp"]
     s0, s1 = supp["w0"], supp["w1"]
@@ -746,8 +756,9 @@ def tab_cpr(D: dict) -> str:
                    f"{REVISED}/supplementary/supplementary.json : w0, w1"]),
            "\\begin{table*}[!t]",
            "\\centering",
-           "\\caption{C-PR Beside Every Other Score and Count of the Main Analysis: $\\Delta\\tau=\\tau_{\\text{C-PR}}-\\tau_b$ "
-           "With 95\\% Paired-Bootstrap Intervals}",
+           "\\caption{C-PR Beside Its Two Layers, EndorseRank With Either Restart Rule, AWP, S-PR and the Four Counts of the "
+           "Main Analysis: $\\Delta\\tau=\\tau(\\text{C-PR})-\\tau(b)$ for the Score $b$ of Each Row, With 95\\% Paired-Bootstrap "
+           "Intervals}",
            "\\label{tab:cpr}",
            "\\footnotesize",
            "\\setlength{\\tabcolsep}{4pt}",
@@ -767,8 +778,10 @@ def tab_cpr(D: dict) -> str:
            "contract graph, as a re-analysis; the unmarked cells belong to no rule. The contrasts with the union in-degree are "
            "part of the definitions of the main analysis and belong to no rule; like every other cell, they were computed "
            "after the labels were known. No cell is "
-           "a registered result. The lower block repeats two rows on the spenders that AWP can order, a restriction also chosen "
-           "after the results were known. Within a cohort every cell uses the same 400 resamples (seed 42).}",
+           "a registered result. The lower block repeats two rows on the spenders that the transfer in-degree can order, a "
+           "restriction also chosen "
+           "after the results were known. Within a cohort every cell uses the same 400 resamples (seed 42). A dash marks a "
+           "contrast that was not computed.}",
            "\\end{table*}", ""]
     return "\n".join(out)
 
@@ -820,7 +833,7 @@ def tab_union(D: dict) -> str:
         label, full, inside, uncapped = item
         lines.append(f"{label} & {delta_cell(full)} & {delta_cell(inside)} & {delta_cell(uncapped)} \\\\")
         if label.startswith(("W0, A1", "W1, F6a")):  # the two contrasts whose reading moves: show both coefficients
-            lines.append(f"\\quad{{\\scriptsize $\\tau_a$, $\\tau_b$}} & {taus(full)} & {taus(inside)} & {taus(uncapped)} \\\\")
+            lines.append(f"\\quad{{\\scriptsize $\\tau(a)$, $\\tau(b)$}} & {taus(full)} & {taus(inside)} & {taus(uncapped)} \\\\")
     p0, p1 = x0["allowance_pairs"], x1["allowance_pairs"]
     out = [header([f"{REVISED}/holdout-w0/eval_summary.json : contrasts_prefixed, baseline_contrasts, in_union_graph",
                    f"{REVISED}/window-w1/eval_summary.json : rule_b, baseline_contrasts, in_union_graph",

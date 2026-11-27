@@ -13,7 +13,7 @@ Distinct addresses other than the zero address & \multicolumn{2}{l}{25{,}537{,}2
 Addresses that sent a transaction (user accounts) & \multicolumn{2}{l}{17{,}477{,}779} \\
 Addresses read with \texttt{eth\_getCode}$^{a}$ & \multicolumn{2}{l}{6{,}230{,}270} \\
 \quad no code (user account) & \multicolumn{2}{l}{2{,}909{,}509} \\
-\quad EIP-7702 delegation designator (user account) & \multicolumn{2}{l}{1{,}165{,}025} \\
+\quad EIP-7702 delegation indicator (user account) & \multicolumn{2}{l}{1{,}165{,}025} \\
 \quad Safe (smart account, user account) & \multicolumn{2}{l}{46{,}204} \\
 \quad ERC-4337 account by the rule of the reads (smart account, user account) & \multicolumn{2}{l}{87{,}157} \\
 \quad ERC-4337 account by the listed code families (smart account, user account) & \multicolumn{2}{l}{192{,}656 (37{,}337 by code hash, 155{,}319 by code hash and implementation)} \\
@@ -22,12 +22,12 @@ Typed user accounts / contracts, with the transaction senders & \multicolumn{2}{
 Audited transaction senders with code / addresses with a call aborted at every attempt & \multicolumn{2}{l}{0 of 1{,}000 / 0} \\
 \addlinespace
 \multicolumn{3}{l}{\emph{Balances and the balance cap}} \\
-Sampled (token, owner) pairs whose balance equals \texttt{balanceOf} at the $T_{\mathrm{obs}}$ block & \multicolumn{2}{l}{1{,}493 of 1{,}500 (99.5\%; threshold 98\%)} \\
+Sampled (token, owner) pairs whose balance equals \texttt{balanceOf} at the $T_{\mathrm{obs}}$ block & \multicolumn{2}{l}{1{,}500 of 1{,}500 (100.0\%; threshold 98\%)} \\
 Positive latest allowances between contracts & 339{,}282 & 308{,}922 \\
 \quad unlimited & 223{,}892 (66.0\%) & 208{,}245 (67.4\%) \\
-\quad capped to zero (the owner holds no balance) & 222{,}559 (65.6\%) & 289{,}299 (93.6\%) \\
-\quad capped below the allowance & 114{,}454 & 17{,}480 \\
-\quad positive after the cap & 116{,}723 & 19{,}623 \\
+\quad capped to zero (the owner holds no balance) & 222{,}559 (65.6\%) & 289{,}307 (93.7\%) \\
+\quad capped below the allowance & 114{,}457 & 17{,}476 \\
+\quad positive after the cap & 116{,}723 & 19{,}615 \\
 \quad sum of the capped values (USD) & 68{,}149{,}271 & 83{,}952{,}622 \\
 \addlinespace
 \multicolumn{3}{l}{\emph{Contract graph (1{,}403{,}959 contracts numbered over both freezes)}} \\
